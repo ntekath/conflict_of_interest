@@ -60,4 +60,19 @@ bool FMarket::RunTest(const FString&) {
  for(int H=0;H<14;++H)S.StepOnce();TestEqual(TEXT("Expiry releases stock"),Find(S.GetState().Orders,FString(TEXT("same")))->ReservedKg,0LL);
  TestEqual(TEXT("Expiry releases money"),Find(S.GetState().Orders,FString(TEXT("self")))->ReservedCents,0LL);TestTrue(TEXT("Trade conserves all funds and goods"),S.AuditRuntime(E));return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FConsumer,"CoI.Economy.ActualConsumption",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FConsumer::RunTest(const FString&) {
+ FString J,E;FCoIGeoMapData G;Fixture(J,G,3,[](auto R){for(auto V:R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Needs"))){V->AsObject()->SetNumberField(TEXT("BasicKgPerThousandPerDay"),1);V->AsObject()->SetNumberField(TEXT("LuxuryKgPerThousandPerDay"),1);}});FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
+ auto A=Order(S,TEXT("food.supply"),TEXT("company.player"),TEXT("sell"),20,1);TestTrue(TEXT("Offer food"),S.Enqueue(A,E));
+ auto B=Order(S,TEXT("lux.supply"),TEXT("company.luxury"),TEXT("sell"),20,10,TEXT("storage.luxury"));B.Order.GoodId=TEXT("good.luxury");TestTrue(TEXT("Offer luxury"),S.Enqueue(B,E));
+ S.StepOnce();TestEqual(TEXT("Food really removed"),Find(S.GetState().GoodsAudit,FString(TEXT("good.food")))->ConsumedKg,10LL);TestEqual(TEXT("No luxury until basics consumed"),Find(S.GetState().GoodsAudit,FString(TEXT("good.luxury")))->ConsumedKg,0LL);
+ S.StepOnce();TestEqual(TEXT("Luxury after basics"),Find(S.GetState().GoodsAudit,FString(TEXT("good.luxury")))->ConsumedKg,10LL);
+ int64 C=0;for(const auto& R:S.GetSnapshot().Countries)for(const auto& V:R.Consumed)C+=V.Kg;TestEqual(TEXT("Country consumption once"),C,20LL);
+ TestEqual(TEXT("Food seller paid, no free goods"),Find(S.GetState().Accounts,FString(TEXT("account.company.player")))->BalanceCents,2500010LL);TestTrue(TEXT("Consumption equation"),S.AuditRuntime(E));
+ Fixture(J,G,3);TestTrue(TEXT("Load shortage"),S.Load(J,G,E));for(int H=0;H<25;++H)S.StepOnce();
+ TestEqual(TEXT("No food supplied: no invented consumption"),Find(S.GetState().GoodsAudit,FString(TEXT("good.food")))->ConsumedKg,0LL);
+ int64 Missed=0;for(const auto& R:S.GetState().Groups)for(const auto& U:R.MissedNeed)if(U.GoodId==TEXT("good.food"))Missed+=U.Kg;TestEqual(TEXT("Shortage visible across four regions"),Missed,4400LL);
+ for(const auto& O:S.GetState().Orders)TestTrue(TEXT("No luxury buys while basic missing"),O.GoodId!=TEXT("good.luxury"));return TestTrue(TEXT("No hidden funding"),S.AuditRuntime(E));
+}
 #endif

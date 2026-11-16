@@ -50,8 +50,9 @@ struct FCompany { FString Id,AccountId; COI_RECORD(COI_F(Id);COI_F(AccountId);) 
 struct FGroup
 {
  FString Id,AccountId; int64 Population=0,Workforce=0,Employed=0,DailyIncomeCents=0,BudgetCents=0;
- TArray<FAmount> Consumed,UnmetNeed;
- COI_RECORD(COI_F(Id);COI_F(AccountId);COI_F(Population);COI_F(Workforce);COI_F(Employed);COI_F(DailyIncomeCents);COI_F(BudgetCents);COI_F(Consumed);COI_F(UnmetNeed);)
+ int64 DailySpentCents=0,LuxurySpentCents=0,BasicRemainder=0,LuxuryRemainder=0;
+ TArray<FAmount> MissedNeed; TArray<FAmount> Consumed,UnmetNeed;
+ COI_RECORD(COI_F(Id);COI_F(AccountId);COI_F(Population);COI_F(Workforce);COI_F(Employed);COI_F(DailyIncomeCents);COI_F(BudgetCents);COI_O(DailySpentCents);COI_O(LuxurySpentCents);COI_O(BasicRemainder);COI_O(LuxuryRemainder);COI_O(MissedNeed);COI_F(Consumed);COI_F(UnmetNeed);)
 };
 struct FEmployment { FString GroupId; int64 Workers=0; COI_RECORD(COI_F(GroupId);COI_F(Workers);) };
 struct FFacility

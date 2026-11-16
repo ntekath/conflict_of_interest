@@ -63,6 +63,7 @@ private:
  bool PlaceOrder(FMarketOrder Order,FString& Error);
  bool CancelOrder(const FString& Id,const FString& Actor,const FString& Status);
  void MatchOrders(); void ExpireOrders();
+ void Demand(int64 Hour);void Consume();
  int64 UsedStorage(const FString& Id) const;
 };
 }
