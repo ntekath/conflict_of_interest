@@ -6,3 +6,4 @@ public class ConflictOfInterest : ModuleRules {
  PublicDependencyModuleNames.AddRange(new[]{"Core","CoreUObject","Engine","InputCore","Json","UMG","Slate","SlateCore"});
  }
 }
+// AP04: pure-data simulation and world-owned runtime bridge.

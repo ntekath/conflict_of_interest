@@ -10,3 +10,5 @@
 *.uasset binary
 *.umap binary
 *.zip binary
+
+*.coisim text eol=lf

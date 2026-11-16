@@ -10,6 +10,8 @@ class CONFLICTOFINTEREST_API ACoIPlayerController : public APlayerController
 public: ACoIPlayerController();
  bool IsMapPointerBlocked() const;
  UFUNCTION(Exec) void MapStatus();
+ UFUNCTION(Exec) void SimStatus();
+ UFUNCTION(Exec) void SimRestart();
 private: UPROPERTY() TObjectPtr<class UCoIMapInterface> MapInterface;
 protected: virtual void BeginPlay() override;
 };

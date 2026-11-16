@@ -34,6 +34,16 @@ private:
  ECoIMapView View=ECoIMapView::Regions;
  UPROPERTY() TObjectPtr<UTextBlock> Information;
  UPROPERTY() TObjectPtr<UTextBlock> ViewLabel;
+ UPROPERTY() TObjectPtr<UTextBlock> SimulationLabel;
+ UPROPERTY() TObjectPtr<UCoIMapButton> PauseControl;
+ UPROPERTY() TObjectPtr<UTextBlock> SimulationDiagnostics;
+ UPROPERTY() TObjectPtr<class UCoISimulationSubsystem> Simulation;
+ FDelegateHandle SimulationChanged;
+ void RefreshSimulation();
+ UFUNCTION() void ToggleSimulation();
+ UFUNCTION() void SpeedOne();
+ UFUNCTION() void SpeedFour();
+ UFUNCTION() void SpeedSixteen();
  UPROPERTY() TObjectPtr<UBorder> Panel;
  TMap<FName,bool> OriginalHidden;
  bool bReady=false;

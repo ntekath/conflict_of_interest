@@ -1,10 +1,13 @@
 #include "MapInterface.h"
 #include "GeoCatalog.h"
 #include "MapCameraPawn.h"
+#include "Simulation/SimulationSubsystem.h"
 #include "Blueprint/WidgetTree.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Border.h"
 #include "Components/ScrollBox.h"
+#include "Components/HorizontalBox.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -29,14 +32,28 @@ TSharedRef<SWidget> UCoIMapInterface::RebuildWidget()
  auto Text=[&](const FString& Value,int Size,FLinearColor Color)
  {auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Value));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",Size));T->SetColorAndOpacity(Color);T->SetAutoWrapText(true);Box->AddChildToVerticalBox(T)->SetPadding(FMargin(0,0,0,10));return T;};
  Text(TEXT("Conflict of Interest"),18,FLinearColor(.95f,.75f,.38f));
- Text(TEXT("Große Seen | 01.01.1913\nStatische Karte - keine Simulation"),12,FLinearColor(.65f,.75f,.8f));
+ SimulationLabel=Text(TEXT("Simulation wird geladen …"),12,FLinearColor(.65f,.75f,.8f));
  ViewLabel=Text(TEXT(""),14,FLinearColor::White);
  // AddDynamic requires literal function names; bind the three controls explicitly.
  auto MakeButton=[&](const TCHAR* Label){auto* B=WidgetTree->ConstructWidget<UCoIMapButton>();auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Label));T->SetColorAndOpacity(FLinearColor(.04f,.06f,.08f));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",13));B->SetContent(T);Box->AddChildToVerticalBox(B)->SetPadding(FMargin(0,0,0,6));return B;};
- MakeButton(TEXT("Regionen"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Regions);
- MakeButton(TEXT("Länder"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Countries);
- MakeButton(TEXT("Besitz"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Ownership);
+ auto MakeRow=[&](){auto* Row=WidgetTree->ConstructWidget<UHorizontalBox>();Box->AddChildToVerticalBox(Row)->SetPadding(FMargin(0,0,0,8));return Row;};
+ auto RowButton=[&](UHorizontalBox* Row,const TCHAR* Label)
+ {
+  auto* B=WidgetTree->ConstructWidget<UCoIMapButton>();auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Label));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",11));T->SetColorAndOpacity(FLinearColor(.04f,.06f,.08f));B->SetContent(T);
+  auto* Cell=Row->AddChildToHorizontalBox(B);Cell->SetSize(FSlateChildSize(ESlateSizeRule::Fill));Cell->SetPadding(FMargin(0,0,4,0));return B;
+ };
+ auto* Views=MakeRow();
+ RowButton(Views,TEXT("Regionen"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Regions);
+ RowButton(Views,TEXT("Länder"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Countries);
+ RowButton(Views,TEXT("Besitz"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Ownership);
  MakeButton(TEXT("Auswahl aufheben"))->OnClicked.AddDynamic(this,&UCoIMapInterface::ClearSelection);
+ auto* Clock=MakeRow();
+ PauseControl=Cast<UCoIMapButton>(RowButton(Clock,TEXT("Start")));
+ PauseControl->OnClicked.AddDynamic(this,&UCoIMapInterface::ToggleSimulation);
+ RowButton(Clock,TEXT("1x"))->OnClicked.AddDynamic(this,&UCoIMapInterface::SpeedOne);
+ RowButton(Clock,TEXT("4x"))->OnClicked.AddDynamic(this,&UCoIMapInterface::SpeedFour);
+ RowButton(Clock,TEXT("16x"))->OnClicked.AddDynamic(this,&UCoIMapInterface::SpeedSixteen);
+ SimulationDiagnostics=Text(TEXT(""),10,FLinearColor(.65f,.75f,.8f));
  Information=Text(TEXT(""),13,FLinearColor(.9f,.94f,.96f));
  Text(TEXT("Orange: Stadt | Gold: Auswahl\nKlick: Ort oder Fläche wählen\nWASD/Pfeile: bewegen | Rad: Zoom\nRegionen sind fiktive Testgebiete."),11,FLinearColor(.62f,.73f,.77f));
  return Super::RebuildWidget();
@@ -48,7 +65,9 @@ void UCoIMapInterface::NativeConstruct()
  {FString Error;bReady=Data.Load(It->Catalog->DefinitionJson,Error);if(!bReady)UE_LOG(LogTemp,Error,TEXT("COI_UI %s"),*Error);break;}
  for(TActorIterator<AStaticMeshActor> It(GetWorld());It;++It)
  {OriginalHidden.Add(It->GetFName(),It->IsHidden());if(It->ActorHasTag(TEXT("display.city_markers")))It->SetActorHiddenInGame(true);}
- ApplyView();RefreshInformation();
+ Simulation=GetWorld()->GetSubsystem<UCoISimulationSubsystem>();
+ if(Simulation)SimulationChanged=Simulation->OnChanged.AddUObject(this,&UCoIMapInterface::RefreshSimulation);
+ ApplyView();RefreshSimulation();
 }
 void UCoIMapInterface::NativeTick(const FGeometry& G,float Dt)
 {
@@ -57,6 +76,7 @@ void UCoIMapInterface::NativeTick(const FGeometry& G,float Dt)
 }
 void UCoIMapInterface::NativeDestruct()
 {
+ if(Simulation)Simulation->OnChanged.Remove(SimulationChanged);SimulationChanged.Reset();Simulation=nullptr;
  for(TActorIterator<AStaticMeshActor> It(GetWorld());It;++It)if(auto* Hidden=OriginalHidden.Find(It->GetFName()))It->SetActorHiddenInGame(*Hidden);
  OriginalHidden.Empty();Super::NativeDestruct();
 }
@@ -77,11 +97,17 @@ void UCoIMapInterface::RefreshInformation()
  FString Info=TEXT("Ort auswählen\n\nStadt vor Fläche. Wasser und freier Hintergrund heben die Auswahl auf.");
  auto Name=[&](const TArray<FCoIGeoSurface>& List,const FString& Id){for(const auto& S:List)if(S.Id==Id)return S.Name;return Id;};
  for(const auto& C:Data.Cities)if(C.Id==Selection.Id)
-  Info=FString::Printf(TEXT("STADT\n%s\n\nLand: %s\nTestregion: %s\n%.4f N, %.4f W\n\nBesitz: nicht zugewiesen\nWirtschaftsdaten: noch nicht angelegt"),*C.Name,*Name(Data.Countries,C.CountryId),*Name(Data.Regions,C.RegionId),C.Latitude,-C.Longitude);
+  Info=FString::Printf(TEXT("STADT\n%s\n\nLand: %s\nTestregion: %s\n%.4f N, %.4f W\n\nBesitz: nicht zugewiesen\nAP04: fiktive Startdaten;\nWirtschaftsregeln noch inaktiv"),*C.Name,*Name(Data.Countries,C.CountryId),*Name(Data.Regions,C.RegionId),C.Latitude,-C.Longitude);
  for(const auto& R:Data.Regions)if(R.Id==Selection.Id)
-  Info=FString::Printf(TEXT("WIRTSCHAFTSREGION\n%s\n\nLand: %s\nFiktives Testgebiet\nKeine amtliche Verwaltungsgrenze\n\nBesitz: nicht zugewiesen\nWirtschaftsdaten: noch nicht angelegt"),*R.Name,*Name(Data.Countries,R.CountryId));
+  Info=FString::Printf(TEXT("WIRTSCHAFTSREGION\n%s\n\nLand: %s\nFiktives Testgebiet\nKeine amtliche Verwaltungsgrenze\n\nBesitz: nicht zugewiesen\nAP04: fiktive Startdaten;\nWirtschaftsregeln noch inaktiv"),*R.Name,*Name(Data.Countries,R.CountryId));
  for(const auto& C:Data.Countries)if(C.Id==Selection.Id)
-  Info=FString::Printf(TEXT("LAND\n%s\n\n%s\nModerne Geografie als Näherung für 1913.\n\nKeine simulierten Landeswerte."),*C.Name,C.Id==TEXT("country.usa")?TEXT("Vier fiktive US-Testregionen"):TEXT("Geografischer Kontext; keine aktive Wirtschaftsregion"));
+  Info=FString::Printf(TEXT("LAND\n%s\n\n%s\nModerne Geografie als Näherung für 1913.\n\nKeine zusätzliche Landesbevölkerung."),*C.Name,C.Id==TEXT("country.usa")?TEXT("Vier fiktive US-Testregionen"):TEXT("Geografischer Kontext; keine aktive Wirtschaftsregion"));
+ if(Simulation&&Simulation->IsReady())
+ {
+  const auto& Snapshot=Simulation->GetSnapshot();
+  for(const auto& R:Snapshot.Regions)if(R.Id==Selection.Id)Info+=FString::Printf(TEXT("\n\nAP04-Testbevölkerung: %lld\nBeschäftigte: %lld\nZuletzt berechnet: Schritt %lld"),R.Population,R.Employed,R.LastProcessedStep);
+  for(const auto& C:Snapshot.Countries)if(C.Id==Selection.Id)Info+=FString::Printf(TEXT("\n\nAus Regionen aggregiert:\nBevölkerung: %lld\nBeschäftigte: %lld"),C.Population,C.Employed);
+ }
  Information->SetText(FText::FromString(Info));
 }
 bool UCoIMapInterface::Project(FVector2D World,FVector2D& Local) const
@@ -187,4 +213,20 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
   FSlateDrawElement::MakeText(Out,Top+3,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Regular",11),ESlateDrawEffect::None,FLinearColor(.75f,.87f,.77f));
  }
  return Top+3;
+}
+
+void UCoIMapInterface::ToggleSimulation(){if(Simulation)Simulation->TogglePause();}
+void UCoIMapInterface::SpeedOne(){if(Simulation)Simulation->SetSpeed(1);}
+void UCoIMapInterface::SpeedFour(){if(Simulation)Simulation->SetSpeed(4);}
+void UCoIMapInterface::SpeedSixteen(){if(Simulation)Simulation->SetSpeed(16);}
+void UCoIMapInterface::RefreshSimulation()
+{
+ if(!SimulationLabel||!SimulationDiagnostics)return;
+ if(!Simulation||!Simulation->IsReady())
+ {SimulationLabel->SetText(FText::FromString(Simulation?Simulation->GetError():TEXT("Simulation nicht verfügbar")));return;}
+ const auto& S=Simulation->GetSnapshot();const auto& D=Simulation->GetDiagnostics();
+ if(PauseControl)if(auto* Caption=Cast<UTextBlock>(PauseControl->GetContent()))Caption->SetText(FText::FromString(Simulation->IsPaused()?TEXT("Start"):TEXT("Pause")));
+ SimulationLabel->SetText(FText::FromString(FString::Printf(TEXT("%s | %s | %dx\n%s: %.2f USD (reserviert %.2f)\nLager %lld/%lld Punkte | Lkw: %lld\nFIKTIVE TESTDATEN | Regeln ab AP05"),*S.Date,Simulation->IsPaused()?TEXT("PAUSE"):TEXT("LÄUFT"),Simulation->GetSpeed(),*S.PlayerName,S.PlayerMoneyCents/100.,S.PlayerReservedCents/100.,S.PlayerStorageUsed,S.PlayerStorageCapacity,S.PlayerTrucks)));
+ SimulationDiagnostics->SetText(FText::FromString(FString::Printf(TEXT("Schritt %lld | Version %llu | %.1f h/s tatsächlich\nSchritt %.0f µs | GT %.0f µs | Snapshot %.0f µs\nRückstau %lld | Befehle %lld | %s"),S.Step,S.Version,Simulation->IsPaused()?0.:D.ActualHoursPerSecond,D.StepMicros,Simulation->GetGameThreadMicros(),D.SnapshotMicros,D.BacklogSteps,D.PendingCommands,D.BudgetLimited?TEXT("Budget begrenzt"):TEXT("Budget frei"))));
+ RefreshInformation();
 }

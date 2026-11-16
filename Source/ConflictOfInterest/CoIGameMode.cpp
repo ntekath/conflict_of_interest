@@ -1,6 +1,7 @@
 #include "CoIGameMode.h"
 #include "MapCameraPawn.h"
 #include "MapInterface.h"
+#include "Simulation/SimulationSubsystem.h"
 ACoIPlayerController::ACoIPlayerController(){bShowMouseCursor=true;}
 void ACoIPlayerController::BeginPlay()
 {Super::BeginPlay();FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);SetInputMode(Mode);
@@ -31,3 +32,9 @@ void ACoIPlayerController::MapStatus()
  auto* CameraPawn=Cast<AMapCameraPawn>(GetPawn());
  UE_LOG(LogTemp,Display,TEXT("COI_MAP_STATUS selection=%s zoom=%.3f blocked=%d"),MapInterface?*MapInterface->GetSelectedId():TEXT("none"),CameraPawn?CameraPawn->GetZoomHeight():0.,IsMapPointerBlocked());
 }
+
+void ACoIPlayerController::SimStatus()
+{
+ if(auto* Sim=GetWorld()->GetSubsystem<UCoISimulationSubsystem>())UE_LOG(LogTemp,Display,TEXT("COI_SIM_STATUS step=%lld paused=%d speed=%d hash=%s"),Sim->GetSnapshot().Step,Sim->IsPaused(),Sim->GetSpeed(),*Sim->Fingerprint());
+}
+void ACoIPlayerController::SimRestart(){if(auto* Sim=GetWorld()->GetSubsystem<UCoISimulationSubsystem>())Sim->Restart();}

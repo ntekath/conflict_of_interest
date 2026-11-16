@@ -1,0 +1,24 @@
+[2026.11.16-19.24.43:712][528]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.16-19.24.43:791][530]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.16-19.24.43:833][532]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.16-19.24.43:879][534]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicCommandsAndLifetime} Path={CoI.Simulation.AtomicCommandsAndLifetime}
+[2026.11.16-19.24.43:925][536]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundedBacklogAndOrdering} Path={CoI.Simulation.BoundedBacklogAndOrdering}
+[2026.11.16-19.24.43:990][538]LogAutomationController: Display: Test Completed. Result={Success} Name={ContractAndValidation} Path={CoI.Simulation.ContractAndValidation}
+[2026.11.16-19.24.44:043][540]LogAutomationController: Display: Test Completed. Result={Success} Name={FixedStepsAndPause} Path={CoI.Simulation.FixedStepsAndPause}
+[2026.11.16-19.24.44:045][541]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 7 tests performed.
+[2026.11.16-19.27.08:446][434]LogTemp: Display: COI_SIM_READY generation=1 seed=1913 population=40000 player_cents=2500000
+[2026.11.16-19.27.53:396][816]LogTemp: Display: COI_SIM_CONTROL paused=0 speed=1 step=0
+[2026.11.16-19.28.02:830][948]LogTemp: Display: COI_SIM_CONTROL paused=0 speed=4 step=9
+[2026.11.16-19.28.17:249][677]LogTemp: Display: COI_SIM_CONTROL paused=0 speed=16 step=67
+[2026.11.16-19.28.25:966][723]LogTemp: Display: COI_SIM_CONTROL paused=1 speed=16 step=206
+[2026.11.16-19.40.31:504][ 73]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.16-19.40.31:596][ 75]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.16-19.40.31:641][ 77]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.16-19.40.31:686][ 79]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicCommandsAndLifetime} Path={CoI.Simulation.AtomicCommandsAndLifetime}
+[2026.11.16-19.40.31:732][ 81]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundedBacklogAndOrdering} Path={CoI.Simulation.BoundedBacklogAndOrdering}
+[2026.11.16-19.40.31:802][ 83]LogAutomationController: Display: Test Completed. Result={Success} Name={ContractAndValidation} Path={CoI.Simulation.ContractAndValidation}
+[2026.11.16-19.40.31:853][ 85]LogAutomationController: Display: Test Completed. Result={Success} Name={FixedStepsAndPause} Path={CoI.Simulation.FixedStepsAndPause}
+[2026.11.16-19.40.31:854][ 86]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 7 tests performed.
+[2026.11.16-19.41.24:953][176]LogTemp: Display: COI_SIM_READY generation=12 seed=1913 population=40000 player_cents=2500000
+[2026.11.16-19.41.36:318][527]LogTemp: Display: COI_SIM_CONTROL paused=0 speed=1 step=0
+[2026.11.16-19.42.02:051][583]LogTemp: Display: COI_SIM_READY generation=15 seed=1913 population=40000 player_cents=2500000
