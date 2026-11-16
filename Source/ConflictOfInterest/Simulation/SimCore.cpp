@@ -36,7 +36,7 @@ bool FSimulation::Enqueue(FCommand Command,FString& Error)
  if(Command.Sequence<=LastIssuedSequence||Command.Sequence>1000000000000LL||Command.TargetStep<=State.Step||Command.TargetStep-State.Step>Scenario.Settings.CommandHorizonSteps)
  {Error=TEXT("Duplicate/nonmonotonic sequence, past target or excessive horizon");return false;}
  if(Pending.Num()>=Scenario.Settings.MaxPendingCommands){Error=TEXT("Command queue full; caller must retry explicitly");return false;}
- if(Command.Kind!=ECommandKind::Reserve&&Command.Kind!=ECommandKind::Release){Error=TEXT("Unsupported command kind");return false;}
+ if(Command.Kind>ECommandKind::CancelOrder){Error=TEXT("Unsupported command kind");return false;}
  LastIssuedSequence=Command.Sequence;Pending.Add(MoveTemp(Command));
  Pending.Sort([](const FCommand& A,const FCommand& B){return A.TargetStep==B.TargetStep?A.Sequence<B.Sequence:A.TargetStep<B.TargetStep;});
  Error.Empty();Diagnostics.PendingCommands=Pending.Num();return true;
@@ -47,6 +47,8 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 }
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
+ if(Command.Kind==ECommandKind::PlaceOrder)return PlaceOrder(Command.Order,Reason);
+ if(Command.Kind==ECommandKind::CancelOrder){bool OK=CancelOrder(Command.Order.Id,Command.Order.ActorId,TEXT("cancelled"));Reason=OK?TEXT("Cancelled"):TEXT("Missing live owned order");return OK;}
  const auto& R=Command.Resources;
  auto Reject=[&](const TCHAR* Message){Reason=Message;return false;};
  if(R.Id.IsEmpty()||R.Id.Len()>128)return Reject(TEXT("Invalid reservation ID"));

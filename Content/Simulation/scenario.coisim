@@ -1480,7 +1480,7 @@
     ]
   },
   "Economy": {
-    "Stage": 1,
+    "Stage": 2,
     "PayrollHours": 24,
     "DecisionHours": 6,
     "DemandHours": 24,

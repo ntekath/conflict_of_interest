@@ -120,5 +120,6 @@ void FSimulation::EconomyHour(int64 Hour)
 {
  if(Scenario.Economy.Stage<1)return;
  Payroll(Hour);Produce(Hour);
+ if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}
 }
 }
