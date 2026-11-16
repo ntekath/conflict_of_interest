@@ -32,14 +32,15 @@ void FSimulation::MatchOrders() {
  Buys.Sort([&](int32 A,int32 B){const auto& X=State.Orders[A];const auto& Y=State.Orders[B];return X.LimitCentsPerKg==Y.LimitCentsPerKg?X.Sequence<Y.Sequence:X.LimitCentsPerKg>Y.LimitCentsPerKg;});
  Sells.Sort([&](int32 A,int32 B){const auto& X=State.Orders[A];const auto& Y=State.Orders[B];return X.LimitCentsPerKg==Y.LimitCentsPerKg?X.Sequence<Y.Sequence:X.LimitCentsPerKg<Y.LimitCentsPerKg;});
  for(int32 BI:Buys)for(int32 SI:Sells){auto& B=State.Orders[BI];auto& S=State.Orders[SI];if(!B.RemainingKg||!S.RemainingKg||B.ActorId==S.ActorId||B.MarketId!=S.MarketId||B.GoodId!=S.GoodId||B.StorageId!=S.StorageId||B.LimitCentsPerKg<S.LimitCentsPerKg)continue;
-  int64 Kg=FMath::Min(B.RemainingKg,S.RemainingKg),Price=B.Sequence<S.Sequence?B.LimitCentsPerKg:S.LimitCentsPerKg,Cost=Kg*Price;
+  int32 Existing=StockIndex(B.ActorId,S.StorageId,S.GoodId);int64 Headroom=1000000000-(Existing==INDEX_NONE?0:State.Inventories[Existing].QuantityKg);int64 Kg=FMath::Min3(B.RemainingKg,S.RemainingKg,Headroom);if(Kg<=0)continue;int64 Price=B.Sequence<S.Sequence?B.LimitCentsPerKg:S.LimitCentsPerKg,Cost=Kg*Price;
   auto* BA=Find(State.Accounts,ActorAccount(B.ActorId));BA->ReservedCents-=Kg*B.LimitCentsPerKg;B.ReservedCents-=Kg*B.LimitCentsPerKg;
   const bool Paid=Pay(BA->Id,ActorAccount(S.ActorId),Cost,TEXT("trade"));check(Paid);
   if(auto* G=Find(State.Groups,B.ActorId)){G->DailySpentCents+=Cost;if(Find(Scenario.Definitions.Goods,B.GoodId)->NeedCategory==TEXT("luxury"))G->LuxurySpentCents+=Cost;}
   int32 Source=StockIndex(S.ActorId,S.StorageId,S.GoodId);State.Inventories[Source].ReservedKg-=Kg;S.ReservedKg-=Kg;
-  int64 Value=TakeStock(Source,Kg);int32 Dest=EnsureStock(B.ActorId,S.StorageId,S.GoodId);State.Inventories[Dest].QuantityKg+=Kg;State.Inventories[Dest].BookValueCents+=Cost;State.Inventories[Dest].AcquiredHour=State.EconomyHour;
+  int64 SpoilCredit=TakeSpoilCredit(Source,Kg);int64 Value=TakeStock(Source,Kg);int32 Dest=EnsureStock(B.ActorId,S.StorageId,S.GoodId);if(!State.Inventories[Dest].QuantityKg)State.Inventories[Dest].AcquiredHour=State.EconomyHour;State.Inventories[Dest].SpoilRemainder+=SpoilCredit;State.Inventories[Dest].QuantityKg+=Kg;State.Inventories[Dest].BookValueCents+=Cost;
   (void)Value;B.RemainingKg-=Kg;S.RemainingKg-=Kg;if(!B.RemainingKg)B.Status=TEXT("filled");if(!S.RemainingKg)S.Status=TEXT("filled");
   FTrade T;T.Id=FString::Printf(TEXT("trade.%lld"),++State.TradeSequence);T.BuyOrderId=B.Id;T.SellOrderId=S.Id;T.BuyerId=B.ActorId;T.SellerId=S.ActorId;T.MarketId=B.MarketId;T.CityId=S.CityId;T.GoodId=B.GoodId;T.Step=State.EconomyHour;T.QuantityKg=Kg;T.PriceCentsPerKg=Price;T.TotalCents=Cost;State.Trades.Add(MoveTemp(T));
+  FString Key=B.MarketId+TEXT("|")+B.GoodId;auto* M=Find(State.MarketTotals,Key);if(!M){FMarketTotal Row;Row.Id=Key;Row.MarketId=B.MarketId;Row.GoodId=B.GoodId;State.MarketTotals.Add(Row);M=&State.MarketTotals.Last();}M->LastPrice=Price;M->LastHour=State.EconomyHour;M->VolumeKg+=Kg;if(M->Day!=State.EconomyHour/24){M->Day=State.EconomyHour/24;M->DayVolumeKg=0;}M->DayVolumeKg+=Kg;
   if(State.Trades.Num()>Scenario.Economy.HistoryLimit)State.Trades.RemoveAt(0,1,EAllowShrinking::No);
  }
 }

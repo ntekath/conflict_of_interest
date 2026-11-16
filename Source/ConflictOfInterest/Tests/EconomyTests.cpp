@@ -78,7 +78,7 @@ bool FConsumer::RunTest(const FString&) {
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTransportTest,"CoI.Economy.TransportAndCosts",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FTransportTest::RunTest(const FString&) {
- FString J,E;FCoIGeoMapData G;Fixture(J,G,4,[](auto R){for(auto V:R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Companies")))if(V->AsObject()->GetStringField(TEXT("DecisionProfile"))!=TEXT("player"))V->AsObject()->SetStringField(TEXT("DecisionProfile"),TEXT("service"));});FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
+ FString J,E;FCoIGeoMapData G;Fixture(J,G,4,[](auto R){for(auto V:R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Companies")))if(V->AsObject()->GetStringField(TEXT("DecisionProfile"))!=TEXT("player")&&V->AsObject()->GetStringField(TEXT("DecisionProfile"))!=TEXT("carrier"))V->AsObject()->SetStringField(TEXT("DecisionProfile"),TEXT("service"));});FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
  auto Book=[&](const TCHAR* Id,int64 Kg){FCommand C;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Kind=ECommandKind::BookTransport;auto& T=C.Transport;T.Id=Id;T.OwnerId=TEXT("company.player");T.VehicleId=TEXT("vehicle.carrier.1");T.FromCityId=TEXT("city.us.detroit");T.ToCityId=TEXT("city.us.chicago");T.SourceInventoryId=TEXT("stock.player.food");T.DestinationStorageId=TEXT("storage.service.chicago");T.Kg=Kg;TestTrue(TEXT("Queue transport"),S.Enqueue(C,E));};
  Book(TEXT("over"),2001);S.StepOnce();TestFalse(TEXT("Oversize atomic rejection"),S.GetResults().Last().Accepted);TestFalse(TEXT("Rejected vehicle stays free"),Find(S.GetState().Vehicles,FString(TEXT("vehicle.carrier.1")))->Bound);
  Book(TEXT("cancel"),10);S.StepOnce();TestTrue(TEXT("Book finite freight"),S.GetResults().Last().Accepted);
@@ -94,5 +94,38 @@ bool FAutonomous::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;Fixture(J,G,4);FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;bool MerchantBought=false,MerchantSold=false,Shipped=false;
  for(int H=0;H<72;++H){S.StepOnce();if(!S.AuditRuntime(E)){AddError(FString::Printf(TEXT("Hour %d: %s"),H,*E));return false;}for(const auto& T:S.GetState().Trades){MerchantBought|=T.BuyerId==TEXT("company.merchant");MerchantSold|=T.SellerId==TEXT("company.merchant");}for(const auto& T:S.GetState().Transports)Shipped|=!T.Empty&&T.OwnerId==TEXT("company.merchant")&&T.FromCityId!=T.ToCityId&&T.Service==TEXT("rented_truck")&&T.Status==TEXT("arrived");}
  TestTrue(TEXT("Merchant purchases actual offers"),MerchantBought);TestTrue(TEXT("Merchant sells actual inventory"),MerchantSold);TestTrue(TEXT("Merchant pays carrier for intercity delivery"),Shipped);TestTrue(TEXT("Consumer actual food"),Find(S.GetState().GoodsAudit,FString(TEXT("good.food")))->ConsumedKg>0);TestTrue(TEXT("Real freight fee booked"),Find(S.GetState().CashTotals,FString(TEXT("freight")))!=nullptr);return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FWeeks,"CoI.Economy.FourWeeksConservationAndReplay",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FWeeks::RunTest(const FString&) {
+ FString J,E;FCoIGeoMapData G;Fixture(J,G,5);FSimulation A,B,C;for(auto* S:{&A,&B,&C})if(!TestTrue(TEXT("Load"),S->Load(J,G,E)))return false;
+ TestTrue(TEXT("No invented starting market price"),A.GetSnapshot().EconomyDetails.FindChecked(TEXT("city.us.chicago")).Contains(TEXT("Kein Abschluss")));
+ FString Csv=TEXT("hour,money_cents,reserved_cents,employment,food_produced_kg,food_consumed_kg,food_spoiled_kg,freight_cents\n");double MaxUs=0;int64 Delivered=0;
+ for(int H=0;H<28*24;++H){A.StepOnce();B.Advance(62500,16,false);C.Advance(250000,4,false);MaxUs=FMath::Max(MaxUs,A.GetDiagnostics().StepMicros);
+  if(!A.AuditRuntime(E)){AddError(FString::Printf(TEXT("Hour %d: %s"),H,*E));return false;}
+  if(H==100){FString Hash=B.Fingerprint();for(int I=0;I<20;++I)B.Advance(1000000,16,true);TestEqual(TEXT("Active economy pause changes nothing"),B.Fingerprint(),Hash);}
+  if((H+1)%24==0){TestEqual(TEXT("16x daily deterministic replay"),B.Fingerprint(),A.Fingerprint());TestEqual(TEXT("4x daily deterministic replay"),C.Fingerprint(),A.Fingerprint());int64 Money=0,Reserved=0;for(const auto& X:A.GetState().Accounts){Money+=X.BalanceCents;Reserved+=X.ReservedCents;}const auto* Food=Find(A.GetState().GoodsAudit,FString(TEXT("good.food")));const auto* Fee=Find(A.GetState().CashTotals,FString(TEXT("freight")));Csv+=FString::Printf(TEXT("%d,%lld,%lld,%lld,%lld,%lld,%lld,%lld\n"),H+1,Money,Reserved,A.GetSnapshot().Employed,Food->ProducedKg,Food->ConsumedKg,Food->SpoiledKg,Fee?Fee->Cents:0);}
+ }
+ TestTrue(TEXT("Bounded histories"),A.GetState().Orders.Num()<=A.GetScenario().Economy.HistoryLimit+A.GetScenario().Economy.MaxOpenOrders+64&&A.GetState().Trades.Num()<=A.GetScenario().Economy.HistoryLimit&&A.GetState().Transports.Num()<=A.GetScenario().Economy.HistoryLimit+A.GetState().Vehicles.Num());
+ const auto* Fee=Find(A.GetState().CashTotals,FString(TEXT("freight")));TestTrue(TEXT("Carrier paid over weeks"),Fee&&Fee->Cents>0);
+ FString Report=TEXT("# AP05: 28-day autonomous simulation\n\nSeed 1913; 672 hourly steps; no player orders, external grants or replenishment. Money, stock, capacity and reservation audit every hour. Replay fingerprints identical daily at 4x and 16x; pause checked.\n\n");Report+=A.GetSnapshot().EconomySummary+TEXT("\n\n## Cash transfers by reason (cents)\n");for(const auto& V:A.GetState().CashTotals)Report+=FString::Printf(TEXT("\n- %s: %lld"),*V.Id,V.Cents);
+ Report+=TEXT("\n\n## Final accounts (cents)\n");for(const auto& V:A.GetState().Accounts)Report+=FString::Printf(TEXT("\n- %s: balance %lld, reserved %lld"),*V.Id,V.BalanceCents,V.ReservedCents);
+ Report+=TEXT("\n\n## Shortages (kg)\n");for(const auto& V:A.GetState().Groups){Report+=TEXT("\n")+V.Id;for(const auto& U:V.UnmetNeed)Report+=FString::Printf(TEXT("; today %s=%lld"),*U.GoodId,U.Kg);for(const auto& U:V.MissedNeed)Report+=FString::Printf(TEXT("; prior days %s=%lld"),*U.GoodId,U.Kg);}
+ Report+=FString::Printf(TEXT("\n\nMaximum observed step: %.1f us (environment measurement, not a frame-rate guarantee).\nFinal fingerprint: `%s`\n"),MaxUs,*A.Fingerprint());
+ const FString Folder=FPaths::ProjectSavedDir()/TEXT("Diagnostics");IFileManager::Get().MakeDirectory(*Folder,true);TestTrue(TEXT("Write reproducible report"),FFileHelper::SaveStringToFile(Report,*(Folder/TEXT("AP05_28days.md")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM));FFileHelper::SaveStringToFile(Csv,*(Folder/TEXT("AP05_28days.csv")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+ return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMarketEdges,"CoI.Economy.OrderPriorityAndRejection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FMarketEdges::RunTest(const FString&) {
+ FString J,E;FCoIGeoMapData G;Fixture(J,G,2);FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
+ auto Submit=[&](FCommand C){TestTrue(TEXT("Enqueue"),S.Enqueue(C,E));};
+ Submit(Order(S,TEXT("first.buy"),TEXT("company.merchant"),TEXT("buy"),60,9));Submit(Order(S,TEXT("second.buy"),TEXT("company.food"),TEXT("buy"),60,9));Submit(Order(S,TEXT("late.sell"),TEXT("company.player"),TEXT("sell"),100,5));S.StepOnce();
+ TestEqual(TEXT("Older buy sets price within both limits"),S.GetState().Trades[0].PriceCentsPerKg,9LL);TestEqual(TEXT("Same price earlier buyer first"),S.GetState().Trades[0].BuyerId,FString(TEXT("company.merchant")));TestEqual(TEXT("Second only gets remaining 40"),S.GetState().Trades[1].QuantityKg,40LL);
+ const auto PriceHour=S.GetState().MarketTotals[0].LastHour;
+ Submit(Order(S,TEXT("remote.sell"),TEXT("company.merchant"),TEXT("sell"),1,1,TEXT("storage.service.chicago"),TEXT("city.us.chicago")));S.StepOnce();TestFalse(TEXT("Cannot sell stock from another physical store"),S.GetResults().Last().Accepted);
+ Submit(Order(S,TEXT("expensive"),TEXT("company.merchant"),TEXT("sell"),10,10));S.StepOnce();TestEqual(TEXT("Noncrossing limits produce no deal"),S.GetState().Trades.Num(),2);
+ FCommand C;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Kind=ECommandKind::CancelOrder;C.Order.Id=TEXT("expensive");C.Order.ActorId=TEXT("company.food");Submit(C);S.StepOnce();TestFalse(TEXT("Wrong actor cannot cancel"),S.GetResults().Last().Accepted);
+ for(int H=0;H<14;++H)S.StepOnce();TestEqual(TEXT("No trade does not refresh last price"),S.GetState().MarketTotals[0].LastHour,PriceHour);TestTrue(TEXT("Stale quote explicitly marked"),S.GetSnapshot().EconomyDetails.FindChecked(TEXT("city.us.detroit")).Contains(TEXT("veraltet")));return TestTrue(TEXT("All holds fully backed"),S.AuditRuntime(E));
 }
 #endif

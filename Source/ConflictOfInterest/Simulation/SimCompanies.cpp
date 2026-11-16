@@ -10,7 +10,7 @@ void FSimulation::Offer(const FString& Actor,const FString& Store,const FString&
 void FSimulation::Companies(int64 H) {
  if(H%Scenario.Economy.DecisionHours)return;
  for(auto& O:State.Orders){const auto* C=Find(Scenario.Definitions.Companies,O.ActorId);if(C&&(C->DecisionProfile==TEXT("producer")||C->DecisionProfile==TEXT("trader"))&&O.Status==TEXT("open"))CancelOrder(O.Id,O.ActorId,TEXT("repriced"));}
- for(const auto& F:State.Facilities){const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* S=Find(State.Warehouses,F.StorageId);
+ for(const auto& F:State.Facilities){if(Find(Scenario.Definitions.Companies,F.OwnerId)->DecisionProfile!=TEXT("producer"))continue;const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* S=Find(State.Warehouses,F.StorageId);
   for(const auto& A:T->Outputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);if(I==INDEX_NONE)continue;const auto& Stock=State.Inventories[I];int64 Kg=Stock.QuantityKg-Stock.ReservedKg;
    int64 Unit=Stock.QuantityKg?(Stock.BookValueCents+Stock.QuantityKg-1)/Stock.QuantityKg:Find(Scenario.Definitions.Goods,A.GoodId)->InitialUnitCostCents;
    int64 Overhead=(T->DailyOperatingCostCents+Find(Scenario.Definitions.WarehouseTypes,S->TypeId)->DailyCostCents+24*A.Kg-1)/(24*A.Kg);

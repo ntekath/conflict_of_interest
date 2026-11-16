@@ -1,0 +1,14 @@
+[2026.11.16-20.33.30:428][599]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.16-20.33.30:506][601]LogAutomationController: Display: Test Completed. Result={Success} Name={ActualConsumption} Path={CoI.Economy.ActualConsumption}
+[2026.11.16-20.33.30:573][604]LogAutomationController: Display: Test Completed. Result={Success} Name={Autonomous72Hours} Path={CoI.Economy.Autonomous72Hours}
+[2026.11.16-20.33.31:261][607]LogAutomationController: Display: Test Completed. Result={Success} Name={FourWeeksConservationAndReplay} Path={CoI.Economy.FourWeeksConservationAndReplay}
+[2026.11.16-20.33.31:311][610]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderPriorityAndRejection} Path={CoI.Economy.OrderPriorityAndRejection}
+[2026.11.16-20.33.31:363][613]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderSettlement} Path={CoI.Economy.OrderSettlement}
+[2026.11.16-20.33.31:440][615]LogAutomationController: Display: Test Completed. Result={Success} Name={ProductionPayroll} Path={CoI.Economy.ProductionPayroll}
+[2026.11.16-20.33.31:507][618]LogAutomationController: Display: Test Completed. Result={Success} Name={TransportAndCosts} Path={CoI.Economy.TransportAndCosts}
+[2026.11.16-20.33.31:578][620]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.16-20.33.31:625][623]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.16-20.33.31:670][625]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicCommandsAndLifetime} Path={CoI.Simulation.AtomicCommandsAndLifetime}
+[2026.11.16-20.33.31:713][627]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundedBacklogAndOrdering} Path={CoI.Simulation.BoundedBacklogAndOrdering}
+[2026.11.16-20.33.31:788][630]LogAutomationController: Display: Test Completed. Result={Success} Name={ContractAndValidation} Path={CoI.Simulation.ContractAndValidation}
+[2026.11.16-20.33.31:861][632]LogAutomationController: Display: Test Completed. Result={Success} Name={FixedStepsAndPause} Path={CoI.Simulation.FixedStepsAndPause}

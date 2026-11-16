@@ -1,7 +1,7 @@
 # Conflict of Interest
 
 Konzeptioneller Neustart: US-Testgebiet, Spielbeginn 01.01.1913. Verbindlicher Entwurf:
-[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP04**. Aktive Karte: Großer-Seen-US-Ausschnitt.
+[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP05**. Aktive Karte: Großer-Seen-US-Ausschnitt.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 
@@ -51,8 +51,8 @@ Engine, Binaries, Intermediate, DerivedDataCache, Saved, IDE-Dateien und lokale 
 gehören nicht ins Repository. Das alte Europa-Projekt `firstgame` liegt außerhalb dieses Repos und
 wurde nicht verändert. Nur die grundlegende Kameratechnik wurde bewusst neu umgesetzt.
 
-Der Simulationskern aus [AP04](Docs/AP04.md) läuft in festen Schritten und startet pausiert. Start/Pause sowie 1x/4x/16x steuern die Spielzeit. Wirtschaftsregeln folgen in AP05; kein wirtschaftlicher Actor-Tick.
-Geografische Definitionen bleiben statische Daten. Das externe JSON-Startszenario, getrennte Laufzeitdaten, Konten, Reservierungen und Assets sind unter `Source/ConflictOfInterest/Simulation` vorbereitet. Alle Wirtschafts- und Bevölkerungswerte sind fiktive Testwerte.
+Der Simulationskern aus [AP04](Docs/AP04.md) läuft in festen Schritten und startet pausiert. Start/Pause sowie 1x/4x/16x steuern die Spielzeit. [AP05](Docs/AP05.md) aktiviert Produzenten, Beschäftigung/Löhne, regionale Orderbücher, Haushaltskonsum und bezahlte Transporte; kein wirtschaftlicher Actor-Tick.
+Geografische Definitionen bleiben statische Daten. Das externe JSON-Startszenario, getrennte Laufzeitdaten, Konten, Reservierungen und Assets laufen unter `Source/ConflictOfInterest/Simulation`. Stadt/Region auswählen und die Diagnoseleiste scrollen; ohne Auswahl erscheint die globale Bilanz. Alle Wirtschafts- und Bevölkerungswerte sind fiktive Testwerte.
 
 ## Prüfung
 

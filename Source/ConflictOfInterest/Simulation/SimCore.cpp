@@ -160,7 +160,7 @@ void FSimulation::Publish()
  New.PlayerName=Find(Scenario.Definitions.Companies,Player->Id)->Name;New.PlayerMoneyCents=A->BalanceCents;New.PlayerReservedCents=A->ReservedCents;
  for(const auto& Store:State.Warehouses)if(Store.OwnerId==Player->Id){New.PlayerStorageCapacity+=Find(Scenario.Definitions.WarehouseTypes,Store.TypeId)->CapacityPoints;New.PlayerStorageUsed+=UsedStorage(Store.Id);}
  for(const auto& Vehicle:State.Vehicles)if(Vehicle.OwnerId==Player->Id)++New.PlayerTrucks;
- Snapshot=MoveTemp(New);Diagnostics.SnapshotMicros=Micros()-T;
+ PublishEconomy(New);Snapshot=MoveTemp(New);Diagnostics.SnapshotMicros=Micros()-T;
 }
 FString FSimulation::Fingerprint() const
 {

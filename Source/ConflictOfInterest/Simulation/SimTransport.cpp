@@ -10,12 +10,15 @@ bool FSimulation::BookTransport(FTransport J,FString& Error) {
  auto Fail=[&](const TCHAR* M){Error=M;return false;};auto* V=Find(State.Vehicles,J.VehicleId);auto* A=Find(State.Accounts,ActorAccount(J.OwnerId));auto* Source=Find(State.Inventories,J.SourceInventoryId);auto* Dest=Find(State.Warehouses,J.DestinationStorageId);
  if(!V||!A||J.Id.IsEmpty()||J.Id.Len()>128||Find(State.Transports,J.Id)||V->Bound||V->ArrearsCents||V->CityId!=J.FromCityId||!Find(Scenario.Definitions.Places,J.ToCityId))return Fail(TEXT("Unavailable vehicle or invalid route"));
  const auto* VT=Find(Scenario.Definitions.VehicleTypes,V->TypeId);J.ProviderId=V->OwnerId;
+ if(J.OwnerId!=J.ProviderId&&Find(Scenario.Definitions.Companies,J.ProviderId)->DecisionProfile!=TEXT("carrier"))return Fail(TEXT("Vehicle is not offered by a carrier"));
  if(J.Empty){if(J.OwnerId!=V->OwnerId||J.FromCityId==J.ToCityId)return Fail(TEXT("Empty reposition must be paid by vehicle owner"));J.Kg=0;J.ReservedIncomingPoints=0;}
  else {const auto* Store=Source?Find(State.Warehouses,Source->StorageId):nullptr;const auto* Good=Source?Find(Scenario.Definitions.Goods,Source->GoodId):nullptr;
   if(!Source||!Store||!Good||Source->OwnerId!=J.OwnerId||Store->CityId!=J.FromCityId||Source->RentArrearsCents||!Dest||Dest->CityId!=J.ToCityId||Dest->ArrearsCents||Source->StorageId==Dest->Id||J.Kg<=0||J.Kg>VT->CapacityKg||J.Kg>Source->QuantityKg-Source->ReservedKg)return Fail(TEXT("Invalid cargo, arrears, capacity or source ownership"));
   // Private receiving sites accept incoming stock only when their owner has a public bid for this good.
   bool Access=Dest->OwnerId==J.OwnerId||Dest->OwnerId==TEXT("company.services");for(const auto& O:State.Orders)if(O.Status==TEXT("open")&&O.Side==TEXT("buy")&&O.ActorId==Dest->OwnerId&&O.StorageId==Dest->Id&&O.GoodId==Source->GoodId)Access=true;
-  if(!Access)return Fail(TEXT("No destination access"));J.GoodId=Source->GoodId;J.ReservedIncomingPoints=J.Kg*Good->StoragePointsPerKg;
+  if(!Access)return Fail(TEXT("No destination access"));
+  int32 Existing=StockIndex(J.OwnerId,Dest->Id,Source->GoodId);int64 Incoming=0;for(const auto& Other:State.Transports)if((Other.Status==TEXT("planned")||Other.Status==TEXT("moving"))&&Other.OwnerId==J.OwnerId&&Other.DestinationStorageId==Dest->Id&&Other.GoodId==Source->GoodId)Incoming+=Other.Kg;
+  if(J.Kg>1000000000-(Existing==INDEX_NONE?0:State.Inventories[Existing].QuantityKg)-Incoming)return Fail(TEXT("Inventory quantity bound"));J.GoodId=Source->GoodId;J.ReservedIncomingPoints=J.Kg*Good->StoragePointsPerKg;
   if(J.ReservedIncomingPoints>Find(Scenario.Definitions.WarehouseTypes,Dest->TypeId)->CapacityPoints-UsedStorage(Dest->Id)-Dest->ReservedIncomingPoints)return Fail(TEXT("Destination full"));
  }
  J.RouteKm=RouteKm(J.FromCityId,J.ToCityId);if(!J.RouteKm)return Fail(TEXT("No route"));J.OperatingCents=J.RouteKm*VT->CostCentsPerKm;
@@ -38,10 +41,10 @@ bool FSimulation::CancelTransport(const FString& Id,const FString& Actor) {
 void FSimulation::TransportHour(int64 Hour) {
  for(auto& J:State.Transports){auto* V=Find(State.Vehicles,J.VehicleId);
   if(J.Status==TEXT("planned")&&J.DepartureStep<=Hour){auto* A=Find(State.Accounts,ActorAccount(J.OwnerId));auto* P=Find(State.Accounts,ActorAccount(J.ProviderId));A->ReservedCents-=J.CostCents;if(J.OwnerId!=J.ProviderId){P->ReservedCents-=J.OperatingCents;const bool FreightPaid=Pay(A->Id,P->Id,J.FreightCents,TEXT("freight"));check(FreightPaid);}const bool OperationPaid=Pay(P->Id,V->CostRecipientAccountId,J.OperatingCents,TEXT("haul_operation"));check(OperationPaid);
-   if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.SourceInventoryId;});State.Inventories[I].ReservedKg-=J.Kg;int64 Value=TakeStock(I,J.Kg);FInventory C;C.Id=TEXT("cargo.")+J.Id;C.OwnerId=J.OwnerId;C.GoodId=J.GoodId;C.StorageId=C.Id;C.QuantityKg=J.Kg;C.BookValueCents=Value+J.CostCents;J.CargoInventoryId=C.Id;State.Inventories.Add(MoveTemp(C));}
+   if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.SourceInventoryId;});State.Inventories[I].ReservedKg-=J.Kg;int64 SpoilCredit=TakeSpoilCredit(I,J.Kg);int64 Value=TakeStock(I,J.Kg);FInventory C;C.Id=TEXT("cargo.")+J.Id;C.OwnerId=J.OwnerId;C.GoodId=J.GoodId;C.StorageId=C.Id;C.SpoilRemainder=SpoilCredit;C.QuantityKg=J.Kg;C.BookValueCents=Value+J.CostCents;J.CargoInventoryId=C.Id;State.Inventories.Add(MoveTemp(C));}
    J.Status=TEXT("moving");V->CityId.Empty();
   }
-  if(J.Status==TEXT("moving")&&J.ArrivalStep<=Hour){if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.CargoInventoryId;});FInventory Cargo=State.Inventories[I];State.Inventories.RemoveAt(I);int32 D=EnsureStock(J.OwnerId,J.DestinationStorageId,J.GoodId);State.Inventories[D].QuantityKg+=Cargo.QuantityKg;State.Inventories[D].BookValueCents+=Cargo.BookValueCents;State.Inventories[D].AcquiredHour=Hour;Find(State.Warehouses,J.DestinationStorageId)->ReservedIncomingPoints-=J.ReservedIncomingPoints;}
+  if(J.Status==TEXT("moving")&&J.ArrivalStep<=Hour){if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.CargoInventoryId;});FInventory Cargo=State.Inventories[I];State.Inventories.RemoveAt(I);int32 D=EnsureStock(J.OwnerId,J.DestinationStorageId,J.GoodId);if(!State.Inventories[D].QuantityKg)State.Inventories[D].AcquiredHour=Hour;State.Inventories[D].SpoilRemainder+=Cargo.SpoilRemainder;State.Inventories[D].QuantityKg+=Cargo.QuantityKg;State.Inventories[D].BookValueCents+=Cargo.BookValueCents;Find(State.Warehouses,J.DestinationStorageId)->ReservedIncomingPoints-=J.ReservedIncomingPoints;}
    J.Status=TEXT("arrived");V->CityId=J.ToCityId;V->Bound=false;V->TransportId.Empty();
   }
  }
