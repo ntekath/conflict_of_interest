@@ -12,7 +12,9 @@ namespace
 bool Fixture(FString& Json,FCoIGeoMapData& Geo)
 {
  auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));FString Error;
- return C&&Geo.Load(C->DefinitionJson,Error)&&FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim")));
+ if(!C||!Geo.Load(C->DefinitionJson,Error)||!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim"))))return false;
+ TSharedPtr<FJsonObject> Root;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root);Root->GetObjectField(TEXT("Economy"))->SetNumberField(TEXT("Stage"),0);
+ Json.Empty();FJsonSerializer::Serialize(Root.ToSharedRef(),TJsonWriterFactory<>::Create(&Json));return true;
 }
 FString Edited(const FString& Json,TFunction<void(TSharedPtr<FJsonObject>)> Edit)
  {TSharedPtr<FJsonObject> Root;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root);Edit(Root);FString Out;FJsonSerializer::Serialize(Root.ToSharedRef(),TJsonWriterFactory<>::Create(&Out));return Out;}

@@ -20,8 +20,8 @@ bool FSimulation::Load(const FString& Json,const FCoIGeoMapData& Geo,FString& Er
 {
  FScenario Candidate;if(!LoadScenario(Json,Geo,Candidate,Error))return false;
  Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Loaded=true;
- for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;State.Regions.Add(Region);}
- Aggregate();Publish();return true;
+ for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;Region.RemainingForestKg=R.ForestKg;Region.RemainingOreKg=R.OreKg;State.Regions.Add(Region);}
+ InitializeAudit();Aggregate();Publish();return true;
 }
 void FSimulation::Shutdown()
 {
@@ -95,6 +95,8 @@ bool FSimulation::RunStep()
   if(Results.Num()>128)Results.RemoveAt(0,Results.Num()-128,EAllowShrinking::No);
   Diagnostics.CommandsMicros=Micros()-T;
  }
+ for(int64 Hour=State.Step*Scenario.Settings.HoursPerStep;Hour<Next*Scenario.Settings.HoursPerStep;++Hour)
+ {State.EconomyHour=Hour;EconomyHour(Hour);State.EconomyHour=Hour+1;}
  // Snapshot inputs are const and independent of rendering. Results have disjoint per-region slots.
  TArray<FRegionProposal> Proposals;Proposals.SetNum(State.Regions.Num());
  {

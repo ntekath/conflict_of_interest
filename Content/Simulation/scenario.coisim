@@ -1,5 +1,5 @@
 {
-  "Schema": 1,
+  "Schema": 2,
   "Id": "scenario.us.great_lakes.1913",
   "StartDate": "1913-01-01",
   "PlayerCompanyId": "company.player",
@@ -1478,5 +1478,30 @@
         "ReservedIncomingPoints": 0
       }
     ]
+  },
+  "Economy": {
+    "Stage": 1,
+    "PayrollHours": 24,
+    "DecisionHours": 6,
+    "DemandHours": 24,
+    "CostsHours": 24,
+    "OrderLifetimeHours": 12,
+    "PickupGraceHours": 24,
+    "RentalCentsPerPointDay": 1,
+    "MaxOrderKg": 100000,
+    "MaxPriceCents": 1000000,
+    "MaxOpenOrders": 512,
+    "HistoryLimit": 256,
+    "DailyBudgetPermille": 500,
+    "LocalHaulKm": 1,
+    "RouteDetourPermille": 1400,
+    "FreightMarkupPermille": 200,
+    "BookingLeadHours": 1,
+    "InputTargetHours": 48,
+    "ProducerReserveKg": 100,
+    "TraderMaxLoadKg": 2000,
+    "TraderCashReserveCents": 10000,
+    "TraderMinProfitCents": 100,
+    "TraderMarkupPermille": 200
   }
 }

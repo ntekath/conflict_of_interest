@@ -8,6 +8,7 @@ namespace CoISim
 struct FRead
 {
  TSharedPtr<FJsonObject> Object; FString& Error;
+ template<class T> void Optional(const TCHAR* Key,T& Value){if(Object->HasField(Key))(*this)(Key,Value);}
  void Fail(const FString& Key){if(Error.IsEmpty())Error=TEXT("Invalid/missing field: ")+Key;}
  template<class T> void operator()(const TCHAR* Key,T& Value)
  {
@@ -29,6 +30,7 @@ struct FRead
 struct FFingerprint
 {
  FSHA1 Hash;
+ template<class T> void Optional(const TCHAR*,const T& X){Write(X);}
  void Bytes(const void* Data,uint32 Num){Hash.Update((const uint8*)Data,Num);}
  template<class T> void operator()(const TCHAR*,const T& X){Write(X);}
  void Write(const FString& S){FTCHARToUTF8 Text(*S);int64 Length=Text.Length();Write(Length);Bytes(Text.Get(),Text.Length());}

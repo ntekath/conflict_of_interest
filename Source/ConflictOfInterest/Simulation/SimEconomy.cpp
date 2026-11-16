@@ -1,0 +1,124 @@
+#include "SimCore.h"
+#include "SimArchive.h"
+#include "ProfilingDebugging/CpuProfilerTrace.h"
+namespace CoISim
+{
+FString FSimulation::ActorAccount(const FString& Id) const
+{
+ if(const auto* C=Find(State.Companies,Id))return C->AccountId;
+ if(const auto* G=Find(State.Groups,Id))return G->AccountId;
+ return {};
+}
+bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason)
+{
+ auto* A=Find(State.Accounts,From);auto* B=Find(State.Accounts,To);
+ if(!A||!B||Cents<0||Cents>A->BalanceCents-A->ReservedCents||B->BalanceCents>MAX_int64-Cents)return false;
+ if(!Cents||From==To)return true;
+ A->BalanceCents-=Cents;B->BalanceCents+=Cents;
+ State.CashFlows.Add({From,To,Reason,State.EconomyHour,Cents});
+ if(State.CashFlows.Num()>Scenario.Economy.HistoryLimit)State.CashFlows.RemoveAt(0,State.CashFlows.Num()-Scenario.Economy.HistoryLimit,EAllowShrinking::No);
+ auto* Total=Find(State.CashTotals,Reason);if(!Total){State.CashTotals.Add({Reason,0});Total=&State.CashTotals.Last();}Total->Cents+=Cents;
+ return true;
+}
+int32 FSimulation::StockIndex(const FString& Actor,const FString& Store,const FString& Good) const
+ {return State.Inventories.IndexOfByPredicate([&](const FInventory& I){return I.OwnerId==Actor&&I.StorageId==Store&&I.GoodId==Good;});}
+int32 FSimulation::EnsureStock(const FString& Actor,const FString& Store,const FString& Good)
+{
+ int32 Index=StockIndex(Actor,Store,Good);if(Index!=INDEX_NONE)return Index;
+ FInventory I;I.Id=TEXT("inventory.")+Actor+TEXT("|")+Store+TEXT("|")+Good;I.OwnerId=Actor;I.StorageId=Store;I.GoodId=Good;
+ return State.Inventories.Add(MoveTemp(I));
+}
+int64 FSimulation::TakeStock(int32 Index,int64 Kg)
+{
+ auto& I=State.Inventories[Index];check(Kg>=0&&Kg<=I.QuantityKg-I.ReservedKg);
+ int64 Value=I.QuantityKg?I.BookValueCents/I.QuantityKg*Kg+(I.BookValueCents%I.QuantityKg)*Kg/I.QuantityKg:0;
+ I.BookValueCents-=Value;I.QuantityKg-=Kg;return Value;
+}
+void FSimulation::InitializeAudit()
+{
+ State.InitialMoneyCents=0;for(const auto& A:State.Accounts)State.InitialMoneyCents+=A.BalanceCents;
+ State.GoodsAudit.Reset();for(const auto& G:Scenario.Definitions.Goods){FGoodsAudit Row;Row.Id=G.Id;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Row.InitialKg+=I.QuantityKg;State.GoodsAudit.Add(Row);}
+}
+bool FSimulation::AuditRuntime(FString& Error) const
+{
+ auto Fail=[&](const FString& Message){Error=Message;return false;};
+ int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
+ if(Money!=State.InitialMoneyCents)return Fail(TEXT("Global money conservation failed"));
+ for(const auto& I:State.Inventories)if(I.QuantityKg<0||I.QuantityKg>1000000000||I.ReservedKg<0||I.ReservedKg>I.QuantityKg||I.BookValueCents<0)return Fail(TEXT("Physical stock: ")+I.Id);
+ for(const auto& S:State.Warehouses)if(S.ReservedIncomingPoints<0||UsedStorage(S.Id)+S.ReservedIncomingPoints>Find(Scenario.Definitions.WarehouseTypes,S.TypeId)->CapacityPoints)return Fail(TEXT("Storage capacity: ")+S.Id);
+ for(const auto& G:State.GoodsAudit){int64 Actual=0;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Actual+=I.QuantityKg;if(Actual!=G.InitialKg+G.ProducedKg-G.InputKg-G.ConsumedKg-G.SpoiledKg)return Fail(TEXT("Goods source/sink equation: ")+G.Id);}
+ for(const auto& G:State.Groups)
+ {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
+ Error.Empty();return true;
+}
+void FSimulation::Payroll(int64 Hour)
+{
+ TRACE_CPUPROFILER_EVENT_SCOPE(CoI_Payroll);
+ if(Hour%Scenario.Economy.PayrollHours)return;
+ for(auto& G:State.Groups){G.Employed=0;G.DailyIncomeCents=0;}
+ TArray<int32> Order;for(int32 I=0;I<State.Facilities.Num();++I)Order.Add(I);
+ Order.Sort([&](int32 A,int32 B){auto* X=Find(Scenario.Definitions.FacilityTypes,State.Facilities[A].TypeId);auto* Y=Find(Scenario.Definitions.FacilityTypes,State.Facilities[B].TypeId);return X->DailyWageCents==Y->DailyWageCents?State.Facilities[A].Id<State.Facilities[B].Id:X->DailyWageCents>Y->DailyWageCents;});
+ for(int32 Index:Order)
+ {
+  auto& F=State.Facilities[Index];const auto* Type=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* Place=Find(Scenario.Definitions.Places,F.CityId);
+  F.Employment.Reset();F.PaidUntilHour=Hour;int64 Needed=Type->Jobs;
+  const int64 Wage=Type->DailyWageCents*(Scenario.Economy.PayrollHours/24);auto* Account=Find(State.Accounts,ActorAccount(F.OwnerId));
+  int64 Affordable=FMath::Min(Needed,(Account->BalanceCents-Account->ReservedCents)/Wage);F.UnfundedJobs=Needed-Affordable;
+  for(auto& G:State.Groups)
+  {
+   if(Find(Scenario.Definitions.Groups,G.Id)->RegionId!=Place->RegionId)continue;
+   int64 Workers=FMath::Min(Affordable,G.Workforce-G.Employed);if(!Workers)continue;
+   if(!Pay(Account->Id,G.AccountId,Workers*Wage,TEXT("wages")))continue;
+   F.Employment.Add({G.Id,Workers});G.Employed+=Workers;G.DailyIncomeCents+=Workers*Type->DailyWageCents;Affordable-=Workers;
+  }
+  if(!F.Employment.IsEmpty())F.PaidUntilHour=Hour+Scenario.Economy.PayrollHours;
+ }
+}
+void FSimulation::Produce(int64 Hour)
+{
+ TRACE_CPUPROFILER_EVENT_SCOPE(CoI_ProductionCalculate);
+ struct FPlan {int32 Index;int64 Batches;};TArray<FPlan> Plans;
+ // Every proposal reads the same pre-production state. No output of an earlier loop entry is an input here.
+ for(int32 Index=0;Index<State.Facilities.Num();++Index)
+ {
+  auto& F=State.Facilities[Index];F.LastBatches=0;F.UtilizationPermille=0;
+  const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* P=Find(Scenario.Definitions.Places,F.CityId);const auto* RD=Find(Scenario.Definitions.Regions,P->RegionId);const auto* R=Find(State.Regions,P->RegionId);
+  int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
+  if(!Workers||F.PaidUntilHour<=Hour)continue;
+  int64 Suitability=T->ResourceRequirement==TEXT("farmland")?RD->FarmlandPermille:1000;
+  if((T->ResourceRequirement==TEXT("forest")&&!R->RemainingForestKg)||(T->ResourceRequirement==TEXT("ore")&&!R->RemainingOreKg))continue;
+  F.ProductionRemainder+=T->CapacityBatchesPerHour*Workers*Suitability;
+  int64 Denominator=T->Jobs*1000,Batches=F.ProductionRemainder/Denominator;F.ProductionRemainder%=Denominator;
+  int64 Net=0;for(const auto& A:T->Inputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,I==INDEX_NONE?0:(State.Inventories[I].QuantityKg-State.Inventories[I].ReservedKg)/FMath::Max(1LL,A.Kg));Net-=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;}
+  int64 ResourcePerBatch=0;for(const auto& A:T->Outputs){Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,(1000000000-(I==INDEX_NONE?0:State.Inventories[I].QuantityKg))/FMath::Max(1LL,A.Kg));if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))ResourcePerBatch+=A.Kg;}
+  if(ResourcePerBatch)Batches=FMath::Min(Batches,(T->ResourceRequirement==TEXT("forest")?R->RemainingForestKg:R->RemainingOreKg)/ResourcePerBatch);
+  const auto* Store=Find(State.Warehouses,F.StorageId);if(Net>0)Batches=FMath::Min(Batches,(Find(Scenario.Definitions.WarehouseTypes,Store->TypeId)->CapacityPoints-UsedStorage(Store->Id)-Store->ReservedIncomingPoints)/Net);
+  if(Batches>0)Plans.Add({Index,Batches});
+ }
+ for(const auto& Plan:Plans)
+ {
+  TRACE_CPUPROFILER_EVENT_SCOPE(CoI_ProductionCommit);
+  auto& F=State.Facilities[Plan.Index];const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);int64 B=Plan.Batches;
+  // Revalidate shared resources at the deterministic central commit, even for shared company stores.
+  for(const auto& A:T->Inputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);B=FMath::Min(B,I==INDEX_NONE?0:(State.Inventories[I].QuantityKg-State.Inventories[I].ReservedKg)/FMath::Max(1LL,A.Kg));}
+  auto* Region=Find(State.Regions,Find(Scenario.Definitions.Places,F.CityId)->RegionId);
+  int64 Resource=0,Net=0;for(const auto& A:T->Inputs)Net-=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;
+  for(const auto& A:T->Outputs){Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))Resource+=A.Kg;}
+  if(Resource)B=FMath::Min(B,(T->ResourceRequirement==TEXT("forest")?Region->RemainingForestKg:Region->RemainingOreKg)/Resource);
+  const auto* Store=Find(State.Warehouses,F.StorageId);if(Net>0)B=FMath::Min(B,(Find(Scenario.Definitions.WarehouseTypes,Store->TypeId)->CapacityPoints-UsedStorage(Store->Id)-Store->ReservedIncomingPoints)/Net);if(B<=0)continue;
+  int64 InputValue=0;for(const auto& A:T->Inputs){InputValue+=TakeStock(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);Find(State.GoodsAudit,A.GoodId)->InputKg+=A.Kg*B;}
+  int64 OutputKg=0;for(const auto& A:T->Outputs)OutputKg+=A.Kg*B;
+  int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
+  int64 WageCost=(Workers*T->DailyWageCents+23)/24;
+  for(const auto& A:T->Outputs){int32 I=EnsureStock(F.OwnerId,F.StorageId,A.GoodId);State.Inventories[I].QuantityKg+=A.Kg*B;State.Inventories[I].BookValueCents+=(InputValue+WageCost)*(A.Kg*B)/FMath::Max(1LL,OutputKg);Find(State.GoodsAudit,A.GoodId)->ProducedKg+=A.Kg*B;}
+  if(T->ResourceRequirement==TEXT("forest"))Region->RemainingForestKg-=Resource*B;
+  if(T->ResourceRequirement==TEXT("ore"))Region->RemainingOreKg-=Resource*B;
+  F.LastBatches=B;F.UtilizationPermille=FMath::Min(1000LL,B*1000/T->CapacityBatchesPerHour);
+ }
+}
+void FSimulation::EconomyHour(int64 Hour)
+{
+ if(Scenario.Economy.Stage<1)return;
+ Payroll(Hour);Produce(Hour);
+}
+}

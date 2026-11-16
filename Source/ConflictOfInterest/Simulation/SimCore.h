@@ -41,6 +41,7 @@ public:
  FString Fingerprint() const;
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
+ bool AuditRuntime(FString& Error) const;
  bool IsLoaded() const { return Loaded; }
 private:
  FScenario Scenario; FState State; FSnapshot Snapshot; FDiagnostics Diagnostics;
@@ -50,6 +51,15 @@ private:
  bool Apply(const FCommand&,FString& Reason);
  bool RunStep();
  void Aggregate(); void Publish();
+ void EconomyHour(int64 Hour);
+ void Payroll(int64 Hour);
+ void Produce(int64 Hour);
+ bool Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason);
+ FString ActorAccount(const FString& ActorId) const;
+ int32 StockIndex(const FString& Actor,const FString& Store,const FString& Good) const;
+ int32 EnsureStock(const FString& Actor,const FString& Store,const FString& Good);
+ int64 TakeStock(int32 Index,int64 Kg);
+ void InitializeAudit();
  int64 UsedStorage(const FString& Id) const;
 };
 }
