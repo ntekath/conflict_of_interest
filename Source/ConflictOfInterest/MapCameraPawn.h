@@ -23,6 +23,7 @@ private:
  UPROPERTY() TObjectPtr<UCameraComponent> Camera;
  FVector2D Movement=FVector2D::ZeroVector;
  double Height=17000;
+ FVector InitialFocus=FVector::ZeroVector;
  void North(float Value);void East(float Value);void Zoom(float Value);
  bool CursorPlane(FVector& Point) const;
 };

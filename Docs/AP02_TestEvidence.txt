@@ -1,0 +1,7 @@
+[2026.11.16-16.49.59:635][248]LogTemp: Display: COI_MAP_OK GreatLakes1913 countries=2 lakes=5 regions=4 cities=4
+[2026.11.16-16.50.44:084][486]LogTemp: Display: COI_SCENARIO scenario.us.great_lakes.1913 start=1913-01-01 cities=4
+[2026.11.16-16.50.44:117][486]LogTemp: Display: COI_SCENARIO scenario.us.great_lakes.1913 start=1913-01-01 cities=4
+[2026.11.16-16.54.22:662][631]LogTemp: Display: COI_MAP_OK GreatLakes1913 countries=2 lakes=5 regions=4 cities=4
+[2026.11.16-16.54.48:054][652]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.16-16.54.48:135][654]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.16-16.54.48:136][655]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 2 tests performed.

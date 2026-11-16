@@ -1,0 +1,204 @@
+{
+  "sources": [
+    {
+      "file": "ne_10m_admin_0_countries.zip",
+      "url": "https://naciscdn.org/naturalearth/10m/cultural/ne_10m_admin_0_countries.zip",
+      "sha256": "ce1ac7036499a0edd641fbc093cd209a98f96a49d2eca8480aaacad35138a7f6",
+      "version": "5.1.1",
+      "retrieved": "2026-11-16"
+    },
+    {
+      "file": "ne_10m_lakes.zip",
+      "url": "https://naciscdn.org/naturalearth/10m/physical/ne_10m_lakes.zip",
+      "sha256": "0803a06f9c3cb4671d89b68c48b142aad9366ba40f665245e12a913fbc61722a",
+      "version": "5.0.0",
+      "retrieved": "2026-11-16"
+    },
+    {
+      "file": "ne_10m_populated_places.zip",
+      "url": "https://naciscdn.org/naturalearth/10m/cultural/ne_10m_populated_places.zip",
+      "sha256": "cd149186f03d2603e0410da399b980a4357d0ac32d3a2305a49ed3dffcc41d7b",
+      "version": "5.1.2",
+      "retrieved": "2026-11-16"
+    }
+  ],
+  "license": "Public domain",
+  "attribution": "Made with Natural Earth.",
+  "license_url": "https://www.naturalearthdata.com/about/terms-of-use/",
+  "scenario_sha256": "b561cfd2d604abd076d2552f56d75c1df906ab78c195184fa8c2bc1a279f75fb",
+  "map_sha256": "05566a210b81f2451d1415bb235fd65f48d2d6a5223ba7ef8e47bd9ea05e7dd6",
+  "distances": [
+    {
+      "from": "city.us.chicago",
+      "to": "city.us.detroit",
+      "sphere_km": 382.03156089514624,
+      "independent_wgs84_km": 383.00724109139503,
+      "relative_error": 0.0025474197131849182
+    },
+    {
+      "from": "city.us.cleveland",
+      "to": "city.us.pittsburgh",
+      "sphere_km": 183.3952039063048,
+      "independent_wgs84_km": 183.585318081144,
+      "relative_error": 0.001035563065861179
+    }
+  ],
+  "counts": {
+    "countries": 2,
+    "lakes": 5,
+    "regions": 4,
+    "cities": 4
+  },
+  "city_positions": [
+    {
+      "id": "city.us.chicago",
+      "source_name": "Chicago",
+      "country_id": "country.usa",
+      "region_id": "region.test.chicago",
+      "name": "Chicago",
+      "latitude": 41.847961283364114,
+      "longitude": -87.63523655322338,
+      "position": [
+        -2025.1277852572152,
+        -1814.317626589934
+      ],
+      "source_id": "1159151491"
+    },
+    {
+      "id": "city.us.cleveland",
+      "source_name": "Cleveland",
+      "country_id": "country.usa",
+      "region_id": "region.test.cleveland",
+      "name": "Cleveland",
+      "latitude": 41.4719327,
+      "longitude": -81.6969441,
+      "position": [
+        -2324.109186887098,
+        1632.1051220402067
+      ],
+      "source_id": "1159150515"
+    },
+    {
+      "id": "city.us.detroit",
+      "source_name": "Detroit",
+      "country_id": "country.usa",
+      "region_id": "region.test.detroit",
+      "name": "Detroit",
+      "latitude": 42.33355800559568,
+      "longitude": -83.05133408216001,
+      "position": [
+        -1675.062716732942,
+        831.8505010733759
+      ],
+      "source_id": "1159151245"
+    },
+    {
+      "id": "city.us.pittsburgh",
+      "source_name": "Pittsburgh",
+      "country_id": "country.usa",
+      "region_id": "region.test.pittsburgh",
+      "name": "Pittsburgh",
+      "latitude": 40.4319445,
+      "longitude": -80.0019313,
+      "position": [
+        -3087.8816574432153,
+        2662.3623195394116
+      ],
+      "source_id": "1159150531"
+    }
+  ],
+  "geometry": [
+    {
+      "id": "country.usa",
+      "parts": 27,
+      "holes": 0,
+      "triangles": 1819,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "country.can",
+      "parts": 24,
+      "holes": 0,
+      "triangles": 1775,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "lake.erie",
+      "parts": 1,
+      "holes": 3,
+      "triangles": 322,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "lake.huron",
+      "parts": 1,
+      "holes": 14,
+      "triangles": 1143,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "lake.michigan",
+      "parts": 1,
+      "holes": 7,
+      "triangles": 580,
+      "discarded_roundoff_triangles": 1
+    },
+    {
+      "id": "lake.ontario",
+      "parts": 1,
+      "holes": 7,
+      "triangles": 425,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "lake.superior",
+      "parts": 1,
+      "holes": 16,
+      "triangles": 990,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "region.test.chicago",
+      "parts": 13,
+      "holes": 0,
+      "triangles": 903,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "region.test.cleveland",
+      "parts": 3,
+      "holes": 0,
+      "triangles": 133,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "region.test.detroit",
+      "parts": 10,
+      "holes": 0,
+      "triangles": 607,
+      "discarded_roundoff_triangles": 0
+    },
+    {
+      "id": "region.test.pittsburgh",
+      "parts": 6,
+      "holes": 0,
+      "triangles": 186,
+      "discarded_roundoff_triangles": 0
+    }
+  ],
+  "tests": [
+    "valid WGS84 sources",
+    "lake subtraction from land",
+    "per-triangle hole/island coverage",
+    "area conservation",
+    "non-overlapping region partition",
+    "stable IDs and four city-region assignments",
+    "independent WGS84 distances <0.5%",
+    "hole+island regression fixture"
+  ],
+  "limitations": [
+    "Modern generalized geography is not a verified 1913 reconstruction.",
+    "Only Great Lakes are subtracted, not every small lake or river.",
+    "No historical traffic, population or production values asserted."
+  ]
+}

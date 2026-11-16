@@ -15,4 +15,7 @@ class CONFLICTOFINTEREST_API ACoIGameMode : public AGameModeBase
 {
  GENERATED_BODY()
 public: ACoIGameMode();
+ virtual void StartPlay() override;
+ virtual void HandleStartingNewPlayer_Implementation(APlayerController* Player) override;
+private: void ApplyMapCamera();
 };

@@ -1,0 +1,38 @@
+{
+  "id": "scenario.us.great_lakes.1913",
+  "name": "Great Lakes 1913 \u2013 Testgebiet",
+  "start_date": "1913-01-01",
+  "bbox_wgs84": [
+    -93,
+    39.5,
+    -75.5,
+    49.5
+  ],
+  "geography_note": "Current generalized Natural Earth geometry is a proxy, not a verified reconstruction of 1913 shorelines or borders.",
+  "cities": [
+    {
+      "id": "city.us.detroit",
+      "source_name": "Detroit",
+      "country_id": "country.usa",
+      "region_id": "region.test.detroit"
+    },
+    {
+      "id": "city.us.chicago",
+      "source_name": "Chicago",
+      "country_id": "country.usa",
+      "region_id": "region.test.chicago"
+    },
+    {
+      "id": "city.us.cleveland",
+      "source_name": "Cleveland",
+      "country_id": "country.usa",
+      "region_id": "region.test.cleveland"
+    },
+    {
+      "id": "city.us.pittsburgh",
+      "source_name": "Pittsburgh",
+      "country_id": "country.usa",
+      "region_id": "region.test.pittsburgh"
+    }
+  ]
+}

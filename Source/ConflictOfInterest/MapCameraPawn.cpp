@@ -13,7 +13,7 @@ AMapCameraPawn::AMapCameraPawn()
  Camera->PostProcessSettings.AutoExposureApplyPhysicalCameraExposure=false;
 }
 void AMapCameraPawn::BeginPlay()
-{Super::BeginPlay();SetActorLocationAndRotation(FVector::ZeroVector,FRotator::ZeroRotator);Height=InitialZoom;Camera->SetRelativeLocation(FVector(0,0,Height));}
+{Super::BeginPlay();SetActorLocationAndRotation(InitialFocus,FRotator::ZeroRotator);Height=InitialZoom;Camera->SetRelativeLocation(FVector(0,0,Height));}
 void AMapCameraPawn::SetupPlayerInputComponent(UInputComponent* Input)
 {
  Super::SetupPlayerInputComponent(Input);Input->BindAxis(TEXT("MapNorth"),this,&AMapCameraPawn::North);
@@ -37,4 +37,4 @@ void AMapCameraPawn::Zoom(float Value)
  SetActorLocation(CoICamera::ClampFocus(GetActorLocation(),Minimum,Maximum));Camera->SetRelativeLocation(FVector(0,0,Height));
 }
 void AMapCameraPawn::SetMapBounds(FVector2D Min,FVector2D Max,FVector Center,double OverviewHeight)
-{Minimum=Min;Maximum=Max;Height=FMath::Clamp(OverviewHeight,MinimumZoom,MaximumZoom);SetActorLocation(CoICamera::ClampFocus(Center,Min,Max));Camera->SetRelativeLocation(FVector(0,0,Height));}
+{Minimum=Min;Maximum=Max;InitialFocus=Center;InitialZoom=FMath::Clamp(OverviewHeight,MinimumZoom,MaximumZoom);Height=InitialZoom;SetActorLocation(CoICamera::ClampFocus(Center,Min,Max));Camera->SetRelativeLocation(FVector(0,0,Height));}
