@@ -1,0 +1,19 @@
+# Generated Unreal/IDE/build products; source assets intentionally remain tracked.
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.idea/
+.venv/
+__pycache__/
+*.pyc
+*.sln
+*.slnx
+*.VC.db
+*.VC.opendb
+*.user
+*.suo
+*.log
+*.tmp
+.DS_Store

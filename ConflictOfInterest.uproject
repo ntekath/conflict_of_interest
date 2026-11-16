@@ -1,0 +1,28 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "{E5BA469E-467B-C42B-89EF-82A32B4E5A82}",
+  "Category": "Games",
+  "Description": "Conflict of Interest \u2013 US 1913 prototype",
+  "Modules": [
+    {
+      "Name": "ConflictOfInterest",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    },
+    {
+      "Name": "CoIEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "AndroidFileServer",
+      "Enabled": false
+    },
+    {
+      "Name": "EnhancedInput",
+      "Enabled": false
+    }
+  ]
+}
