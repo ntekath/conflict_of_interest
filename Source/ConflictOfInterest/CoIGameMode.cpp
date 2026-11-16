@@ -1,8 +1,11 @@
 #include "CoIGameMode.h"
 #include "MapCameraPawn.h"
+#include "MapInterface.h"
 ACoIPlayerController::ACoIPlayerController(){bShowMouseCursor=true;}
 void ACoIPlayerController::BeginPlay()
-{Super::BeginPlay();FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);SetInputMode(Mode);}
+{Super::BeginPlay();FInputModeGameAndUI Mode;Mode.SetHideCursorDuringCapture(false);Mode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);SetInputMode(Mode);
+ MapInterface=CreateWidget<UCoIMapInterface>(this,UCoIMapInterface::StaticClass());MapInterface->AddToViewport();}
+bool ACoIPlayerController::IsMapPointerBlocked() const{return MapInterface&&MapInterface->IsPointerOverPanel();}
 ACoIGameMode::ACoIGameMode(){DefaultPawnClass=AMapCameraPawn::StaticClass();PlayerControllerClass=ACoIPlayerController::StaticClass();}
 
 #include "GeoCatalog.h"
@@ -21,4 +24,10 @@ void ACoIGameMode::ApplyMapCamera()
    Pawn->SetMapBounds(Data.Minimum,Data.Maximum,FVector(Data.Center.X,Data.Center.Y,0),Data.OverviewHeight);
   UE_LOG(LogTemp,Display,TEXT("COI_SCENARIO %s start=%s cities=%d"),*Data.ScenarioId,*Data.StartDate,Data.Cities.Num());return;
  }
+}
+
+void ACoIPlayerController::MapStatus()
+{
+ auto* CameraPawn=Cast<AMapCameraPawn>(GetPawn());
+ UE_LOG(LogTemp,Display,TEXT("COI_MAP_STATUS selection=%s zoom=%.3f blocked=%d"),MapInterface?*MapInterface->GetSelectedId():TEXT("none"),CameraPawn?CameraPawn->GetZoomHeight():0.,IsMapPointerBlocked());
 }

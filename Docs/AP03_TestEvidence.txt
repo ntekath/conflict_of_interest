@@ -1,0 +1,16 @@
+[2026.11.16-17.11.29:975][837]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.16-17.11.30:062][839]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.16-17.11.30:104][841]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.16-17.11.30:106][842]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 3 tests performed.
+[2026.11.16-17.20.30:480][802]LogTemp: Display: COI_SELECT city.us.chicago
+[2026.11.16-17.20.54:481][682]LogTemp: Display: COI_SELECT city.us.cleveland
+[2026.11.16-17.21.00:397][392]LogTemp: Display: COI_SELECT city.us.pittsburgh
+[2026.11.16-17.21.06:664][144]LogTemp: Display: COI_SELECT city.us.detroit
+[2026.11.16-17.21.18:315][542]LogTemp: Display: COI_SELECT country.usa
+[2026.11.16-17.21.24:202][ 58]LogTemp: Display: COI_SELECT country.can
+[2026.11.16-17.21.30:088][588]LogTemp: Display: COI_SELECT
+[2026.11.16-17.21.56:532][761]LogTemp: Display: COI_SELECT city.us.detroit
+[2026.11.16-17.25.26:360][688]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.16-17.25.26:448][690]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.16-17.25.26:492][692]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.16-17.25.26:493][693]LogAutomationCommandLine: Display: ...Automation Test Queue Empty 3 tests performed.

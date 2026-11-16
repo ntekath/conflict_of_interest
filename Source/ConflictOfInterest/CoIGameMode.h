@@ -8,6 +8,9 @@ class CONFLICTOFINTEREST_API ACoIPlayerController : public APlayerController
 {
  GENERATED_BODY()
 public: ACoIPlayerController();
+ bool IsMapPointerBlocked() const;
+ UFUNCTION(Exec) void MapStatus();
+private: UPROPERTY() TObjectPtr<class UCoIMapInterface> MapInterface;
 protected: virtual void BeginPlay() override;
 };
 UCLASS()

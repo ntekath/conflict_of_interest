@@ -1,5 +1,6 @@
 #include "MapCameraPawn.h"
 #include "CameraMath.h"
+#include "CoIGameMode.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/PlayerController.h"
@@ -31,7 +32,8 @@ bool AMapCameraPawn::CursorPlane(FVector& Point) const
 }
 void AMapCameraPawn::Zoom(float Value)
 {
- if(FMath::IsNearlyZero(Value))return;FVector Anchor;bool Anchored=CursorPlane(Anchor);double Old=Height;
+ if(FMath::IsNearlyZero(Value))return;
+ if(auto* PC=Cast<ACoIPlayerController>(GetController());PC&&PC->IsMapPointerBlocked())return;FVector Anchor;bool Anchored=CursorPlane(Anchor);double Old=Height;
  Height=CoICamera::Zoom(Height,Value,MinimumZoom,MaximumZoom);
  if(Anchored)SetActorLocation(CoICamera::AnchorFocus(GetActorLocation(),Anchor,Old,Height));
  SetActorLocation(CoICamera::ClampFocus(GetActorLocation(),Minimum,Maximum));Camera->SetRelativeLocation(FVector(0,0,Height));

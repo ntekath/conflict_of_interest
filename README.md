@@ -1,7 +1,7 @@
 # Conflict of Interest
 
 Konzeptioneller Neustart: US-Testgebiet, Spielbeginn 01.01.1913. Verbindlicher Entwurf:
-[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 und AP02**. Aktive Karte: Großer-Seen-US-Ausschnitt.
+[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP03**. Aktive Karte: Großer-Seen-US-Ausschnitt.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 
@@ -24,7 +24,7 @@ Falls Windows keine `.uproject`-Dateizuordnung hat: Unreal Engine starten → Me
 
 Standardlevel: `/Game/Maps/GreatLakes1913`, dann **Play**. Die vier orangefarbenen Marker stehen
 für Chicago, Detroit, Cleveland und Pittsburgh. Spielregionen liegen ausschließlich in den USA;
-Kanada dient als geografischer Kontext. AP03-Auswahl und UI sind noch nicht implementiert.
+Kanada dient als geografischer Kontext. Auswahl, Ortsinformationen und Kartenansichten: [AP03](Docs/AP03.md).
 
 Die generierten `.umap`/`.uasset`-Dateien sowie Roharchive, Szenario und Importer sind versioniert.
 Zum Offline-Neuimport und zur genauen Editor-Reihenfolge: [AP02](Docs/AP02.md).
@@ -51,11 +51,11 @@ Engine, Binaries, Intermediate, DerivedDataCache, Saved, IDE-Dateien und lokale 
 gehören nicht ins Repository. Das alte Europa-Projekt `firstgame` liegt außerhalb dieses Repos und
 wurde nicht verändert. Nur die grundlegende Kameratechnik wurde bewusst neu umgesetzt.
 
-Der Simulationskern ist noch nicht implementiert. Kein wirtschaftlicher Actor-Tick und keine AP03-UI.
+Der Simulationskern ist noch nicht implementiert. Kein wirtschaftlicher Actor-Tick.
 Die geografischen Definitionen (einschließlich vier Städten) sind statische Daten, kein Spielzustand. Auch spätere Entitäten werden hier nicht als
 leere Framework-Klassen vorweggenommen.
 
 ## Prüfung
 
 UE-Konsole: `Automation RunTests CoI.`, bis „Test Queue Empty“ abwarten.
-Weitere Schritte und tatsächlich ausgeführte Prüfungen: [AP01](Docs/AP01.md), [AP02](Docs/AP02.md).
+Weitere Schritte und tatsächlich ausgeführte Prüfungen: [AP01](Docs/AP01.md), [AP02](Docs/AP02.md), [AP03](Docs/AP03.md).
