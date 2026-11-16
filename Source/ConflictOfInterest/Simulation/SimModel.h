@@ -10,8 +10,8 @@ namespace CoISim
 struct FAmount { FString GoodId; int64 Kg=0; COI_RECORD(COI_F(GoodId);COI_F(Kg);) };
 struct FGoodDef
 {
- FString Id,Name,Unit,NeedCategory; int64 StoragePointsPerKg=0,SpoilPartsPerMillionPerDay=0;
- COI_RECORD(COI_F(Id);COI_F(Name);COI_F(Unit);COI_F(NeedCategory);COI_F(StoragePointsPerKg);COI_F(SpoilPartsPerMillionPerDay);)
+ FString Id,Name,Unit,NeedCategory; int64 InitialUnitCostCents=0,InputLimitCents=0; int64 StoragePointsPerKg=0,SpoilPartsPerMillionPerDay=0;
+ COI_RECORD(COI_F(Id);COI_F(Name);COI_F(Unit);COI_F(NeedCategory);COI_F(InitialUnitCostCents);COI_F(InputLimitCents);COI_F(StoragePointsPerKg);COI_F(SpoilPartsPerMillionPerDay);)
 };
 struct FCompanyDef { FString Id,Name,DecisionProfile; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);) };
 struct FNeedDef
@@ -57,9 +57,9 @@ struct FGroup
 struct FEmployment { FString GroupId; int64 Workers=0; COI_RECORD(COI_F(GroupId);COI_F(Workers);) };
 struct FFacility
 {
- FString Id,TypeId,OwnerId,CityId,StorageId,CostRecipientAccountId; int64 PaidUntilHour=0,ProductionRemainder=0,LastBatches=0,UnfundedJobs=0,UtilizationPermille=0,PayrollArrearsCents=0;
+ FString Id,TypeId,OwnerId,CityId,StorageId,CostRecipientAccountId; int64 OperatingPaidUntilHour=0,OperatingArrearsCents=0; int64 PaidUntilHour=0,ProductionRemainder=0,LastBatches=0,UnfundedJobs=0,UtilizationPermille=0,PayrollArrearsCents=0;
  TArray<FEmployment> Employment;
- COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(StorageId);COI_F(CostRecipientAccountId);COI_O(PaidUntilHour);COI_O(ProductionRemainder);COI_O(LastBatches);COI_O(UnfundedJobs);COI_F(UtilizationPermille);COI_F(PayrollArrearsCents);COI_F(Employment);)
+ COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(StorageId);COI_F(CostRecipientAccountId);COI_O(OperatingPaidUntilHour);COI_O(OperatingArrearsCents);COI_O(PaidUntilHour);COI_O(ProductionRemainder);COI_O(LastBatches);COI_O(UnfundedJobs);COI_F(UtilizationPermille);COI_F(PayrollArrearsCents);COI_F(Employment);)
 };
 struct FWarehouse
 {
@@ -68,13 +68,13 @@ struct FWarehouse
 };
 struct FVehicle
 {
- FString Id,TypeId,OwnerId,CityId,TransportId,CostRecipientAccountId; bool Bound=false;
- COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(TransportId);COI_F(CostRecipientAccountId);COI_F(Bound);)
+ FString Id,TypeId,OwnerId,CityId,TransportId,CostRecipientAccountId; int64 ArrearsCents=0; bool Bound=false;
+ COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(TransportId);COI_F(CostRecipientAccountId);COI_O(ArrearsCents);COI_F(Bound);)
 };
 struct FInventory
 {
- FString Id,GoodId,OwnerId,StorageId; int64 BookValueCents=0,SpoilRemainder=0; int64 QuantityKg=0,ReservedKg=0;
- COI_RECORD(COI_F(Id);COI_F(GoodId);COI_F(OwnerId);COI_F(StorageId);COI_O(BookValueCents);COI_O(SpoilRemainder);COI_F(QuantityKg);COI_F(ReservedKg);)
+ FString Id,GoodId,OwnerId,StorageId; int64 AcquiredHour=0,RentArrearsCents=0; int64 BookValueCents=0,SpoilRemainder=0; int64 QuantityKg=0,ReservedKg=0;
+ COI_RECORD(COI_F(Id);COI_F(GoodId);COI_F(OwnerId);COI_F(StorageId);COI_O(AcquiredHour);COI_O(RentArrearsCents);COI_O(BookValueCents);COI_O(SpoilRemainder);COI_F(QuantityKg);COI_F(ReservedKg);)
 };
 struct FMarketOrder
 {
@@ -96,8 +96,8 @@ struct FTransportOffer
 struct FTransport
 {
  FString Id,OwnerId,ProviderId,VehicleId,FromCityId,ToCityId,GoodId,CargoInventoryId,DestinationStorageId,Service,Status;
- int64 Kg=0,DepartureStep=0,ArrivalStep=0,CostCents=0,ReservedIncomingPoints=0;
- COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(ProviderId);COI_F(VehicleId);COI_F(FromCityId);COI_F(ToCityId);COI_F(GoodId);COI_F(CargoInventoryId);COI_F(DestinationStorageId);COI_F(Service);COI_F(Status);COI_F(Kg);COI_F(DepartureStep);COI_F(ArrivalStep);COI_F(CostCents);COI_F(ReservedIncomingPoints);)
+ FString SourceInventoryId;bool Empty=false;int64 OperatingCents=0,FreightCents=0,RouteKm=0; int64 Kg=0,DepartureStep=0,ArrivalStep=0,CostCents=0,ReservedIncomingPoints=0;
+ COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(ProviderId);COI_F(VehicleId);COI_F(FromCityId);COI_F(ToCityId);COI_F(GoodId);COI_F(CargoInventoryId);COI_F(DestinationStorageId);COI_F(Service);COI_F(Status);COI_O(SourceInventoryId);COI_O(Empty);COI_O(OperatingCents);COI_O(FreightCents);COI_O(RouteKm);COI_F(Kg);COI_F(DepartureStep);COI_F(ArrivalStep);COI_F(CostCents);COI_F(ReservedIncomingPoints);)
 };
 struct FReservation
 {

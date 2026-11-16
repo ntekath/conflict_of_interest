@@ -3,11 +3,11 @@
 #include "GeoMapData.h"
 namespace CoISim
 {
-enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder };
+enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport };
 struct FCommand
 {
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
- ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order;
+ ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;
 };
 struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason; };
 struct FRegionProposal { int32 Index=0; int64 Step=0; uint32 Random=0; };
@@ -64,6 +64,10 @@ private:
  bool CancelOrder(const FString& Id,const FString& Actor,const FString& Status);
  void MatchOrders(); void ExpireOrders();
  void Demand(int64 Hour);void Consume();
+ bool BookTransport(FTransport Job,FString& Error);bool CancelTransport(const FString& Id,const FString& Actor);
+ int64 RouteKm(const FString& From,const FString& To) const;
+ void TransportHour(int64 Hour);void Costs(int64 Hour);void Spoil();void Companies(int64 Hour);void Trader(int64 Hour);
+ void Offer(const FString& Actor,const FString& Store,const FString& Good,const FString& Side,int64 Kg,int64 Price);
  int64 UsedStorage(const FString& Id) const;
 };
 }

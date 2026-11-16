@@ -36,6 +36,7 @@ int64 FSimulation::TakeStock(int32 Index,int64 Kg)
 }
 void FSimulation::InitializeAudit()
 {
+ for(auto& I:State.Inventories)I.BookValueCents=I.QuantityKg*Find(Scenario.Definitions.Goods,I.GoodId)->InitialUnitCostCents;
  State.InitialMoneyCents=0;for(const auto& A:State.Accounts)State.InitialMoneyCents+=A.BalanceCents;
  State.GoodsAudit.Reset();for(const auto& G:Scenario.Definitions.Goods){FGoodsAudit Row;Row.Id=G.Id;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Row.InitialKg+=I.QuantityKg;State.GoodsAudit.Add(Row);}
 }
@@ -49,6 +50,13 @@ bool FSimulation::AuditRuntime(FString& Error) const
  for(const auto& G:State.GoodsAudit){int64 Actual=0;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Actual+=I.QuantityKg;if(Actual!=G.InitialKg+G.ProducedKg-G.InputKg-G.ConsumedKg-G.SpoiledKg)return Fail(TEXT("Goods source/sink equation: ")+G.Id);}
  for(const auto& G:State.Groups)
  {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
+
+ for(const auto& A:State.Accounts){int64 Backed=0;for(const auto& O:State.Orders)if(ActorAccount(O.ActorId)==A.Id)Backed+=O.ReservedCents;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")){if(ActorAccount(J.OwnerId)==A.Id)Backed+=J.CostCents;if(J.OwnerId!=J.ProviderId&&ActorAccount(J.ProviderId)==A.Id)Backed+=J.OperatingCents;}for(const auto& R:State.Reservations)if(R.Active&&R.AccountId==A.Id)Backed+=R.MoneyCents;if(Backed!=A.ReservedCents)return Fail(TEXT("Unbacked money hold: ")+A.Id);}
+ for(const auto& I:State.Inventories){int64 Backed=0;for(const auto& O:State.Orders)if(O.Side==TEXT("sell")&&O.ActorId==I.OwnerId&&O.StorageId==I.StorageId&&O.GoodId==I.GoodId)Backed+=O.ReservedKg;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")&&J.SourceInventoryId==I.Id)Backed+=J.Kg;for(const auto& R:State.Reservations)if(R.Active&&R.InventoryId==I.Id)Backed+=R.Kg;if(Backed!=I.ReservedKg)return Fail(TEXT("Unbacked stock hold: ")+I.Id);
+  if(!Find(State.Warehouses,I.StorageId)){bool Cargo=false;for(const auto& J:State.Transports)if(J.Status==TEXT("moving")&&J.CargoInventoryId==I.Id)Cargo=true;if(!Cargo)return Fail(TEXT("Stock without physical location: ")+I.Id);}
+ }
+ for(const auto& S:State.Warehouses){int64 Backed=0;for(const auto& J:State.Transports)if((J.Status==TEXT("planned")||J.Status==TEXT("moving"))&&J.DestinationStorageId==S.Id)Backed+=J.ReservedIncomingPoints;for(const auto& R:State.Reservations)if(R.Active&&R.WarehouseId==S.Id)Backed+=R.IncomingPoints;if(Backed!=S.ReservedIncomingPoints)return Fail(TEXT("Unbacked destination hold: ")+S.Id);}
+ for(const auto& V:State.Vehicles){int Count=0;for(const auto& J:State.Transports)if((J.Status==TEXT("planned")||J.Status==TEXT("moving"))&&J.VehicleId==V.Id){++Count;if(V.TransportId!=J.Id)return Fail(TEXT("Wrong vehicle job"));}for(const auto& R:State.Reservations)if(R.Active&&R.VehicleId==V.Id)++Count;if(Count>1||V.Bound!=(Count==1))return Fail(TEXT("Vehicle double binding: ")+V.Id);}
  Error.Empty();return true;
 }
 void FSimulation::Payroll(int64 Hour)
@@ -84,7 +92,7 @@ void FSimulation::Produce(int64 Hour)
   auto& F=State.Facilities[Index];F.LastBatches=0;F.UtilizationPermille=0;
   const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* P=Find(Scenario.Definitions.Places,F.CityId);const auto* RD=Find(Scenario.Definitions.Regions,P->RegionId);const auto* R=Find(State.Regions,P->RegionId);
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
-  if(!Workers||F.PaidUntilHour<=Hour)continue;
+  if(!Workers||F.PaidUntilHour<=Hour||(Scenario.Economy.Stage>=4&&F.OperatingPaidUntilHour<=Hour))continue;
   int64 Suitability=T->ResourceRequirement==TEXT("farmland")?RD->FarmlandPermille:1000;
   if((T->ResourceRequirement==TEXT("forest")&&!R->RemainingForestKg)||(T->ResourceRequirement==TEXT("ore")&&!R->RemainingOreKg))continue;
   F.ProductionRemainder+=T->CapacityBatchesPerHour*Workers*Suitability;
@@ -119,10 +127,13 @@ void FSimulation::Produce(int64 Hour)
 void FSimulation::EconomyHour(int64 Hour)
 {
  if(Scenario.Economy.Stage<1)return;
+ if(Scenario.Economy.Stage>=4){TransportHour(Hour);Costs(Hour);Spoil();}
  Payroll(Hour);Produce(Hour);
  if(Scenario.Economy.Stage>=2)ExpireOrders();
+ if(Scenario.Economy.Stage>=4)Companies(Hour);
  if(Scenario.Economy.Stage>=3)Demand(Hour);
  if(Scenario.Economy.Stage>=2)MatchOrders();
  if(Scenario.Economy.Stage>=3)Consume();
+ if(Scenario.Economy.Stage>=4){Trader(Hour);MatchOrders();}
 }
 }

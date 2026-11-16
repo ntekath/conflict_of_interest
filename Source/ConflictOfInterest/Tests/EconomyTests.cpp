@@ -75,4 +75,24 @@ bool FConsumer::RunTest(const FString&) {
  int64 Missed=0;for(const auto& R:S.GetState().Groups)for(const auto& U:R.MissedNeed)if(U.GoodId==TEXT("good.food"))Missed+=U.Kg;TestEqual(TEXT("Shortage visible across four regions"),Missed,4400LL);
  for(const auto& O:S.GetState().Orders)TestTrue(TEXT("No luxury buys while basic missing"),O.GoodId!=TEXT("good.luxury"));return TestTrue(TEXT("No hidden funding"),S.AuditRuntime(E));
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTransportTest,"CoI.Economy.TransportAndCosts",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FTransportTest::RunTest(const FString&) {
+ FString J,E;FCoIGeoMapData G;Fixture(J,G,4,[](auto R){for(auto V:R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Companies")))if(V->AsObject()->GetStringField(TEXT("DecisionProfile"))!=TEXT("player"))V->AsObject()->SetStringField(TEXT("DecisionProfile"),TEXT("service"));});FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
+ auto Book=[&](const TCHAR* Id,int64 Kg){FCommand C;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Kind=ECommandKind::BookTransport;auto& T=C.Transport;T.Id=Id;T.OwnerId=TEXT("company.player");T.VehicleId=TEXT("vehicle.carrier.1");T.FromCityId=TEXT("city.us.detroit");T.ToCityId=TEXT("city.us.chicago");T.SourceInventoryId=TEXT("stock.player.food");T.DestinationStorageId=TEXT("storage.service.chicago");T.Kg=Kg;TestTrue(TEXT("Queue transport"),S.Enqueue(C,E));};
+ Book(TEXT("over"),2001);S.StepOnce();TestFalse(TEXT("Oversize atomic rejection"),S.GetResults().Last().Accepted);TestFalse(TEXT("Rejected vehicle stays free"),Find(S.GetState().Vehicles,FString(TEXT("vehicle.carrier.1")))->Bound);
+ Book(TEXT("cancel"),10);S.StepOnce();TestTrue(TEXT("Book finite freight"),S.GetResults().Last().Accepted);
+ FCommand C;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Kind=ECommandKind::CancelTransport;C.Transport.Id=TEXT("cancel");C.Transport.OwnerId=TEXT("company.player");TestTrue(TEXT("Queue cancel"),S.Enqueue(C,E));S.StepOnce();TestTrue(TEXT("Cancel before departure"),S.GetResults().Last().Accepted);TestEqual(TEXT("Cancel releases incoming capacity"),Find(S.GetState().Warehouses,FString(TEXT("storage.service.chicago")))->ReservedIncomingPoints,0LL);
+ Book(TEXT("ship"),50);Book(TEXT("double"),10);S.StepOnce();TestFalse(TEXT("No double vehicle binding"),S.GetResults().Last().Accepted);S.StepOnce();TestEqual(TEXT("Source moved exactly once"),Find(S.GetState().Inventories,FString(TEXT("stock.player.food")))->QuantityKg,50LL);
+ C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Transport.Id=TEXT("ship");TestTrue(TEXT("Queue late cancel"),S.Enqueue(C,E));S.StepOnce();TestFalse(TEXT("No cancel after departure"),S.GetResults().Last().Accepted);
+ for(int H=0;H<100;++H){S.StepOnce();if(!S.AuditRuntime(E)){AddError(E);return false;}}
+ TestEqual(TEXT("Cargo arrived"),Find(S.GetState().Transports,FString(TEXT("ship")))->Status,FString(TEXT("arrived")));TestEqual(TEXT("Truck remains at destination"),Find(S.GetState().Vehicles,FString(TEXT("vehicle.carrier.1")))->CityId,FString(TEXT("city.us.chicago")));
+ TestTrue(TEXT("Carrier receives real fee"),Find(S.GetState().CashTotals,FString(TEXT("freight")))->Cents>0);TestTrue(TEXT("Empty warehouses incur fixed costs"),Find(S.GetState().CashTotals,FString(TEXT("storage_fixed")))->Cents>0);TestTrue(TEXT("Foreign stock pays rent after grace"),Find(S.GetState().CashTotals,FString(TEXT("foreign_storage")))->Cents>0);return true;
+}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FAutonomous,"CoI.Economy.Autonomous72Hours",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FAutonomous::RunTest(const FString&) {
+ FString J,E;FCoIGeoMapData G;Fixture(J,G,4);FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;bool MerchantBought=false,MerchantSold=false,Shipped=false;
+ for(int H=0;H<72;++H){S.StepOnce();if(!S.AuditRuntime(E)){AddError(FString::Printf(TEXT("Hour %d: %s"),H,*E));return false;}for(const auto& T:S.GetState().Trades){MerchantBought|=T.BuyerId==TEXT("company.merchant");MerchantSold|=T.SellerId==TEXT("company.merchant");}for(const auto& T:S.GetState().Transports)Shipped|=!T.Empty&&T.OwnerId==TEXT("company.merchant")&&T.FromCityId!=T.ToCityId&&T.Service==TEXT("rented_truck")&&T.Status==TEXT("arrived");}
+ TestTrue(TEXT("Merchant purchases actual offers"),MerchantBought);TestTrue(TEXT("Merchant sells actual inventory"),MerchantSold);TestTrue(TEXT("Merchant pays carrier for intercity delivery"),Shipped);TestTrue(TEXT("Consumer actual food"),Find(S.GetState().GoodsAudit,FString(TEXT("good.food")))->ConsumedKg>0);TestTrue(TEXT("Real freight fee booked"),Find(S.GetState().CashTotals,FString(TEXT("freight")))!=nullptr);return true;
+}
 #endif

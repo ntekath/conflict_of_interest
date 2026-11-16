@@ -7,7 +7,7 @@ bool FSimulation::PlaceOrder(FMarketOrder O,FString& Error) {
  int64 Open=0;for(const auto& R:State.Orders)if(R.Status==TEXT("open"))++Open;
  if(!A||!S||!P||S->CityId!=P->Id||Find(Scenario.Definitions.Regions,P->RegionId)->MarketId!=O.MarketId||!Find(Scenario.Definitions.Goods,O.GoodId)||O.Id.IsEmpty()||O.Id.Len()>128||Find(State.Orders,O.Id)||Open>=E.MaxOpenOrders||O.OriginalKg<=0||O.OriginalKg>E.MaxOrderKg||O.LimitCentsPerKg<=0||O.LimitCentsPerKg>E.MaxPriceCents||(O.Side!=TEXT("buy")&&O.Side!=TEXT("sell")))return Reject(TEXT("Invalid order, physical pickup or book limit"));
  if(auto* G=Find(State.Groups,O.ActorId)){if(O.Side==TEXT("sell"))return Reject(TEXT("Households do not resell"));int64 Holds=0;for(const auto& R:State.Orders)if(R.ActorId==G->Id)Holds+=R.ReservedCents;if(O.OriginalKg*O.LimitCentsPerKg>G->BudgetCents-G->DailySpentCents-Holds)return Reject(TEXT("Household budget exhausted"));}
- if(S->ArrearsCents)return Reject(TEXT("Storage arrears"));
+ if(O.Side==TEXT("buy")&&S->ArrearsCents)return Reject(TEXT("Storage arrears"));
  O.ReservedCents=O.ReservedKg=0;O.RemainingKg=O.OriginalKg;
  if(O.Side==TEXT("buy")){int64 Cost=O.OriginalKg*O.LimitCentsPerKg;if(Cost>A->BalanceCents-A->ReservedCents)return Reject(TEXT("Insufficient available money"));O.ReservedCents=Cost;}
  else {int32 I=StockIndex(O.ActorId,O.StorageId,O.GoodId);if(I==INDEX_NONE||O.OriginalKg>State.Inventories[I].QuantityKg-State.Inventories[I].ReservedKg)return Reject(TEXT("Insufficient owned pickup stock"));O.ReservedKg=O.OriginalKg;}
@@ -37,7 +37,7 @@ void FSimulation::MatchOrders() {
   const bool Paid=Pay(BA->Id,ActorAccount(S.ActorId),Cost,TEXT("trade"));check(Paid);
   if(auto* G=Find(State.Groups,B.ActorId)){G->DailySpentCents+=Cost;if(Find(Scenario.Definitions.Goods,B.GoodId)->NeedCategory==TEXT("luxury"))G->LuxurySpentCents+=Cost;}
   int32 Source=StockIndex(S.ActorId,S.StorageId,S.GoodId);State.Inventories[Source].ReservedKg-=Kg;S.ReservedKg-=Kg;
-  int64 Value=TakeStock(Source,Kg);int32 Dest=EnsureStock(B.ActorId,S.StorageId,S.GoodId);State.Inventories[Dest].QuantityKg+=Kg;State.Inventories[Dest].BookValueCents+=Cost;
+  int64 Value=TakeStock(Source,Kg);int32 Dest=EnsureStock(B.ActorId,S.StorageId,S.GoodId);State.Inventories[Dest].QuantityKg+=Kg;State.Inventories[Dest].BookValueCents+=Cost;State.Inventories[Dest].AcquiredHour=State.EconomyHour;
   (void)Value;B.RemainingKg-=Kg;S.RemainingKg-=Kg;if(!B.RemainingKg)B.Status=TEXT("filled");if(!S.RemainingKg)S.Status=TEXT("filled");
   FTrade T;T.Id=FString::Printf(TEXT("trade.%lld"),++State.TradeSequence);T.BuyOrderId=B.Id;T.SellOrderId=S.Id;T.BuyerId=B.ActorId;T.SellerId=S.ActorId;T.MarketId=B.MarketId;T.CityId=S.CityId;T.GoodId=B.GoodId;T.Step=State.EconomyHour;T.QuantityKg=Kg;T.PriceCentsPerKg=Price;T.TotalCents=Cost;State.Trades.Add(MoveTemp(T));
   if(State.Trades.Num()>Scenario.Economy.HistoryLimit)State.Trades.RemoveAt(0,1,EAllowShrinking::No);

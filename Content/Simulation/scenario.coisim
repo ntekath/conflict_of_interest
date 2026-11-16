@@ -23,7 +23,9 @@
         "Unit": "kg",
         "NeedCategory": "basic",
         "StoragePointsPerKg": 1,
-        "SpoilPartsPerMillionPerDay": 10000
+        "SpoilPartsPerMillionPerDay": 10000,
+        "InitialUnitCostCents": 2,
+        "InputLimitCents": 12
       },
       {
         "Id": "good.luxury",
@@ -31,7 +33,9 @@
         "Unit": "kg",
         "NeedCategory": "luxury",
         "StoragePointsPerKg": 4,
-        "SpoilPartsPerMillionPerDay": 1000
+        "SpoilPartsPerMillionPerDay": 1000,
+        "InitialUnitCostCents": 50,
+        "InputLimitCents": 120
       },
       {
         "Id": "good.ore",
@@ -39,7 +43,9 @@
         "Unit": "kg",
         "NeedCategory": "none",
         "StoragePointsPerKg": 1,
-        "SpoilPartsPerMillionPerDay": 0
+        "SpoilPartsPerMillionPerDay": 0,
+        "InitialUnitCostCents": 2,
+        "InputLimitCents": 8
       },
       {
         "Id": "good.tools",
@@ -47,7 +53,9 @@
         "Unit": "kg",
         "NeedCategory": "none",
         "StoragePointsPerKg": 3,
-        "SpoilPartsPerMillionPerDay": 0
+        "SpoilPartsPerMillionPerDay": 0,
+        "InitialUnitCostCents": 15,
+        "InputLimitCents": 80
       },
       {
         "Id": "good.wood",
@@ -55,7 +63,9 @@
         "Unit": "kg",
         "NeedCategory": "none",
         "StoragePointsPerKg": 2,
-        "SpoilPartsPerMillionPerDay": 0
+        "SpoilPartsPerMillionPerDay": 0,
+        "InitialUnitCostCents": 2,
+        "InputLimitCents": 10
       }
     ],
     "Companies": [
@@ -1480,7 +1490,7 @@
     ]
   },
   "Economy": {
-    "Stage": 3,
+    "Stage": 4,
     "PayrollHours": 24,
     "DecisionHours": 6,
     "DemandHours": 24,
@@ -1497,7 +1507,7 @@
     "RouteDetourPermille": 1400,
     "FreightMarkupPermille": 200,
     "BookingLeadHours": 1,
-    "InputTargetHours": 48,
+    "InputTargetHours": 72,
     "ProducerReserveKg": 100,
     "TraderMaxLoadKg": 2000,
     "TraderCashReserveCents": 10000,

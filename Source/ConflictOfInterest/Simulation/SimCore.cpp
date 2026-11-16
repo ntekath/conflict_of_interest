@@ -36,7 +36,7 @@ bool FSimulation::Enqueue(FCommand Command,FString& Error)
  if(Command.Sequence<=LastIssuedSequence||Command.Sequence>1000000000000LL||Command.TargetStep<=State.Step||Command.TargetStep-State.Step>Scenario.Settings.CommandHorizonSteps)
  {Error=TEXT("Duplicate/nonmonotonic sequence, past target or excessive horizon");return false;}
  if(Pending.Num()>=Scenario.Settings.MaxPendingCommands){Error=TEXT("Command queue full; caller must retry explicitly");return false;}
- if(Command.Kind>ECommandKind::CancelOrder){Error=TEXT("Unsupported command kind");return false;}
+ if(Command.Kind>ECommandKind::CancelTransport){Error=TEXT("Unsupported command kind");return false;}
  LastIssuedSequence=Command.Sequence;Pending.Add(MoveTemp(Command));
  Pending.Sort([](const FCommand& A,const FCommand& B){return A.TargetStep==B.TargetStep?A.Sequence<B.Sequence:A.TargetStep<B.TargetStep;});
  Error.Empty();Diagnostics.PendingCommands=Pending.Num();return true;
@@ -47,6 +47,8 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 }
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
+ if(Command.Kind==ECommandKind::BookTransport)return BookTransport(Command.Transport,Reason);
+ if(Command.Kind==ECommandKind::CancelTransport){bool OK=CancelTransport(Command.Transport.Id,Command.Transport.OwnerId);Reason=OK?TEXT("Cancelled"):TEXT("Not cancellable");return OK;}
  if(Command.Kind==ECommandKind::PlaceOrder)return PlaceOrder(Command.Order,Reason);
  if(Command.Kind==ECommandKind::CancelOrder){bool OK=CancelOrder(Command.Order.Id,Command.Order.ActorId,TEXT("cancelled"));Reason=OK?TEXT("Cancelled"):TEXT("Missing live owned order");return OK;}
  const auto& R=Command.Resources;
@@ -163,6 +165,6 @@ void FSimulation::Publish()
 FString FSimulation::Fingerprint() const
 {
  FFingerprint F;F.Write(Scenario);F.Write(State);F.Write(LastIssuedSequence);
- for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write(C.Resources);}return F.Finish();
+ for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);}return F.Finish();
 }
 }
