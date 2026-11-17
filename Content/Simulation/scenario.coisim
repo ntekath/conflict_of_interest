@@ -25,7 +25,9 @@
         "StoragePointsPerKg": 1,
         "SpoilPartsPerMillionPerDay": 10000,
         "InitialUnitCostCents": 2,
-        "InputLimitCents": 12
+        "InputLimitCents": 12,
+        "MapPriceLowCents": 2,
+        "MapPriceHighCents": 12
       },
       {
         "Id": "good.luxury",
@@ -35,7 +37,9 @@
         "StoragePointsPerKg": 4,
         "SpoilPartsPerMillionPerDay": 1000,
         "InitialUnitCostCents": 50,
-        "InputLimitCents": 120
+        "InputLimitCents": 120,
+        "MapPriceLowCents": 30,
+        "MapPriceHighCents": 120
       },
       {
         "Id": "good.ore",
@@ -45,7 +49,9 @@
         "StoragePointsPerKg": 1,
         "SpoilPartsPerMillionPerDay": 0,
         "InitialUnitCostCents": 2,
-        "InputLimitCents": 8
+        "InputLimitCents": 8,
+        "MapPriceLowCents": 2,
+        "MapPriceHighCents": 8
       },
       {
         "Id": "good.tools",
@@ -55,7 +61,9 @@
         "StoragePointsPerKg": 3,
         "SpoilPartsPerMillionPerDay": 0,
         "InitialUnitCostCents": 15,
-        "InputLimitCents": 80
+        "InputLimitCents": 80,
+        "MapPriceLowCents": 10,
+        "MapPriceHighCents": 80
       },
       {
         "Id": "good.wood",
@@ -65,7 +73,9 @@
         "StoragePointsPerKg": 2,
         "SpoilPartsPerMillionPerDay": 0,
         "InitialUnitCostCents": 2,
-        "InputLimitCents": 10
+        "InputLimitCents": 10,
+        "MapPriceLowCents": 2,
+        "MapPriceHighCents": 10
       }
     ],
     "Companies": [

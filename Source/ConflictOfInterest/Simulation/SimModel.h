@@ -10,8 +10,8 @@ namespace CoISim
 struct FAmount { FString GoodId; int64 Kg=0; COI_RECORD(COI_F(GoodId);COI_F(Kg);) };
 struct FGoodDef
 {
- FString Id,Name,Unit,NeedCategory; int64 InitialUnitCostCents=0,InputLimitCents=0; int64 StoragePointsPerKg=0,SpoilPartsPerMillionPerDay=0;
- COI_RECORD(COI_F(Id);COI_F(Name);COI_F(Unit);COI_F(NeedCategory);COI_F(InitialUnitCostCents);COI_F(InputLimitCents);COI_F(StoragePointsPerKg);COI_F(SpoilPartsPerMillionPerDay);)
+ FString Id,Name,Unit,NeedCategory; int64 MapPriceLowCents=0,MapPriceHighCents=0;int64 InitialUnitCostCents=0,InputLimitCents=0; int64 StoragePointsPerKg=0,SpoilPartsPerMillionPerDay=0;
+ COI_RECORD(COI_F(Id);COI_F(Name);COI_F(Unit);COI_F(NeedCategory);COI_F(MapPriceLowCents);COI_F(MapPriceHighCents);COI_F(InitialUnitCostCents);COI_F(InputLimitCents);COI_F(StoragePointsPerKg);COI_F(SpoilPartsPerMillionPerDay);)
 };
 struct FCompanyDef { FString Id,Name,DecisionProfile,Description,StartCityId;bool Playable=false,AccountingOnly=false; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);COI_F(Playable);COI_F(AccountingOnly);COI_F(Description);COI_F(StartCityId);) };
 struct FNeedDef
@@ -146,15 +146,25 @@ struct FPlayerEvent
  FString Id,Kind,ObjectId,Text;int64 Hour=0,Count=1;
  COI_RECORD(COI_F(Id);COI_F(Kind);COI_F(ObjectId);COI_F(Text);COI_F(Hour);COI_F(Count);)
 };
+struct FDayMetric
+{
+ FString Id,RegionId,GoodId;int64 HouseholdWantedKg=0,HouseholdUsedKg=0,InputWantedKg=0,InputUsedKg=0,TradeKg=0,TradeCents=0;
+ COI_RECORD(COI_F(Id);COI_F(RegionId);COI_F(GoodId);COI_F(HouseholdWantedKg);COI_F(HouseholdUsedKg);COI_F(InputWantedKg);COI_F(InputUsedKg);COI_F(TradeKg);COI_F(TradeCents);)
+};
+struct FDayMetrics
+{
+ int64 Day=0,CompletedStep=0;bool Complete=false;TArray<FDayMetric> Rows;
+ COI_RECORD(COI_F(Day);COI_F(CompletedStep);COI_F(Complete);COI_F(Rows);)
+};
 struct FState
 {
- TArray<FPlayerDay> PlayerDays;TArray<FPlayerEvent> PlayerEvents;int64 OrderSequence=0,TradeSequence=0; int64 EconomyHour=0,InitialMoneyCents=0;TArray<FMarketTotal> MarketTotals;TArray<FCashFlow> CashFlows;TArray<FCashTotal> CashTotals;TArray<FGoodsAudit> GoodsAudit;
+ FDayMetrics CurrentDayMetrics,LastDayMetrics;TArray<FPlayerDay> PlayerDays;TArray<FPlayerEvent> PlayerEvents;int64 OrderSequence=0,TradeSequence=0; int64 EconomyHour=0,InitialMoneyCents=0;TArray<FMarketTotal> MarketTotals;TArray<FCashFlow> CashFlows;TArray<FCashTotal> CashTotals;TArray<FGoodsAudit> GoodsAudit;
  int64 Step=0; TArray<FAccount> Accounts; TArray<FCompany> Companies; TArray<FGroup> Groups;
  TArray<FFacility> Facilities; TArray<FWarehouse> Warehouses; TArray<FVehicle> Vehicles;
  TArray<FInventory> Inventories; TArray<FMarketOrder> Orders; TArray<FTrade> Trades;
  TArray<FTransport> Transports; TArray<FTransportOffer> Offers; TArray<FReservation> Reservations;
  TArray<FRegion> Regions; TArray<FCountry> Countries;
- COI_RECORD(COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
+ COI_RECORD(COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
 };
 struct FSettings
 {

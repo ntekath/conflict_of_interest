@@ -21,7 +21,7 @@ bool FSimulation::Load(const FString& Json,const FCoIGeoMapData& Geo,FString& Er
  FScenario Candidate;if(!LoadScenario(Json,Geo,Candidate,Error))return false;
  Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Session={Scenario.Id,Scenario.PlayerCompanyId};Loaded=true;
  for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;Region.RemainingForestKg=R.ForestKg;Region.RemainingOreKg=R.OreKg;State.Regions.Add(Region);}
- InitializeAudit();Aggregate();Publish();return true;
+ InitializeAudit();BeginDayMetrics(0);Aggregate();Publish();return true;
 }
 void FSimulation::Shutdown()
 {
@@ -105,7 +105,7 @@ bool FSimulation::RunStep()
  // Match all queued market commands against the committed state before the next hour ages stock.
  if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}
  for(int64 Hour=State.Step*Scenario.Settings.HoursPerStep;Hour<Next*Scenario.Settings.HoursPerStep;++Hour)
- {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;PlayerWarnings();}
+ {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;if(State.EconomyHour%24==0)FinishDayMetrics(Next);PlayerWarnings();}
  // Snapshot inputs are const and independent of rendering. Results have disjoint per-region slots.
  TArray<FRegionProposal> Proposals;Proposals.SetNum(State.Regions.Num());
  {
@@ -165,7 +165,7 @@ void FSimulation::Publish()
  New.PlayerName=Find(Scenario.Definitions.Companies,Player->Id)->Name;New.PlayerMoneyCents=A->BalanceCents;New.PlayerReservedCents=A->ReservedCents;
  for(const auto& Store:State.Warehouses)if(Store.OwnerId==Player->Id){New.PlayerStorageCapacity+=Find(Scenario.Definitions.WarehouseTypes,Store.TypeId)->CapacityPoints;New.PlayerStorageUsed+=UsedStorage(Store.Id);}
  for(const auto& Vehicle:State.Vehicles)if(Vehicle.OwnerId==Player->Id)++New.PlayerTrucks;
- PublishPlayer(New);PublishEconomy(New);Snapshot=MoveTemp(New);Diagnostics.SnapshotMicros=Micros()-T;
+ New.MapDay=State.LastDayMetrics;PublishPlayer(New);PublishEconomy(New);Snapshot=MoveTemp(New);Diagnostics.SnapshotMicros=Micros()-T;
 }
 FString FSimulation::Fingerprint() const
 {

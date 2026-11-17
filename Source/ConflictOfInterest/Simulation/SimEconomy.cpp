@@ -97,11 +97,18 @@ void FSimulation::Produce(int64 Hour)
   auto& F=State.Facilities[Index];F.LastBatches=0;F.UtilizationPermille=0;
   const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* P=Find(Scenario.Definitions.Places,F.CityId);const auto* RD=Find(Scenario.Definitions.Regions,P->RegionId);const auto* R=Find(State.Regions,P->RegionId);
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
-  if((Scenario.Economy.Stage>=4&&Find(State.Warehouses,F.StorageId)->ArrearsCents)||!Workers||F.PaidUntilHour<=Hour||(Scenario.Economy.Stage>=4&&F.OperatingPaidUntilHour<=Hour))continue;
   int64 Suitability=T->ResourceRequirement==TEXT("farmland")?RD->FarmlandPermille:1000;
   if((T->ResourceRequirement==TEXT("forest")&&!R->RemainingForestKg)||(T->ResourceRequirement==TEXT("ore")&&!R->RemainingOreKg))continue;
+  int64 Denominator=T->Jobs*1000;
+  // Counterfactual capacity before liquidity: current workers plus unfunded jobs
+  // that could be filled by the region's still available workforce. No jobs or wages are created.
+  int64 Available=0;for(const auto& G:State.Groups)if(Find(Scenario.Definitions.Groups,G.Id)->RegionId==P->RegionId)Available+=G.Workforce-G.Employed;
+  int64 PlannedWorkers=Workers+FMath::Min(F.UnfundedJobs,Available);
+  int64 Planned=(F.ProductionRemainder+T->CapacityBatchesPerHour*PlannedWorkers*Suitability)/Denominator;
+  for(const auto& A:T->Inputs)DayMetric(P->RegionId,A.GoodId).InputWantedKg+=A.Kg*Planned;
+  if((Scenario.Economy.Stage>=4&&Find(State.Warehouses,F.StorageId)->ArrearsCents)||!Workers||F.PaidUntilHour<=Hour||(Scenario.Economy.Stage>=4&&F.OperatingPaidUntilHour<=Hour))continue;
   F.ProductionRemainder+=T->CapacityBatchesPerHour*Workers*Suitability;
-  int64 Denominator=T->Jobs*1000,Batches=F.ProductionRemainder/Denominator;F.ProductionRemainder%=Denominator;
+  int64 Batches=F.ProductionRemainder/Denominator;F.ProductionRemainder%=Denominator;
   int64 Net=0;for(const auto& A:T->Inputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,I==INDEX_NONE?0:(State.Inventories[I].QuantityKg-State.Inventories[I].ReservedKg)/FMath::Max(1LL,A.Kg));Net-=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;}
   int64 ResourcePerBatch=0;for(const auto& A:T->Outputs){Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,(1000000000-(I==INDEX_NONE?0:State.Inventories[I].QuantityKg))/FMath::Max(1LL,A.Kg));if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))ResourcePerBatch+=A.Kg;}
   if(ResourcePerBatch)Batches=FMath::Min(Batches,(T->ResourceRequirement==TEXT("forest")?R->RemainingForestKg:R->RemainingOreKg)/ResourcePerBatch);
@@ -119,7 +126,7 @@ void FSimulation::Produce(int64 Hour)
   for(const auto& A:T->Outputs){int32 Existing=StockIndex(F.OwnerId,F.StorageId,A.GoodId);B=FMath::Min(B,(1000000000-(Existing==INDEX_NONE?0:State.Inventories[Existing].QuantityKg))/A.Kg);Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))Resource+=A.Kg;}
   if(Resource)B=FMath::Min(B,(T->ResourceRequirement==TEXT("forest")?Region->RemainingForestKg:Region->RemainingOreKg)/Resource);
   const auto* Store=Find(State.Warehouses,F.StorageId);if(Net>0)B=FMath::Min(B,(Find(Scenario.Definitions.WarehouseTypes,Store->TypeId)->CapacityPoints-UsedStorage(Store->Id)-Store->ReservedIncomingPoints)/Net);if(B<=0)continue;
-  int64 InputValue=0;for(const auto& A:T->Inputs){TakeSpoilCredit(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);InputValue+=TakeStock(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);Find(State.GoodsAudit,A.GoodId)->InputKg+=A.Kg*B;}
+  int64 InputValue=0;for(const auto& A:T->Inputs){TakeSpoilCredit(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);InputValue+=TakeStock(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);Find(State.GoodsAudit,A.GoodId)->InputKg+=A.Kg*B;DayMetric(Region->Id,A.GoodId).InputUsedKg+=A.Kg*B;}
   int64 OutputKg=0;for(const auto& A:T->Outputs)OutputKg+=A.Kg*B;
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
   int64 WageCost=(Workers*T->DailyWageCents+23)/24;

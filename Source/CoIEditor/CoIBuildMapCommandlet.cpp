@@ -14,6 +14,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialExpressionConstant3Vector.h"
+#include "Materials/MaterialExpressionVectorParameter.h"
 #include "UObject/SavePackage.h"
 #include "Misc/PackageName.h"
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -108,6 +109,7 @@ static int32 BuildUSMap()
 }
 int32 UCoIBuildMapCommandlet::Main(const FString& Params)
 {
+ if(Params.Contains(TEXT("EconomicMaterial"))){const FString Path=TEXT("/Game/Materials/M_EconomicLayer");auto* M=LoadObject<UMaterial>(nullptr,*(Path+TEXT(".M_EconomicLayer")));if(!M){auto* P=CreatePackage(*Path);M=NewObject<UMaterial>(P,TEXT("M_EconomicLayer"),RF_Public|RF_Standalone);M->SetShadingModel(MSM_Unlit);M->TwoSided=true;auto* C=NewObject<UMaterialExpressionVectorParameter>(M);C->ParameterName=TEXT("RegionColor");C->DefaultValue=FLinearColor(.28f,.30f,.32f);M->GetExpressionCollection().AddExpression(C);M->GetEditorOnlyData()->EmissiveColor.Expression=C;M->PostEditChange();SaveAsset(M);}return 0;}
  if(!Params.Contains(TEXT("Prototype")))return BuildUSMap();
  auto* W=UEditorLoadingAndSavingUtils::NewBlankMap(false);if(!W)return 1;
  W->GetWorldSettings()->DefaultGameMode=ACoIGameMode::StaticClass();W->SpawnActor<APlayerStart>(FVector::ZeroVector,FRotator::ZeroRotator);

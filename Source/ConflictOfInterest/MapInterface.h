@@ -4,6 +4,7 @@
 #include "Components/Button.h"
 #include "GeoMapData.h"
 #include "MapSelection.h"
+#include "Simulation/MapMetrics.h"
 #include "MapInterface.generated.h"
 UCLASS()
 class UCoIMapButton : public UButton
@@ -19,6 +20,7 @@ class CONFLICTOFINTEREST_API UCoIMapInterface : public UUserWidget
  GENERATED_BODY()
 public:
  bool IsPointerOverPanel() const;bool IsKeyboardBlocked() const;bool HandleEscape();void SetMapMode(const FString& Mode);
+ void SetMetricLayer(const FString& Layer,const FString& Good,CoISim::EMapMetric Kind);
  const FString& GetSelectedId() const { return Selection.Id; }
 protected:
  virtual TSharedRef<SWidget> RebuildWidget() override;
@@ -30,6 +32,10 @@ protected:
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
  UPROPERTY() TObjectPtr<class UCoIPlayerHUD> PlayerHUD;
+ FString MetricLayer=TEXT("regions"),MetricGood=TEXT("good.food");CoISim::EMapMetric MetricKind=CoISim::EMapMetric::Households;int64 MetricStep=-1;
+ UPROPERTY() TMap<FName,TObjectPtr<class UMaterialInterface>> BaseMaterials;
+ UPROPERTY() TMap<FName,TObjectPtr<class UMaterialInstanceDynamic>> MetricMaterials;
+ void ApplyMetricLayer();
  FCoIGeoMapData Data;
  FCoISelection Selection;
  ECoIMapView View=ECoIMapView::Regions;

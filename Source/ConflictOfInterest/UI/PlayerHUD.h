@@ -21,7 +21,7 @@ class CONFLICTOFINTEREST_API UCoIPlayerHUD : public UUserWidget {
  GENERATED_BODY()
 public:
  UPROPERTY() TObjectPtr<class UCoIMapInterface> MapOwner;
- void Action(const FString& Key);void MapSelection(const FString& Id,const FString& Summary=TEXT(""));bool PointerBlocked(FVector2D Absolute) const;bool KeyboardBlocked() const;bool Escape();
+ void Action(const FString& Key);void MapSelection(const FString& Id,const FString& Summary=TEXT(""));bool PointerBlocked(FVector2D Absolute) const;bool OverlayCovered(FVector2D Position,FVector2D Size=FVector2D::ZeroVector) const;bool KeyboardBlocked() const;bool Escape();
 protected:
  virtual TSharedRef<SWidget> RebuildWidget() override;
  virtual void NativeConstruct() override;virtual void NativeDestruct() override;virtual void NativeTick(const FGeometry&,float) override;
@@ -31,6 +31,10 @@ protected:
 private:
  UPROPERTY() TObjectPtr<class UCoISimulationSubsystem> Sim;
  UPROPERTY() TObjectPtr<UCanvasPanel> Root;
+ UPROPERTY() TObjectPtr<UBorder> MapControls;UPROPERTY() TObjectPtr<UBorder> MapLegend;
+ UPROPERTY() TObjectPtr<UTextBlock> LegendText;UPROPERTY() TObjectPtr<UTextBlock> MetricDetails;
+ UPROPERTY() TArray<TObjectPtr<UBorder>> LegendColors;
+ void RefreshMap();
  UPROPERTY() TObjectPtr<UBorder> Top;UPROPERTY() TObjectPtr<UBorder> Nav;UPROPERTY() TObjectPtr<UBorder> Work;UPROPERTY() TObjectPtr<UBorder> SelectionPanel;UPROPERTY() TObjectPtr<UBorder> Notices;UPROPERTY() TObjectPtr<UBorder> Debug;UPROPERTY() TObjectPtr<UBorder> ModalShade;UPROPERTY() TObjectPtr<UBorder> Dialog;
  UPROPERTY() TObjectPtr<UTextBlock> AccountText;UPROPERTY() TObjectPtr<UTextBlock> ClockText;UPROPERTY() TObjectPtr<UTextBlock> SelectionText;UPROPERTY() TObjectPtr<UTextBlock> NoticeText;UPROPERTY() TObjectPtr<UTextBlock> DebugText;UPROPERTY() TObjectPtr<UTextBlock> WorkTitle;UPROPERTY() TObjectPtr<UTextBlock> FormPreview;UPROPERTY() TObjectPtr<UTextBlock> FormState;
  UPROPERTY() TObjectPtr<UCoIActionButton> PauseButton;UPROPERTY() TObjectPtr<UCoIActionButton> ConfirmButton;
