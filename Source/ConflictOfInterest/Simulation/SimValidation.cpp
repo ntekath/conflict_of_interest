@@ -23,6 +23,7 @@ bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Erro
  REQUIRE(FDateTime::ParseIso8601(*(S.StartDate+TEXT("T00:00:00Z")),Start)&&S.StartDate.Len()==10,"Invalid start date");
  REQUIRE(C.HoursPerStep>=1&&C.HoursPerStep<=24&&C.Seed>=0&&C.Seed<=MAX_int32&&C.RealMicrosPerStep>=1000&&C.RealMicrosPerStep<=60000000&&C.MaxStepsPerFrame>=1&&C.MaxStepsPerFrame<=64&&C.MaxBacklogSteps>=C.MaxStepsPerFrame&&C.MaxBacklogSteps<=128&&C.MaxPendingCommands>=1&&C.MaxPendingCommands<=4096&&C.CommandHorizonSteps>=1&&C.CommandHorizonSteps<=100000&&C.StepBudgetMicros>=1&&C.StepBudgetMicros<=100000,"Invalid simulation limits");
  const auto& E=S.Economy;
+ REQUIRE(E.MapTrucksPerRoute>=0&&E.MapTrucksPerRoute<=20&&E.MapTrucksTotal>=0&&E.MapTrucksTotal<=1000&&E.MapTruckZoom>0&&E.MapRouteDetailZoom>0,"Invalid map route display limits");
  REQUIRE(W.CurrentDayMetrics.Rows.IsEmpty()&&W.LastDayMetrics.Rows.IsEmpty()&&!W.LastDayMetrics.Complete,"Initial map metrics must be empty");
  REQUIRE(W.PlayerDays.IsEmpty()&&W.PlayerEvents.IsEmpty(),"Initial player history must be empty");
  REQUIRE(W.EconomyHour==0&&W.InitialMoneyCents==0&&W.OrderSequence==0&&W.TradeSequence==0&&W.CashFlows.IsEmpty()&&W.CashTotals.IsEmpty()&&W.GoodsAudit.IsEmpty()&&W.MarketTotals.IsEmpty(),"Initial derived economic counters must be empty");

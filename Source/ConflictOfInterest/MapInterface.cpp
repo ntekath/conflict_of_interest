@@ -7,6 +7,7 @@
 #include "MapCameraPawn.h"
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/SimArchive.h"
+#include "Simulation/RouteDisplay.h"
 #include "Blueprint/WidgetTree.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Border.h"
@@ -119,6 +120,10 @@ FReply UCoIMapInterface::NativeOnMouseButtonDown(const FGeometry& G,const FPoint
  auto Pointer=G.AbsoluteToLocal(E.GetScreenSpacePosition());TArray<FVector2D> Centers;TArray<bool> Visible;
  for(const auto& C:Data.Cities){FVector2D P;bool OK=Project(C.Position,P);Centers.Add(P);Visible.Add(OK&&P.X>=8&&P.Y>=8&&P.X<=G.GetLocalSize().X-8&&P.Y<=G.GetLocalSize().Y-8&&!InsidePanel(G.LocalToAbsolute(P)));}
  int32 City=CoISelection::PickCity(Centers,Visible,Pointer);
+ TArray<TPair<double,FString>> Hits;
+ for(const auto& R:ScreenRoutes()){double Dist=1.e9;for(int32 I=1;I<R.Points.Num();++I)Dist=FMath::Min(Dist,CoIRoutes::Distance(Pointer,R.Points[I-1],R.Points[I]));if(Dist<=10)Hits.Add({Dist,R.Id});}
+ Hits.Sort([](const auto& A,const auto& B){return FMath::Abs(A.Key-B.Key)>.01?A.Key<B.Key:A.Value<B.Value;});
+ if(City==INDEX_NONE&&!Hits.IsEmpty()){RoutePickCycle=(Pointer-LastRoutePointer).Size()<8?RoutePickCycle+1:0;LastRoutePointer=Pointer;Selection.Id=Hits[RoutePickCycle%Hits.Num()].Value;RefreshInformation();return FReply::Handled();}
  if(City!=INDEX_NONE)Selection.Id=Data.Cities[City].Id;
  else
  {
@@ -195,7 +200,7 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
  }
 
  if((MetricLayer==TEXT("supply")||MetricLayer==TEXT("price"))&&Simulation&&Simulation->IsReady()){const auto& S=Simulation->GetSnapshot();for(const auto& R:Data.Regions){double Largest=0;FVector2D Anchor=FVector2D::ZeroVector;for(int32 I=0;I<R.Triangles.Num();I+=3){auto A=R.Vertices[R.Triangles[I]],B=R.Vertices[R.Triangles[I+1]],C=R.Vertices[R.Triangles[I+2]];double Area=FMath::Abs((B.X-A.X)*(C.Y-A.Y)-(B.Y-A.Y)*(C.X-A.X));if(Area>Largest){Largest=Area;Anchor=(A+B+C)/3;}}FVector2D P;if(!Project(Anchor,P)||(PlayerHUD?PlayerHUD->OverlayCovered(P):InsidePanel(G.LocalToAbsolute(P))))continue;auto V=CoISim::MetricValue(S.MapDay,R.Id,MetricGood,MetricKind);FString Label=V.Availability==CoISim::EMetricAvailability::NoNeed?TEXT("N · Kein Bedarf"):V.Availability==CoISim::EMetricAvailability::Missing?(S.MapDay.Complete?TEXT("– · Kein Umsatz"):TEXT("– · Keine Tagesdaten")):MetricKind==CoISim::EMapMetric::Price?FString::Printf(TEXT("%.2f USD/kg"),V.Value/100.):FString::Printf(TEXT("%.0f %%"),V.Value);FVector2D Box(Label.Len()*7+12,22);P-=Box/2;if(PlayerHUD&&PlayerHUD->OverlayCovered(P,Box))continue;if(P.X<8||P.Y<8||P.X+Box.X>G.GetLocalSize().X-8||P.Y+Box.Y>G.GetLocalSize().Y-8)continue;FSlateDrawElement::MakeBox(Out,Top+4,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,FLinearColor(.02f,.03f,.04f,.94f));FSlateDrawElement::MakeText(Out,Top+5,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Bold",11),ESlateDrawEffect::None,FLinearColor(.95f,.91f,.8f));}}
- return Top+5;
+ return PaintRoutes(G,Out,Top+6);
 }
 
 void UCoIMapInterface::ToggleSimulation(){if(Simulation)Simulation->TogglePause();}
@@ -227,4 +232,33 @@ void UCoIMapInterface::ApplyMetricLayer(){if(!Simulation||!Simulation->IsReady()
   else {bool Owned=false;for(const auto& W:S.Player.Stores)if(W.Own){const auto* Place=CoISim::Find(S.Player.Catalog.Places,W.CityId);Owned|=Place&&Place->RegionId==R.Id;}for(const auto& F:S.Player.Facilities){const auto* Place=CoISim::Find(S.Player.Catalog.Places,F.CityId);Owned|=Place&&Place->RegionId==R.Id;}Color=Owned?FLinearColor(.65f,.45f,.16f):FLinearColor(.22f,.27f,.28f);}
   Dynamic->SetVectorParameterValue(TEXT("RegionColor"),Color);
  }}
+}
+
+void UCoIMapInterface::SetRouteDisplay(const FString& Filter,bool Animate){RouteFilter=Filter;RouteAnimate=Animate;}
+FString UCoIMapInterface::RouteDiagnostics() const{return FString::Printf(TEXT("Routen %d · Lkw %d · Routenzeichnung %.0f µs"),DrawnRoutes,DrawnTrucks,RoutePaintMicros);}
+TArray<UCoIMapInterface::FScreenRoute> UCoIMapInterface::ScreenRoutes() const {
+ TArray<FScreenRoute> Out;if(!Simulation||!Simulation->IsReady()||RouteFilter==TEXT("off"))return Out;
+ auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn());const auto& P=Simulation->GetSnapshot().Player;bool Detail=Pawn&&Pawn->GetZoomHeight()<P.Rules.MapRouteDetailZoom;TSet<FString> Bundles;
+ for(const auto& R:P.Routes){if(RouteFilter==TEXT("own")&&!R.Own)continue;
+  const auto* A=Data.Cities.FindByPredicate([&](const FCoIGeoCity& C){return C.Id==R.FromCityId;});const auto* B=Data.Cities.FindByPredicate([&](const FCoIGeoCity& C){return C.Id==R.ToCityId;});FVector2D From,To;if(!A||!B||!Project(A->Position,From)||!Project(B->Position,To))continue;
+  const auto Size=GetCachedGeometry().GetLocalSize();if(FMath::Max(From.X,To.X)<0||FMath::Min(From.X,To.X)>Size.X||FMath::Max(From.Y,To.Y)<0||FMath::Min(From.Y,To.Y)>Size.Y)continue;
+  // At overview scale draw one representative per undirected pair and ownership class.
+  FString Key=(R.FromCityId<R.ToCityId?R.FromCityId+R.ToCityId:R.ToCityId+R.FromCityId)+(R.Own?TEXT("own"):TEXT("public"));if(!Detail&&Bundles.Contains(Key))continue;Bundles.Add(Key);
+  FScreenRoute X;X.Id=R.Id;X.Own=R.Own;for(int32 I=0;I<=16;++I)X.Points.Add(CoIRoutes::Point(From,To,I/16.,R.Own,Detail));Out.Add(X);
+ }return Out;
+}
+int32 UCoIMapInterface::PaintRoutes(const FGeometry& G,FSlateWindowElementList& Out,int32 Layer) const {
+ double Start=FPlatformTime::Seconds();DrawnTrucks=DrawnRoutes=0;if(!Simulation||!Simulation->IsReady())return Layer;
+ const auto& P=Simulation->GetSnapshot().Player;auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn());double Zoom=Pawn?Pawn->GetZoomHeight():22000;
+ auto Clear=[&](FVector2D At,FVector2D Size){return At.X>=0&&At.Y>=0&&At.X+Size.X<G.GetLocalSize().X&&At.Y+Size.Y<G.GetLocalSize().Y&&(!PlayerHUD||!PlayerHUD->OverlayCovered(At,Size));};
+ auto Line=[&](FVector2D A,FVector2D B,FLinearColor C,float W){if(Clear(A,FVector2D::ZeroVector)&&Clear(B,FVector2D::ZeroVector))FSlateDrawElement::MakeLines(Out,Layer,G.ToPaintGeometry(),{A,B},ESlateDrawEffect::None,C,true,W);};
+ for(const auto& R:ScreenRoutes()){const auto* DataRow=CoISim::Find(P.Routes,R.Id);if(!DataRow)continue;++DrawnRoutes;FLinearColor Color=R.Id==Selection.Id?FLinearColor(1,.86f,.3f):R.Own?FLinearColor(.9f,.62f,.18f):FLinearColor(.55f,.72f,.8f);
+  for(int32 I=1;I<R.Points.Num();++I)Line(R.Points[I-1],R.Points[I],Color,R.Own?3:1.5f);
+  auto Center=R.Points[9],D=(R.Points[10]-R.Points[8]).GetSafeNormal(),N=FVector2D(-D.Y,D.X);Line(Center,Center-D*9+N*5,Color,2);Line(Center,Center-D*9-N*5,Color,2);
+  int32 Count=CoIRoutes::TruckCount(*DataRow,P.Rules,Zoom,(int32)P.Rules.MapTrucksTotal-DrawnTrucks,RouteAnimate);
+  for(int32 I=0;I<Count;++I){double Phase=CoIRoutes::ExamplePhase(*DataRow,I,P),Index=Phase*16;int32 Seg=FMath::Min(15,(int32)Index);FVector2D At=FMath::Lerp(R.Points[Seg],R.Points[Seg+1],Index-Seg)-FVector2D(8,5);if(!Clear(At,{18,13}))continue;++DrawnTrucks;
+   auto Box=[&](FVector2D Pos,FVector2D Size,FLinearColor C){FSlateDrawElement::MakeBox(Out,Layer+1,G.ToPaintGeometry(FVector2f(Size),FSlateLayoutTransform(FVector2f(Pos))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,C);};
+   Box(At,{11,8},Color);Box(At+FVector2D(12,2),{5,6},Color);Box(At+FVector2D(2,8),{4,3},FLinearColor::Black);Box(At+FVector2D(12,8),{4,3},FLinearColor::Black);
+  }
+ }RoutePaintMicros=(FPlatformTime::Seconds()-Start)*1.e6;return Layer+2;
 }

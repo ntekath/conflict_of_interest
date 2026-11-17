@@ -51,5 +51,13 @@ void FSimulation::PublishPlayer(FSnapshot& Out) const {
  P.Trades=State.Trades;P.Markets=State.MarketTotals;
  for(const auto& J:State.Transports)if(J.OwnerId==P.ActorId)P.Shipments.Add(J);
  for(const auto& F:State.Facilities)if(F.OwnerId==P.ActorId)P.Facilities.Add(F);
+ for(const auto& J:State.Transports)if(J.Status==TEXT("planned")||J.Status==TEXT("moving")){
+  const bool Own=J.OwnerId==P.ActorId;if(!Own&&!P.Rules.MapPublicRouteActivity)continue;
+  const FString Key=(Own?TEXT("route.own|"):TEXT("route.public|"))+J.FromCityId+TEXT("|")+J.ToCityId;
+  auto* R=P.Routes.FindByPredicate([&](const FRouteActivity& X){return X.Id==Key;});if(!R){FRouteActivity X;X.Id=Key;X.FromCityId=J.FromCityId;X.ToCityId=J.ToCityId;X.Own=Own;P.Routes.Add(X);R=&P.Routes.Last();}
+  ++R->Active;if(J.Status==TEXT("moving"))++R->Moving;
+  if(Own){R->OwnKg+=J.Kg;R->OwnJobs.Add(J.Id);if(!R->NextArrival||J.ArrivalStep<R->NextArrival)R->NextArrival=J.ArrivalStep;}
+ }
+ P.Routes.Sort([](const FRouteActivity& A,const FRouteActivity& B){return A.Id<B.Id;});
 }
 }

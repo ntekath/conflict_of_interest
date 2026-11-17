@@ -65,3 +65,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP06a](Docs/AP06a.md): Vor Spielbeginn kann PlayerCompanyId im Szenario ein bestehendes spielbares Handelshaus, einen Produzenten oder den Transportbetrieb übernehmen; Besitz und Geld bleiben reguläre Firmendaten.
 
 [AP07.1](Docs/AP07.1.md): Versorgung und echte gewichtete Tagespreise als Kartenlayer, getrennte Haushalts-/Inputansicht, konfigurierbare Preisgrenzen und klare Zustände für fehlende Daten/Nullbedarf.
+
+[AP07.2](Docs/AP07.2.md): gerichtete Routen, freigegebene öffentliche Aktivitätsaggregation und begrenzte Lkw-Beispiele aus veröffentlichter Spielzeit.

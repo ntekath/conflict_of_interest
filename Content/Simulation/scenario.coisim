@@ -1568,6 +1568,11 @@
     "UiEventLimit": 64,
     "UiVisibleEvents": 1,
     "UiHistoryDays": 7,
-    "MaxBookingDelayHours": 168
+    "MaxBookingDelayHours": 168,
+    "MapPublicRouteActivity": true,
+    "MapTrucksPerRoute": 3,
+    "MapTrucksTotal": 100,
+    "MapTruckZoom": 16000,
+    "MapRouteDetailZoom": 12000
   }
 }
