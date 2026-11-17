@@ -1,6 +1,7 @@
 #include "SimCore.h"
 #include "SimArchive.h"
 #include "GeoTransform.h"
+#include "PlayerView.h"
 namespace CoISim {
 int64 FSimulation::RouteKm(const FString& From,const FString& To) const {
  const auto* A=Find(Scenario.Definitions.Places,From);const auto* B=Find(Scenario.Definitions.Places,To);if(!A||!B)return 0;
@@ -21,15 +22,17 @@ bool FSimulation::BookTransport(FTransport J,FString& Error) {
   if(J.Kg>1000000000-(Existing==INDEX_NONE?0:State.Inventories[Existing].QuantityKg)-Incoming)return Fail(TEXT("Inventory quantity bound"));J.GoodId=Source->GoodId;J.ReservedIncomingPoints=J.Kg*Good->StoragePointsPerKg;
   if(J.ReservedIncomingPoints>Find(Scenario.Definitions.WarehouseTypes,Dest->TypeId)->CapacityPoints-UsedStorage(Dest->Id)-Dest->ReservedIncomingPoints)return Fail(TEXT("Destination full"));
  }
- J.RouteKm=RouteKm(J.FromCityId,J.ToCityId);if(!J.RouteKm)return Fail(TEXT("No route"));J.OperatingCents=J.RouteKm*VT->CostCentsPerKm;
- J.FreightCents=J.OwnerId==J.ProviderId?0:(J.OperatingCents*(1000+Scenario.Economy.FreightMarkupPermille)+999)/1000;J.CostCents=J.OwnerId==J.ProviderId?J.OperatingCents:J.FreightCents;
+ const auto Terms=TransportTerms(Scenario.Definitions,Scenario.Economy,J.FromCityId,J.ToCityId,*VT,J.OwnerId==J.ProviderId,State.EconomyHour,J.RequestedDepartureHour);
+ if(!Terms.Km)return Fail(TEXT("No route"));
+ if(Terms.Departure<State.EconomyHour+Scenario.Economy.BookingLeadHours||Terms.Departure>State.EconomyHour+Scenario.Economy.MaxBookingDelayHours)return Fail(TEXT("Departure outside booking window"));
+ J.RouteKm=Terms.Km;J.OperatingCents=Terms.Operation;J.FreightCents=Terms.Freight;J.CostCents=Terms.Cost;
  auto* P=Find(State.Accounts,ActorAccount(J.ProviderId));int64 Need=J.OwnerId==J.ProviderId?J.OperatingCents:J.FreightCents;
  if(!P||Need>A->BalanceCents-A->ReservedCents||(J.OwnerId!=J.ProviderId&&J.OperatingCents>P->BalanceCents-P->ReservedCents))return Fail(TEXT("Unfunded shipper or provider"));
  int64 Active=0;for(const auto& T:State.Transports)if(T.Status==TEXT("planned")||T.Status==TEXT("moving"))++Active;if(Active>=State.Vehicles.Num())return Fail(TEXT("Finite fleet full"));
  // Commit only after ALL predicates; source, destination, provider and payer become bound together.
  A->ReservedCents+=Need;if(J.OwnerId!=J.ProviderId)P->ReservedCents+=J.OperatingCents;
  if(!J.Empty){Source->ReservedKg+=J.Kg;Dest->ReservedIncomingPoints+=J.ReservedIncomingPoints;}
- V->Bound=true;V->TransportId=J.Id;J.Status=TEXT("planned");J.Service=J.OwnerId==J.ProviderId?TEXT("own_truck"):TEXT("rented_truck");J.DepartureStep=State.EconomyHour+Scenario.Economy.BookingLeadHours;J.ArrivalStep=J.DepartureStep+(J.RouteKm+VT->SpeedKmPerHour-1)/VT->SpeedKmPerHour;
+ V->Bound=true;V->TransportId=J.Id;J.Status=TEXT("planned");J.Service=J.OwnerId==J.ProviderId?TEXT("own_truck"):TEXT("rented_truck");J.DepartureStep=Terms.Departure;J.ArrivalStep=Terms.Arrival;
  State.Transports.Add(MoveTemp(J));Error.Empty();return true;
 }
 bool FSimulation::CancelTransport(const FString& Id,const FString& Actor) {
@@ -45,7 +48,7 @@ void FSimulation::TransportHour(int64 Hour) {
    J.Status=TEXT("moving");V->CityId.Empty();
   }
   if(J.Status==TEXT("moving")&&J.ArrivalStep<=Hour){if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.CargoInventoryId;});FInventory Cargo=State.Inventories[I];State.Inventories.RemoveAt(I);int32 D=EnsureStock(J.OwnerId,J.DestinationStorageId,J.GoodId);if(!State.Inventories[D].QuantityKg)State.Inventories[D].AcquiredHour=Hour;State.Inventories[D].SpoilRemainder+=Cargo.SpoilRemainder;State.Inventories[D].QuantityKg+=Cargo.QuantityKg;State.Inventories[D].BookValueCents+=Cargo.BookValueCents;Find(State.Warehouses,J.DestinationStorageId)->ReservedIncomingPoints-=J.ReservedIncomingPoints;}
-   J.Status=TEXT("arrived");V->CityId=J.ToCityId;V->Bound=false;V->TransportId.Empty();
+   J.Status=TEXT("arrived");if(J.OwnerId==Scenario.PlayerCompanyId)PlayerEvent(TEXT("transport"),J.Id,TEXT("Lieferung angekommen. Fahrzeug und verbleibende Ware stehen am Ziel bereit."));V->CityId=J.ToCityId;V->Bound=false;V->TransportId.Empty();
   }
  }
  int32 Closed=0;for(const auto& J:State.Transports)if(J.Status!=TEXT("planned")&&J.Status!=TEXT("moving"))++Closed;

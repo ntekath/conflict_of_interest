@@ -1512,6 +1512,12 @@
     "TraderMaxLoadKg": 2000,
     "TraderCashReserveCents": 10000,
     "TraderMinProfitCents": 100,
-    "TraderMarkupPermille": 200
+    "TraderMarkupPermille": 200,
+    "UiLowCashCents": 10000,
+    "UiCapacityWarningPermille": 100,
+    "UiEventLimit": 64,
+    "UiVisibleEvents": 1,
+    "UiHistoryDays": 7,
+    "MaxBookingDelayHours": 168
   }
 }

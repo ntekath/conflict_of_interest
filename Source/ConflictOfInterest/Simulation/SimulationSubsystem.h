@@ -19,6 +19,8 @@ public:
  virtual bool DoesSupportWorldType(EWorldType::Type Type) const override {return Type==EWorldType::Game||Type==EWorldType::PIE;}
  void TogglePause();void SetSpeed(int32 Value);bool Restart();
  bool Submit(CoISim::FCommand Command,FString& Error);
+ bool SubmitPlayer(CoISim::FCommand Command,int64 Token,int64& Ticket,FString& Error);
+ const TArray<CoISim::FCommandResult>& GetCommandResults() const {return Simulation.GetResults();}
  const CoISim::FSnapshot& GetSnapshot() const {return Simulation.GetSnapshot();}
  const CoISim::FDiagnostics& GetDiagnostics() const {return Simulation.GetDiagnostics();}
  bool IsPaused() const {return Paused;}int32 GetSpeed() const {return Speed;}
@@ -30,6 +32,6 @@ public:
 private:
  CoISim::FSimulation Simulation;
  bool Paused=true;int32 Speed=1;double FractionalMicros=0,NotifySeconds=0,GameThreadMicros=0;
- FString LoadError;
+ int64 LastPlayerToken=0;FString LoadError;
  void Stop();
 };

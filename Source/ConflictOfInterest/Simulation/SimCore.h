@@ -1,5 +1,6 @@
 #pragma once
 #include "SimModel.h"
+#include "PlayerView.h"
 #include "GeoMapData.h"
 namespace CoISim
 {
@@ -9,7 +10,7 @@ struct FCommand
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;
 };
-struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason; };
+struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason,ActorId,ObjectId; };
 struct FRegionProposal { int32 Index=0; int64 Step=0; uint32 Random=0; };
 struct FDiagnostics
 {
@@ -20,7 +21,7 @@ struct FDiagnostics
 struct FSnapshot
 {
  uint64 Generation=0,Version=0; int64 Step=0,Population=0,Employed=0,PlayerMoneyCents=0,PlayerReservedCents=0,PlayerStorageCapacity=0,PlayerStorageUsed=0,PlayerTrucks=0;
- FString Date,PlayerName,EconomySummary;
+ FPlayerView Player;FString Date,PlayerName,EconomySummary;
  TMap<FString,FString> EconomyDetails; TArray<FRegion> Regions; TArray<FCountry> Countries;
 };
 bool LoadScenario(const FString& Json,const FCoIGeoMapData& Geo,FScenario& Out,FString& Error);
@@ -60,6 +61,7 @@ private:
  int32 StockIndex(const FString& Actor,const FString& Store,const FString& Good) const;
  int32 EnsureStock(const FString& Actor,const FString& Store,const FString& Good);
  int64 TakeStock(int32 Index,int64 Kg);int64 TakeSpoilCredit(int32 Index,int64 Kg);
+ FPlayerDay& PlayerDay();void PlayerEvent(const FString& Kind,const FString& Object,const FString& Text);void PlayerWarnings();void PublishPlayer(FSnapshot&) const;
  void InitializeAudit();void PublishEconomy(FSnapshot& Out) const;
  bool PlaceOrder(FMarketOrder Order,FString& Error);
  bool CancelOrder(const FString& Id,const FString& Actor,const FString& Status);

@@ -8,12 +8,12 @@ class CONFLICTOFINTEREST_API ACoIPlayerController : public APlayerController
 {
  GENERATED_BODY()
 public: ACoIPlayerController();
- bool IsMapPointerBlocked() const;
+ bool IsMapPointerBlocked() const;bool IsMapKeyboardBlocked() const;void ClosePlayerView();
  UFUNCTION(Exec) void MapStatus();
  UFUNCTION(Exec) void SimStatus();
  UFUNCTION(Exec) void SimRestart();
 private: UPROPERTY() TObjectPtr<class UCoIMapInterface> MapInterface;
-protected: virtual void BeginPlay() override;
+protected: virtual void BeginPlay() override;virtual void SetupInputComponent() override;
 };
 UCLASS()
 class CONFLICTOFINTEREST_API ACoIGameMode : public AGameModeBase

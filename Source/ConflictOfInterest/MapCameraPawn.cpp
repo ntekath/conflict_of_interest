@@ -23,7 +23,7 @@ void AMapCameraPawn::SetupPlayerInputComponent(UInputComponent* Input)
 void AMapCameraPawn::North(float Value){Movement.X=Value;}
 void AMapCameraPawn::East(float Value){Movement.Y=Value;}
 void AMapCameraPawn::Tick(float Dt)
-{Super::Tick(Dt);auto M=Movement.GetClampedToMaxSize(1);SetActorLocation(CoICamera::ClampFocus(GetActorLocation()+FVector(M.X,M.Y,0)*Height*.65*Dt,Minimum,Maximum));}
+{Super::Tick(Dt);if(auto* PC=Cast<ACoIPlayerController>(GetController());PC&&PC->IsMapKeyboardBlocked())return;auto M=Movement.GetClampedToMaxSize(1);SetActorLocation(CoICamera::ClampFocus(GetActorLocation()+FVector(M.X,M.Y,0)*Height*.65*Dt,Minimum,Maximum));}
 bool AMapCameraPawn::CursorPlane(FVector& Point) const
 {
  auto* PC=Cast<APlayerController>(GetController());FVector O,D;

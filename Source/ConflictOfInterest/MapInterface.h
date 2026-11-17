@@ -18,7 +18,7 @@ class CONFLICTOFINTEREST_API UCoIMapInterface : public UUserWidget
 {
  GENERATED_BODY()
 public:
- bool IsPointerOverPanel() const;
+ bool IsPointerOverPanel() const;bool IsKeyboardBlocked() const;bool HandleEscape();void SetMapMode(const FString& Mode);
  const FString& GetSelectedId() const { return Selection.Id; }
 protected:
  virtual TSharedRef<SWidget> RebuildWidget() override;
@@ -29,6 +29,7 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
+ UPROPERTY() TObjectPtr<class UCoIPlayerHUD> PlayerHUD;
  FCoIGeoMapData Data;
  FCoISelection Selection;
  ECoIMapView View=ECoIMapView::Regions;

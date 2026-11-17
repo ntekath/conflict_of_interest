@@ -1,10 +1,10 @@
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
-Stand: 16.11.2026. Vollständiger konzeptioneller Neustart mit US-Kartenausschnitt und Spielbeginn 1913. Die folgende Paketfolge ersetzt die bisherige europäische Planung; alle Pakete gelten für diesen Neustart als offen. Der bestehende Projektcode wurde hier nicht geprüft. Vorhandene Arbeit nicht automatisch löschen: für einen neuen Projektstand bzw. Branch sichern und nur passende technische Teile bewusst übernehmen.
+Stand: 16.11.2026. Vollständiger konzeptioneller Neustart mit US-Kartenausschnitt und Spielbeginn 1913. Die folgende Paketfolge ersetzt die bisherige europäische Planung; AP01–AP04 sind inzwischen laut Projektinhaber umgesetzt. Der Umsetzungsstand ab AP05 ist nicht bestätigt. Der bestehende Projektcode wurde hier nicht geprüft. Vorhandene Arbeit nicht automatisch löschen: für einen neuen Projektstand bzw. Branch sichern und nur passende technische Teile bewusst übernehmen.
 
 ## Masterprompt für Codex
 
-Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; beginne erneut mit AP01 für den neuen US-Projektstand. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
+Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; AP01–AP04 nicht erneut bauen. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
 
 ### Spielvision
 
@@ -54,6 +54,37 @@ Produktion, Inputverbrauch, Haushaltskonsum und Verderb sind ausgewiesene Warenq
 Die Hauptoberfläche ist eine zusammenhängende, flache 3D-Strategiekarte mit später optionalem Höhenrelief. Orientierung für Zoom, Auswahl und Informationsdichte ist Crusader Kings 3; Gestaltung und Assets sind eigenständig.
 
 Die Karte zeigt abhängig vom Zoom Länder, Regionen, Städte, Betriebe und Transportverbindungen. Informationspanels ergänzen die Karte. Es gibt zunächst keine separate begehbare Welt und keine Stadtbauansicht.
+
+### Spieler-HUD und Arbeitsansichten
+
+Ab AP06 ersetzt eine zusammenhängende Spieleroberfläche das bisherige Diagnosepanel als Hauptbedienung. AP07 ergänzt Kartenanalyse und Querverbindungen. Technische Diagnose bleibt separat einblendbar; Schrittzeiten, Snapshot-Dauer und interne IDs gehören nicht ins normale HUD.
+
+**Gestaltung und Verhalten**
+- Dezente Anlehnung an 1913: ruhige dunkle Flächen, warme helle Schrift, zurückhaltende Messingakzente und klare Tabellen. Lesbarkeit hat Vorrang vor Ornamenten; keine historische Schrift für dichte Zahlentabellen.
+- Einheitliche Abstände, Typografie, Buttonzustände, Tooltips und Zahlenformate in wiederverwendbaren UMG-Komponenten.
+- Zunächst 1280×720 und 1920×1080 mit DPI-Skalierung prüfen. Keine abgeschnittenen Bedienelemente; Tabellen scrollen innerhalb ihres Fensters, Zeilen besitzen klar beschriftete Spalten.
+- Karte bleibt Hauptfläche. Eine große Arbeitsansicht gleichzeitig; Auswahlpanel kompakt bzw. einklappbar. Escape schließt zuerst Dialog, dann Arbeitsansicht.
+- UI-Eingaben einschließlich Mausrad nicht an die Karte durchreichen. Texteingabe blockiert Kamera-Hotkeys. Dialoge pausieren die Simulation nicht automatisch; Datum und Geschwindigkeit bleiben sichtbar.
+- Aufträge werden erst durch explizite Bestätigung gesendet. Vorschauen sind unverbindlich; Verfügbarkeit, Kosten und Deckung bei Ausführung erneut prüfen. Ablehnungen verständlich erklären, doppelte Bestätigung desselben Befehls verhindern.
+- Daten stammen aus konsistenten veröffentlichten Zuständen, nicht aus separat gerechneter UI-Wirtschaft. Filter, Auswahl und Scrollposition bei Aktualisierung möglichst behalten.
+
+| Oberfläche | Verbindlicher Inhalt |
+|---|---|
+| Obere Leiste | Firmenname, verfügbares und reserviertes Geld, Gesamtkontostand im Tooltip, Datum/Uhrzeit, Pause, vorhandene Zeitgeschwindigkeiten |
+| Navigation | Märkte, Lager, Transporte, Unternehmen; aktive Ansicht deutlich markieren |
+| Kartenauswahl | Name, Typ und Standort des gewählten Objekts, passende Kennzahlen und direkte Aktion zum zugehörigen Markt/Lager/Transport |
+| Kartensteuerung ab AP07 | Layerwahl, Warenauswahl, Legende, Datenzeitraum und Datenstand |
+| Meldungen | Lieferung angekommen, Auftrag abgelehnt, Lagerkapazität erschöpft, Liquidität knapp; mit Zeit, Kontext und Sprung zum Objekt |
+
+Verfügbares Geld = Kontostand minus finanzielle Reservierungen. Reserviertes Geld nicht nochmals vom Kontostand abziehen. Bereits implementierte Geschwindigkeitsstufen beibehalten, sofern nicht ausdrücklich geändert.
+
+**Arbeitsansichten ab AP06**
+- Märkte: Region, Ware und physischer Angebotsort filtern. Kauf-/Verkaufsangebote mit Preislimit, Restmenge und Ort; letzte Abschlüsse mit Alter. Eigene Aufträge samt Reservierung, Restmenge und Storno anzeigen. Kauf/Verkauf mit Gesamtwertvorschau und verständlichen Grenzen.
+- Lager: Standort, Eigentum/Mietstatus, belegte/freie/reservierte Zielkapazität, Fixkosten und Warenbestände. Gesamtmenge, Verkaufs-/Transportreservierungen und verfügbare Menge unterscheiden. Keine doppelte Reservierung zählen.
+- Transporte: Planung, eigene Fahrzeugliste mit Standort/Belegung, buchbare Fremdangebote und laufende Aufträge. Start, Ziel, Fracht, Abfahrt, Ankunft, Status und Kosten sichtbar.
+- Unternehmen: eigene Betriebe, Lager und Fahrzeuge sowie gebuchte Einnahmen, Ausgaben und Ergebnis des letzten abgeschlossenen Spieltags. Verfügbare Tage explizit nennen; noch fehlende Historie als solche ausweisen. Kein neues Bilanz-/Finanzierungssystem nur für das HUD erfinden.
+- Meldungen bündeln wiederholte Probleme pro Objekt; maximale sichtbare Anzahl begrenzen. Ein begrenztes Meldungsprotokoll bleibt einsehbar. Warnschwellen in Konfiguration halten.
+- Leere Listen, fehlende Marktgeschäfte, ungültige Auswahl und veraltete Vorschauen erhalten verständliche Zustände statt Nullwerten ohne Erklärung.
 
 ### Technische Leitplanken
 
@@ -290,13 +321,14 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 - Handels-/Transportbuchungen erhalten Gesamtgeld und Gesamtwaren; Produktion, Konsum, Verderb und externe Quellen werden separat bilanziert.
 - Landesaggregation zählt Konsum nicht doppelt.
 
-### AP06 – Transportmenü, eigene Assets und erste Handelslieferung
+### AP06 – Spieler-HUD, Arbeitsansichten und erste Handelslieferung
 
 **Voraussetzung:** AP05.
 
-**Ziel:** Der Spieler verdient durch räumlichen Warenausgleich Geld.
+**Ziel:** Ein bedienbares Spieler-HUD verbindet Märkte, Lager, Unternehmensbesitz und Transporte zu einem vollständigen Handelsablauf.
 
 **Aufgaben**
+- Spieler-HUD gemäß eigener Spezifikation bauen: obere Leiste, Navigation, Auswahlpanel, Meldungen und die vier Arbeitsansichten. Diagnosepanel separat schaltbar erhalten.
 - Spielerkonzern und Handelsdialog auf bestehende Akteurskonten und Orderbücher aufsetzen. Dieselben Regeln wie bei Nichtspielern verwenden.
 - Kaufaufträge mit Preislimit, reserviertem Budget und Teilausführungen anbieten. Nur tatsächlich erworbene Ware ist transportierbar.
 - Transportbuchung separat atomar validieren. Ein abgelehnter Transport macht einen bereits ausgeführten Marktkauf nicht rückwirkend ungültig; Ware bleibt im Eigentum des Spielers am Startort.
@@ -310,7 +342,10 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 - Keine Fahrsteuerung oder detailliertes Straßennetz implementieren. Routendarstellung und exemplarische Animation folgen in AP07.
 
 **Abnahme**
-- Kauf → Transport → Ankunft → Verkauf ist vollständig spielbar.
+- Kauf → Transport → Ankunft → Verkauf ist vollständig über Spieleransichten bedienbar, ohne Entwicklerkonsole oder Debugbuttons.
+- Verfügbares/reserviertes Geld, Waren und Kapazitäten stimmen mit dem Simulationszustand überein.
+- Kernablauf bei 1280×720 und 1920×1080 visuell prüfen; keine verdeckten Schaltflächen oder Eingaben durch Fenster auf die Karte.
+- Abschluss/Fehler eines Auftrags erzeugt eine verständliche Meldung mit Objektbezug.
 - Zu wenig Geld, Ware oder Kapazität verhindert den Auftrag nachvollziehbar.
 - Fracht wird nie doppelt erzeugt oder doppelt zugestellt.
 - Lieferungen funktionieren auch außerhalb des Kamerabereichs und bei Zeitbeschleunigung.
@@ -318,25 +353,51 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 - Fremdauftrag bezahlt den Anbieter und bindet dessen Kapazität. Leeres Lager verursacht weiterhin Fixkosten.
 - Fehlende Zielkapazität lehnt die Buchung ohne Teilreservierungen ab. Geplatzter Transport storniert keinen bereits ausgeführten Kauf.
 
-### AP07 – Wirtschafts- und Transportlayer
+### AP07 – Wirtschafts- und Transportlayer mit HUD-Integration
 
-**Voraussetzung:** AP06.
+**Voraussetzung:** AP06 einschließlich Spieler-HUD.
 
-**Ziel:** Chancen und Engpässe werden direkt auf der Karte sichtbar.
+**Ziel:** Versorgungslücken, Preisunterschiede und Transportaktivität lassen sich auf der Karte erkennen und direkt bearbeiten.
 
-**Aufgaben**
-- Layer für Politik, Versorgung, Preise und Transport einführen.
-- Warenauswahl, Legende, Einheiten und eindeutige Kennzeichnung fehlender Daten ergänzen.
-- Wirtschaftswerte über Region-IDs mit der Kartendarstellung verbinden.
-- Grobe Routen, Kapazitäten und Transportaktivität anzeigen. Begrenzte exemplarische Fahrzeuge auf Routen bewegen; nicht zwingend ein sichtbares Fahrzeug pro Auftrag.
-- Animationsfortschritt aus veröffentlichten Simulationsdaten ableiten, zoomabhängig vereinfachen und bei Bedarf ausblenden. Keine Kollision, Fahrphysik oder NavMesh-Abhängigkeit.
-- Für Vergleiche eine konsistente Farbskala verwenden.
+**AP07.1 – Kennzahlen und Kartenlayer**
+- Vorhandene Länder-/Regionsansicht weiterverwenden; keine neue politische Simulation.
+- Versorgung für gewählte Ware und Region im letzten abgeschlossenen Spieltag berechnen: Nahrung/Luxus = tatsächlich konsumierte Menge geteilt durch vor Budgetbegrenzung gewünschten Konsumbedarf; Produktionsinputs = tatsächlich eingesetzte Menge geteilt durch den vor Input-/Geldmangel geplanten Rezeptbedarf bei vorhandener Arbeitskraft/Kapazität.
+- Haushalts- und Produktionsversorgung getrennt auswählbar machen, sofern dieselbe Ware beiden dient. Definition und Mengen im Tooltip erläutern.
+- Bedarf null als „Kein Bedarf“ behandeln, nicht als 0 % oder 100 %. Noch kein vollständiger Spieltag = „Noch keine Tagesdaten“.
+- Preis = mengengewichteter Durchschnitt tatsächlich ausgeführter Geschäfte des letzten abgeschlossenen Spieltags für Ware und Region. Bei mehreren physischen Orten Aggregation benennen; regionale Mittelwerte sind keine direkt garantierten Handelspreise.
+- Aktuelle beste Kauf-/Verkaufsangebote und Mengen im Panel separat mit Ortsbezug anzeigen. Ohne Tagesumsatz „Keine aktuellen Geschäfte“; letzten älteren Abschluss nur mit Alter anzeigen.
+- Versorgungsskala 0–100 %: Rot–Gelb–Grün mit festen Schwellen, zusätzlich Zahlen/Text. Preisgrenzen je Ware konfigurierbar und während des Vergleichs stabil; Werte außerhalb mit Endfarbe und tatsächlichem Zahlenwert zeigen.
+- Fehlende Daten neutral grau, „Kein Bedarf“ davon durch Muster/Symbol/Text unterscheidbar. Farbe darf nicht die einzige Information sein.
+- Layerwahl, Ware, Unteransicht, Einheit, Zeitfenster und Legende ins HUD aufnehmen. Datenstand und zugrunde liegenden abgeschlossenen Simulationsschritt anzeigen.
+- Wirtschaftswerte über stabile Region-IDs zuordnen; Darstellung erst nach veröffentlichtem Simulationsschritt aktualisieren.
+
+**AP07.2 – Routen und exemplarische Fahrzeuge**
+- Grobe Routenkurven mit Richtung zwischen wirtschaftlichen Orten darstellen; keine detaillierte Straßenkarte, Kollision, Fahrphysik oder NavMesh.
+- Filter „Eigene“ und „öffentlich sichtbare Aktivität“. Eigene Routen hervorheben. Für den Prototyp fremde Routenaktivität nur aggregiert und explizit als öffentliches Szenariowissen freigeben; keine geheimen Frachtmengen, Konten oder Einzelaufträge anzeigen.
+- Eigene Routenauswahl zeigt Start/Ziel, aktive Lieferungen, eigene Frachtmenge und nächste Ankunft; Auftrag im Transportmenü öffnen können. Fremde Route zeigt nur freigegebene Aggregation.
+- Wenige exemplarische Lkw auf sichtbaren aktiven Verbindungen. Anzahl pro Route und insgesamt konfigurierbar begrenzen, z. B. maximal 3 je Route und 100 insgesamt als Testwerte.
+- Visualisierungen dürfen reale Auftragsfortschritte abbilden oder aggregierte Aktivität repräsentieren. Exemplarische Fahrzeuge sind nicht die eindeutige Positionsauskunft für einzelne Lieferungen.
+- Beim Herauszoomen Fahrzeuge ausblenden und Routen bündeln/vereinfachen. Nahe Route muss trotz Kreuzung mit anderen Verbindungen gezielt auswählbar sein.
+- Bewegung aus Simulationszeit und veröffentlichten Daten ableiten; Pause stoppt, Geschwindigkeit beeinflusst Bewegung. Keine Render-DeltaTime als unabhängige Transportuhr.
+- Fahrzeuge sind Darstellungsobjekte ohne Waren-/Geldbesitz und ohne Zustellungslogik. Ausblenden oder Entfernen ändert keine Simulationsdaten.
+
+**AP07.3 – Karte und Arbeitsansichten verbinden**
+- Klick auf Region öffnet kompaktes Kennzahlenpanel; Aktion „Markt öffnen“ übernimmt Region und gewählte Ware in die Marktansicht.
+- Aktion „Transport planen“ öffnet AP06 mit sinnvollen Start-/Zielfiltern aus Auswahl bzw. eigenem Lager. Ohne Quelle/Ziel nur fehlende Felder offenlassen, keinen Auftrag automatisch erzeugen.
+- Auswahl aus Lager-/Transportliste kann die Karte auf das betreffende Objekt zentrieren. Karte und Listen nutzen dieselben IDs.
+- Marktauswahl und Layerfilter beim Wechsel zwischen Karte und Arbeitsansicht erhalten.
+- Berechnungen für Tageskennzahlen einmal pro benötigtem Zeitraum im Daten-/Simulationsbereich durchführen; UI nicht pro Frame durch die gesamte Welt oder unbegrenzte Geschäftshistorie iterieren lassen.
+- Karte, Tabellen und Auswahlpanel auf denselben Datenstand beziehen; technische Diagnosen weiterhin separat.
 
 **Abnahme**
-- Ein Nahrungsengpass kann auf der Karte gefunden und über einen Handelsauftrag bedient werden.
-- Layer stimmen mit Informationspanel und Simulationszustand überein.
-- Layerwechsel verändert keine wirtschaftlichen Daten.
-- Deaktivierte Routenanimation ändert keine Ankunft, Kosten oder Wirtschaftsergebnisse.
+- Kontrollfall: 80 kg konsumiert bei 100 kg gewünschtem Bedarf ergeben 80 %; Bedarf null und fehlende Historie sind eigenständige Zustände.
+- Kontrollfall: 10 kg zu 2 USD/kg und 30 kg zu 4 USD/kg ergeben 3,50 USD/kg Tagespreis. Ohne Abschlüsse erscheint kein erfundener Preis.
+- Auf der Karte lässt sich ein Nahrungsengpass erkennen, der zugehörige Markt öffnen und über AP06 eine Lieferung planen.
+- Karte, Legende und Informationspanel zeigen dieselben Werte und Zeiträume. Layerwechsel verändert keine wirtschaftlichen Daten.
+- Pause hält exemplarische Bewegung an; Zeitbeschleunigung, Kameraposition und deaktivierte Animation verändern keine Kosten oder Ankünfte.
+- Sichtbarkeitsfilter offenbaren keine geschützten Konkurrentendaten.
+- UI bei 1280×720 und 1920×1080 sowie mehreren Zoomstufen visuell prüfen. Layer, Legende und Auftragsdialoge bleiben bedienbar.
+- Anzahl visueller Fahrzeuge bleibt innerhalb der Limits; Schritt-/Frame-Zeit mit aktivierter und deaktivierter Routenansicht vergleichen und dokumentieren.
 
 ### AP07a – Klimarisiko, Vorräte und erster Interessenkonflikt
 

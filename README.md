@@ -1,7 +1,7 @@
 # Conflict of Interest
 
 Konzeptioneller Neustart: US-Testgebiet, Spielbeginn 01.01.1913. Verbindlicher Entwurf:
-[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP05**. Aktive Karte: Großer-Seen-US-Ausschnitt.
+[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP06**. Aktive Karte: Großer-Seen-US-Ausschnitt.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 
@@ -58,3 +58,6 @@ Geografische Definitionen bleiben statische Daten. Das externe JSON-Startszenari
 
 UE-Konsole: `Automation RunTests CoI.`, bis „Test Queue Empty“ abwarten.
 Weitere Schritte und tatsächlich ausgeführte Prüfungen: [AP01](Docs/AP01.md), [AP02](Docs/AP02.md), [AP03](Docs/AP03.md), [AP04](Docs/AP04.md).
+
+
+Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als Hauptoberfläche. Märkte, Lager, Transporte und Unternehmen verbinden Kauf → bezahlte Lieferung → Verkauf; Bestätigungen senden echte Simulationsbefehle. Diagnose bleibt separat schaltbar. Escape schließt zuerst den Dialog, dann die Arbeitsansicht. Bei pausierter Simulation werden gesendete Befehle erst nach Start umgesetzt. Bedienung, Testwerte und bekannte Grenzen stehen in der AP06-Dokumentation.

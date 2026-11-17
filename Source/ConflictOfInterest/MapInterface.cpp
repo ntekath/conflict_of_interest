@@ -1,4 +1,5 @@
 #include "MapInterface.h"
+#include "UI/PlayerHUD.h"
 #include "GeoCatalog.h"
 #include "MapCameraPawn.h"
 #include "Simulation/SimulationSubsystem.h"
@@ -25,37 +26,8 @@ TSharedRef<SWidget> UCoIMapInterface::RebuildWidget()
 {
  if(!WidgetTree)WidgetTree=NewObject<UWidgetTree>(this,TEXT("WidgetTree"),RF_Transient);
  auto* Root=WidgetTree->ConstructWidget<UCanvasPanel>();WidgetTree->RootWidget=Root;
- Panel=WidgetTree->ConstructWidget<UBorder>();Panel->SetBrushColor(FLinearColor(.014f,.025f,.035f,.96f));Panel->SetPadding(FMargin(18));
- auto* PanelSlot=Root->AddChildToCanvas(Panel);PanelSlot->SetPosition({18,18});PanelSlot->SetSize({300,590});
- auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Panel->SetContent(Scroll);
- auto* Box=WidgetTree->ConstructWidget<UVerticalBox>();Scroll->AddChild(Box);
- auto Text=[&](const FString& Value,int Size,FLinearColor Color)
- {auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Value));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",Size));T->SetColorAndOpacity(Color);T->SetAutoWrapText(true);Box->AddChildToVerticalBox(T)->SetPadding(FMargin(0,0,0,10));return T;};
- Text(TEXT("Conflict of Interest"),18,FLinearColor(.95f,.75f,.38f));
- SimulationLabel=Text(TEXT("Simulation wird geladen …"),12,FLinearColor(.65f,.75f,.8f));
- ViewLabel=Text(TEXT(""),14,FLinearColor::White);
- // AddDynamic requires literal function names; bind the three controls explicitly.
- auto MakeButton=[&](const TCHAR* Label){auto* B=WidgetTree->ConstructWidget<UCoIMapButton>();auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Label));T->SetColorAndOpacity(FLinearColor(.04f,.06f,.08f));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",13));B->SetContent(T);Box->AddChildToVerticalBox(B)->SetPadding(FMargin(0,0,0,6));return B;};
- auto MakeRow=[&](){auto* Row=WidgetTree->ConstructWidget<UHorizontalBox>();Box->AddChildToVerticalBox(Row)->SetPadding(FMargin(0,0,0,8));return Row;};
- auto RowButton=[&](UHorizontalBox* Row,const TCHAR* Label)
- {
-  auto* B=WidgetTree->ConstructWidget<UCoIMapButton>();auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Label));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",11));T->SetColorAndOpacity(FLinearColor(.04f,.06f,.08f));B->SetContent(T);
-  auto* Cell=Row->AddChildToHorizontalBox(B);Cell->SetSize(FSlateChildSize(ESlateSizeRule::Fill));Cell->SetPadding(FMargin(0,0,4,0));return B;
- };
- auto* Views=MakeRow();
- RowButton(Views,TEXT("Regionen"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Regions);
- RowButton(Views,TEXT("Länder"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Countries);
- RowButton(Views,TEXT("Besitz"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Ownership);
- MakeButton(TEXT("Auswahl aufheben"))->OnClicked.AddDynamic(this,&UCoIMapInterface::ClearSelection);
- auto* Clock=MakeRow();
- PauseControl=Cast<UCoIMapButton>(RowButton(Clock,TEXT("Start")));
- PauseControl->OnClicked.AddDynamic(this,&UCoIMapInterface::ToggleSimulation);
- RowButton(Clock,TEXT("1x"))->OnClicked.AddDynamic(this,&UCoIMapInterface::SpeedOne);
- RowButton(Clock,TEXT("4x"))->OnClicked.AddDynamic(this,&UCoIMapInterface::SpeedFour);
- RowButton(Clock,TEXT("16x"))->OnClicked.AddDynamic(this,&UCoIMapInterface::SpeedSixteen);
- SimulationDiagnostics=Text(TEXT(""),10,FLinearColor(.65f,.75f,.8f));
- Information=Text(TEXT(""),13,FLinearColor(.9f,.94f,.96f));
- Text(TEXT("Orange: Stadt | Gold: Auswahl\nKlick: Ort oder Fläche wählen\nWASD/Pfeile: bewegen | Rad: Zoom\nRegionen sind fiktive Testgebiete."),11,FLinearColor(.62f,.73f,.77f));
+ PlayerHUD=CreateWidget<UCoIPlayerHUD>(GetOwningPlayer(),UCoIPlayerHUD::StaticClass());PlayerHUD->MapOwner=this;
+ auto* HUDSlot=Root->AddChildToCanvas(PlayerHUD);HUDSlot->SetAnchors(FAnchors(0,0,1,1));HUDSlot->SetOffsets(FMargin(0));
  return Super::RebuildWidget();
 }
 void UCoIMapInterface::NativeConstruct()
@@ -93,6 +65,7 @@ void UCoIMapInterface::ApplyView()
 }
 void UCoIMapInterface::RefreshInformation()
 {
+ if(PlayerHUD){FString Summary;for(const auto& C:Data.Countries)if(C.Id==Selection.Id)Summary=C.Name+TEXT(" · Land\nWerte werden aus Regionen aggregiert.");PlayerHUD->MapSelection(Selection.Id,Summary);return;}
  if(!Information)return;
  FString Info=TEXT("Ort auswählen\n\nStadt vor Fläche. Wasser und freier Hintergrund heben die Auswahl auf.");
  auto Name=[&](const TArray<FCoIGeoSurface>& List,const FString& Id){for(const auto& S:List)if(S.Id==Id)return S.Name;return Id;};
@@ -121,6 +94,7 @@ bool UCoIMapInterface::Project(FVector2D World,FVector2D& Local) const
 }
 bool UCoIMapInterface::InsidePanel(FVector2D Absolute) const
  {
+  if(PlayerHUD)return PlayerHUD->PointerBlocked(Absolute);
   if(!Panel)return false;
   auto Local=GetCachedGeometry().AbsoluteToLocal(Absolute);
   auto* PanelSlot=Cast<UCanvasPanelSlot>(Panel->Slot);
@@ -155,7 +129,7 @@ FReply UCoIMapInterface::NativeOnMouseButtonDown(const FGeometry& G,const FPoint
 }
 int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Cull,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const
 {
- int32 Top=Layer;if(!bReady)return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);
+ int32 Top=Layer;if(PlayerHUD&&PlayerHUD->KeyboardBlocked())return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);if(!bReady)return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);
  const FLinearColor Gold(1,.78f,.24f),Orange(1,.48f,.08f);const auto Font=FCoreStyle::GetDefaultFontStyle("Bold",12);
  auto Line=[&](TArray<FVector2D> P,FLinearColor Color,float Width){FSlateDrawElement::MakeLines(Out,Top+1,G.ToPaintGeometry(FVector2f(G.GetLocalSize()),FSlateLayoutTransform()),P,ESlateDrawEffect::None,Color,true,Width);};
  // All rings, including islands/holes, follow the original selection ID even after a mode change.
@@ -167,7 +141,7 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
    {
     FVector2D A,B;if(!Project(Ring[I-1],A)||!Project(Ring[I],B))continue;
     // The panel occupies the left edge. Clip segments at its right edge rather than crossing UI.
-    const double Right=318;
+    const double Right=0;
     if(A.X<Right&&B.X<Right)continue;
     if(A.X<Right)A=FMath::Lerp(A,B,(Right-A.X)/(B.X-A.X));
     if(B.X<Right)B=FMath::Lerp(B,A,(Right-B.X)/(A.X-B.X));
@@ -179,11 +153,11 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
  Top=Super::NativePaint(Args,G,Cull,Out,Top+2,Style,Enabled);
  // Clip custom map overlays away from the information panel as well as the viewport edge.
  // Draw symbols first; labels then use a deterministic collision budget.
- TArray<FVector2D> Occupied,OccupiedSizes;Occupied.Add({18,18});OccupiedSizes.Add(Panel?Panel->GetCachedGeometry().GetLocalSize():FVector2D(300,590));
+ TArray<FVector2D> Occupied,OccupiedSizes;Occupied.Add({0,0});OccupiedSizes.Add(FVector2D(G.GetLocalSize().X,132));Occupied.Add({G.GetLocalSize().X-322,82});OccupiedSizes.Add({306,180});
  auto Size=G.GetLocalSize();auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn());double Height=Pawn?Pawn->GetZoomHeight():21000;
  for(const auto& C:Data.Cities)
  {
-  FVector2D P;if(!Project(C.Position,P)||P.X<8||P.Y<8||P.X>Size.X-8||P.Y>Size.Y-8||(P.X>=18&&P.X<=318&&P.Y>=18&&P.Y<=18+Panel->GetCachedGeometry().GetLocalSize().Y))continue;
+  FVector2D P;if(!Project(C.Position,P)||P.X<8||P.Y<8||P.X>Size.X-8||P.Y>Size.Y-8||InsidePanel(G.LocalToAbsolute(P)))continue;
   const bool Selected=C.Id==Selection.Id;
   const auto* Brush=FCoreStyle::Get().GetBrush("WhiteBrush");
   if(Selected)FSlateDrawElement::MakeBox(Out,Top+1,G.ToPaintGeometry(FVector2f(20,20),FSlateLayoutTransform(FVector2f(P-FVector2D(10,10)))),Brush,ESlateDrawEffect::None,Gold);
@@ -232,3 +206,7 @@ void UCoIMapInterface::RefreshSimulation()
  SimulationDiagnostics->SetText(FText::FromString(FString::Printf(TEXT("Schritt %lld | Version %llu | %.1f h/s tatsächlich\nSchritt %.0f µs | GT %.0f µs | Snapshot %.0f µs\nRückstau %lld | Befehle %lld | %s"),S.Step,S.Version,Simulation->IsPaused()?0.:D.ActualHoursPerSecond,D.StepMicros,Simulation->GetGameThreadMicros(),D.SnapshotMicros,D.BacklogSteps,D.PendingCommands,D.BudgetLimited?TEXT("Budget begrenzt"):TEXT("Budget frei"))));
  RefreshInformation();
 }
+
+bool UCoIMapInterface::IsKeyboardBlocked() const{return PlayerHUD&&PlayerHUD->KeyboardBlocked();}
+bool UCoIMapInterface::HandleEscape(){return PlayerHUD&&PlayerHUD->Escape();}
+void UCoIMapInterface::SetMapMode(const FString& Mode){if(Mode==TEXT("countries"))Countries();else if(Mode==TEXT("ownership"))Ownership();else Regions();}

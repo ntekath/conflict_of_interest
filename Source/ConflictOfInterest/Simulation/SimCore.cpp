@@ -93,14 +93,17 @@ bool FSimulation::RunStep()
   {
    if(C.TargetStep>Next)break;
    FCommandResult Result;Result.Sequence=C.Sequence;Result.Step=Next;
-   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);Results.Add(MoveTemp(Result));++Done;
+   Result.ActorId=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:C.Transport.OwnerId;Result.ObjectId=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.Id:C.Transport.Id;
+   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(Result.ActorId==Scenario.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
   }
   if(Done)Pending.RemoveAt(0,Done,EAllowShrinking::No);
   if(Results.Num()>128)Results.RemoveAt(0,Results.Num()-128,EAllowShrinking::No);
   Diagnostics.CommandsMicros=Micros()-T;
  }
+ // Match all queued market commands against the committed state before the next hour ages stock.
+ if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}
  for(int64 Hour=State.Step*Scenario.Settings.HoursPerStep;Hour<Next*Scenario.Settings.HoursPerStep;++Hour)
- {State.EconomyHour=Hour;EconomyHour(Hour);State.EconomyHour=Hour+1;}
+ {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;PlayerWarnings();}
  // Snapshot inputs are const and independent of rendering. Results have disjoint per-region slots.
  TArray<FRegionProposal> Proposals;Proposals.SetNum(State.Regions.Num());
  {
@@ -160,7 +163,7 @@ void FSimulation::Publish()
  New.PlayerName=Find(Scenario.Definitions.Companies,Player->Id)->Name;New.PlayerMoneyCents=A->BalanceCents;New.PlayerReservedCents=A->ReservedCents;
  for(const auto& Store:State.Warehouses)if(Store.OwnerId==Player->Id){New.PlayerStorageCapacity+=Find(Scenario.Definitions.WarehouseTypes,Store.TypeId)->CapacityPoints;New.PlayerStorageUsed+=UsedStorage(Store.Id);}
  for(const auto& Vehicle:State.Vehicles)if(Vehicle.OwnerId==Player->Id)++New.PlayerTrucks;
- PublishEconomy(New);Snapshot=MoveTemp(New);Diagnostics.SnapshotMicros=Micros()-T;
+ PublishPlayer(New);PublishEconomy(New);Snapshot=MoveTemp(New);Diagnostics.SnapshotMicros=Micros()-T;
 }
 FString FSimulation::Fingerprint() const
 {

@@ -15,6 +15,8 @@ bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FS
  if(!A||!B||Cents<0||Cents>A->BalanceCents-A->ReservedCents||B->BalanceCents>MAX_int64-Cents)return false;
  if(!Cents||From==To)return true;
  A->BalanceCents-=Cents;B->BalanceCents+=Cents;
+ if(A->OwnerId==Scenario.PlayerCompanyId)PlayerDay().ExpenseCents+=Cents;
+ if(B->OwnerId==Scenario.PlayerCompanyId)PlayerDay().IncomeCents+=Cents;
  State.CashFlows.Add({From,To,Reason,State.EconomyHour,Cents});
  if(State.CashFlows.Num()>Scenario.Economy.HistoryLimit)State.CashFlows.RemoveAt(0,State.CashFlows.Num()-Scenario.Economy.HistoryLimit,EAllowShrinking::No);
  auto* Total=Find(State.CashTotals,Reason);if(!Total){State.CashTotals.Add({Reason,0});Total=&State.CashTotals.Last();}Total->Cents+=Cents;
