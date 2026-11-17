@@ -27,6 +27,13 @@ struct FSnapshot
  FDayMetrics MapDay;FPlayerView Player;FString Date,PlayerName,EconomySummary;
  TMap<FString,FString> EconomyDetails; TArray<FRegion> Regions; TArray<FCountry> Countries;
 };
+// One immutable presentation version shared by map, tables and selection between UI notifications.
+class FPresentationSnapshot {
+ FSnapshot Published;
+public:
+ void Refresh(const FSnapshot& Source){if(Published.Generation!=Source.Generation||Published.Version!=Source.Version)Published=Source;}
+ const FSnapshot& Get() const{return Published;}
+};
 bool LoadScenario(const FString& Json,const FCoIGeoMapData& Geo,FScenario& Out,FString& Error);
 bool ValidateScenario(const FScenario& Scenario,const FCoIGeoMapData& Geo,FString& Error);
 uint32 EntityRandom(int64 Seed,int64 Step,const FString& Id);

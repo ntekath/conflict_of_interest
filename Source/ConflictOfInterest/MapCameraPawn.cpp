@@ -40,3 +40,5 @@ void AMapCameraPawn::Zoom(float Value)
 }
 void AMapCameraPawn::SetMapBounds(FVector2D Min,FVector2D Max,FVector Center,double OverviewHeight)
 {Minimum=Min;Maximum=Max;InitialFocus=Center;InitialZoom=FMath::Clamp(OverviewHeight,MinimumZoom,MaximumZoom);Height=InitialZoom;SetActorLocation(CoICamera::ClampFocus(Center,Min,Max));Camera->SetRelativeLocation(FVector(0,0,Height));}
+
+void AMapCameraPawn::FocusCity(FVector2D Position){SetActorLocation(CoICamera::ClampFocus(FVector(Position.X,Position.Y,0),Minimum,Maximum));Height=FMath::Min(Height,10000.);Camera->SetRelativeLocation(FVector(0,0,Height));}

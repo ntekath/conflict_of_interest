@@ -21,7 +21,7 @@ public:
  bool Submit(CoISim::FCommand Command,FString& Error);
  bool SubmitPlayer(CoISim::FCommand Command,int64 Token,int64& Ticket,FString& Error);
  const TArray<CoISim::FCommandResult>& GetCommandResults() const {return Simulation.GetResults();}
- const CoISim::FSnapshot& GetSnapshot() const {return Simulation.GetSnapshot();}
+ const CoISim::FSnapshot& GetSnapshot() const {return Presentation.Get();}
  const CoISim::FDiagnostics& GetDiagnostics() const {return Simulation.GetDiagnostics();}
  bool IsPaused() const {return Paused;}int32 GetSpeed() const {return Speed;}
  bool IsReady() const {return Simulation.IsLoaded();}
@@ -30,6 +30,7 @@ public:
  FString Fingerprint() const {return Simulation.Fingerprint();}
  FCoISimulationChanged OnChanged;
 private:
+ CoISim::FPresentationSnapshot Presentation;void PublishPresentation();
  CoISim::FSimulation Simulation;
  bool Paused=true;int32 Speed=1;double FractionalMicros=0,NotifySeconds=0,GameThreadMicros=0;
  int64 LastPlayerToken=0;FString LoadError;

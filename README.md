@@ -67,3 +67,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP07.1](Docs/AP07.1.md): Versorgung und echte gewichtete Tagespreise als Kartenlayer, getrennte Haushalts-/Inputansicht, konfigurierbare Preisgrenzen und klare Zustände für fehlende Daten/Nullbedarf.
 
 [AP07.2](Docs/AP07.2.md): gerichtete Routen, freigegebene öffentliche Aktivitätsaggregation und begrenzte Lkw-Beispiele aus veröffentlichter Spielzeit.
+
+[AP07.3](Docs/AP07.3.md): Karte/Markt/Lager/Transporte verbinden, Planung vorbelegen und Objekte auf der Karte zentrieren; Tests und Messvergleich dokumentiert.

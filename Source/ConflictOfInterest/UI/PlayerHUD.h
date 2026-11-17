@@ -47,7 +47,7 @@ private:
  FDelegateHandle Changed;FString FocusedObject,SelectionSummary;FString View,SelectionId,DialogKind,ContextId,LastStatus;bool Updating=false,SelectionCollapsed=false;
  uint64 SeenGeneration=0,SeenVersion=MAX_uint64,QuoteVersion=0;int64 Token=0,PendingTicket=0;uint64 QuoteGeneration=0;int64 QuoteHour=0;
  CoISim::FCommand Draft;bool ValidDraft=false;
- void Refresh();void BuildView(const FString& NewView);void RefreshTable();void RefreshSelection();void OpenTrade(bool Buy,const FString& Id=TEXT(""));void OpenTransport(const FString& Stock=TEXT(""),bool Empty=false);void OpenCancel(const FString& Id,bool Transport);void OpenDialog(const FString& Title);void Preview();void Confirm();void CloseDialog();
+ void Refresh();void BuildView(const FString& NewView);void RefreshTable();void RefreshSelection();void OpenTrade(bool Buy,const FString& Id=TEXT(""));void OpenTransport(const FString& Stock=TEXT(""),bool Empty=false,const FString& Target=TEXT(""));void OpenCancel(const FString& Id,bool Transport);void OpenDialog(const FString& Title);void Preview();void Confirm();void CloseDialog();
  UTextBlock* Text(class UPanelWidget* Parent,const FString& Value,int32 Size=13,bool Gold=false);
  UCoIActionButton* Button(class UPanelWidget* Parent,const FString& Caption,const FString& Key,bool Accent=false,const FString& Tip=TEXT(""));
  UHorizontalBox* Row(class UPanelWidget* Parent);

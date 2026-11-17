@@ -56,7 +56,7 @@ void FSimulation::PublishPlayer(FSnapshot& Out) const {
   const FString Key=(Own?TEXT("route.own|"):TEXT("route.public|"))+J.FromCityId+TEXT("|")+J.ToCityId;
   auto* R=P.Routes.FindByPredicate([&](const FRouteActivity& X){return X.Id==Key;});if(!R){FRouteActivity X;X.Id=Key;X.FromCityId=J.FromCityId;X.ToCityId=J.ToCityId;X.Own=Own;P.Routes.Add(X);R=&P.Routes.Last();}
   ++R->Active;if(J.Status==TEXT("moving"))++R->Moving;
-  if(Own){R->OwnKg+=J.Kg;R->OwnJobs.Add(J.Id);if(!R->NextArrival||J.ArrivalStep<R->NextArrival)R->NextArrival=J.ArrivalStep;}
+  if(Own){const auto* Cargo=Find(State.Inventories,J.CargoInventoryId);R->OwnKg+=J.Empty?0:J.Status==TEXT("moving")?(Cargo?Cargo->QuantityKg:0):J.Kg;R->OwnJobs.Add(J.Id);if(!R->NextArrival||J.ArrivalStep<R->NextArrival)R->NextArrival=J.ArrivalStep;}
  }
  P.Routes.Sort([](const FRouteActivity& A,const FRouteActivity& B){return A.Id<B.Id;});
 }

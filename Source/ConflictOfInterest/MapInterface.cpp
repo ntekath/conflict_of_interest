@@ -8,6 +8,7 @@
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/SimArchive.h"
 #include "Simulation/RouteDisplay.h"
+#include "Misc/App.h"
 #include "Blueprint/WidgetTree.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/Border.h"
@@ -160,7 +161,7 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
   }
  };
  Highlight(Data.Countries);Highlight(Data.Regions);
- Top=Super::NativePaint(Args,G,Cull,Out,Top+2,Style,Enabled);
+ Top=Super::NativePaint(Args,G,Cull,Out,Top+2,Style,Enabled);const int32 RouteTop=PaintRoutes(G,Out,Top+1);
  // Clip custom map overlays away from the information panel as well as the viewport edge.
  // Draw symbols first; labels then use a deterministic collision budget.
  TArray<FVector2D> Occupied,OccupiedSizes;Occupied.Add({0,0});OccupiedSizes.Add(FVector2D(G.GetLocalSize().X,132));Occupied.Add({G.GetLocalSize().X-322,82});OccupiedSizes.Add({306,180});
@@ -200,7 +201,7 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
  }
 
  if((MetricLayer==TEXT("supply")||MetricLayer==TEXT("price"))&&Simulation&&Simulation->IsReady()){const auto& S=Simulation->GetSnapshot();for(const auto& R:Data.Regions){double Largest=0;FVector2D Anchor=FVector2D::ZeroVector;for(int32 I=0;I<R.Triangles.Num();I+=3){auto A=R.Vertices[R.Triangles[I]],B=R.Vertices[R.Triangles[I+1]],C=R.Vertices[R.Triangles[I+2]];double Area=FMath::Abs((B.X-A.X)*(C.Y-A.Y)-(B.Y-A.Y)*(C.X-A.X));if(Area>Largest){Largest=Area;Anchor=(A+B+C)/3;}}FVector2D P;if(!Project(Anchor,P)||(PlayerHUD?PlayerHUD->OverlayCovered(P):InsidePanel(G.LocalToAbsolute(P))))continue;auto V=CoISim::MetricValue(S.MapDay,R.Id,MetricGood,MetricKind);FString Label=V.Availability==CoISim::EMetricAvailability::NoNeed?TEXT("N · Kein Bedarf"):V.Availability==CoISim::EMetricAvailability::Missing?(S.MapDay.Complete?TEXT("– · Kein Umsatz"):TEXT("– · Keine Tagesdaten")):MetricKind==CoISim::EMapMetric::Price?FString::Printf(TEXT("%.2f USD/kg"),V.Value/100.):FString::Printf(TEXT("%.0f %%"),V.Value);FVector2D Box(Label.Len()*7+12,22);P-=Box/2;if(PlayerHUD&&PlayerHUD->OverlayCovered(P,Box))continue;if(P.X<8||P.Y<8||P.X+Box.X>G.GetLocalSize().X-8||P.Y+Box.Y>G.GetLocalSize().Y-8)continue;FSlateDrawElement::MakeBox(Out,Top+4,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,FLinearColor(.02f,.03f,.04f,.94f));FSlateDrawElement::MakeText(Out,Top+5,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Bold",11),ESlateDrawEffect::None,FLinearColor(.95f,.91f,.8f));}}
- return PaintRoutes(G,Out,Top+6);
+ return FMath::Max(Top+5,RouteTop);
 }
 
 void UCoIMapInterface::ToggleSimulation(){if(Simulation)Simulation->TogglePause();}
@@ -225,7 +226,7 @@ bool UCoIMapInterface::HandleEscape(){return PlayerHUD&&PlayerHUD->Escape();}
 void UCoIMapInterface::SetMapMode(const FString& Mode){if(Mode==TEXT("countries"))Countries();else if(Mode==TEXT("ownership"))Ownership();else Regions();}
 
 void UCoIMapInterface::SetMetricLayer(const FString& L,const FString& G,CoISim::EMapMetric K){if(MetricLayer==L&&MetricGood==G&&MetricKind==K)return;MetricLayer=L;MetricGood=G;MetricKind=K;MetricStep=-1;View=L==TEXT("countries")?ECoIMapView::Countries:L==TEXT("ownership")?ECoIMapView::Ownership:ECoIMapView::Regions;ApplyView();ApplyMetricLayer();}
-void UCoIMapInterface::ApplyMetricLayer(){if(!Simulation||!Simulation->IsReady())return;const auto& S=Simulation->GetSnapshot();bool Economic=MetricLayer==TEXT("supply")||MetricLayer==TEXT("price");int64 Source=Economic?S.MapDay.CompletedStep:S.Step;if(MetricStep==Source)return;MetricStep=Source;const auto* Good=CoISim::Find(S.Player.Catalog.Goods,MetricGood);if(!Good)return;
+void UCoIMapInterface::ApplyMetricLayer(){if(!Simulation||!Simulation->IsReady())return;const auto& S=Simulation->GetSnapshot();bool Economic=MetricLayer==TEXT("supply")||MetricLayer==TEXT("price");int64 Source=Economic?S.MapDay.CompletedStep:S.Step;if(MetricStep==Source&&MetricGeneration==S.Generation)return;MetricStep=Source;MetricGeneration=S.Generation;const auto* Good=CoISim::Find(S.Player.Catalog.Goods,MetricGood);if(!Good)return;
  auto* Material=Economic||MetricLayer==TEXT("ownership")?LoadObject<UMaterialInterface>(nullptr,TEXT("/Game/Materials/M_EconomicLayer.M_EconomicLayer")):nullptr;
  for(TActorIterator<AStaticMeshActor> It(GetWorld());It;++It){auto* Mesh=It->GetStaticMeshComponent();if(!Mesh->GetStaticMesh()||Mesh->GetStaticMesh()->GetName().StartsWith(TEXT("Border_")))continue;for(const auto& R:Data.Regions)if(It->ActorHasTag(FName(*R.Id))){if(!BaseMaterials.Contains(It->GetFName()))BaseMaterials.Add(It->GetFName(),Mesh->GetMaterial(0));if(!Material){Mesh->SetMaterial(0,BaseMaterials[It->GetFName()]);continue;}auto* Dynamic=MetricMaterials.FindRef(It->GetFName()).Get();if(!Dynamic){Dynamic=UMaterialInstanceDynamic::Create(Material,this);MetricMaterials.Add(It->GetFName(),Dynamic);}Mesh->SetMaterial(0,Dynamic);FLinearColor Color;
   if(Economic)Color=CoISim::MetricColor(CoISim::MetricValue(S.MapDay,R.Id,MetricGood,MetricKind),MetricKind,*Good);
@@ -235,7 +236,7 @@ void UCoIMapInterface::ApplyMetricLayer(){if(!Simulation||!Simulation->IsReady()
 }
 
 void UCoIMapInterface::SetRouteDisplay(const FString& Filter,bool Animate){RouteFilter=Filter;RouteAnimate=Animate;}
-FString UCoIMapInterface::RouteDiagnostics() const{return FString::Printf(TEXT("Routen %d · Lkw %d · Routenzeichnung %.0f µs"),DrawnRoutes,DrawnTrucks,RoutePaintMicros);}
+FString UCoIMapInterface::RouteDiagnostics() const{return FString::Printf(TEXT("Routen %d · Lkw %d · Routenzeichnung %.0f µs · Frame %.2f ms"),DrawnRoutes,DrawnTrucks,RoutePaintMicros,FApp::GetDeltaTime()*1000.);}
 TArray<UCoIMapInterface::FScreenRoute> UCoIMapInterface::ScreenRoutes() const {
  TArray<FScreenRoute> Out;if(!Simulation||!Simulation->IsReady()||RouteFilter==TEXT("off"))return Out;
  auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn());const auto& P=Simulation->GetSnapshot().Player;bool Detail=Pawn&&Pawn->GetZoomHeight()<P.Rules.MapRouteDetailZoom;TSet<FString> Bundles;
@@ -262,3 +263,5 @@ int32 UCoIMapInterface::PaintRoutes(const FGeometry& G,FSlateWindowElementList& 
   }
  }RoutePaintMicros=(FPlatformTime::Seconds()-Start)*1.e6;return Layer+2;
 }
+
+void UCoIMapInterface::FocusObject(const FString& CityId,const FString& ObjectId){if(const auto* C=Data.Cities.FindByPredicate([&](const FCoIGeoCity& X){return X.Id==CityId;})){if(auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn()))Pawn->FocusCity(C->Position);Selection.Id=ObjectId;RefreshInformation();}}

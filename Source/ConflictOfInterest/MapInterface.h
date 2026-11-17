@@ -20,6 +20,7 @@ class CONFLICTOFINTEREST_API UCoIMapInterface : public UUserWidget
  GENERATED_BODY()
 public:
  bool IsPointerOverPanel() const;bool IsKeyboardBlocked() const;bool HandleEscape();void SetMapMode(const FString& Mode);
+ void FocusObject(const FString& CityId,const FString& ObjectId);
  void SetRouteDisplay(const FString& Filter,bool Animate);
  FString RouteDiagnostics() const;
  void SetMetricLayer(const FString& Layer,const FString& Good,CoISim::EMapMetric Kind);
@@ -34,7 +35,7 @@ protected:
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
  UPROPERTY() TObjectPtr<class UCoIPlayerHUD> PlayerHUD;
- FString MetricLayer=TEXT("regions"),MetricGood=TEXT("good.food");CoISim::EMapMetric MetricKind=CoISim::EMapMetric::Households;int64 MetricStep=-1;
+ FString MetricLayer=TEXT("regions"),MetricGood=TEXT("good.food");CoISim::EMapMetric MetricKind=CoISim::EMapMetric::Households;int64 MetricStep=-1;uint64 MetricGeneration=MAX_uint64;
  UPROPERTY() TMap<FName,TObjectPtr<class UMaterialInterface>> BaseMaterials;
  UPROPERTY() TMap<FName,TObjectPtr<class UMaterialInstanceDynamic>> MetricMaterials;
  FString RouteFilter=TEXT("own");bool RouteAnimate=true;
