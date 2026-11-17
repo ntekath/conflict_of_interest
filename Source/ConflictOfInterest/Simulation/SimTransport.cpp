@@ -48,7 +48,7 @@ void FSimulation::TransportHour(int64 Hour) {
    J.Status=TEXT("moving");V->CityId.Empty();
   }
   if(J.Status==TEXT("moving")&&J.ArrivalStep<=Hour){if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.CargoInventoryId;});FInventory Cargo=State.Inventories[I];State.Inventories.RemoveAt(I);int32 D=EnsureStock(J.OwnerId,J.DestinationStorageId,J.GoodId);if(!State.Inventories[D].QuantityKg)State.Inventories[D].AcquiredHour=Hour;State.Inventories[D].SpoilRemainder+=Cargo.SpoilRemainder;State.Inventories[D].QuantityKg+=Cargo.QuantityKg;State.Inventories[D].BookValueCents+=Cargo.BookValueCents;Find(State.Warehouses,J.DestinationStorageId)->ReservedIncomingPoints-=J.ReservedIncomingPoints;}
-   J.Status=TEXT("arrived");if(J.OwnerId==Scenario.PlayerCompanyId)PlayerEvent(TEXT("transport"),J.Id,TEXT("Lieferung angekommen. Fahrzeug und verbleibende Ware stehen am Ziel bereit."));V->CityId=J.ToCityId;V->Bound=false;V->TransportId.Empty();
+   J.Status=TEXT("arrived");if(J.OwnerId==Session.PlayerCompanyId)PlayerEvent(TEXT("transport"),J.Id,TEXT("Lieferung angekommen. Fahrzeug und verbleibende Ware stehen am Ziel bereit."));V->CityId=J.ToCityId;V->Bound=false;V->TransportId.Empty();
   }
  }
  int32 Closed=0;for(const auto& J:State.Transports)if(J.Status!=TEXT("planned")&&J.Status!=TEXT("moving"))++Closed;

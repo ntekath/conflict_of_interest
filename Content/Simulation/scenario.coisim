@@ -72,52 +72,92 @@
       {
         "Id": "company.carrier",
         "Name": "Great Lakes Freight (TEST)",
-        "DecisionProfile": "carrier"
+        "DecisionProfile": "carrier",
+        "AccountingOnly": false,
+        "Playable": true,
+        "Description": "Transportbetrieb mit zwei Lkw.",
+        "StartCityId": "city.us.detroit"
       },
       {
         "Id": "company.external",
         "Name": "Offen bilanzierter externer Sektor (TEST)",
-        "DecisionProfile": "service"
+        "DecisionProfile": "service",
+        "AccountingOnly": true,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       },
       {
         "Id": "company.food",
         "Name": "Prairie Food (TEST)",
-        "DecisionProfile": "producer"
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": true,
+        "Description": "Nahrungsproduzent ohne eigene Lkw.",
+        "StartCityId": "city.us.chicago"
       },
       {
         "Id": "company.luxury",
         "Name": "Detroit Crafts (TEST)",
-        "DecisionProfile": "producer"
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       },
       {
         "Id": "company.merchant",
         "Name": "Lakes Merchant (TEST)",
-        "DecisionProfile": "trader"
+        "DecisionProfile": "trader",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       },
       {
         "Id": "company.ore",
         "Name": "Allegheny Ore (TEST)",
-        "DecisionProfile": "producer"
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       },
       {
         "Id": "company.player",
         "Name": "Spielerhandel",
-        "DecisionProfile": "player"
+        "DecisionProfile": "trader",
+        "AccountingOnly": false,
+        "Playable": true,
+        "Description": "Kleines Handelshaus mit Lager und eigenem Lkw.",
+        "StartCityId": "city.us.detroit"
       },
       {
         "Id": "company.services",
         "Name": "Lager- und Betriebskostenkonto (TEST)",
-        "DecisionProfile": "service"
+        "DecisionProfile": "service",
+        "AccountingOnly": true,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       },
       {
         "Id": "company.tools",
         "Name": "Steel Tools (TEST)",
-        "DecisionProfile": "producer"
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       },
       {
         "Id": "company.wood",
         "Name": "Lake Timber (TEST)",
-        "DecisionProfile": "producer"
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": ""
       }
     ],
     "Needs": [

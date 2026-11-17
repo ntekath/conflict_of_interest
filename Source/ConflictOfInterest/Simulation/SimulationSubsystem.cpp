@@ -51,7 +51,7 @@ bool UCoISimulationSubsystem::SubmitPlayer(CoISim::FCommand C,int64 Token,int64&
  if(Token<=LastPlayerToken){Error=TEXT("Diese Bestätigung wurde bereits gesendet.");return false;}
  if(C.Generation!=Simulation.GetGeneration()){Error=TEXT("Szenario gewechselt. Neue Vorschau öffnen.");return false;}
  C.Sequence=Simulation.NextSequence();C.TargetStep=GetSnapshot().Step+1;
- const FString Actor=GetSnapshot().Player.ActorId;
+ const FString Actor=GetSnapshot().Player.ActorId;C.Origin=CoISim::ECommandOrigin::Player;C.CompanyId=Actor;
  if(C.Kind==CoISim::ECommandKind::PlaceOrder){C.Order.ActorId=Actor;C.Order.Id=FString::Printf(TEXT("player.order.%lld"),C.Sequence);}
  else if(C.Kind==CoISim::ECommandKind::CancelOrder)C.Order.ActorId=Actor;
  else if(C.Kind==CoISim::ECommandKind::BookTransport){C.Transport.OwnerId=Actor;C.Transport.Id=FString::Printf(TEXT("player.haul.%lld"),C.Sequence);}

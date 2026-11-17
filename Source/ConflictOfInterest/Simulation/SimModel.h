@@ -13,7 +13,7 @@ struct FGoodDef
  FString Id,Name,Unit,NeedCategory; int64 InitialUnitCostCents=0,InputLimitCents=0; int64 StoragePointsPerKg=0,SpoilPartsPerMillionPerDay=0;
  COI_RECORD(COI_F(Id);COI_F(Name);COI_F(Unit);COI_F(NeedCategory);COI_F(InitialUnitCostCents);COI_F(InputLimitCents);COI_F(StoragePointsPerKg);COI_F(SpoilPartsPerMillionPerDay);)
 };
-struct FCompanyDef { FString Id,Name,DecisionProfile; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);) };
+struct FCompanyDef { FString Id,Name,DecisionProfile,Description,StartCityId;bool Playable=false,AccountingOnly=false; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);COI_F(Playable);COI_F(AccountingOnly);COI_F(Description);COI_F(StartCityId);) };
 struct FNeedDef
 {
  FString Id,BasicGoodId,LuxuryGoodId; int64 BasicKgPerThousandPerDay=0,LuxuryKgPerThousandPerDay=0,BasicMaxPriceCents=0,LuxuryMaxPriceCents=0,LuxuryBudgetPermille=0;
@@ -163,6 +163,8 @@ struct FSettings
 };
 // Examples are schema fixtures, NEVER applied to live accounts or orders.
 struct FExamples { TArray<FMarketOrder> Orders; TArray<FTrade> Trades; TArray<FTransport> Transports; COI_RECORD(COI_F(Orders);COI_F(Trades);COI_F(Transports);) };
+// Session control is separate from economic ownership; serializable for AP09.
+struct FSession {FString ScenarioId,PlayerCompanyId;COI_RECORD(COI_F(ScenarioId);COI_F(PlayerCompanyId);)};
 struct FScenario
 {
  int64 Schema=2; FString Id,StartDate,PlayerCompanyId,BalancingNotice,Currency;

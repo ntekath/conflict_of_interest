@@ -5,9 +5,11 @@
 namespace CoISim
 {
 enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport };
+enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
+ ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
  ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;
 };
 struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason,ActorId,ObjectId; };
@@ -44,12 +46,16 @@ public:
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
  bool AuditRuntime(FString& Error) const;
+ const FSession& GetSession() const {return Session;}
+ bool IsAutonomous(const FString& Id) const;
+ FString EconomicFingerprint() const;
  bool IsLoaded() const { return Loaded; }
 private:
- FScenario Scenario; FState State; FSnapshot Snapshot; FDiagnostics Diagnostics;
+ FSession Session;FScenario Scenario; FState State; FSnapshot Snapshot; FDiagnostics Diagnostics;
  TArray<FCommand> Pending; TArray<FCommandResult> Results;
  uint64 Generation=0,Version=0; int64 LastIssuedSequence=0,CreditMicros=0;
  double RateSeconds=0; int64 RateSteps=0; bool Loaded=false;
+ bool Authorized(const FCommand&,FString&) const;
  bool Apply(const FCommand&,FString& Reason);
  bool RunStep();
  void Aggregate(); void Publish();

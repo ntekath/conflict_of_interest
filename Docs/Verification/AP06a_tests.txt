@@ -1,0 +1,17 @@
+[2026.11.17-18.44.48:435][600]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.17-18.44.48:506][603]LogAutomationController: Display: Test Completed. Result={Success} Name={ExistingCompanySelection} Path={CoI.Control.ExistingCompanySelection}
+[2026.11.17-18.44.48:591][606]LogAutomationController: Display: Test Completed. Result={Success} Name={ActualConsumption} Path={CoI.Economy.ActualConsumption}
+[2026.11.17-18.44.48:653][608]LogAutomationController: Display: Test Completed. Result={Success} Name={Autonomous72Hours} Path={CoI.Economy.Autonomous72Hours}
+[2026.11.17-18.44.49:454][610]LogAutomationController: Display: Test Completed. Result={Success} Name={FourWeeksConservationAndReplay} Path={CoI.Economy.FourWeeksConservationAndReplay}
+[2026.11.17-18.44.49:511][613]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderPriorityAndRejection} Path={CoI.Economy.OrderPriorityAndRejection}
+[2026.11.17-18.44.49:561][616]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderSettlement} Path={CoI.Economy.OrderSettlement}
+[2026.11.17-18.44.49:651][619]LogAutomationController: Display: Test Completed. Result={Success} Name={ProductionPayroll} Path={CoI.Economy.ProductionPayroll}
+[2026.11.17-18.44.49:713][621]LogAutomationController: Display: Test Completed. Result={Success} Name={TransportAndCosts} Path={CoI.Economy.TransportAndCosts}
+[2026.11.17-18.44.49:786][623]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.17-18.44.49:825][625]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.17-18.44.49:876][627]LogAutomationController: Display: Test Completed. Result={Success} Name={PurchaseDeliverySale} Path={CoI.Player.PurchaseDeliverySale}
+[2026.11.17-18.44.49:924][629]LogAutomationController: Display: Test Completed. Result={Success} Name={RentedFreightAndPreview} Path={CoI.Player.RentedFreightAndPreview}
+[2026.11.17-18.44.49:968][631]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicCommandsAndLifetime} Path={CoI.Simulation.AtomicCommandsAndLifetime}
+[2026.11.17-18.44.50:011][633]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundedBacklogAndOrdering} Path={CoI.Simulation.BoundedBacklogAndOrdering}
+[2026.11.17-18.44.50:079][635]LogAutomationController: Display: Test Completed. Result={Success} Name={ContractAndValidation} Path={CoI.Simulation.ContractAndValidation}
+[2026.11.17-18.44.50:165][638]LogAutomationController: Display: Test Completed. Result={Success} Name={FixedStepsAndPause} Path={CoI.Simulation.FixedStepsAndPause}

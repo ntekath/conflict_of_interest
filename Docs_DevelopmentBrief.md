@@ -1,14 +1,14 @@
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
-Stand: 16.11.2026. Vollständiger konzeptioneller Neustart mit US-Kartenausschnitt und Spielbeginn 1913. Die folgende Paketfolge ersetzt die bisherige europäische Planung; AP01–AP04 sind inzwischen laut Projektinhaber umgesetzt. Der Umsetzungsstand ab AP05 ist nicht bestätigt. Der bestehende Projektcode wurde hier nicht geprüft. Vorhandene Arbeit nicht automatisch löschen: für einen neuen Projektstand bzw. Branch sichern und nur passende technische Teile bewusst übernehmen.
+Stand: 17.11.2026. US-Szenario mit Spielbeginn 1913. AP01–AP06 sind laut Projektinhaber umgesetzt; der Code wurde hier nicht geprüft. Nächster notwendiger Schritt ist AP06a (Unternehmenssteuerung) vor AP07. Bestehende Implementierung gezielt anpassen, keinen erneuten Projektneustart durchführen.
 
 ## Masterprompt für Codex
 
-Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; AP01–AP04 nicht erneut bauen. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
+Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; AP01–AP06 nicht erneut bauen; AP06a vor AP07 umsetzen. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
 
 ### Spielvision
 
-Der Spieler beginnt als kleiner Händler in einer simulierten Weltwirtschaft auf der echten Erde. Er organisiert Rohstoff- und Warenlieferungen, erschließt Märkte und kann später Produktionsstätten, Lager und Transportinfrastruktur bauen oder übernehmen. Ganze Lieferketten können wirtschaftlich kontrolliert werden.
+Der Spieler übernimmt vor Spielbeginn eines von mehreren vorgegebenen, bereits existierenden Unternehmen einer simulierten Weltwirtschaft auf der echten Erde. Ein kleines Handelshaus ist eine mögliche Startposition. Er organisiert Rohstoff- und Warenlieferungen, erschließt Märkte und kann später Produktionsstätten, Lager und Transportinfrastruktur bauen oder übernehmen. Ganze Lieferketten können wirtschaftlich kontrolliert werden.
 
 Länder, Regionen und andere Unternehmen entwickeln sich unabhängig vom Eingreifen des Spielers, solange die Simulation läuft. Offline-Fortschritt bei geschlossenem Spiel ist zunächst nicht vorgesehen. Versorgung, Konsum, Produktion und Kaufkraft erzeugen Handelsmöglichkeiten. Langfristig beeinflussen Politik, Konflikte, Konkurrenz und Währungen die Wirtschaft.
 
@@ -21,6 +21,23 @@ Ziel ist der Aufbau eines Weltkonzerns durch Handel, Produktion, Logistik, Über
 Das Spiel ermöglicht moralisch verwerfliches Verhalten: Waren zurückhalten, auf klimabedingte Knappheit spekulieren, Konkurrenz verdrängen und später Handelsbeschränkungen über Zwischenhändler oder Drittstaaten umgehen. Dies sind abstrakte Spielsysteme; konkrete reale Umgehungsanleitungen sind nicht Teil des Designs.
 
 Konsequenzen entstehen aus Wirtschaftsregeln und reagierenden Akteuren. Kein globaler Moralwert: Versorgung, Vertrauen, Beziehungen, regulatorische Risiken und Unternehmensgewinn sind getrennte Größen. Spekulation birgt echte Verluste, weil Prognosen unsicher sind, Waren verderben und Lager Geld kosten. Für die ersten Pakete keine vollständigen Politik- oder Reputationssysteme vorwegnehmen.
+
+### Unternehmenswahl und Steuerungszuordnung
+
+Die Szenariowelt enthält alle Unternehmen vor der Spielerwahl. Der Spieler übernimmt eines davon; die übrigen handeln als NPCs. Die Auswahl erzeugt keine zusätzliche Firma, kein Geld und keine zusätzlichen Assets.
+
+- Unternehmen sind wirtschaftliche Entitäten mit stabiler CompanyId. Ob sie vom Spieler oder der KI geführt werden, gehört zur Sitzungs-/Steuerungszuordnung, nicht zum Unternehmenstyp.
+- Eine zentrale PlayerCompanyId identifiziert im Singleplayer genau ein existentes und als spielbar freigegebenes Unternehmen. Controller-Zuordnung zentral verwalten, nicht mehrfach als unabhängige Flags kopieren.
+- Konsumentengruppen und externe Abrechnungskonten sind keine auswählbaren Unternehmen.
+- Szenariodaten enthalten eine kleine Auswahl spielbarer Firmen mit Name, Beschreibung, Startort und Ausgangsbesitz. Vorläufige Beispiele: Handelshaus, Transportbetrieb, Produzent. Ein Unternehmen darf mehrere Tätigkeiten verbinden.
+- Das bisherige Startunternehmen mit Lager, Lkw und Kapital bleibt als wählbares Handelshaus erhalten. Andere Startpositionen haben eigene Besitz- und Kapitalverhältnisse.
+- Ein steuerbares Unternehmen verwendet Spielerbefehle; die übrigen verwenden KI-Entscheidungen. Alle nutzen dieselben fachlichen Regeln und Befehlsprüfungen.
+- Nur autonome Unternehmensplanung des übernommenen Unternehmens deaktivieren. Produktion, Löhne, bereits gebuchte Transporte und explizit vom Spieler erteilte Automatisierungen laufen weiterhin.
+- Befehle tragen CompanyId und ihre Herkunft. Die zentrale Befehlsverarbeitung prüft Steuerungsberechtigung sowie Eigentum, Bestände und Deckung; ein frei gesetztes Firmenfeld in einem Widget genügt nicht.
+- HUD, Tabellen, Benachrichtigungen, Kartenbesitzfilter und Auftragsaktionen leiten „eigene“ Daten aus der PlayerCompanyId ab.
+- Auswahl erfolgt vor Simulationsbeginn. Laufender Unternehmenswechsel ist zunächst nicht vorgesehen. Ungültige Auswahl verhindert den Start mit verständlicher Fehlermeldung; kein stiller Rückfall auf die erste Firma.
+- Zunächst reicht Auswahl per Szenariokonfiguration. Ein späteres Startmenü liest dieselben Daten und ruft dieselbe Initialisierung auf.
+- Speichern/Laden erhält PlayerCompanyId und erforderliche Controller-Zuordnung. Neue Partie aus demselben Szenario erzeugt unabhängig von der Auswahl denselben wirtschaftlichen Ausgangszustand; nur die Steuerung unterscheidet sich.
 
 ### Wirtschaftsmodell: Akteure, Konsumenten und regionale Märkte
 
@@ -149,7 +166,8 @@ Die Namen sind Vorschläge, keine Pflichtstruktur:
 - Rohstoffvorkommen und landwirtschaftliche Eignung sind geografisch begrenzt. Betriebe können Rohstoffe nur an geeigneten Standorten fördern bzw. erzeugen.
 - Fünf anfängliche Waren: Nahrung, Holz, Erz, Werkzeuge und abstrakte Luxuswaren. Eine gemeinsame Währung USD, intern ganzzahlige Cents; Preisniveaus sind zunächst Testwerte.
 - Mindestens zwei Produzenten, ein eigenständiger Händler und ein Transportunternehmen mit getrennten Konten, Besitzbeständen und einfachen Entscheidungsregeln. Für Waren außerhalb der vollständig modellierten Ketten sind deklarierte Betriebe oder ein offen bilanzierter externer Sektor zulässig.
-- Spielerstart an einem Ort, als vorläufiger Testwert Detroit: ein eigenes Lagerhaus, ein eigener Lkw und konfigurierbares Startkapital. Keine kostenlose unbegrenzte Lagerung und keine unbegrenzte Flotte.
+- Vordefiniertes spielbares Handelshaus an einem Ort, als vorläufiger Testwert Detroit: ein eigenes Lagerhaus, ein eigener Lkw und konfigurierbares Kapital. Es existiert auch dann, wenn der Spieler ein anderes Unternehmen übernimmt. Keine kostenlose unbegrenzte Lagerung oder Flotte.
+- Mindestens zwei bereits wirtschaftlich initialisierte Unternehmen als spielbar freigeben, darunter das Handelshaus und ein weiterer Unternehmenstyp. Alle anderen Unternehmen bleiben NPCs; keine vollständigen separaten Startszenarien pro Firma bauen.
 - Alle Mengen, Kosten, Kapazitäten und Startbestände liegen in Szenariodaten. Sie sind veränderbare Testwerte, keine historischen Behauptungen.
 - Erster Wirtschaftskonflikt: Lebensmittelversorgung und Lagerhaltung bei unsicherem Dürre-Risiko. Ein freies Testszenario, keine vorgeschriebene moralische Handlungsfolge.
 
@@ -162,7 +180,8 @@ Definitionen beschreiben Typen und Regeln; Laufzeitdaten beschreiben konkrete En
 | Land / Region | ID, Name, Geometrie, Landeszugehörigkeit | Aggregierte Kennzahlen; Region besitzt genau einen Markt |
 | Ort | ID, Name, Koordinaten, Region-ID | Lokale Betriebe, Lager und Fahrzeuge |
 | Ware | ID, Mengeneinheit, Lagerbedarf je Einheit, Verderbsregel, Bedarfskategorie | Mengen ausschließlich in zugeordneten Beständen |
-| Unternehmen | ID, Name, Entscheidungsprofil | Konto, Besitz an Betrieben/Lagern/Fahrzeugen, Aufträge |
+| Unternehmen | ID, Name, Entscheidungsprofil, spielbar und Auswahlbeschreibung | Konto, Besitz an Betrieben/Lagern/Fahrzeugen, Aufträge |
+| Sitzung / Steuerung | Szenario-ID, Startauswahl | PlayerCompanyId und zentrale Controller-Zuordnung, getrennt von wirtschaftlichen Firmendaten |
 | Betriebsstätte | Typ, Produktionsrezept, Kapazität, Personalbedarf | Eigentümer, Ort, Beschäftigung, Inputs/Outputs, Auslastung |
 | Konsumentengruppe | Region, Bedürfnisprofil und Einkommensgruppe | Bevölkerung, Erwerbspersonen, Beschäftigte, Geld, Konsum und Fehlbedarf |
 | Lagerhaus | Lagerkapazität in Lagerpunkten, fixe Tageskosten | Eigentümer, unveränderlicher Ort, eingelagerte Bestände, reservierte Zielkapazität |
@@ -270,7 +289,7 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 - Definitionen und Laufzeitdaten für Orte, Waren, Unternehmen, Betriebsstätten und regionale Konsumentengruppen einführen.
 - Konten, Eigentumsbestände je Standort, Reservierungen, Markt-IDs und Auftrags-/Geschäftsdatentypen vorbereiten. Matching und Wirtschaftsregeln folgen in AP05.
 - Den Datenmodell-Vertrag vollständig in Typen und Beispieldaten umsetzen: Beschäftigung, Grund-/Luxusbedarf, geografische Ressourcen, Lager/Fahrzeugassets und Transportangebote einschließen. Noch keine wirtschaftlichen Entscheidungsregeln implementieren.
-- US-Startszenario mit Spielerfirma, Lagerhaus, einem Lkw und Startkapital laden; Länderwerte nur aus Regionen aggregieren.
+- US-Startszenario mit vordefinierten Unternehmen und deren Besitz laden; das anfängliche Handelshaus besitzt Lager, Lkw und Kapital. Steuerungszuordnung gemäß AP06a anbinden; Länderwerte nur aus Regionen aggregieren.
 - Feste Simulationsschritte, Pause und mehrere Geschwindigkeiten implementieren.
 - Festgelegte Reihenfolge für Zustandsänderungen und einen expliziten Zufalls-Seed vorsehen.
 - UI über Zustandsänderungen informieren, ohne Simulationsregeln im Widget auszuführen.
@@ -353,9 +372,37 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 - Fremdauftrag bezahlt den Anbieter und bindet dessen Kapazität. Leeres Lager verursacht weiterhin Fixkosten.
 - Fehlende Zielkapazität lehnt die Buchung ohne Teilreservierungen ab. Geplatzter Transport storniert keinen bereits ausgeführten Kauf.
 
+### AP06a – Bestehendes Unternehmen übernehmen statt Spielerfirma erzeugen
+
+**Voraussetzung:** AP06. Vor AP07 umsetzen; bestehende Paketnummern bleiben erhalten.
+
+**Ziel:** Der Spieler kann in einer neuen Partie ein vorgegebenes Unternehmen übernehmen, während alle anderen von der KI geführt werden. Zunächst Auswahl über Konfiguration.
+
+**Aufgaben**
+1. Bestehenden Code auf feste Spielerannahmen prüfen: erste Firma im Array, feste Firmen-/Asset-IDs, eigens erzeugte Spielerfirma, separate Spieler-Geldbestände, KI-Sonderregeln und fest verknüpfte Widgets.
+2. Szenario zuerst vollständig initialisieren. Die Startauswahl benennt ausschließlich eine vorhandene spielbare CompanyId. Mindestens zwei geeignete Unternehmen zur Auswahl konfigurieren; Besitz, Geld und Standorte bleiben in deren regulären Szenariodatensätzen.
+3. Zentrale PlayerCompanyId und eindeutige Steuerungszuordnung einführen. UI und KI fragen diese ab; wirtschaftliche Daten nicht duplizieren oder auf ein Spielerobjekt kopieren.
+4. Befehlsberechtigung zentral erzwingen: Spieler darf ausschließlich im Namen des übernommenen Unternehmens handeln; KI darf keine autonomen Aufträge für dieses erzeugen. Allgemeine Eigentums- und Liquiditätsprüfungen bleiben unverändert.
+5. KI-Auftragsgenerierung für die übernommene Firma deaktivieren, deren wirtschaftlichen Betrieb aber weiterlaufen lassen. Initialisierung und Befehlsqueue müssen verhindern, dass vor Spielbeginn alte autonome Aufträge der ausgewählten Firma eingespielt werden.
+6. HUD, Markt-/Lager-/Transport-/Unternehmensansichten, verfügbare Aktionen, eigene Meldungen und Besitzmarkierungen auf den zentralen Kontext umstellen. Öffentlich sichtbare Fremddaten weiter gemäß Sichtbarkeitsregeln behandeln.
+7. Ein initialer ungültiger oder nicht spielbarer Firmenschlüssel erzeugt einen Fehler ohne teilweise gestartete Simulation. Bei neuer Partie UI-Kontext und Meldungen sauber initialisieren.
+8. Zuordnung als Bestandteil des zukünftigen Save-Zustands vorsehen. Falls Speichern bereits existiert, jetzt integrieren. Bei alten Spielständen Zuordnung nur übernehmen, wenn eindeutig rekonstruierbar; sonst verständlich abweisen, nicht raten.
+9. Änderungen und Testauswahl dokumentieren. Noch kein Unternehmenswechsel während laufender Partie, kein umfassendes Auswahlmenü und kein erneuter Umbau korrekter Markt-/Transportregeln.
+
+**Abnahme**
+- Zwei neue Partien mit identischem Szenario/Seed, einmal Firma A und einmal Firma B, besitzen unmittelbar vor dem ersten Schritt identische wirtschaftliche Weltzustände. Nur Steuerungszuordnung und UI-Perspektive unterscheiden sich.
+- In beiden Partien zeigt das HUD Geld, Lager, Fahrzeuge und Aufträge der tatsächlich ausgewählten Firma; ein Unternehmen ohne eigenen Lkw erhält keinen gratis.
+- Auftrag für fremdes Unternehmen wird zentral abgewiesen, auch wenn die CompanyId außerhalb des Widgets verändert wird.
+- Nicht gewählte Firmen erzeugen weiterhin KI-Aufträge. Die gewählte Firma erzeugt keine autonomen KI-Handelsentscheidungen, führt aber laufende Produktion, Löhne und bereits gebuchte Transporte aus.
+- Ungültige/nicht spielbare Auswahl startet keine Partie und erzeugt keine Ersatzfirma.
+- Keine zusätzlichen Konten, Waren oder Assets durch die Auswahl. Abgeschlossene Handels- und Transportabläufe aus AP06 funktionieren weiterhin.
+
+**Späteres Auswahlmenü**
+Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wesentliche Assets. Auswahl markiert das Unternehmen und seinen Standort auf der Karte; „Partie starten“ bestätigt. Daten und Steuerungsinitialisierung sind dieselben wie in AP06a. Das Menü ist ein später gesondert zu beauftragender UI-Schritt, kein zusätzliches Wirtschaftssystem.
+
 ### AP07 – Wirtschafts- und Transportlayer mit HUD-Integration
 
-**Voraussetzung:** AP06 einschließlich Spieler-HUD.
+**Voraussetzung:** AP06 und AP06a einschließlich Spieler-HUD und zentraler Unternehmenszuordnung.
 
 **Ziel:** Versorgungslücken, Preisunterschiede und Transportaktivität lassen sich auf der Karte erkennen und direkt bearbeiten.
 
@@ -447,6 +494,7 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 **Ziel:** Eine zusammenhängende Spielsitzung kann fortgesetzt werden.
 
 **Aufgaben**
+- PlayerCompanyId, Szenario-ID und Controller-Zuordnung beim Laden validieren; KI-Zuordnung vor dem ersten weiteren Simulationsschritt wiederherstellen. Kein Rückfall auf eine feste Standardfirma.
 - Versioniertes Speicherformat für Zeit, Konten, Eigentumsbestände, Betriebsstätten, Konsumentengruppen, Bedürfnisse/Versorgung, Orderbücher, Reservierungen, Preisverlauf, Unternehmensentscheidungen, aktive Transporte, Fahrzeugstandorte/-belegung, Lagerkapazitätsreservierungen, Fixkosten-/Lohnzeitpunkte, Zahlungsrückstände, Klimazustand und Zufallszustand ergänzen.
 - Geschäftshistorie begrenzen oder archivieren; offene Aufträge und abrechnungsrelevante Zustände vollständig erhalten.
 - Referenzen über stabile IDs speichern; Darstellung beim Laden rekonstruieren.
@@ -456,6 +504,7 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 
 **Abnahme**
 - Speichern während einer Lieferung und Laden stellt den korrekten Zustand wieder her.
+- Laden bewahrt die übernommene Firma und deren HUD-Perspektive; keine gleichzeitige autonome KI-Steuerung dieser Firma.
 - Derselbe Transport wird nach dem Laden genau einmal zugestellt.
 - Offene und teilgefüllte Aufträge behalten korrekte Restmengen und Reservierungen; Laden bucht weder Löhne noch Handel oder Konsum doppelt.
 - Paketierter Build enthält Geodaten, UI und Materialien und läuft ohne Editor sowie ohne Kartendienst.

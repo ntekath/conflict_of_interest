@@ -61,3 +61,5 @@ Weitere Schritte und tatsächlich ausgeführte Prüfungen: [AP01](Docs/AP01.md),
 
 
 Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als Hauptoberfläche. Märkte, Lager, Transporte und Unternehmen verbinden Kauf → bezahlte Lieferung → Verkauf; Bestätigungen senden echte Simulationsbefehle. Diagnose bleibt separat schaltbar. Escape schließt zuerst den Dialog, dann die Arbeitsansicht. Bei pausierter Simulation werden gesendete Befehle erst nach Start umgesetzt. Bedienung, Testwerte und bekannte Grenzen stehen in der AP06-Dokumentation.
+
+[AP06a](Docs/AP06a.md): Vor Spielbeginn kann PlayerCompanyId im Szenario ein bestehendes spielbares Handelshaus, einen Produzenten oder den Transportbetrieb übernehmen; Besitz und Geld bleiben reguläre Firmendaten.

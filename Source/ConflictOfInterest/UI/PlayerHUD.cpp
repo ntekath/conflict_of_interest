@@ -131,7 +131,7 @@ void UCoIPlayerHUD::RefreshTable(){if(!Body||!Sim||View.IsEmpty())return;float O
   Text(Body,TEXT("Ergebnis ist der Saldo echter Zahlungen des abgeschlossenen Tages, keine Schätzung künftiger Verkaufserlöse und keine neue Bilanzbewertung."),11);
   Text(Body,TEXT("EIGENE LAGER"),14,true);for(const auto& W:P.Stores)if(W.Own)Cells(Body,{W.Name,Number(W.Used)+TEXT(" / ")+Number(W.Capacity)+TEXT(" Punkte"),Number(W.Incoming)+TEXT(" Ziel reserviert"),Money(W.DailyCost)+TEXT(" / Tag")},{2,1,1,1});
   Text(Body,TEXT("EIGENE FAHRZEUGE"),14,true);for(const auto& V:P.Vehicles)if(V.Own)Cells(Body,{V.Name,City(V.CityId),Quantity(V.Capacity),FString(V.Bound?TEXT("Gebunden"):TEXT("Frei"))+TEXT("\n")+Money(V.DailyCost)+TEXT(" / Tag")},{1,1,1,1},false,TEXT("Planen"),TEXT("empty|")+V.Id);
-  Text(Body,TEXT("EIGENE BETRIEBE"),14,true);if(P.Facilities.IsEmpty())Text(Body,TEXT("Noch keine eigenen Produktionsbetriebe. Der Startkonzern besitzt ein Lager und einen Lkw."),12);for(const auto& F:P.Facilities)Cells(Body,{City(F.CityId),Number(F.UtilizationPermille/10)+TEXT(" % Auslastung"),Money(F.OperatingArrearsCents)+TEXT(" Rückstand")},{1,1,1});
+  Text(Body,TEXT("EIGENE BETRIEBE"),14,true);if(P.Facilities.IsEmpty())Text(Body,TEXT("Keine eigenen Produktionsbetriebe. Vorhandene Lager und Fahrzeuge sind oben aufgeführt."),12);for(const auto& F:P.Facilities)Cells(Body,{City(F.CityId),Number(F.UtilizationPermille/10)+TEXT(" % Auslastung"),Money(F.OperatingArrearsCents)+TEXT(" Rückstand")},{1,1,1});
  }
  if(View==TEXT("Meldungen")){
   Text(Body,TEXT("Begrenztes Protokoll · Wiederholungen pro Objekt werden zusammengefasst."),11);if(P.Events.IsEmpty())Text(Body,TEXT("Noch keine Meldungen. Auftragsbestätigungen, Fehler und Ankünfte erscheinen hier."),12);

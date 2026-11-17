@@ -20,7 +20,7 @@ bool FSimulation::CancelOrder(const FString& Id,const FString& Actor,const FStri
  auto* O=Find(State.Orders,Id);if(!O||O->ActorId!=Actor||O->Status!=TEXT("open"))return false;
  Find(State.Accounts,ActorAccount(Actor))->ReservedCents-=O->ReservedCents;
  if(O->ReservedKg)State.Inventories[StockIndex(Actor,O->StorageId,O->GoodId)].ReservedKg-=O->ReservedKg;
- O->ReservedCents=O->ReservedKg=0;O->Status=Status;if(Actor==Scenario.PlayerCompanyId)PlayerEvent(TEXT("order"),Id,Status==TEXT("expired")?TEXT("Marktauftrag abgelaufen; verbleibende Reservierungen freigegeben."):Status==TEXT("spoilage")?TEXT("Marktauftrag wegen Warenverderb beendet; Restreservierungen freigegeben."):TEXT("Marktauftrag beendet; Restreservierungen freigegeben."));return true;
+ O->ReservedCents=O->ReservedKg=0;O->Status=Status;if(Actor==Session.PlayerCompanyId)PlayerEvent(TEXT("order"),Id,Status==TEXT("expired")?TEXT("Marktauftrag abgelaufen; verbleibende Reservierungen freigegeben."):Status==TEXT("spoilage")?TEXT("Marktauftrag wegen Warenverderb beendet; Restreservierungen freigegeben."):TEXT("Marktauftrag beendet; Restreservierungen freigegeben."));return true;
 }
 void FSimulation::ExpireOrders() {
  for(auto& O:State.Orders)if(O.Status==TEXT("open")&&O.ExpiresStep<=State.EconomyHour)CancelOrder(O.Id,O.ActorId,TEXT("expired"));
@@ -39,8 +39,8 @@ void FSimulation::MatchOrders() {
   int32 Source=StockIndex(S.ActorId,S.StorageId,S.GoodId);State.Inventories[Source].ReservedKg-=Kg;S.ReservedKg-=Kg;
   int64 SpoilCredit=TakeSpoilCredit(Source,Kg);int64 Value=TakeStock(Source,Kg);int32 Dest=EnsureStock(B.ActorId,S.StorageId,S.GoodId);if(!State.Inventories[Dest].QuantityKg)State.Inventories[Dest].AcquiredHour=State.EconomyHour;State.Inventories[Dest].SpoilRemainder+=SpoilCredit;State.Inventories[Dest].QuantityKg+=Kg;State.Inventories[Dest].BookValueCents+=Cost;
   (void)Value;B.RemainingKg-=Kg;S.RemainingKg-=Kg;if(!B.RemainingKg)B.Status=TEXT("filled");if(!S.RemainingKg)S.Status=TEXT("filled");
-  if(B.ActorId==Scenario.PlayerCompanyId)PlayerEvent(TEXT("order"),B.Id,FString::Printf(TEXT("Kauf ausgeführt: %lld von %lld kg erworben. Ware bleibt im Quelllager."),B.OriginalKg-B.RemainingKg,B.OriginalKg));
-  if(S.ActorId==Scenario.PlayerCompanyId)PlayerEvent(TEXT("order"),S.Id,FString::Printf(TEXT("Verkauf ausgeführt: %lld von %lld kg. Erlös wurde gebucht."),S.OriginalKg-S.RemainingKg,S.OriginalKg));
+  if(B.ActorId==Session.PlayerCompanyId)PlayerEvent(TEXT("order"),B.Id,FString::Printf(TEXT("Kauf ausgeführt: %lld von %lld kg erworben. Ware bleibt im Quelllager."),B.OriginalKg-B.RemainingKg,B.OriginalKg));
+  if(S.ActorId==Session.PlayerCompanyId)PlayerEvent(TEXT("order"),S.Id,FString::Printf(TEXT("Verkauf ausgeführt: %lld von %lld kg. Erlös wurde gebucht."),S.OriginalKg-S.RemainingKg,S.OriginalKg));
   FTrade T;T.Id=FString::Printf(TEXT("trade.%lld"),++State.TradeSequence);T.BuyOrderId=B.Id;T.SellOrderId=S.Id;T.BuyerId=B.ActorId;T.SellerId=S.ActorId;T.MarketId=B.MarketId;T.CityId=S.CityId;T.GoodId=B.GoodId;T.Step=State.EconomyHour;T.QuantityKg=Kg;T.PriceCentsPerKg=Price;T.TotalCents=Cost;State.Trades.Add(MoveTemp(T));
   FString Key=B.MarketId+TEXT("|")+B.GoodId;auto* M=Find(State.MarketTotals,Key);if(!M){FMarketTotal Row;Row.Id=Key;Row.MarketId=B.MarketId;Row.GoodId=B.GoodId;State.MarketTotals.Add(Row);M=&State.MarketTotals.Last();}M->LastPrice=Price;M->LastHour=State.EconomyHour;M->VolumeKg+=Kg;if(M->Day!=State.EconomyHour/24){M->Day=State.EconomyHour/24;M->DayVolumeKg=0;}M->DayVolumeKg+=Kg;
   if(State.Trades.Num()>Scenario.Economy.HistoryLimit)State.Trades.RemoveAt(0,1,EAllowShrinking::No);

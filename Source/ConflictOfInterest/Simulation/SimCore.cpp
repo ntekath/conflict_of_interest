@@ -19,7 +19,7 @@ uint32 EntityRandom(int64 Seed,int64 Step,const FString& Id)
 bool FSimulation::Load(const FString& Json,const FCoIGeoMapData& Geo,FString& Error)
 {
  FScenario Candidate;if(!LoadScenario(Json,Geo,Candidate,Error))return false;
- Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Loaded=true;
+ Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Session={Scenario.Id,Scenario.PlayerCompanyId};Loaded=true;
  for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;Region.RemainingForestKg=R.ForestKg;Region.RemainingOreKg=R.OreKg;State.Regions.Add(Region);}
  InitializeAudit();Aggregate();Publish();return true;
 }
@@ -28,7 +28,7 @@ void FSimulation::Shutdown()
  // A local counter would reuse generation 1 in the next PIE world. Epochs are process-unique.
  static std::atomic<uint64> NextEpoch{0};
  Loaded=false;Generation=NextEpoch.fetch_add(1,std::memory_order_relaxed)+1;Version=0;LastIssuedSequence=0;CreditMicros=0;RateSeconds=0;RateSteps=0;
- Pending.Reset();Results.Reset();State=FState();Snapshot=FSnapshot();Scenario=FScenario();Diagnostics=FDiagnostics();
+ Pending.Reset();Results.Reset();Session=FSession();State=FState();Snapshot=FSnapshot();Scenario=FScenario();Diagnostics=FDiagnostics();
 }
 bool FSimulation::Enqueue(FCommand Command,FString& Error)
 {
@@ -37,6 +37,7 @@ bool FSimulation::Enqueue(FCommand Command,FString& Error)
  {Error=TEXT("Duplicate/nonmonotonic sequence, past target or excessive horizon");return false;}
  if(Pending.Num()>=Scenario.Settings.MaxPendingCommands){Error=TEXT("Command queue full; caller must retry explicitly");return false;}
  if(Command.Kind>ECommandKind::CancelTransport){Error=TEXT("Unsupported command kind");return false;}
+ if(!Authorized(Command,Error))return false;
  LastIssuedSequence=Command.Sequence;Pending.Add(MoveTemp(Command));
  Pending.Sort([](const FCommand& A,const FCommand& B){return A.TargetStep==B.TargetStep?A.Sequence<B.Sequence:A.TargetStep<B.TargetStep;});
  Error.Empty();Diagnostics.PendingCommands=Pending.Num();return true;
@@ -47,6 +48,7 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 }
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
+ if(!Authorized(Command,Reason))return false;
  if(Command.Kind==ECommandKind::BookTransport)return BookTransport(Command.Transport,Reason);
  if(Command.Kind==ECommandKind::CancelTransport){bool OK=CancelTransport(Command.Transport.Id,Command.Transport.OwnerId);Reason=OK?TEXT("Cancelled"):TEXT("Not cancellable");return OK;}
  if(Command.Kind==ECommandKind::PlaceOrder)return PlaceOrder(Command.Order,Reason);
@@ -94,7 +96,7 @@ bool FSimulation::RunStep()
    if(C.TargetStep>Next)break;
    FCommandResult Result;Result.Sequence=C.Sequence;Result.Step=Next;
    Result.ActorId=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:C.Transport.OwnerId;Result.ObjectId=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.Id:C.Transport.Id;
-   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(Result.ActorId==Scenario.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
+   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(Result.ActorId==Session.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
   }
   if(Done)Pending.RemoveAt(0,Done,EAllowShrinking::No);
   if(Results.Num()>128)Results.RemoveAt(0,Results.Num()-128,EAllowShrinking::No);
@@ -159,7 +161,7 @@ void FSimulation::Publish()
  New.Generation=Generation;New.Version=Version;New.Step=State.Step;New.Regions=State.Regions;New.Countries=State.Countries;
  FDateTime Start;FDateTime::ParseIso8601(*(Scenario.StartDate+TEXT("T00:00:00Z")),Start);New.Date=(Start+FTimespan::FromHours((double)State.Step*Scenario.Settings.HoursPerStep)).ToString(TEXT("%d.%m.%Y %H:%M"));
  for(const auto& C:State.Countries){New.Population+=C.Population;New.Employed+=C.Employed;}
- const auto* Player=Find(State.Companies,Scenario.PlayerCompanyId);const auto* A=Find(State.Accounts,Player->AccountId);
+ const auto* Player=Find(State.Companies,Session.PlayerCompanyId);const auto* A=Find(State.Accounts,Player->AccountId);
  New.PlayerName=Find(Scenario.Definitions.Companies,Player->Id)->Name;New.PlayerMoneyCents=A->BalanceCents;New.PlayerReservedCents=A->ReservedCents;
  for(const auto& Store:State.Warehouses)if(Store.OwnerId==Player->Id){New.PlayerStorageCapacity+=Find(Scenario.Definitions.WarehouseTypes,Store.TypeId)->CapacityPoints;New.PlayerStorageUsed+=UsedStorage(Store.Id);}
  for(const auto& Vehicle:State.Vehicles)if(Vehicle.OwnerId==Player->Id)++New.PlayerTrucks;
@@ -168,6 +170,16 @@ void FSimulation::Publish()
 FString FSimulation::Fingerprint() const
 {
  FFingerprint F;F.Write(Scenario);F.Write(State);F.Write(LastIssuedSequence);
- for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);}return F.Finish();
+ for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);}return F.Finish();
 }
+}
+
+namespace CoISim {
+bool FSimulation::IsAutonomous(const FString& Id) const {return Id!=Session.PlayerCompanyId&&Find(State.Companies,Id)!=nullptr;}
+bool FSimulation::Authorized(const FCommand& C,FString& Error) const {
+ if(C.Origin==ECommandOrigin::System)return true; // trusted scenario/test harness, never exposed by the player bridge
+ FString Actor=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:(C.Kind==ECommandKind::BookTransport||C.Kind==ECommandKind::CancelTransport)?C.Transport.OwnerId:C.Resources.ActorId;
+ if(C.CompanyId!=Actor||!Find(State.Companies,Actor)||(C.Origin==ECommandOrigin::Player?Actor!=Session.PlayerCompanyId:!IsAutonomous(Actor))){Error=TEXT("Company control authorization failed");return false;}return true;
+}
+FString FSimulation::EconomicFingerprint() const {auto Economic=State;Economic.PlayerDays.Reset();Economic.PlayerEvents.Reset();FFingerprint F;F.Write(Scenario.Definitions);F.Write(Scenario.Settings);F.Write(Economic);return F.Finish();}
 }

@@ -15,11 +15,11 @@ void FSimulation::Spoil() {
   I.SpoilRemainder+=I.QuantityKg*Rate;int64 Lost=I.SpoilRemainder/24000000;I.SpoilRemainder%=24000000;if(!Lost)continue;
   // Cancel reservations that would otherwise refer to lost physical stock, before applying spoilage.
   if(Lost>I.QuantityKg-I.ReservedKg){for(auto& O:State.Orders)if(O.Status==TEXT("open")&&O.Side==TEXT("sell")&&O.ActorId==I.OwnerId&&O.StorageId==I.StorageId&&O.GoodId==I.GoodId)CancelOrder(O.Id,O.ActorId,TEXT("spoilage"));
-   for(auto& J:State.Transports)if(J.Status==TEXT("planned")&&J.SourceInventoryId==I.Id){CancelTransport(J.Id,J.OwnerId);if(J.OwnerId==Scenario.PlayerCompanyId)PlayerEvent(TEXT("transport"),J.Id,TEXT("Geplanter Transport wegen Verderb der Quellware aufgehoben. Reservierungen wurden freigegeben; verbliebene Ware bleibt im Quelllager."));}
+   for(auto& J:State.Transports)if(J.Status==TEXT("planned")&&J.SourceInventoryId==I.Id){CancelTransport(J.Id,J.OwnerId);if(J.OwnerId==Session.PlayerCompanyId)PlayerEvent(TEXT("transport"),J.Id,TEXT("Geplanter Transport wegen Verderb der Quellware aufgehoben. Reservierungen wurden freigegeben; verbliebene Ware bleibt im Quelllager."));}
    for(auto& R:State.Reservations)if(R.Active&&R.InventoryId==I.Id){FCommand C;C.Kind=ECommandKind::Release;C.Resources=R;FString Error;Apply(C,Error);}
   }
   TakeStock(Index,Lost);Find(State.GoodsAudit,I.GoodId)->SpoiledKg+=Lost;
-  if(I.OwnerId==Scenario.PlayerCompanyId){auto& Rows=PlayerDay().Spoiled;auto* Row=Rows.FindByPredicate([&](const FAmount& A){return A.GoodId==I.GoodId;});if(!Row){Rows.Add({I.GoodId,0});Row=&Rows.Last();}Row->Kg+=Lost;}
+  if(I.OwnerId==Session.PlayerCompanyId){auto& Rows=PlayerDay().Spoiled;auto* Row=Rows.FindByPredicate([&](const FAmount& A){return A.GoodId==I.GoodId;});if(!Row){Rows.Add({I.GoodId,0});Row=&Rows.Last();}Row->Kg+=Lost;}
  }
 }
 }

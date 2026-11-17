@@ -9,7 +9,7 @@
 using namespace CoISim;
 namespace
 {
-bool Fixture(FString& Json,FCoIGeoMapData& Geo)
+bool SimulationFixture(FString& Json,FCoIGeoMapData& Geo)
 {
  auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));FString Error;
  if(!C||!Geo.Load(C->DefinitionJson,Error)||!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim"))))return false;
@@ -28,7 +28,7 @@ FCommand Reservation(FSimulation& Sim,int64 Seq,int64 Target,const FString& Id)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCoISimContract,"CoI.Simulation.ContractAndValidation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCoISimContract::RunTest(const FString& Parameters)
 {
- FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture available"),Fixture(Json,Geo)))return false;
+ FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture available"),SimulationFixture(Json,Geo)))return false;
  FSimulation Sim;if(!TestTrue(TEXT("Strict scenario validation"),Sim.Load(Json,Geo,Error))){AddError(Error);return false;}
  TestEqual(TEXT("Five configured goods"),Sim.GetScenario().Definitions.Goods.Num(),5);
  TestEqual(TEXT("Three groups in each of four regions"),Sim.GetState().Groups.Num(),12);
@@ -64,7 +64,7 @@ bool FCoISimContract::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCoISimDeterminism,"CoI.Simulation.FixedStepsAndPause",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCoISimDeterminism::RunTest(const FString& Parameters)
 {
- FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture"),Fixture(Json,Geo)))return false;
+ FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture"),SimulationFixture(Json,Geo)))return false;
  FSimulation A,B,C;for(auto* Sim:{&A,&B,&C})
  {
   if(!TestTrue(TEXT("Scenario"),Sim->Load(Json,Geo,Error)))return false;
@@ -91,7 +91,7 @@ bool FCoISimDeterminism::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCoISimCommands,"CoI.Simulation.AtomicCommandsAndLifetime",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCoISimCommands::RunTest(const FString& Parameters)
 {
- FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture"),Fixture(Json,Geo)))return false;FSimulation Sim;
+ FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture"),SimulationFixture(Json,Geo)))return false;FSimulation Sim;
  if(!TestTrue(TEXT("Scenario"),Sim.Load(Json,Geo,Error)))return false;
  FSimulation Other;if(!TestTrue(TEXT("Independent scenario instance"),Other.Load(Json,Geo,Error)))return false;
  TestFalse(TEXT("Command from another newly-created world is stale"),Other.Enqueue(Reservation(Sim,1,1,TEXT("hold.cross_world")),Error));
@@ -117,7 +117,7 @@ bool FCoISimCommands::RunTest(const FString& Parameters)
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCoISimBudget,"CoI.Simulation.BoundedBacklogAndOrdering",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCoISimBudget::RunTest(const FString& Parameters)
 {
- FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture"),Fixture(Json,Geo)))return false;
+ FString Json,Error;FCoIGeoMapData Geo;if(!TestTrue(TEXT("Fixture"),SimulationFixture(Json,Geo)))return false;
  Json=Edited(Json,[](auto R){R->GetObjectField(TEXT("Settings"))->SetNumberField(TEXT("MaxPendingCommands"),2);R->GetObjectField(TEXT("Settings"))->SetNumberField(TEXT("StepBudgetMicros"),1);});
  FSimulation Sim;if(!TestTrue(TEXT("Budget fixture validates"),Sim.Load(Json,Geo,Error)))return false;
  auto Future=Reservation(Sim,1,3,TEXT("hold.future"));auto Near=Reservation(Sim,2,1,TEXT("hold.near"));Near.Resources.Kg=10;

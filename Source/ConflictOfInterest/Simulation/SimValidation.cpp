@@ -38,7 +38,7 @@ bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Erro
  auto Actor=[&](const FString& Id){return Find(D.Companies,Id)!=nullptr||Find(D.Groups,Id)!=nullptr;};
  auto Amounts=[&](const TArray<FAmount>& A){TSet<FString> Seen;for(const auto& V:A){if(!Find(D.Goods,V.GoodId)||V.Kg<0||V.Kg>1000000000||Seen.Contains(V.GoodId))return false;Seen.Add(V.GoodId);}return true;};
  for(const TCHAR* Id:{TEXT("good.food"),TEXT("good.wood"),TEXT("good.ore"),TEXT("good.tools"),TEXT("good.luxury")})REQUIRE(Find(D.Goods,FString(Id)),"Missing required prototype good");
- for(const auto& Company:D.Companies)REQUIRE(!Company.Name.IsEmpty()&&(Company.DecisionProfile==TEXT("player")||Company.DecisionProfile==TEXT("producer")||Company.DecisionProfile==TEXT("trader")||Company.DecisionProfile==TEXT("carrier")||Company.DecisionProfile==TEXT("service")),"Unknown company decision profile");
+ for(const auto& Company:D.Companies)REQUIRE(!Company.Name.IsEmpty()&&(Company.DecisionProfile==TEXT("producer")||Company.DecisionProfile==TEXT("trader")||Company.DecisionProfile==TEXT("carrier")||Company.DecisionProfile==TEXT("service")),"Unknown company decision profile");
  for(const auto& G:D.Goods)REQUIRE(G.InitialUnitCostCents>=0&&G.InitialUnitCostCents<=E.MaxPriceCents&&G.InputLimitCents>0&&G.InputLimitCents<=E.MaxPriceCents&&G.Unit==TEXT("kg")&&G.StoragePointsPerKg>0&&G.StoragePointsPerKg<=10000&&G.SpoilPartsPerMillionPerDay>=0&&G.SpoilPartsPerMillionPerDay<=1000000&&(G.NeedCategory==TEXT("basic")||G.NeedCategory==TEXT("luxury")||G.NeedCategory==TEXT("none")),"Invalid goods units, storage or spoilage definition");
  for(const auto& P:D.Places){const auto* G=Geo.Cities.FindByPredicate([&](const FCoIGeoCity& X){return X.Id==P.Id;});REQUIRE(G&&P.RegionId==G->RegionId&&FMath::Abs(P.Latitude-G->Latitude)<1e-7&&FMath::Abs(P.Longitude-G->Longitude)<1e-7,"Place does not agree with geographic catalog");}
  TSet<FString> Markets;
@@ -88,10 +88,10 @@ bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Erro
  {
   auto* V=Find(W.Vehicles,O.VehicleId);REQUIRE(V&&O.ProviderId==V->OwnerId&&Find(D.Places,O.FromCityId)&&Find(D.Places,O.ToCityId)&&O.FromCityId!=O.ToCityId&&V->CityId==O.FromCityId&&O.AvailableKg>0&&O.AvailableKg<=Find(D.VehicleTypes,V->TypeId)->CapacityKg&&O.FixedCents>=0&&O.CentsPerKg>=0&&O.ExpiresStep>0,"Invalid finite transport offer");
  }
- int32 PlayerTrucks=0,PlayerStores=0;for(const auto& V:W.Vehicles)if(V.OwnerId==S.PlayerCompanyId)++PlayerTrucks;for(const auto& Store:W.Warehouses)if(Store.OwnerId==S.PlayerCompanyId)++PlayerStores;
- REQUIRE(Find(D.Companies,S.PlayerCompanyId)&&PlayerTrucks==1&&PlayerStores==1,"Player must begin with exactly one truck and one warehouse");
- const auto* PlayerStore=W.Warehouses.FindByPredicate([&](const FWarehouse& A){return A.OwnerId==S.PlayerCompanyId;});const auto* PlayerTruck=W.Vehicles.FindByPredicate([&](const FVehicle& A){return A.OwnerId==S.PlayerCompanyId;});
- REQUIRE(PlayerStore&&PlayerTruck&&PlayerStore->CityId==PlayerTruck->CityId,"Player assets must start together");
+ const auto* Selected=Find(D.Companies,S.PlayerCompanyId);
+ REQUIRE(Selected&&Selected->Playable,"Selected company is missing or not playable; session cannot start");
+ int Playable=0;for(const auto& Company:D.Companies){if(Company.Playable){++Playable;REQUIRE(!Company.AccountingOnly&&!Company.Description.IsEmpty()&&Find(D.Places,Company.StartCityId),"Invalid playable company metadata");}}
+ REQUIRE(Playable>=2,"At least two existing companies must be playable");
  for(const auto& O:S.ContractExamples.Orders)
  {auto* P=Find(D.Places,O.CityId);auto* Store=Find(W.Warehouses,O.StorageId);auto* R=P?Find(D.Regions,P->RegionId):nullptr;REQUIRE(Actor(O.ActorId)&&P&&Store&&Store->CityId==O.CityId&&R&&R->MarketId==O.MarketId&&Find(D.Goods,O.GoodId)&&(O.Side==TEXT("buy")||O.Side==TEXT("sell"))&&O.Status==TEXT("draft")&&O.OriginalKg>0&&O.RemainingKg<=O.OriginalKg&&O.RemainingKg>=0&&O.LimitCentsPerKg>0&&O.ExpiresStep>O.CreatedStep&&O.ReservedKg==0&&O.ReservedCents==0,"Invalid market-order contract example");}
  for(const auto& T:S.ContractExamples.Trades)REQUIRE(Find(S.ContractExamples.Orders,T.BuyOrderId)&&Find(S.ContractExamples.Orders,T.SellOrderId)&&Actor(T.BuyerId)&&Actor(T.SellerId)&&T.BuyerId!=T.SellerId&&Markets.Contains(T.MarketId)&&Find(D.Places,T.CityId)&&Find(D.Goods,T.GoodId)&&T.QuantityKg>0&&T.QuantityKg<=1000000000&&T.PriceCentsPerKg>0&&T.PriceCentsPerKg<=1000000000&&T.TotalCents==T.QuantityKg*T.PriceCentsPerKg,"Invalid trade contract example");
