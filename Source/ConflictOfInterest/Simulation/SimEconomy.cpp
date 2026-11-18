@@ -1,4 +1,5 @@
 #include "SimCore.h"
+#include "CityHubs.h"
 #include "SimArchive.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 namespace CoISim
@@ -46,6 +47,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
+ if(!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -95,10 +97,10 @@ void FSimulation::Produce(int64 Hour)
  for(int32 Index=0;Index<State.Facilities.Num();++Index)
  {
   auto& F=State.Facilities[Index];F.LastBatches=0;F.UtilizationPermille=0;
-  const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* P=Find(Scenario.Definitions.Places,F.CityId);const auto* RD=Find(Scenario.Definitions.Regions,P->RegionId);const auto* R=Find(State.Regions,P->RegionId);
+  const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* P=Find(Scenario.Definitions.Places,F.CityId);const auto* Site=Find(Scenario.Definitions.ResourceSites,F.ResourceSiteId);const auto* ResourceState=Find(State.ResourceSites,F.ResourceSiteId);
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
-  int64 Suitability=T->ResourceRequirement==TEXT("farmland")?RD->FarmlandPermille:1000;
-  if((T->ResourceRequirement==TEXT("forest")&&!R->RemainingForestKg)||(T->ResourceRequirement==TEXT("ore")&&!R->RemainingOreKg))continue;
+  int64 Suitability=Site?Site->SuitabilityPermille:1000;
+  if(Site&&Site->Kind!=TEXT("farmland")&&(!ResourceState||!ResourceState->RemainingKg))continue;
   int64 Denominator=T->Jobs*1000;
   // Counterfactual capacity before liquidity: current workers plus unfunded jobs
   // that could be filled by the region's still available workforce. No jobs or wages are created.
@@ -111,7 +113,7 @@ void FSimulation::Produce(int64 Hour)
   int64 Batches=F.ProductionRemainder/Denominator;F.ProductionRemainder%=Denominator;
   int64 Net=0;for(const auto& A:T->Inputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,I==INDEX_NONE?0:(State.Inventories[I].QuantityKg-State.Inventories[I].ReservedKg)/FMath::Max(1LL,A.Kg));Net-=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;}
   int64 ResourcePerBatch=0;for(const auto& A:T->Outputs){Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,(1000000000-(I==INDEX_NONE?0:State.Inventories[I].QuantityKg))/FMath::Max(1LL,A.Kg));if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))ResourcePerBatch+=A.Kg;}
-  if(ResourcePerBatch)Batches=FMath::Min(Batches,(T->ResourceRequirement==TEXT("forest")?R->RemainingForestKg:R->RemainingOreKg)/ResourcePerBatch);
+  if(Site)Batches=FMath::Min(Batches,F.ResourceBatchesPerHour);if(ResourcePerBatch)Batches=FMath::Min(Batches,ResourceState->RemainingKg/ResourcePerBatch);
   const auto* Store=Find(State.Warehouses,F.StorageId);if(Net>0)Batches=FMath::Min(Batches,(Find(Scenario.Definitions.WarehouseTypes,Store->TypeId)->CapacityPoints-UsedStorage(Store->Id)-Store->ReservedIncomingPoints)/Net);
   if(Batches>0)Plans.Add({Index,Batches});
  }
@@ -124,13 +126,14 @@ void FSimulation::Produce(int64 Hour)
   auto* Region=Find(State.Regions,Find(Scenario.Definitions.Places,F.CityId)->RegionId);
   int64 Resource=0,Net=0;for(const auto& A:T->Inputs)Net-=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;
   for(const auto& A:T->Outputs){int32 Existing=StockIndex(F.OwnerId,F.StorageId,A.GoodId);B=FMath::Min(B,(1000000000-(Existing==INDEX_NONE?0:State.Inventories[Existing].QuantityKg))/A.Kg);Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))Resource+=A.Kg;}
-  if(Resource)B=FMath::Min(B,(T->ResourceRequirement==TEXT("forest")?Region->RemainingForestKg:Region->RemainingOreKg)/Resource);
+  auto* ResourceState=Find(State.ResourceSites,F.ResourceSiteId);if(ResourceState){B=FMath::Min(B,F.ResourceBatchesPerHour);if(Resource)B=FMath::Min(B,ResourceState->RemainingKg/Resource);}
   const auto* Store=Find(State.Warehouses,F.StorageId);if(Net>0)B=FMath::Min(B,(Find(Scenario.Definitions.WarehouseTypes,Store->TypeId)->CapacityPoints-UsedStorage(Store->Id)-Store->ReservedIncomingPoints)/Net);if(B<=0)continue;
   int64 InputValue=0;for(const auto& A:T->Inputs){TakeSpoilCredit(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);InputValue+=TakeStock(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);Find(State.GoodsAudit,A.GoodId)->InputKg+=A.Kg*B;DayMetric(Region->Id,A.GoodId).InputUsedKg+=A.Kg*B;}
   int64 OutputKg=0;for(const auto& A:T->Outputs)OutputKg+=A.Kg*B;
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
   int64 WageCost=(Workers*T->DailyWageCents+23)/24;
   for(const auto& A:T->Outputs){int32 I=EnsureStock(F.OwnerId,F.StorageId,A.GoodId);State.Inventories[I].QuantityKg+=A.Kg*B;State.Inventories[I].BookValueCents+=(InputValue+WageCost)*(A.Kg*B)/FMath::Max(1LL,OutputKg);Find(State.GoodsAudit,A.GoodId)->ProducedKg+=A.Kg*B;}
+  if(ResourceState&&Resource){ResourceState->RemainingKg-=Resource*B;ResourceState->ExtractedKg+=Resource*B;}
   if(T->ResourceRequirement==TEXT("forest"))Region->RemainingForestKg-=Resource*B;
   if(T->ResourceRequirement==TEXT("ore"))Region->RemainingOreKg-=Resource*B;
   F.LastBatches=B;F.UtilizationPermille=FMath::Min(1000LL,B*1000/T->CapacityBatchesPerHour);

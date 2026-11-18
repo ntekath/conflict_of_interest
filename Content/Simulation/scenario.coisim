@@ -86,7 +86,8 @@
         "AccountingOnly": false,
         "Playable": true,
         "Description": "Transportbetrieb mit zwei Lkw.",
-        "StartCityId": "city.us.detroit"
+        "StartCityId": "city.us.detroit",
+        "HeadquartersCityId": "city.us.detroit"
       },
       {
         "Id": "company.external",
@@ -95,7 +96,8 @@
         "AccountingOnly": true,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": ""
       },
       {
         "Id": "company.food",
@@ -104,7 +106,8 @@
         "AccountingOnly": false,
         "Playable": true,
         "Description": "Nahrungsproduzent ohne eigene Lkw.",
-        "StartCityId": "city.us.chicago"
+        "StartCityId": "city.us.chicago",
+        "HeadquartersCityId": "city.us.chicago"
       },
       {
         "Id": "company.luxury",
@@ -113,7 +116,8 @@
         "AccountingOnly": false,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.detroit"
       },
       {
         "Id": "company.merchant",
@@ -122,7 +126,8 @@
         "AccountingOnly": false,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.cleveland"
       },
       {
         "Id": "company.ore",
@@ -131,7 +136,8 @@
         "AccountingOnly": false,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.pittsburgh"
       },
       {
         "Id": "company.player",
@@ -140,7 +146,8 @@
         "AccountingOnly": false,
         "Playable": true,
         "Description": "Kleines Handelshaus mit Lager und eigenem Lkw.",
-        "StartCityId": "city.us.detroit"
+        "StartCityId": "city.us.detroit",
+        "HeadquartersCityId": "city.us.detroit"
       },
       {
         "Id": "company.services",
@@ -149,7 +156,8 @@
         "AccountingOnly": true,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": ""
       },
       {
         "Id": "company.tools",
@@ -158,7 +166,8 @@
         "AccountingOnly": false,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.pittsburgh"
       },
       {
         "Id": "company.wood",
@@ -167,7 +176,8 @@
         "AccountingOnly": false,
         "Playable": false,
         "Description": "",
-        "StartCityId": ""
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.cleveland"
       }
     ],
     "Needs": [
@@ -477,6 +487,88 @@
         "SpeedKmPerHour": 20,
         "CostCentsPerKm": 5,
         "DailyCostCents": 100
+      }
+    ],
+    "ResourceSites": [
+      {
+        "Id": "site|city.us.chicago|farmland",
+        "CityId": "city.us.chicago",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 800,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.chicago|forest",
+        "CityId": "city.us.chicago",
+        "Kind": "forest",
+        "InitialKg": 100000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.cleveland|farmland",
+        "CityId": "city.us.cleveland",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 300,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.cleveland|forest",
+        "CityId": "city.us.cleveland",
+        "Kind": "forest",
+        "InitialKg": 800000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.cleveland|ore",
+        "CityId": "city.us.cleveland",
+        "Kind": "ore",
+        "InitialKg": 100000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.detroit|farmland",
+        "CityId": "city.us.detroit",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 250,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.detroit|forest",
+        "CityId": "city.us.detroit",
+        "Kind": "forest",
+        "InitialKg": 300000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.pittsburgh|farmland",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 100,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.pittsburgh|forest",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "forest",
+        "InitialKg": 150000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.pittsburgh|ore",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "ore",
+        "InitialKg": 900000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
       }
     ]
   },
@@ -1167,7 +1259,9 @@
             "GroupId": "group.chicago.low",
             "Workers": 20
           }
-        ]
+        ],
+        "ResourceSiteId": "site|city.us.chicago|farmland",
+        "ResourceBatchesPerHour": 1
       },
       {
         "Id": "facility.luxury",
@@ -1189,7 +1283,9 @@
         "CostRecipientAccountId": "account.company.services",
         "UtilizationPermille": 0,
         "PayrollArrearsCents": 0,
-        "Employment": []
+        "Employment": [],
+        "ResourceSiteId": "site|city.us.pittsburgh|ore",
+        "ResourceBatchesPerHour": 1
       },
       {
         "Id": "facility.tools",
@@ -1211,7 +1307,9 @@
         "CostRecipientAccountId": "account.company.services",
         "UtilizationPermille": 0,
         "PayrollArrearsCents": 0,
-        "Employment": []
+        "Employment": [],
+        "ResourceSiteId": "site|city.us.cleveland|forest",
+        "ResourceBatchesPerHour": 1
       }
     ],
     "Warehouses": [
@@ -1323,7 +1421,8 @@
         "CityId": "city.us.detroit",
         "TransportId": "",
         "CostRecipientAccountId": "account.company.services",
-        "Bound": false
+        "Bound": false,
+        "HomeCityId": "city.us.detroit"
       },
       {
         "Id": "vehicle.carrier.2",
@@ -1332,7 +1431,8 @@
         "CityId": "city.us.cleveland",
         "TransportId": "",
         "CostRecipientAccountId": "account.company.services",
-        "Bound": false
+        "Bound": false,
+        "HomeCityId": "city.us.cleveland"
       },
       {
         "Id": "vehicle.merchant",
@@ -1341,7 +1441,8 @@
         "CityId": "city.us.cleveland",
         "TransportId": "",
         "CostRecipientAccountId": "account.company.services",
-        "Bound": false
+        "Bound": false,
+        "HomeCityId": "city.us.cleveland"
       },
       {
         "Id": "vehicle.player",
@@ -1350,7 +1451,8 @@
         "CityId": "city.us.detroit",
         "TransportId": "",
         "CostRecipientAccountId": "account.company.services",
-        "Bound": false
+        "Bound": false,
+        "HomeCityId": "city.us.detroit"
       }
     ],
     "Inventories": [
@@ -1574,5 +1676,6 @@
     "MapTrucksTotal": 100,
     "MapTruckZoom": 16000,
     "MapRouteDetailZoom": 12000
-  }
+  },
+  "HubSchema": 1
 }

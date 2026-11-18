@@ -13,7 +13,7 @@ struct FGoodDef
  FString Id,Name,Unit,NeedCategory; int64 MapPriceLowCents=0,MapPriceHighCents=0;int64 InitialUnitCostCents=0,InputLimitCents=0; int64 StoragePointsPerKg=0,SpoilPartsPerMillionPerDay=0;
  COI_RECORD(COI_F(Id);COI_F(Name);COI_F(Unit);COI_F(NeedCategory);COI_F(MapPriceLowCents);COI_F(MapPriceHighCents);COI_F(InitialUnitCostCents);COI_F(InputLimitCents);COI_F(StoragePointsPerKg);COI_F(SpoilPartsPerMillionPerDay);)
 };
-struct FCompanyDef { FString Id,Name,DecisionProfile,Description,StartCityId;bool Playable=false,AccountingOnly=false; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);COI_F(Playable);COI_F(AccountingOnly);COI_F(Description);COI_F(StartCityId);) };
+struct FCompanyDef { FString Id,Name,DecisionProfile,Description,StartCityId,HeadquartersCityId;bool Playable=false,AccountingOnly=false; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);COI_F(Playable);COI_F(AccountingOnly);COI_F(Description);COI_F(StartCityId);COI_O(HeadquartersCityId);) };
 struct FNeedDef
 {
  FString Id,BasicGoodId,LuxuryGoodId; int64 BasicKgPerThousandPerDay=0,LuxuryKgPerThousandPerDay=0,BasicMaxPriceCents=0,LuxuryMaxPriceCents=0,LuxuryBudgetPermille=0;
@@ -38,12 +38,15 @@ struct FVehicleDef
  FString Id,Mode; int64 CapacityKg=0,SpeedKmPerHour=0,CostCentsPerKm=0,DailyCostCents=0;
  COI_RECORD(COI_F(Id);COI_F(Mode);COI_F(CapacityKg);COI_F(SpeedKmPerHour);COI_F(CostCentsPerKm);COI_F(DailyCostCents);)
 };
+// A physical hinterland site belongs to exactly one hub; regional amounts are aggregates.
+struct FResourceSiteDef {FString Id,CityId,Kind;int64 InitialKg=0,SuitabilityPermille=1000,MaxBatchesPerHour=1;COI_RECORD(COI_F(Id);COI_F(CityId);COI_F(Kind);COI_F(InitialKg);COI_F(SuitabilityPermille);COI_F(MaxBatchesPerHour);)};
+struct FResourceSite {FString Id;int64 RemainingKg=0,ExtractedKg=0;COI_RECORD(COI_F(Id);COI_F(RemainingKg);COI_F(ExtractedKg);)};
 struct FDefinitions
 {
- TArray<FGoodDef> Goods; TArray<FCompanyDef> Companies; TArray<FNeedDef> Needs; TArray<FGroupDef> Groups;
+ TArray<FResourceSiteDef> ResourceSites;TArray<FGoodDef> Goods; TArray<FCompanyDef> Companies; TArray<FNeedDef> Needs; TArray<FGroupDef> Groups;
  TArray<FRegionDef> Regions; TArray<FPlaceDef> Places; TArray<FFacilityDef> FacilityTypes;
  TArray<FWarehouseDef> WarehouseTypes; TArray<FVehicleDef> VehicleTypes;
- COI_RECORD(COI_F(Goods);COI_F(Companies);COI_F(Needs);COI_F(Groups);COI_F(Regions);COI_F(Places);COI_F(FacilityTypes);COI_F(WarehouseTypes);COI_F(VehicleTypes);)
+ COI_RECORD(COI_O(ResourceSites);COI_F(Goods);COI_F(Companies);COI_F(Needs);COI_F(Groups);COI_F(Regions);COI_F(Places);COI_F(FacilityTypes);COI_F(WarehouseTypes);COI_F(VehicleTypes);)
 };
 struct FAccount { FString Id,OwnerId; int64 BalanceCents=0,ReservedCents=0; COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(BalanceCents);COI_F(ReservedCents);) };
 struct FCompany { FString Id,AccountId; COI_RECORD(COI_F(Id);COI_F(AccountId);) };
@@ -57,9 +60,9 @@ struct FGroup
 struct FEmployment { FString GroupId; int64 Workers=0; COI_RECORD(COI_F(GroupId);COI_F(Workers);) };
 struct FFacility
 {
- FString Id,TypeId,OwnerId,CityId,StorageId,CostRecipientAccountId; int64 OperatingPaidUntilHour=0,OperatingArrearsCents=0; int64 PaidUntilHour=0,ProductionRemainder=0,LastBatches=0,UnfundedJobs=0,UtilizationPermille=0,PayrollArrearsCents=0;
+ FString ResourceSiteId;int64 ResourceBatchesPerHour=0;FString Id,TypeId,OwnerId,CityId,StorageId,CostRecipientAccountId; int64 OperatingPaidUntilHour=0,OperatingArrearsCents=0; int64 PaidUntilHour=0,ProductionRemainder=0,LastBatches=0,UnfundedJobs=0,UtilizationPermille=0,PayrollArrearsCents=0;
  TArray<FEmployment> Employment;
- COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(StorageId);COI_F(CostRecipientAccountId);COI_O(OperatingPaidUntilHour);COI_O(OperatingArrearsCents);COI_O(PaidUntilHour);COI_O(ProductionRemainder);COI_O(LastBatches);COI_O(UnfundedJobs);COI_F(UtilizationPermille);COI_F(PayrollArrearsCents);COI_F(Employment);)
+ COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(StorageId);COI_O(ResourceSiteId);COI_O(ResourceBatchesPerHour);COI_F(CostRecipientAccountId);COI_O(OperatingPaidUntilHour);COI_O(OperatingArrearsCents);COI_O(PaidUntilHour);COI_O(ProductionRemainder);COI_O(LastBatches);COI_O(UnfundedJobs);COI_F(UtilizationPermille);COI_F(PayrollArrearsCents);COI_F(Employment);)
 };
 struct FWarehouse
 {
@@ -68,8 +71,8 @@ struct FWarehouse
 };
 struct FVehicle
 {
- FString Id,TypeId,OwnerId,CityId,TransportId,CostRecipientAccountId; int64 ArrearsCents=0; bool Bound=false;
- COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(TransportId);COI_F(CostRecipientAccountId);COI_O(ArrearsCents);COI_F(Bound);)
+ FString HomeCityId;FString Id,TypeId,OwnerId,CityId,TransportId,CostRecipientAccountId; int64 ArrearsCents=0; bool Bound=false;
+ COI_RECORD(COI_F(Id);COI_F(TypeId);COI_F(OwnerId);COI_F(CityId);COI_F(TransportId);COI_O(HomeCityId);COI_F(CostRecipientAccountId);COI_O(ArrearsCents);COI_F(Bound);)
 };
 struct FInventory
 {
@@ -161,7 +164,7 @@ struct FDayMetrics
 };
 struct FState
 {
- bool DeveloperModified=false;int64 DeveloperMoneySources=0,DeveloperMoneySinks=0;
+ TArray<FResourceSite> ResourceSites;bool DeveloperModified=false;int64 DeveloperMoneySources=0,DeveloperMoneySinks=0;
 
  FDayMetrics CurrentDayMetrics,LastDayMetrics;TArray<FPlayerDay> PlayerDays;TArray<FPlayerEvent> PlayerEvents;int64 OrderSequence=0,TradeSequence=0; int64 EconomyHour=0,InitialMoneyCents=0;TArray<FMarketTotal> MarketTotals;TArray<FCashFlow> CashFlows;TArray<FCashTotal> CashTotals;TArray<FGoodsAudit> GoodsAudit;
  int64 Step=0; TArray<FAccount> Accounts; TArray<FCompany> Companies; TArray<FGroup> Groups;
@@ -169,7 +172,7 @@ struct FState
  TArray<FInventory> Inventories; TArray<FMarketOrder> Orders; TArray<FTrade> Trades;
  TArray<FTransport> Transports; TArray<FTransportOffer> Offers; TArray<FReservation> Reservations;
  TArray<FRegion> Regions; TArray<FCountry> Countries;
- COI_RECORD(COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
+ COI_RECORD(COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
 };
 struct FSettings
 {
@@ -182,9 +185,9 @@ struct FExamples { TArray<FMarketOrder> Orders; TArray<FTrade> Trades; TArray<FT
 struct FSession {FString ScenarioId,PlayerCompanyId;COI_RECORD(COI_F(ScenarioId);COI_F(PlayerCompanyId);)};
 struct FScenario
 {
- int64 Schema=2; FString Id,StartDate,PlayerCompanyId,BalancingNotice,Currency;
+ int64 HubSchema=0;int64 Schema=2; FString Id,StartDate,PlayerCompanyId,BalancingNotice,Currency;
  FEconomyRules Economy; FSettings Settings; FDefinitions Definitions; FState InitialState; FExamples ContractExamples;
- COI_RECORD(COI_F(Schema);COI_F(Id);COI_F(StartDate);COI_F(PlayerCompanyId);COI_F(BalancingNotice);COI_F(Currency);COI_F(Economy);COI_F(Settings);COI_F(Definitions);COI_F(InitialState);COI_F(ContractExamples);)
+ COI_RECORD(COI_O(HubSchema);COI_F(Schema);COI_F(Id);COI_F(StartDate);COI_F(PlayerCompanyId);COI_F(BalancingNotice);COI_F(Currency);COI_F(Economy);COI_F(Settings);COI_F(Definitions);COI_F(InitialState);COI_F(ContractExamples);)
 };
 #undef COI_RECORD
 #undef COI_O

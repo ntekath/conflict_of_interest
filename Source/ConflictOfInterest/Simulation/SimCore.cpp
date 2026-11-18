@@ -21,6 +21,7 @@ bool FSimulation::Load(const FString& Json,const FCoIGeoMapData& Geo,FString& Er
  FScenario Candidate;if(!LoadScenario(Json,Geo,Candidate,Error))return false;
  Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Session={Scenario.Id,Scenario.PlayerCompanyId};Loaded=true;
  for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;Region.RemainingForestKg=R.ForestKg;Region.RemainingOreKg=R.OreKg;State.Regions.Add(Region);}
+ for(const auto& X:Scenario.Definitions.ResourceSites)State.ResourceSites.Add({X.Id,X.InitialKg,0});
  InitializeAudit();BeginDayMetrics(0);Aggregate();Publish();return true;
 }
 void FSimulation::Shutdown()

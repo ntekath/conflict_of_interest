@@ -1,4 +1,5 @@
 #include "SimCore.h"
+#include "CityHubs.h"
 #include "SimArchive.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -14,7 +15,7 @@ bool LoadScenario(const FString& Json,const FCoIGeoMapData& Geo,FScenario& Out,F
  Error.Empty();REQUIRE(Json.Len()<4000000,"Scenario exceeds size limit");
  TSharedPtr<FJsonObject> Root;REQUIRE(FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root)&&Root.IsValid(),"Invalid scenario JSON");
  FScenario Candidate;FRead Reader{Root,Error};Candidate.Fields(Reader);if(!Error.IsEmpty())return false;
- if(!ValidateScenario(Candidate,Geo,Error))return false;Out=MoveTemp(Candidate);return true;
+ if(!MigrateCityHubs(Candidate,Error)||!ValidateScenario(Candidate,Geo,Error))return false;Out=MoveTemp(Candidate);return true;
 }
 bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Error)
 {
@@ -100,7 +101,7 @@ bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Erro
  for(const auto& T:S.ContractExamples.Trades)REQUIRE(Find(S.ContractExamples.Orders,T.BuyOrderId)&&Find(S.ContractExamples.Orders,T.SellOrderId)&&Actor(T.BuyerId)&&Actor(T.SellerId)&&T.BuyerId!=T.SellerId&&Markets.Contains(T.MarketId)&&Find(D.Places,T.CityId)&&Find(D.Goods,T.GoodId)&&T.QuantityKg>0&&T.QuantityKg<=1000000000&&T.PriceCentsPerKg>0&&T.PriceCentsPerKg<=1000000000&&T.TotalCents==T.QuantityKg*T.PriceCentsPerKg,"Invalid trade contract example");
  for(const auto& T:S.ContractExamples.Transports)
  {auto* V=Find(W.Vehicles,T.VehicleId);auto* Store=Find(W.Warehouses,T.DestinationStorageId);REQUIRE(V&&Actor(T.OwnerId)&&Find(D.Companies,T.ProviderId)&&Find(D.Places,T.FromCityId)&&Find(D.Places,T.ToCityId)&&Store&&Store->CityId==T.ToCityId&&Find(D.Goods,T.GoodId)&&Find(W.Inventories,T.CargoInventoryId)&&T.Status==TEXT("draft")&&(T.Service==TEXT("own_truck")||T.Service==TEXT("rented_truck"))&&T.Kg>0&&T.Kg<=Find(D.VehicleTypes,V->TypeId)->CapacityKg&&T.ArrivalStep>T.DepartureStep&&T.CostCents>=0&&T.ReservedIncomingPoints==0,"Invalid transport contract example");}
- Error.Empty();return true;
+ if(!ValidateCityHubs(S,W,true,Error))return false;Error.Empty();return true;
 }
 #undef REQUIRE
 }
