@@ -7,12 +7,13 @@ namespace CoISim
 // Strict required-field reader. Integer input is bounded to exact JSON integer range and safe scenario magnitudes.
 struct FRead
 {
- TSharedPtr<FJsonObject> Object; FString& Error;
- template<class T> void Optional(const TCHAR* Key,T& Value){if(Object->HasField(Key))(*this)(Key,Value);}
+ TSharedPtr<FJsonObject> Object; FString& Error;bool Strict=false;TSet<FString> Keys;
+ void Complete(){if(Strict)for(const auto& P:Object->Values){FString Key(*P.Key);if(!Keys.Contains(Key))Fail(TEXT("Unbekanntes Feld: ")+Key);}}
+ template<class T> void Optional(const TCHAR* Key,T& Value){if(Strict||Object->HasField(Key))(*this)(Key,Value);}
  void Fail(const FString& Key){if(Error.IsEmpty())Error=TEXT("Invalid/missing field: ")+Key;}
  template<class T> void operator()(const TCHAR* Key,T& Value)
  {
-  auto V=Object->TryGetField(Key);if(!V.IsValid()){Fail(Key);return;}
+  if(Strict)Keys.Add(Key);auto V=Object->TryGetField(Key);if(!V.IsValid()){Fail(Key);return;}
   Read(V,Value,Key);
  }
  void Read(const TSharedPtr<FJsonValue>& V,FString& X,const FString& Key){if(!V->TryGetString(X)||X.Len()>512)Fail(Key);}
@@ -24,7 +25,20 @@ struct FRead
  template<class T> void Read(const TSharedPtr<FJsonValue>& V,TArray<T>& X,const FString& Key)
  {const TArray<TSharedPtr<FJsonValue>>* A=nullptr;if(!V->TryGetArray(A)||A->Num()>10000){Fail(Key);return;}X.Reset();for(const auto& E:*A){T Item;Read(E,Item,Key);X.Add(MoveTemp(Item));}}
  template<class T> void Read(const TSharedPtr<FJsonValue>& V,T& X,const FString& Key)
- {const TSharedPtr<FJsonObject>* O=nullptr;if(!V->TryGetObject(O)){Fail(Key);return;}FRead Nested{*O,Error};X.Fields(Nested);}
+ {const TSharedPtr<FJsonObject>* O=nullptr;if(!V->TryGetObject(O)){Fail(Key);return;}FRead Nested{*O,Error,Strict};X.Fields(Nested);Nested.Complete();}
+};
+// Full, canonical JSON writer; optional scenario fields are always present in saves.
+struct FWrite {
+ TSharedRef<FJsonObject> Object=MakeShared<FJsonObject>();
+ template<class T>void Optional(const TCHAR* K,const T& V){(*this)(K,V);}
+ template<class T>void operator()(const TCHAR* K,const T& V){Object->SetField(K,Value(V));}
+ TSharedPtr<FJsonValue> Value(const FString& V){return MakeShared<FJsonValueString>(V);}
+ TSharedPtr<FJsonValue> Value(int64 V){return MakeShared<FJsonValueNumber>((double)V);}
+ TSharedPtr<FJsonValue> Value(uint32 V){return Value((int64)V);}
+ TSharedPtr<FJsonValue> Value(double V){return MakeShared<FJsonValueNumber>(V);}
+ TSharedPtr<FJsonValue> Value(bool V){return MakeShared<FJsonValueBoolean>(V);}
+ template<class T>TSharedPtr<FJsonValue> Value(const TArray<T>& V){TArray<TSharedPtr<FJsonValue>> A;for(const auto& X:V)A.Add(Value(X));return MakeShared<FJsonValueArray>(A);}
+ template<class T>TSharedPtr<FJsonValue> Value(const T& V){FWrite W;auto Copy=V;Copy.Fields(W);return MakeShared<FJsonValueObject>(W.Object);}
 };
 // Field-order canonical fingerprint: never iterate a TMap, never hash struct padding.
 struct FFingerprint

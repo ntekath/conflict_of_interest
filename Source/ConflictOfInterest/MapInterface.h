@@ -35,7 +35,7 @@ protected:
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
  UPROPERTY() TObjectPtr<class UCoIPlayerHUD> PlayerHUD;
- FString MetricLayer=TEXT("regions"),MetricGood=TEXT("good.food");CoISim::EMapMetric MetricKind=CoISim::EMapMetric::Households;int64 MetricStep=-1;uint64 MetricGeneration=MAX_uint64;
+ FString MetricLayer=TEXT("regions"),MetricGood=TEXT("good.food");CoISim::EMapMetric MetricKind=CoISim::EMapMetric::Households;int64 MetricStep=-1;uint64 MetricGeneration=MAX_uint64,PresentationGeneration=MAX_uint64;
  UPROPERTY() TMap<FName,TObjectPtr<class UMaterialInterface>> BaseMaterials;
  UPROPERTY() TMap<FName,TObjectPtr<class UMaterialInstanceDynamic>> MetricMaterials;
  FString RouteFilter=TEXT("own");bool RouteAnimate=true;

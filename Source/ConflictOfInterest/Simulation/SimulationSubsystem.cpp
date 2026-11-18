@@ -123,3 +123,66 @@ bool UCoISimulationSubsystem::ExportDeveloper(FString& Result){if(JournalFailed)
 #endif
 
 bool UCoISimulationSubsystem::PreviewInvestment(CoISim::FInvestmentRequest R,CoISim::FInvestmentQuote& Q,FString& E) const {check(IsInGameThread());R.OwnerId=Simulation.GetSession().PlayerCompanyId;return Simulation.PreviewInvestment(R,Q,E);}
+
+bool UCoISimulationSubsystem::SaveSlot(int32 Slot, FString &Error)
+{
+    check(IsInGameThread());
+#if COI_WITH_DEV_CONSOLE
+    if (Dev.IsAdvancing())
+    {
+        Error = TEXT("Entwicklervorschub aktiv. Erst cancel oder Abschluss abwarten.");
+        return false;
+    }
+#endif
+    FString Json;
+    return Simulation.SaveGameJson(Json, Error, Speed) && CoISim::WriteSaveSlot(Slot, Json, Error);
+}
+bool UCoISimulationSubsystem::LoadSlot(int32 Slot, FString &Error)
+{
+    check(IsInGameThread());
+#if COI_WITH_DEV_CONSOLE
+    if (Dev.IsAdvancing())
+    {
+        Error = TEXT("Entwicklervorschub aktiv. Erst cancel oder Abschluss abwarten.");
+        return false;
+    }
+#endif
+    FCoIGeoMapData Geo;
+    bool Found = false;
+    for (TActorIterator<ACoIGeoReference> It(GetWorld()); It; ++It)
+        if (It->Catalog)
+        {
+            Found = Geo.Load(It->Catalog->DefinitionJson, Error);
+            break;
+        }
+    if (!Found)
+    {
+        Error = TEXT("Kein gültiger Geokatalog.");
+        return false;
+    }
+    FString Config, Json;
+    CoISim::FScenario Expected;
+    if (!FFileHelper::LoadFileToString(Config, *(FPaths::ProjectContentDir() / TEXT("Simulation/scenario.coisim"))))
+    {
+        Error = TEXT("Installierte Szenariodatei fehlt oder ist nicht lesbar.");
+        return false;
+    }
+    if (!CoISim::LoadScenario(Config, Geo, Expected, Error) || !CoISim::ReadSaveSlot(Slot, Json, Error))
+        return false;
+    int32 RestoredSpeed = 1;
+    if (!Simulation.LoadGameJson(Json, Geo, Expected, Error, RestoredSpeed))
+        return false;
+#if COI_WITH_DEV_CONSOLE
+    Dev.Reset(Simulation);
+    InitializeDeveloper();
+#endif
+    Paused = true;
+    Speed = RestoredSpeed;
+    FractionalMicros = 0;
+    NotifySeconds = 0;
+    GameThreadMicros = 0;
+    LastPlayerToken = 0;
+    LoadError.Empty();
+    PublishPresentation();
+    return true;
+}

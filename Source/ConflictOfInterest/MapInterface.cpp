@@ -210,6 +210,7 @@ void UCoIMapInterface::SpeedFour(){if(Simulation)Simulation->SetSpeed(4);}
 void UCoIMapInterface::SpeedSixteen(){if(Simulation)Simulation->SetSpeed(16);}
 void UCoIMapInterface::RefreshSimulation()
 {
+ if(Simulation&&Simulation->IsReady()&&PresentationGeneration!=Simulation->GetSnapshot().Generation){PresentationGeneration=Simulation->GetSnapshot().Generation;Selection.Id.Empty();RoutePickCycle=0;LastRoutePointer=FVector2D::ZeroVector;RefreshInformation();}
  if(PlayerHUD){ApplyMetricLayer();return;}
  if(!SimulationLabel||!SimulationDiagnostics)return;
  if(!Simulation||!Simulation->IsReady())

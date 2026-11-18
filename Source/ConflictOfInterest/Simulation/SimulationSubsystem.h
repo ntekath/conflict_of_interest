@@ -3,6 +3,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "SimCore.h"
 #include "DeveloperConsole.h"
+#include "SaveGame.h"
 #include "SimulationSubsystem.generated.h"
 DECLARE_MULTICAST_DELEGATE(FCoISimulationChanged);
 // Sole authoritative UE owner. All entry points run synchronously on the Game Thread.
@@ -19,6 +20,7 @@ public:
  virtual bool IsTickable() const override {return Super::IsTickable()&&Simulation.IsLoaded();}
  virtual bool DoesSupportWorldType(EWorldType::Type Type) const override {return Type==EWorldType::Game||Type==EWorldType::PIE;}
  void TogglePause();void SetSpeed(int32 Value);bool Restart();
+ bool SaveSlot(int32 Slot,FString& Error);bool LoadSlot(int32 Slot,FString& Error);
  bool Submit(CoISim::FCommand Command,FString& Error);
  bool SubmitPlayer(CoISim::FCommand Command,int64 Token,int64& Ticket,FString& Error);
  bool PreviewInvestment(CoISim::FInvestmentRequest Request,CoISim::FInvestmentQuote& Quote,FString& Error) const;

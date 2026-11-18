@@ -60,6 +60,9 @@ public:
  bool IsAutonomous(const FString& Id) const;
  FString EconomicFingerprint() const;
  bool IsLoaded() const { return Loaded; }
+ bool SaveGameJson(FString& Json,FString& Error,int32 Speed=1) const;
+ bool LoadGameJson(const FString& Json,const FCoIGeoMapData& Geo,const FScenario& Expected,FString& Error,int32& Speed);
+ bool ValidateSaveState(FString& Error) const;
 private:
 #if COI_WITH_DEV_CONSOLE
  friend class FDeveloperConsole;

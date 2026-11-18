@@ -186,7 +186,7 @@ struct FSettings
 };
 // Examples are schema fixtures, NEVER applied to live accounts or orders.
 struct FExamples { TArray<FMarketOrder> Orders; TArray<FTrade> Trades; TArray<FTransport> Transports; COI_RECORD(COI_F(Orders);COI_F(Trades);COI_F(Transports);) };
-// Session control is separate from economic ownership; serializable for AP09.
+// Session control is separate from economic ownership; persisted since AP08.4.
 struct FSession {FString ScenarioId,PlayerCompanyId;COI_RECORD(COI_F(ScenarioId);COI_F(PlayerCompanyId);)};
 struct FScenario
 {

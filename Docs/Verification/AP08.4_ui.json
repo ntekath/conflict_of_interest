@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-18",
+  "engine": "UE 5.8.4",
+  "method": "computer-use skill / @oai/sky native Windows app",
+  "checks": [
+    {
+      "resolution": "1280x720",
+      "actions": [
+        "Spielstände öffnen; drei leere Plätze sichtbar",
+        "Start; normale Simulation bis Stunde 25; Pause",
+        "Slot 3 Speichern bestätigen",
+        "Ladedialog öffnen und per Escape abbrechen"
+      ],
+      "result": {
+        "company": "Spielerhandel",
+        "step": 25,
+        "date": "02.01.1913 01:00",
+        "available_cents": 2499600,
+        "reserved_cents": 0,
+        "status": "Spielstand erfolgreich gespeichert."
+      }
+    },
+    {
+      "resolution": "1920x1080",
+      "actions": [
+        "Vorherigen Spielprozess vollständig schließen",
+        "Neuen Prozess starten: Stunde 0, 2500000 Cent",
+        "Spielstände öffnen: persistierter Slot 3 sichtbar",
+        "Slot 3 Laden bestätigen"
+      ],
+      "result": {
+        "company": "Spielerhandel",
+        "step": 25,
+        "date": "02.01.1913 01:00",
+        "available_cents": 2499600,
+        "reserved_cents": 0,
+        "paused": true,
+        "status": "Spielstand geladen. Partie pausiert; Start setzt sie fort."
+      }
+    }
+  ],
+  "screenshots": "Während der Prüfung direkt visuell kontrolliert; keine Screenshots im Repository.",
+  "slots": "UI-Testslot 3 bleibt lokal im ignorierten Saved-Verzeichnis; 1 und 2 leer."
+}

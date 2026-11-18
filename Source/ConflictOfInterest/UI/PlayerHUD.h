@@ -4,6 +4,7 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Simulation/SimCore.h"
+#include "Simulation/SaveGame.h"
 #include "PlayerHUD.generated.h"
 class UVerticalBox;class UHorizontalBox;class UTextBlock;class UBorder;class UCanvasPanel;class UScrollBox;class UEditableTextBox;class UComboBoxString;
 UCLASS()
@@ -44,6 +45,7 @@ private:
  UPROPERTY() TMap<FString,TObjectPtr<UEditableTextBox>> Fields;
  UPROPERTY() TArray<TObjectPtr<UCoIActionButton>> NavButtons;
  TMap<FString,TMap<FString,FString>> ChoiceValues;TMap<FString,FString> Selected;
+ TArray<CoISim::FSaveSlotInfo> SaveSlots;
  FString CityContext,LastCityContext,CityTab=TEXT("Übersicht");bool EntireRegion=false;
  void OpenCity(const FString&);void RefreshCity();
  FDelegateHandle Changed;FString FocusedObject,SelectionSummary;FString View,SelectionId,DialogKind,ContextId,LastStatus;bool Updating=false,SelectionCollapsed=false;
