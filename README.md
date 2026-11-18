@@ -73,3 +73,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP07a](Docs/AP07a.md): lokale Entwicklerkonsole mit F10 (nur Editor/Development), sicheren Eingriffen, budgetiertem Stunden-Vorschub und JSONL-Journal. `help` listet Befehle; Shipping enthält keine Entwickler-Endpunkte.
 
 [AP08.1](Docs/AP08.1.md): gemeinsame Stadthubs, getrennte Hauptsitze/Heimatorte und begrenzte physische Umlandquellen; Migration ohne zusätzliche Assets.
+
+[AP08.2](Docs/AP08.2.md): Stadtbildschirm mit Übersicht, bestehenden lokalen Markt-/Lager-/Transportaktionen, eigenen Assets und transparent noch nicht ausführbaren Investitionen. Einstieg über „Stadt“ oder die Kartenauswahl.

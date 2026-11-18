@@ -8,6 +8,7 @@ FTransportTerms TransportTerms(const FDefinitions& D,const FEconomyRules& E,cons
  T.Km=From==To?E.LocalHaulKm:FMath::Max(1LL,(int64)FMath::CeilToDouble(CoIGeo::DistanceKm(A->Latitude,A->Longitude,B->Latitude,B->Longitude)*E.RouteDetourPermille/1000.));
  T.Duration=(T.Km+V.SpeedKmPerHour-1)/V.SpeedKmPerHour;T.Departure=Requested?Requested:Hour+E.BookingLeadHours;T.Arrival=T.Departure+T.Duration;T.Operation=T.Km*V.CostCentsPerKm;T.Freight=Own?0:(T.Operation*(1000+E.FreightMarkupPermille)+999)/1000;T.Cost=Own?T.Operation:T.Freight;return T;
 }
+bool CityMarketLocation(const FPlayerView& P,const FString& StoreId,const FString& CityId,bool EntireRegion){const auto* W=Find(P.Stores,StoreId);if(!W)return false;if(CityId.IsEmpty())return true;const auto* C=Find(P.Catalog.Places,CityId);const auto* L=Find(P.Catalog.Places,W->CityId);return C&&L&&(EntireRegion?C->RegionId==L->RegionId:C->Id==L->Id);}
 FString PlayerReason(const FString& R) {
  if(R.Contains(TEXT("Destination full"))||R.Contains(TEXT("destination capacity")))return TEXT("Im Ziellager ist nicht genügend freie Kapazität vorhanden. Es wurde nichts reserviert.");
  if(R.Contains(TEXT("Invalid cargo")))return TEXT("Ware ist nicht verfügbar, bereits reserviert oder nicht an diesem Abholort. Prüfen Sie auch Lagerzugang und Lkw-Kapazität.");
@@ -45,7 +46,7 @@ void FSimulation::PublishPlayer(FSnapshot& Out) const {
  // No competitor account balances, private stocks or individual freight jobs cross the HUD boundary.
  for(const auto& S:State.Warehouses){FStoreView V;V.Id=S.Id;V.CityId=S.CityId;V.Own=S.OwnerId==P.ActorId;V.Public=S.OwnerId==TEXT("company.services");V.OwnerName=Find(Scenario.Definitions.Companies,S.OwnerId)->Name;V.Name=(V.Own?TEXT("Eigenes Lager"):V.Public?TEXT("Mietlager"):TEXT("Betriebslager"))+FString(TEXT(" · "))+Find(Scenario.Definitions.Places,S.CityId)->Name+(V.Own||V.Public?TEXT(""):TEXT(" · ")+V.OwnerName);V.Capacity=Find(Scenario.Definitions.WarehouseTypes,S.TypeId)->CapacityPoints;V.DailyCost=Find(Scenario.Definitions.WarehouseTypes,S.TypeId)->DailyCostCents;V.Used=UsedStorage(S.Id);V.Incoming=S.ReservedIncomingPoints;V.Blocked=S.ArrearsCents>0;V.Arrears=V.Own?S.ArrearsCents:0;
   for(const auto& O:State.Orders)if(O.Status==TEXT("open")&&O.Side==TEXT("buy")&&O.ActorId==S.OwnerId&&O.StorageId==S.Id)V.AcceptedGoods.AddUnique(O.GoodId);P.Stores.Add(MoveTemp(V));}
- for(const auto& V:State.Vehicles){bool Own=V.OwnerId==P.ActorId;const auto* C=Find(Scenario.Definitions.Companies,V.OwnerId);if(!Own&&C->DecisionProfile!=TEXT("carrier"))continue;const auto* T=Find(Scenario.Definitions.VehicleTypes,V.TypeId);FVehicleView X;X.Id=V.Id;X.Own=Own;X.ProviderId=V.OwnerId;X.ProviderName=C->Name;X.Name=Own?TEXT("Eigener Lkw"):C->Name+TEXT(" · Lkw ")+FString::FromInt(P.Vehicles.Num()+1);X.CityId=V.CityId;X.Bound=V.Bound;X.JobId=Own?V.TransportId:TEXT("");X.Blocked=V.ArrearsCents>0;X.Capacity=T->CapacityKg;X.Speed=T->SpeedKmPerHour;X.CostPerKm=T->CostCentsPerKm;X.DailyCost=T->DailyCostCents;P.Vehicles.Add(MoveTemp(X));}
+ for(const auto& V:State.Vehicles){bool Own=V.OwnerId==P.ActorId;const auto* C=Find(Scenario.Definitions.Companies,V.OwnerId);if(!Own&&C->DecisionProfile!=TEXT("carrier"))continue;const auto* T=Find(Scenario.Definitions.VehicleTypes,V.TypeId);FVehicleView X;X.Id=V.Id;X.Own=Own;X.ProviderId=V.OwnerId;X.ProviderName=C->Name;X.Name=Own?TEXT("Eigener Lkw"):C->Name+TEXT(" · Lkw ")+FString::FromInt(P.Vehicles.Num()+1);X.CityId=V.CityId;X.HomeCityId=Own?V.HomeCityId:TEXT("");X.Bound=V.Bound;X.JobId=Own?V.TransportId:TEXT("");X.Blocked=V.ArrearsCents>0;X.Capacity=T->CapacityKg;X.Speed=T->SpeedKmPerHour;X.CostPerKm=T->CostCentsPerKm;X.DailyCost=T->DailyCostCents;P.Vehicles.Add(MoveTemp(X));}
  for(const auto& I:State.Inventories)if(I.OwnerId==P.ActorId&&(I.QuantityKg>0||I.RentArrearsCents))P.Stocks.Add(I);
  for(const auto& O:State.Orders)if(O.Status==TEXT("open")||O.ActorId==P.ActorId)P.Orders.Add(O);
  P.Trades=State.Trades;P.Markets=State.MarketTotals;
@@ -57,6 +58,17 @@ void FSimulation::PublishPlayer(FSnapshot& Out) const {
   auto* R=P.Routes.FindByPredicate([&](const FRouteActivity& X){return X.Id==Key;});if(!R){FRouteActivity X;X.Id=Key;X.FromCityId=J.FromCityId;X.ToCityId=J.ToCityId;X.Own=Own;P.Routes.Add(X);R=&P.Routes.Last();}
   ++R->Active;if(J.Status==TEXT("moving"))++R->Moving;
   if(Own){const auto* Cargo=Find(State.Inventories,J.CargoInventoryId);R->OwnKg+=J.Empty?0:J.Status==TEXT("moving")?(Cargo?Cargo->QuantityKg:0):J.Kg;R->OwnJobs.Add(J.Id);if(!R->NextArrival||J.ArrivalStep<R->NextArrival)R->NextArrival=J.ArrivalStep;}
+ }
+ for(const auto& Place:P.Catalog.Places){FCityView City;City.Id=Place.Id;City.Name=Place.Name;City.RegionId=Place.RegionId;
+  if(const auto* R=Find(State.Regions,Place.RegionId)){City.RegionalEmployed=R->Employed;City.RegionalPopulation=R->Population;}
+  for(const auto& G:State.Groups){const auto* Def=Find(P.Catalog.Groups,G.Id);if(Def->ConsumptionCityId==Place.Id){City.Residents+=G.Population;City.Workforce+=G.Workforce;City.Groups.Add(Def->IncomeBand);}}
+  for(const auto& I:P.Stocks)if(const auto* W=Find(P.Stores,I.StorageId);W&&W->CityId==Place.Id)City.OwnStockKg+=I.QuantityKg;
+  for(const auto& C:P.Catalog.Companies){FCityPresence X;X.CompanyId=C.Id;X.Name=C.Name;X.Own=C.Id==P.ActorId;X.Headquarters=C.HeadquartersCityId==Place.Id;
+   for(const auto& W:State.Warehouses)if(W.CityId==Place.Id&&W.OwnerId==C.Id)++X.Warehouses;
+   for(const auto& F:State.Facilities)if(F.CityId==Place.Id&&F.OwnerId==C.Id)++X.Facilities;
+   for(const auto& V:P.Vehicles)if(V.ProviderId==C.Id&&V.CityId==Place.Id)++X.PublicVehicles;
+   if(X.Headquarters||X.Warehouses||X.Facilities||X.PublicVehicles||(X.Own&&City.OwnStockKg))City.Presence.Add(X);
+  }P.Cities.Add(City);
  }
  P.Routes.Sort([](const FRouteActivity& A,const FRouteActivity& B){return A.Id<B.Id;});
 }

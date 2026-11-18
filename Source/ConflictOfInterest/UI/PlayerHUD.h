@@ -44,6 +44,8 @@ private:
  UPROPERTY() TMap<FString,TObjectPtr<UEditableTextBox>> Fields;
  UPROPERTY() TArray<TObjectPtr<UCoIActionButton>> NavButtons;
  TMap<FString,TMap<FString,FString>> ChoiceValues;TMap<FString,FString> Selected;
+ FString CityContext,LastCityContext,CityTab=TEXT("Übersicht");bool EntireRegion=false;
+ void OpenCity(const FString&);void RefreshCity();
  FDelegateHandle Changed;FString FocusedObject,SelectionSummary;FString View,SelectionId,DialogKind,ContextId,LastStatus;bool Updating=false,SelectionCollapsed=false;
  uint64 SeenGeneration=0,SeenVersion=MAX_uint64,QuoteVersion=0;int64 Token=0,PendingTicket=0;uint64 QuoteGeneration=0;int64 QuoteHour=0;
  CoISim::FCommand Draft;bool ValidDraft=false;
