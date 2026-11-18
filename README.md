@@ -79,3 +79,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP08.3](Docs/AP08.3.md): Stadt → Investitionen ermöglicht gedeckten Lager-/Farmbau, verzögerten Lagerausbau und Käufe ausdrücklich angebotener unbelasteter Assets. Kosten, Dauer, Bauplätze und Angebote liegen im Szenario.
 
 [AP08.4](Docs/AP08.4.md): „Spielstände“ bietet drei lokale Speicherplätze für vollständige Partien einschließlich laufender Bau-/Ausbauprojekte, teilgefüllter Orders und Transporte. Laden prüft Version, Konfiguration, Referenzen und Bilanzen und startet mit der gespeicherten Firma pausiert. Dateien liegen in `Saved/SaveGames`; keine automatische Offline-Fortschreibung.
+
+[AP08.5](Docs/AP08.5.md): Stadt → Eigene Assets → Lager-/Betriebsregeln steuert expliziten automatischen Einkauf/Verkauf, Ziele/Reserven, Preislimits, Kaufbudgets, geplante Auslastung und Lohnangebote. Gemeinsame Konten/Bestände werden nicht mehrfach reserviert. Regeln und Fälligkeiten sind in Save-Version 2 gespeichert; ältere Version-1-Spielstände werden unverändert als inkompatibel abgewiesen.

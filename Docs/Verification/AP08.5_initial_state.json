@@ -1,0 +1,18 @@
+{
+  "baseline": "89c118ca8225116a66e6610d53890b6e8d49c864 (AP08.4)",
+  "InitialState_identical": true,
+  "Definitions_identical": true,
+  "Settings_identical": true,
+  "PlayerCompanyId_restored": "company.player",
+  "initial_money_cents": 56500000,
+  "initial_stock_kg": 11100,
+  "initial_assets": 20,
+  "new_economy_fields": {
+    "RuleBudgetHours": 24,
+    "RuleDefaultBuyBudgetCents": 50000,
+    "RuleMaxBuyBudgetCents": 1000000000,
+    "RuleMaxWageCents": 100000,
+    "RuleMaxStockKg": 1000000
+  },
+  "other_economy_values_unchanged": true
+}

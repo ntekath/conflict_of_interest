@@ -11,6 +11,7 @@ struct FStoredCommand
     FMarketOrder Order;
     FTransport Transport;
     FInvestmentRequest Investment;
+    FOperatingRule Rule;
     template <class R> void Fields(R &W)
     {
         W(TEXT("Kind"), Kind);
@@ -22,6 +23,7 @@ struct FStoredCommand
         W(TEXT("Order"), Order);
         W(TEXT("Transport"), Transport);
         W(TEXT("Investment"), Investment);
+        W(TEXT("Rule"), Rule);
     }
 };
 struct FStoredResult
@@ -41,7 +43,7 @@ struct FStoredResult
 };
 struct FSaveData
 {
-    int64 FormatVersion = 1, SimulationVersion = 1, DefinitionsVersion = 1, SnapshotVersion = 0, LastSequence = 0,
+    int64 FormatVersion = 2, SimulationVersion = 2, DefinitionsVersion = 2, SnapshotVersion = 0, LastSequence = 0,
           CreditMicros = 0, Speed = 1;
     FString Platform = TEXT("Win64"), RandomAlgorithm = TEXT("entity-fnv-splitmix-v1"), SavedUtc, CompatibilityHash;
     FScenario Scenario;

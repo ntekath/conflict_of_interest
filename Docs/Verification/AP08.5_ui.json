@@ -1,0 +1,109 @@
+{
+  "date": "2026-11-18",
+  "engine": "UE 5.8.4",
+  "method": "computer-use skill / @oai/sky native Windows UI",
+  "checks": [
+    {
+      "resolution": "1280x720",
+      "actions": [
+        "Stadt / Eigene Assets / Lagerregeln öffnen",
+        "Aktiv wählen; Nahrung Mindestreserve 20, Ziel 50, Verkaufslimit 1 Cent/kg",
+        "Interne Scrollfläche bis zur vollständigen Vorschau prüfen; fixe Bestätigungszeile erreichbar",
+        "Vorschau aktualisieren / verbindlich bestätigen / Start",
+        "Automatischer Verkauf 50 kg tatsächlich ausgeführt; 50 kg bleiben",
+        "Bei Stunde 15 pausieren und Slot 2 speichern"
+      ],
+      "result": {
+        "company": "company.player",
+        "hour": 15,
+        "cash_cents": 2499850,
+        "remaining_owned_food_kg": 50,
+        "rule_enabled": true,
+        "reserve_kg": 20,
+        "target_kg": 50,
+        "sell_cents_per_kg": 1
+      }
+    },
+    {
+      "resolution": "1920x1080",
+      "actions": [
+        "Vorherigen Prozess schließen; in neuem Prozess vorhandene company.food über temporäre Szenarioauswahl starten",
+        "Stadt / Eigene Assets / Betriebsregeln: zulässiges Nahrungsrezept sichtbar",
+        "50 % geplante Auslastung und 200 Cent Tageslohn einstellen; bestätigen und starten",
+        "Nach Stunde 26 pausieren; Vorgaben erneut öffnen: 10 von 20 Stellen, bezahlter Tarif 2 USD, Deckung bis 03.01. 00:00",
+        "Slot 2 laden; vorheriger Handelsbetrieb samt Regeln und Beständen wiederhergestellt",
+        "Testprozess schließen; ursprüngliche Szenarioauswahl bytegenau wiederherstellen"
+      ],
+      "result": {
+        "production_company": "company.food",
+        "production_hour": 26,
+        "planned_utilization_permille": 500,
+        "offered_and_paid_daily_wage_cents": 200,
+        "assigned_workers": 10,
+        "production_cash_cents": 4994800,
+        "restored_company": "company.player",
+        "restored_hour": 15,
+        "restored_cash_cents": 2499850,
+        "restored_rule_enabled": true,
+        "restored_food_kg": 50,
+        "loaded_paused": true
+      }
+    }
+  ],
+  "saved_file_crosscheck": {
+    "FormatVersion": 2,
+    "SimulationVersion": 2,
+    "DefinitionsVersion": 2,
+    "PlayerCompanyId": "company.player",
+    "Step": 15,
+    "rule": {
+      "Id": "storage.player",
+      "OwnerId": "company.player",
+      "RecipeId": "",
+      "Explicit": true,
+      "Enabled": true,
+      "UtilizationPermille": 1000,
+      "DailyWageCents": 1,
+      "BuyBudgetCents": 50000,
+      "Goods": [
+        {
+          "GoodId": "good.food",
+          "MinimumKg": 20,
+          "TargetKg": 50,
+          "BuyLimitCents": 0,
+          "SellLimitCents": 1
+        },
+        {
+          "GoodId": "good.luxury",
+          "MinimumKg": 0,
+          "TargetKg": 0,
+          "BuyLimitCents": 0,
+          "SellLimitCents": 0
+        },
+        {
+          "GoodId": "good.ore",
+          "MinimumKg": 0,
+          "TargetKg": 0,
+          "BuyLimitCents": 0,
+          "SellLimitCents": 0
+        },
+        {
+          "GoodId": "good.tools",
+          "MinimumKg": 0,
+          "TargetKg": 0,
+          "BuyLimitCents": 0,
+          "SellLimitCents": 0
+        },
+        {
+          "GoodId": "good.wood",
+          "MinimumKg": 0,
+          "TargetKg": 0,
+          "BuyLimitCents": 0,
+          "SellLimitCents": 0
+        }
+      ]
+    }
+  },
+  "legacy_slot_3": "Version 1 im Menü klar abgewiesen; nicht überschrieben",
+  "screenshots": "Direkt visuell geprüft; keine Screenshots im Repository."
+}

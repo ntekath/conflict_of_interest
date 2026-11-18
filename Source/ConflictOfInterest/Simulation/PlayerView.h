@@ -19,6 +19,7 @@ struct FCityPresence {FString CompanyId,Name;bool Headquarters=false,Own=false;i
 struct FCityView {FString Id,Name,RegionId;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FString> Groups;TArray<FCityPresence> Presence;};
 struct FPlayerView {
  FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
+ TArray<FOperatingRule> OperatingRules;TArray<FOperatingStatus> OperatingStatus;
  TArray<FConstructionProject> Projects;TArray<FAssetSale> AssetSales;TArray<FString> OccupiedPlots;TArray<FCityView> Cities;TArray<FStoreView> Stores;TArray<FVehicleView> Vehicles;TArray<FInventory> Stocks;
  TArray<FMarketOrder> Orders;TArray<FTrade> Trades;TArray<FMarketTotal> Markets;TArray<FTransport> Shipments;TArray<FFacility> Facilities;
  TArray<FRouteActivity> Routes;TArray<FPlayerDay> Days;TArray<FPlayerEvent> Events;

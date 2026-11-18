@@ -20,6 +20,8 @@ bool LoadScenario(const FString& Json,const FCoIGeoMapData& Geo,FScenario& Out,F
 }
 bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Error)
 {
+ const auto& Op=S.Economy;if(Op.RuleBudgetHours<1||Op.RuleBudgetHours>168||Op.RuleDefaultBuyBudgetCents<0||Op.RuleDefaultBuyBudgetCents>Op.RuleMaxBuyBudgetCents||Op.RuleMaxBuyBudgetCents<1||Op.RuleMaxBuyBudgetCents>1000000000000LL||Op.RuleMaxWageCents<1||Op.RuleMaxWageCents>1000000||Op.RuleMaxStockKg<1||Op.RuleMaxStockKg>1000000000||!S.InitialState.OperatingRules.IsEmpty()||!S.InitialState.OperatingStatus.IsEmpty()){Error=TEXT("Invalid operating rules configuration or nonempty initial runtime rules");return false;}
+
  const auto& D=S.Definitions;const auto& W=S.InitialState;const auto& C=S.Settings;
  FDateTime Start;REQUIRE(S.Schema==2&&S.Id==Geo.ScenarioId&&S.Currency==TEXT("USD")&&!S.BalancingNotice.IsEmpty(),"Scenario schema, ID, currency or balancing notice invalid");
  REQUIRE(FDateTime::ParseIso8601(*(S.StartDate+TEXT("T00:00:00Z")),Start)&&S.StartDate.Len()==10,"Invalid start date");
@@ -70,7 +72,7 @@ bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Erro
  for(const auto& T:D.WarehouseTypes)REQUIRE(T.CapacityPoints>0&&T.CapacityPoints<=1000000000000LL&&T.DailyCostCents>0,"Warehouses require finite capacity and positive daily costs");
  for(const auto& T:D.VehicleTypes)REQUIRE(T.Mode==TEXT("truck")&&T.CapacityKg>0&&T.CapacityKg<=1000000000&&T.SpeedKmPerHour>0&&T.SpeedKmPerHour<=200&&T.CostCentsPerKm>0&&T.DailyCostCents>0,"Invalid truck type");
  for(const auto& T:D.FacilityTypes){for(const auto& A:T.Inputs)REQUIRE(A.Kg>0,"Recipe input must be positive");for(const auto& A:T.Outputs)REQUIRE(A.Kg>0,"Recipe output must be positive");if(T.ResourceRequirement==TEXT("forest")||T.ResourceRequirement==TEXT("ore")){bool Resource=false;for(const auto& A:T.Outputs)Resource|=A.GoodId==(T.ResourceRequirement==TEXT("forest")?TEXT("good.wood"):TEXT("good.ore"));REQUIRE(Resource,"Extraction requires matching resource output");}}
- for(const auto& T:D.FacilityTypes)REQUIRE(Amounts(T.Inputs)&&Amounts(T.Outputs)&&!T.Outputs.IsEmpty()&&T.CapacityBatchesPerHour>0&&T.CapacityBatchesPerHour<=100000&&T.Jobs>0&&T.Jobs<=1000000&&T.DailyWageCents>0&&T.DailyWageCents<=100000000&&T.DailyOperatingCostCents>=0&&T.MarginPermille>=0&&T.MarginPermille<=10000&&(T.ResourceRequirement==TEXT("none")||T.ResourceRequirement==TEXT("farmland")||T.ResourceRequirement==TEXT("forest")||T.ResourceRequirement==TEXT("ore")),"Invalid facility recipe, workforce or resource requirement");
+ for(const auto& T:D.FacilityTypes)REQUIRE(Amounts(T.Inputs)&&Amounts(T.Outputs)&&!T.Outputs.IsEmpty()&&T.CapacityBatchesPerHour>0&&T.CapacityBatchesPerHour<=100000&&T.Jobs>0&&T.Jobs<=1000000&&T.DailyWageCents>0&&T.DailyWageCents<=S.Economy.RuleMaxWageCents&&T.DailyOperatingCostCents>=0&&T.MarginPermille>=0&&T.MarginPermille<=10000&&(T.ResourceRequirement==TEXT("none")||T.ResourceRequirement==TEXT("farmland")||T.ResourceRequirement==TEXT("forest")||T.ResourceRequirement==TEXT("ore")),"Invalid facility recipe, workforce or resource requirement");
  for(const auto& Store:W.Warehouses)REQUIRE(Find(D.WarehouseTypes,Store.TypeId)&&Find(D.Companies,Store.OwnerId)&&Find(D.Places,Store.CityId)&&Find(W.Accounts,Store.CostRecipientAccountId)&&Store.ReservedIncomingPoints==0&&Store.ArrearsCents>=0,"Invalid warehouse references or incoming reservation");
  TSet<FString> StockKeys;
  for(const auto& I:W.Inventories)

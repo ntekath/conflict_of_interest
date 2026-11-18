@@ -2,26 +2,11 @@
 #include "SimArchive.h"
 namespace CoISim {
 void FSimulation::Offer(const FString& Actor,const FString& Store,const FString& Good,const FString& Side,int64 Kg,int64 Price) {
- if(!IsAutonomous(Actor)||Kg<=0||Price<=0)return;const auto* S=Find(State.Warehouses,Store);if(!S)return;
- for(const auto& O:State.Orders)if(O.Status==TEXT("open")&&O.ActorId==Actor&&O.StorageId==Store&&O.GoodId==Good&&O.Side==Side)return;
- auto* A=Find(State.Accounts,ActorAccount(Actor));if(Side==TEXT("buy"))Kg=FMath::Min(Kg,(A->BalanceCents-A->ReservedCents)/Price);Kg=FMath::Min(Kg,Scenario.Economy.MaxOrderKg);if(Kg<=0)return;
- FMarketOrder O;O.Id=FString::Printf(TEXT("auto.%lld"),State.OrderSequence+1);O.ActorId=Actor;O.StorageId=Store;O.CityId=S->CityId;O.MarketId=Find(Scenario.Definitions.Regions,Find(Scenario.Definitions.Places,S->CityId)->RegionId)->MarketId;O.GoodId=Good;O.Side=Side;O.OriginalKg=Kg;O.LimitCentsPerKg=FMath::Min(Price,Scenario.Economy.MaxPriceCents);FString Error;PlaceOrder(O,Error);
+ if(!IsAutonomous(Actor)||Kg<=0||Price<=0)return;for(const auto& O:State.Orders)if(O.Status==TEXT("open")&&O.ActorId==Actor&&O.StorageId==Store&&O.GoodId==Good&&O.Side==Side)return;auto* A=Find(State.Accounts,ActorAccount(Actor));if(Side==TEXT("buy"))Kg=FMath::Min(Kg,(A->BalanceCents-A->ReservedCents)/Price);FString E;OperatingOrder(Actor,Store,Good,Side,Kg,Price,TEXT(""),E);
 }
 void FSimulation::Companies(int64 H) {
  if(H%Scenario.Economy.DecisionHours)return;
- for(auto& O:State.Orders){const auto* C=Find(Scenario.Definitions.Companies,O.ActorId);if(IsAutonomous(O.ActorId)&&C&&(C->DecisionProfile==TEXT("producer")||C->DecisionProfile==TEXT("trader"))&&O.Status==TEXT("open"))CancelOrder(O.Id,O.ActorId,TEXT("repriced"));}
- for(const auto& F:State.Facilities){if(!IsAutonomous(F.OwnerId)||Find(Scenario.Definitions.Companies,F.OwnerId)->DecisionProfile!=TEXT("producer"))continue;const auto* T=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* S=Find(State.Warehouses,F.StorageId);
-  for(const auto& A:T->Outputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);if(I==INDEX_NONE)continue;const auto& Stock=State.Inventories[I];int64 Kg=Stock.QuantityKg-Stock.ReservedKg;
-   int64 Unit=Stock.QuantityKg?(Stock.BookValueCents+Stock.QuantityKg-1)/Stock.QuantityKg:Find(Scenario.Definitions.Goods,A.GoodId)->InitialUnitCostCents;
-   int64 Overhead=(T->DailyOperatingCostCents+Find(Scenario.Definitions.WarehouseTypes,S->TypeId)->DailyCostCents+24*A.Kg-1)/(24*A.Kg);
-   int64 Price=((Unit+Overhead)*(1000+T->MarginPermille)+999)/1000;Offer(F.OwnerId,F.StorageId,A.GoodId,TEXT("sell"),FMath::Max(0LL,Kg-Scenario.Economy.ProducerReserveKg),Price);
-  }
-  for(const auto& A:T->Inputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);int64 Have=I==INDEX_NONE?0:State.Inventories[I].QuantityKg;int64 Target=A.Kg*T->CapacityBatchesPerHour*Scenario.Economy.InputTargetHours;auto* Account=Find(State.Accounts,ActorAccount(F.OwnerId));int64 Limit=Find(Scenario.Definitions.Goods,A.GoodId)->InputLimitCents;
-   // Working capital keeps one full payroll period and one operating day available.
-   int64 Reserve=T->Jobs*T->DailyWageCents*(Scenario.Economy.PayrollHours/24)+T->DailyOperatingCostCents;int64 Budget=FMath::Max(0LL,Account->BalanceCents-Account->ReservedCents-Reserve);
-   Offer(F.OwnerId,F.StorageId,A.GoodId,TEXT("buy"),FMath::Min(FMath::Max(0LL,Target-Have),Budget/Limit),Limit);
-  }
- }
+ for(auto& O:State.Orders){const auto* C=Find(Scenario.Definitions.Companies,O.ActorId);if(IsAutonomous(O.ActorId)&&C&&C->DecisionProfile==TEXT("trader")&&O.RuleId.IsEmpty()&&O.Status==TEXT("open"))CancelOrder(O.Id,O.ActorId,TEXT("repriced"));}
  for(const auto& Stock:State.Inventories){const auto* C=Find(Scenario.Definitions.Companies,Stock.OwnerId);if(!IsAutonomous(Stock.OwnerId)||!C||C->DecisionProfile!=TEXT("trader")||Stock.QuantityKg<=Stock.ReservedKg||!Find(State.Warehouses,Stock.StorageId)||Stock.RentArrearsCents)continue;
   int64 Unit=(Stock.BookValueCents+Stock.QuantityKg-1)/Stock.QuantityKg;int64 Price=FMath::Max(1LL,(Unit*(1000+Scenario.Economy.TraderMarkupPermille)+999)/1000);Offer(Stock.OwnerId,Stock.StorageId,Stock.GoodId,TEXT("sell"),Stock.QuantityKg-Stock.ReservedKg,Price);
  }
@@ -48,7 +33,7 @@ void FSimulation::Trader(int64 H) {
   for(const auto& Ask:State.Orders){if(Ask.Status!=TEXT("open")||Ask.Side!=TEXT("sell")||Ask.ActorId==Actor)continue;
    for(const auto& Bid:State.Orders){if(Bid.Status!=TEXT("open")||Bid.Side!=TEXT("buy")||Bid.ActorId==Actor||Bid.GoodId!=Ask.GoodId||Bid.StorageId==Ask.StorageId)continue;
     for(const auto& V:State.Vehicles){const auto* Owner=Find(Scenario.Definitions.Companies,V.OwnerId);if(V.OwnerId==Session.PlayerCompanyId||V.Bound||V.ArrearsCents||V.CityId!=Ask.CityId||(Owner->DecisionProfile!=TEXT("carrier")&&V.OwnerId!=Actor))continue;const auto* VT=Find(Scenario.Definitions.VehicleTypes,V.TypeId);int64 Kg=FMath::Min3(Ask.RemainingKg,Bid.RemainingKg,FMath::Min(Scenario.Economy.TraderMaxLoadKg,VT->CapacityKg));int64 Op=RouteKm(Ask.CityId,Bid.CityId)*VT->CostCentsPerKm;int64 Fee=V.OwnerId==Actor?Op:(Op*(1000+Scenario.Economy.FreightMarkupPermille)+999)/1000;
-     int64 Budget=Cash->BalanceCents-Cash->ReservedCents-Scenario.Economy.TraderCashReserveCents-Fee;Kg=FMath::Min(Kg,FMath::Max(0LL,Budget)/Ask.LimitCentsPerKg);int64 Profit=Kg*(Bid.LimitCentsPerKg-Ask.LimitCentsPerKg)-Fee;if(Kg>0&&Profit>BestProfit){BestProfit=Profit;Buy=Ask;Buy.ActorId=Actor;Buy.Side=TEXT("buy");Buy.OriginalKg=Kg;Buy.Id=FString::Printf(TEXT("merchant.buy.%lld"),State.OrderSequence+1);}
+     int64 Budget=Cash->BalanceCents-Cash->ReservedCents-Scenario.Economy.TraderCashReserveCents-Fee;Kg=FMath::Min(Kg,FMath::Max(0LL,Budget)/Ask.LimitCentsPerKg);int64 Profit=Kg*(Bid.LimitCentsPerKg-Ask.LimitCentsPerKg)-Fee;if(Kg>0&&Profit>BestProfit){BestProfit=Profit;Buy=Ask;Buy.RuleId.Empty();Buy.ActorId=Actor;Buy.Side=TEXT("buy");Buy.OriginalKg=Kg;Buy.Id=FString::Printf(TEXT("merchant.buy.%lld"),State.OrderSequence+1);}
     }
    }
   }

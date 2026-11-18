@@ -6,13 +6,13 @@
 #include "GeoMapData.h"
 namespace CoISim
 {
-enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest };
+enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest,OperatingRule };
 enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
- ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;
+ ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;
 };
 struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason,ActorId,ObjectId; };
 struct FRegionProposal { int32 Index=0; int64 Step=0; uint32 Random=0; };
@@ -55,6 +55,7 @@ public:
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
  bool AuditRuntime(FString& Error) const;
+ bool PreviewOperatingRule(const FOperatingRule&,FString&) const;
  bool PreviewInvestment(const FInvestmentRequest&,struct FInvestmentQuote&,FString&) const;
  const FSession& GetSession() const {return Session;}
  bool IsAutonomous(const FString& Id) const;
@@ -77,6 +78,8 @@ private:
  bool RunStep();
  void Aggregate(); void Publish();
  bool Invest(const FInvestmentRequest&,FString&);void ConstructionHour(int64 Hour);
+ void InitializeOperatingRules();void OperatingService(int64 Hour);bool ChangeOperatingRule(const FOperatingRule&,FString&);
+ bool OperatingEnabled(const FOperatingRule&) const;int64 OfferedWage(const FFacility&) const;int64 PlannedJobs(const FFacility&) const;FString OperatingCause(const FOperatingRule&) const;bool ValidateOperatingRules(FString&) const;
  void EconomyHour(int64 Hour);
  void Payroll(int64 Hour);
  void Produce(int64 Hour);
@@ -96,6 +99,7 @@ private:
  int64 RouteKm(const FString& From,const FString& To) const;
  void TransportHour(int64 Hour);void Costs(int64 Hour);void Spoil();void Companies(int64 Hour);void Trader(int64 Hour);
  void Offer(const FString& Actor,const FString& Store,const FString& Good,const FString& Side,int64 Kg,int64 Price);
+ bool OperatingOrder(const FString& Actor,const FString& Store,const FString& Good,const FString& Side,int64 Kg,int64 Price,const FString& RuleId,FString& Error);
  int64 UsedStorage(const FString& Id) const;
 };
 }

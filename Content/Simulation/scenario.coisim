@@ -1801,7 +1801,12 @@
     "MapTrucksPerRoute": 3,
     "MapTrucksTotal": 100,
     "MapTruckZoom": 16000,
-    "MapRouteDetailZoom": 12000
+    "MapRouteDetailZoom": 12000,
+    "RuleBudgetHours": 24,
+    "RuleDefaultBuyBudgetCents": 50000,
+    "RuleMaxBuyBudgetCents": 1000000000,
+    "RuleMaxWageCents": 100000,
+    "RuleMaxStockKg": 1000000
   },
   "HubSchema": 1
 }

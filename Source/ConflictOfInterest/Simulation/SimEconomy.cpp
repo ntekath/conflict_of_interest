@@ -48,7 +48,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -72,12 +72,12 @@ void FSimulation::Payroll(int64 Hour)
  if(Hour%Scenario.Economy.PayrollHours)return;
  for(auto& G:State.Groups){G.Employed=0;G.DailyIncomeCents=0;}
  TArray<int32> Order;for(int32 I=0;I<State.Facilities.Num();++I)Order.Add(I);
- Order.Sort([&](int32 A,int32 B){auto* X=Find(Scenario.Definitions.FacilityTypes,State.Facilities[A].TypeId);auto* Y=Find(Scenario.Definitions.FacilityTypes,State.Facilities[B].TypeId);return X->DailyWageCents==Y->DailyWageCents?State.Facilities[A].Id<State.Facilities[B].Id:X->DailyWageCents>Y->DailyWageCents;});
+ Order.Sort([&](int32 A,int32 B){return OfferedWage(State.Facilities[A])==OfferedWage(State.Facilities[B])?State.Facilities[A].Id<State.Facilities[B].Id:OfferedWage(State.Facilities[A])>OfferedWage(State.Facilities[B]);});
  for(int32 Index:Order)
  {
-  auto& F=State.Facilities[Index];const auto* Type=Find(Scenario.Definitions.FacilityTypes,F.TypeId);const auto* Place=Find(Scenario.Definitions.Places,F.CityId);
-  F.Employment.Reset();F.PaidUntilHour=Hour;int64 Needed=Type->Jobs;
-  const int64 Wage=Type->DailyWageCents*(Scenario.Economy.PayrollHours/24);auto* Account=Find(State.Accounts,ActorAccount(F.OwnerId));
+  auto& F=State.Facilities[Index];const auto* Place=Find(Scenario.Definitions.Places,F.CityId);
+  F.Employment.Reset();F.PaidUntilHour=Hour;F.PaidDailyWageCents=OfferedWage(F);int64 Needed=PlannedJobs(F);
+  const int64 Wage=F.PaidDailyWageCents*(Scenario.Economy.PayrollHours/24);auto* Account=Find(State.Accounts,ActorAccount(F.OwnerId));
   int64 Affordable=FMath::Min(Needed,(Account->BalanceCents-Account->ReservedCents)/Wage);F.UnfundedJobs=Needed-Affordable;
   if(Scenario.Economy.Stage>=4&&(F.OperatingPaidUntilHour<=Hour||Find(State.Warehouses,F.StorageId)->ArrearsCents)){F.UnfundedJobs=Needed;continue;}
   for(auto& G:State.Groups)
@@ -85,7 +85,7 @@ void FSimulation::Payroll(int64 Hour)
    if(Find(Scenario.Definitions.Groups,G.Id)->RegionId!=Place->RegionId)continue;
    int64 Workers=FMath::Min(Affordable,G.Workforce-G.Employed);if(!Workers)continue;
    if(!Pay(Account->Id,G.AccountId,Workers*Wage,TEXT("wages")))continue;
-   F.Employment.Add({G.Id,Workers});G.Employed+=Workers;G.DailyIncomeCents+=Workers*Type->DailyWageCents;Affordable-=Workers;
+   F.Employment.Add({G.Id,Workers});G.Employed+=Workers;G.DailyIncomeCents+=Workers*F.PaidDailyWageCents;Affordable-=Workers;
   }
   if(!F.Employment.IsEmpty())F.PaidUntilHour=Hour+Scenario.Economy.PayrollHours;
  }
@@ -106,11 +106,12 @@ void FSimulation::Produce(int64 Hour)
   // Counterfactual capacity before liquidity: current workers plus unfunded jobs
   // that could be filled by the region's still available workforce. No jobs or wages are created.
   int64 Available=0;for(const auto& G:State.Groups)if(Find(Scenario.Definitions.Groups,G.Id)->RegionId==P->RegionId)Available+=G.Workforce-G.Employed;
+  const auto* Rule=Find(State.OperatingRules,F.Id);int64 PlannedUtil=Rule?Rule->UtilizationPermille:1000;
   int64 PlannedWorkers=Workers+FMath::Min(F.UnfundedJobs,Available);
-  int64 Planned=(F.ProductionRemainder+T->CapacityBatchesPerHour*PlannedWorkers*Suitability)/Denominator;
+  int64 Planned=(F.ProductionRemainder+T->CapacityBatchesPerHour*FMath::Min(PlannedWorkers*1000,T->Jobs*PlannedUtil)*Suitability/1000)/Denominator;
   for(const auto& A:T->Inputs)DayMetric(P->RegionId,A.GoodId).InputWantedKg+=A.Kg*Planned;
-  if((Scenario.Economy.Stage>=4&&Find(State.Warehouses,F.StorageId)->ArrearsCents)||!Workers||F.PaidUntilHour<=Hour||(Scenario.Economy.Stage>=4&&F.OperatingPaidUntilHour<=Hour))continue;
-  F.ProductionRemainder+=T->CapacityBatchesPerHour*Workers*Suitability;
+  if((Scenario.Economy.Stage>=4&&Find(State.Warehouses,F.StorageId)->ArrearsCents)||!PlannedUtil||!Workers||F.PaidUntilHour<=Hour||(Scenario.Economy.Stage>=4&&F.OperatingPaidUntilHour<=Hour))continue;
+  int64 Work=T->CapacityBatchesPerHour*FMath::Min(Workers*1000,T->Jobs*PlannedUtil)*Suitability+F.UtilizationRemainder;F.ProductionRemainder+=Work/1000;F.UtilizationRemainder=Work%1000;
   int64 Batches=F.ProductionRemainder/Denominator;F.ProductionRemainder%=Denominator;
   int64 Net=0;for(const auto& A:T->Inputs){int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,I==INDEX_NONE?0:(State.Inventories[I].QuantityKg-State.Inventories[I].ReservedKg)/FMath::Max(1LL,A.Kg));Net-=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;}
   int64 ResourcePerBatch=0;for(const auto& A:T->Outputs){Net+=A.Kg*Find(Scenario.Definitions.Goods,A.GoodId)->StoragePointsPerKg;int32 I=StockIndex(F.OwnerId,F.StorageId,A.GoodId);Batches=FMath::Min(Batches,(1000000000-(I==INDEX_NONE?0:State.Inventories[I].QuantityKg))/FMath::Max(1LL,A.Kg));if((T->ResourceRequirement==TEXT("forest")&&A.GoodId==TEXT("good.wood"))||(T->ResourceRequirement==TEXT("ore")&&A.GoodId==TEXT("good.ore")))ResourcePerBatch+=A.Kg;}
@@ -132,7 +133,7 @@ void FSimulation::Produce(int64 Hour)
   int64 InputValue=0;for(const auto& A:T->Inputs){TakeSpoilCredit(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);InputValue+=TakeStock(StockIndex(F.OwnerId,F.StorageId,A.GoodId),A.Kg*B);Find(State.GoodsAudit,A.GoodId)->InputKg+=A.Kg*B;DayMetric(Region->Id,A.GoodId).InputUsedKg+=A.Kg*B;}
   int64 OutputKg=0;for(const auto& A:T->Outputs)OutputKg+=A.Kg*B;
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
-  int64 WageCost=(Workers*T->DailyWageCents+23)/24;
+  int64 WageCost=(Workers*F.PaidDailyWageCents+23)/24;
   for(const auto& A:T->Outputs){int32 I=EnsureStock(F.OwnerId,F.StorageId,A.GoodId);State.Inventories[I].QuantityKg+=A.Kg*B;State.Inventories[I].BookValueCents+=(InputValue+WageCost)*(A.Kg*B)/FMath::Max(1LL,OutputKg);Find(State.GoodsAudit,A.GoodId)->ProducedKg+=A.Kg*B;}
   if(ResourceState&&Resource){ResourceState->RemainingKg-=Resource*B;ResourceState->ExtractedKg+=Resource*B;}
   if(T->ResourceRequirement==TEXT("forest"))Region->RemainingForestKg-=Resource*B;
@@ -146,7 +147,7 @@ void FSimulation::EconomyHour(int64 Hour)
  if(Scenario.Economy.Stage>=4){TransportHour(Hour);Costs(Hour);Spoil();}
  Payroll(Hour);Produce(Hour);
  if(Scenario.Economy.Stage>=2)ExpireOrders();
- if(Scenario.Economy.Stage>=4)Companies(Hour);
+ if(Scenario.Economy.Stage>=4){OperatingService(Hour);Companies(Hour);}
  if(Scenario.Economy.Stage>=3)Demand(Hour);
  if(Scenario.Economy.Stage>=2)MatchOrders();
  if(Scenario.Economy.Stage>=3)Consume();

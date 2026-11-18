@@ -49,16 +49,17 @@ bool FSimulation::ValidateSaveState(FString &E) const
         return Fail(TEXT(#Name " IDs"));
     CHECK_IDS(Accounts)
     CHECK_IDS(Companies)
-    CHECK_IDS(Groups) CHECK_IDS(Facilities) CHECK_IDS(Warehouses) CHECK_IDS(Vehicles) CHECK_IDS(Inventories)
-        CHECK_IDS(Orders) CHECK_IDS(Trades) CHECK_IDS(Transports) CHECK_IDS(Offers) CHECK_IDS(Reservations)
-            CHECK_IDS(Regions) CHECK_IDS(Countries) CHECK_IDS(GoodsAudit) CHECK_IDS(MarketTotals) CHECK_IDS(CashTotals)
-                CHECK_IDS(Projects) CHECK_IDS(AssetSales) CHECK_IDS(ResourceSites) CHECK_IDS(PlayerDays)
-                    CHECK_IDS(PlayerEvents)
+    CHECK_IDS(Groups)
+    CHECK_IDS(Facilities)
+    CHECK_IDS(Warehouses) CHECK_IDS(Vehicles) CHECK_IDS(Inventories) CHECK_IDS(Orders) CHECK_IDS(Trades)
+        CHECK_IDS(Transports) CHECK_IDS(Offers) CHECK_IDS(Reservations) CHECK_IDS(Regions) CHECK_IDS(Countries)
+            CHECK_IDS(GoodsAudit) CHECK_IDS(MarketTotals) CHECK_IDS(CashTotals) CHECK_IDS(Projects)
+                CHECK_IDS(AssetSales) CHECK_IDS(ResourceSites) CHECK_IDS(PlayerDays) CHECK_IDS(PlayerEvents)
 #undef CHECK_IDS
-                        if (W.Accounts.Num() != Scenario.InitialState.Accounts.Num() ||
-                            W.Companies.Num() != D.Companies.Num() || W.Groups.Num() != D.Groups.Num() ||
-                            W.Regions.Num() != D.Regions.Num() ||
-                            W.GoodsAudit.Num() != D.Goods.Num()) return Fail(TEXT("Entitätenabdeckung"));
+                    if (W.Accounts.Num() != Scenario.InitialState.Accounts.Num() ||
+                        W.Companies.Num() != D.Companies.Num() || W.Groups.Num() != D.Groups.Num() ||
+                        W.Regions.Num() != D.Regions.Num() ||
+                        W.GoodsAudit.Num() != D.Goods.Num()) return Fail(TEXT("Entitätenabdeckung"));
     int64 InitialMoney = 0;
     for (const auto &A : Scenario.InitialState.Accounts)
         InitialMoney += A.BalanceCents;
@@ -100,7 +101,10 @@ bool FSimulation::ValidateSaveState(FString &E) const
         const auto *T = Find(D.FacilityTypes, F.TypeId);
         const auto *P = Find(D.Places, F.CityId);
         if (!T || !P || !Find(W.Companies, F.OwnerId) || !Find(W.Warehouses, F.StorageId) ||
-            !Find(W.Accounts, F.CostRecipientAccountId) || F.PaidUntilHour < 0 ||
+            !Find(W.Accounts, F.CostRecipientAccountId) ||
+            (!F.Employment.IsEmpty() && F.PaidUntilHour > H && F.PaidDailyWageCents == 0) || F.PaidDailyWageCents < 0 ||
+            F.PaidDailyWageCents > Scenario.Economy.RuleMaxWageCents || F.UtilizationRemainder < 0 ||
+            F.UtilizationRemainder >= 1000 || F.PaidUntilHour < 0 ||
             F.PaidUntilHour > H + Scenario.Economy.PayrollHours || F.OperatingPaidUntilHour < 0 ||
             F.OperatingPaidUntilHour > H + Scenario.Economy.CostsHours || F.ProductionRemainder < 0 ||
             F.ProductionRemainder >= T->Jobs * 1000 || F.LastBatches < 0 || F.LastBatches > T->CapacityBatchesPerHour ||
@@ -168,7 +172,7 @@ bool FSimulation::ValidateSaveState(FString &E) const
         else if (O.ReservedCents || O.ReservedKg ||
                  (O.Status != TEXT("filled") && O.Status != TEXT("cancelled") && O.Status != TEXT("expired") &&
                   O.Status != TEXT("spoilage") && O.Status != TEXT("day_end") && O.Status != TEXT("repriced") &&
-                  O.Status != TEXT("route_evaluation")))
+                  O.Status != TEXT("route_evaluation") && O.Status != TEXT("rule_changed")))
             return Fail(O.Id);
     }
     for (const auto &T : W.Trades)
