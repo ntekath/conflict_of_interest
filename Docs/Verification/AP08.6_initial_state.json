@@ -1,0 +1,21 @@
+{
+  "baseline": "143659d6102b54e696e4121fcfb419fe71b45613",
+  "unchanged": {
+    "InitialState": true,
+    "Definitions": true,
+    "Settings": true,
+    "PlayerCompanyId": true
+  },
+  "existingEconomyValuesUnchanged": true,
+  "addedEconomyFields": {
+    "DeliveryMaxRules": 64,
+    "DeliveryMinIntervalHours": 6,
+    "DeliveryMaxIntervalHours": 168,
+    "DeliveryMaxDurationHours": 8760,
+    "DeliveryMaxKg": 2000,
+    "DeliveryReturnGraceHours": 24,
+    "DeliveryPromiseHours": 24,
+    "DeliveryDefaultFreightCapCents": 10000
+  },
+  "initialStateSHA256": "121e5290873b8b262a8d8980fb7824666420425ad8e9196b482a2ce6857cf385"
+}

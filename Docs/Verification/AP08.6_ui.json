@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-18",
+  "method": "Native Unreal game, computer-use @oai/sky; screenshots inspected directly",
+  "developerCheatsUsed": false,
+  "tests": [
+    {
+      "resolution": "1280x720",
+      "result": "passed",
+      "steps": [
+        "Pittsburgh → Investitionen → bestehendes angebotenes Lager regulär für 3000 USD gekauft.",
+        "Transporte → Lieferregeln: Detroit eigenes Lager → Pittsburgh eigenes Lager, Nahrung, eigener Lkw, 50 kg / 24 h, Beginn 7, Ende 175, interner Preis 1 Cent/kg, Kostenlimit 10000 Cent.",
+        "Formular scrollt, Vorschau und Bestätigung erreichbar, Zuordnung und Bedingungen lesbar.",
+        "Stunde 93: vier Termine, 200 kg zugesagt, 99 kg gebucht, 50 kg geliefert, 101 kg ausgefallen. Fahrzeuge fehlten sichtbar an zwei Terminen; nach Rückkehr echte Teilladung 49 kg.",
+        "Speicherplatz 1 bei Stunde 93 während laufender Hinfracht gespeichert; freie Liquidität 21887.20 USD, reserviert 23.20 USD."
+      ]
+    },
+    {
+      "resolution": "1920x1080",
+      "result": "passed",
+      "steps": [
+        "Spiel neu gestartet; Slot 1 pausiert bei Stunde 93 mit identischen Beträgen geladen.",
+        "Standortberichte: externe Erlöse 0, externe Kosten 3089.60 USD, interne Gutschrift = Lastschrift = 0.50 USD; Lager-/Frachtbuchwert 47.90 USD.",
+        "Fortgesetzt bis Stunde 184: acht Termine, 400 kg zugesagt, 99 kg gebucht, 98 kg tatsächlich geliefert, 302 kg ausgefallen/verdorben; beide realen Hin-/Rückfahrten abgeschlossen.",
+        "Standortberichte danach: externe Erlöse 0, externe Kosten 3132.80 USD, internes Paar 0.98 USD; kein interner Umsatz, Bargeld 21867.20 USD, keine Reservierung.",
+        "Ältere Slots 2/3 unverändert als inkompatibel angezeigt; kein Überschreiben. Testfenster geschlossen, Slot 1 bleibt bei Stunde 93."
+      ]
+    }
+  ]
+}

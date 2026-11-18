@@ -20,6 +20,7 @@ bool LoadScenario(const FString& Json,const FCoIGeoMapData& Geo,FScenario& Out,F
 }
 bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Error)
 {
+ const auto& Dv=S.Economy;if(Dv.DeliveryMaxRules<1||Dv.DeliveryMaxRules>256||Dv.DeliveryMinIntervalHours<1||Dv.DeliveryMaxIntervalHours<Dv.DeliveryMinIntervalHours||Dv.DeliveryMaxIntervalHours>8760||Dv.DeliveryMaxDurationHours<1||Dv.DeliveryMaxDurationHours>8760||Dv.DeliveryMaxKg<1||Dv.DeliveryMaxKg>1000000||Dv.DeliveryReturnGraceHours<1||Dv.DeliveryReturnGraceHours>168||Dv.DeliveryPromiseHours<1||Dv.DeliveryPromiseHours>168||Dv.DeliveryDefaultFreightCapCents<0||Dv.DeliveryDefaultFreightCapCents>1000000000||!S.InitialState.Deliveries.IsEmpty()||!S.InitialState.DeliverySlots.IsEmpty()||!S.InitialState.SiteLedgers.IsEmpty()||!S.InitialState.InternalTransfers.IsEmpty()){Error=TEXT("Invalid delivery configuration or nonempty initial delivery/accounting state");return false;}
  const auto& Op=S.Economy;if(Op.RuleBudgetHours<1||Op.RuleBudgetHours>168||Op.RuleDefaultBuyBudgetCents<0||Op.RuleDefaultBuyBudgetCents>Op.RuleMaxBuyBudgetCents||Op.RuleMaxBuyBudgetCents<1||Op.RuleMaxBuyBudgetCents>1000000000000LL||Op.RuleMaxWageCents<1||Op.RuleMaxWageCents>1000000||Op.RuleMaxStockKg<1||Op.RuleMaxStockKg>1000000000||!S.InitialState.OperatingRules.IsEmpty()||!S.InitialState.OperatingStatus.IsEmpty()){Error=TEXT("Invalid operating rules configuration or nonempty initial runtime rules");return false;}
 
  const auto& D=S.Definitions;const auto& W=S.InitialState;const auto& C=S.Settings;

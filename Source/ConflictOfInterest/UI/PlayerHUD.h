@@ -50,6 +50,7 @@ private:
  void OpenCity(const FString&);void RefreshCity();
  FDelegateHandle Changed;FString FocusedObject,SelectionSummary;FString View,SelectionId,DialogKind,ContextId,LastStatus;bool Updating=false,SelectionCollapsed=false;
  uint64 SeenGeneration=0,SeenVersion=MAX_uint64,QuoteVersion=0;int64 Token=0,PendingTicket=0;uint64 QuoteGeneration=0;int64 QuoteHour=0;
+ CoISim::FDeliveryRequest DeliveryDraft;void OpenDelivery(const FString&);void OpenDeliveryStop(const FString&);bool ReadDeliveryForm(FString&);void RefreshDeliveries();void RefreshSiteReports();
  CoISim::FOperatingRule OperatingDraft;void OpenOperating(const FString&);bool ReadOperatingForm(FString&);void OperatingInfo(const FString&);
  CoISim::FInvestmentRequest InvestmentDraft;void OpenInvestment(const FString&,const FString&,const FString&);
  CoISim::FCommand Draft;bool ValidDraft=false;

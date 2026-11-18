@@ -11,12 +11,12 @@ FString FSimulation::ActorAccount(const FString& Id) const
  if(const auto* G=Find(State.Groups,Id))return G->AccountId;
  return {};
 }
-bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason)
+bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason,const FString& FromSite,const FString& ToSite)
 {
  auto* A=Find(State.Accounts,From);auto* B=Find(State.Accounts,To);
  if(!A||!B||Cents<0||Cents>A->BalanceCents-A->ReservedCents||B->BalanceCents>MAX_int64-Cents)return false;
  if(!Cents||From==To)return true;
- A->BalanceCents-=Cents;B->BalanceCents+=Cents;
+ A->BalanceCents-=Cents;B->BalanceCents+=Cents;SitePayment(A->OwnerId,FromSite,Cents,false);SitePayment(B->OwnerId,ToSite,Cents,true);
  if(A->OwnerId==Session.PlayerCompanyId)PlayerDay().ExpenseCents+=Cents;
  if(B->OwnerId==Session.PlayerCompanyId)PlayerDay().IncomeCents+=Cents;
  State.CashFlows.Add({From,To,Reason,State.EconomyHour,Cents});
@@ -48,7 +48,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -58,7 +58,7 @@ bool FSimulation::AuditRuntime(FString& Error) const
  for(const auto& G:State.Groups)
  {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
 
- for(const auto& A:State.Accounts){int64 Backed=0;for(const auto& P:State.Projects)if(P.Status==TEXT("building")&&ActorAccount(P.OwnerId)==A.Id)Backed+=P.CostCents;for(const auto& O:State.Orders)if(ActorAccount(O.ActorId)==A.Id)Backed+=O.ReservedCents;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")){if(ActorAccount(J.OwnerId)==A.Id)Backed+=J.CostCents;if(J.OwnerId!=J.ProviderId&&ActorAccount(J.ProviderId)==A.Id)Backed+=J.OperatingCents;}for(const auto& R:State.Reservations)if(R.Active&&R.AccountId==A.Id)Backed+=R.MoneyCents;if(Backed!=A.ReservedCents)return Fail(TEXT("Unbacked money hold: ")+A.Id);}
+ for(const auto& A:State.Accounts){int64 Backed=0;for(const auto& X:State.DeliverySlots){const auto* C=Find(State.Deliveries,X.ContractId);if(C&&ActorAccount(C->BuyerId)==A.Id)Backed+=X.ReturnHoldCents;}for(const auto& P:State.Projects)if(P.Status==TEXT("building")&&ActorAccount(P.OwnerId)==A.Id)Backed+=P.CostCents;for(const auto& O:State.Orders)if(ActorAccount(O.ActorId)==A.Id)Backed+=O.ReservedCents;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")){if(ActorAccount(J.OwnerId)==A.Id)Backed+=J.CostCents;if(J.OwnerId!=J.ProviderId&&ActorAccount(J.ProviderId)==A.Id)Backed+=J.OperatingCents;}for(const auto& R:State.Reservations)if(R.Active&&R.AccountId==A.Id)Backed+=R.MoneyCents;if(Backed!=A.ReservedCents)return Fail(TEXT("Unbacked money hold: ")+A.Id);}
  for(const auto& I:State.Inventories){int64 Backed=0;for(const auto& O:State.Orders)if(O.Side==TEXT("sell")&&O.ActorId==I.OwnerId&&O.StorageId==I.StorageId&&O.GoodId==I.GoodId)Backed+=O.ReservedKg;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")&&J.SourceInventoryId==I.Id)Backed+=J.Kg;for(const auto& R:State.Reservations)if(R.Active&&R.InventoryId==I.Id)Backed+=R.Kg;if(Backed!=I.ReservedKg)return Fail(TEXT("Unbacked stock hold: ")+I.Id);
   if(!Find(State.Warehouses,I.StorageId)){bool Cargo=false;for(const auto& J:State.Transports)if(J.Status==TEXT("moving")&&J.CargoInventoryId==I.Id)Cargo=true;if(!Cargo)return Fail(TEXT("Stock without physical location: ")+I.Id);}
  }
@@ -84,7 +84,7 @@ void FSimulation::Payroll(int64 Hour)
   {
    if(Find(Scenario.Definitions.Groups,G.Id)->RegionId!=Place->RegionId)continue;
    int64 Workers=FMath::Min(Affordable,G.Workforce-G.Employed);if(!Workers)continue;
-   if(!Pay(Account->Id,G.AccountId,Workers*Wage,TEXT("wages")))continue;
+   if(!Pay(Account->Id,G.AccountId,Workers*Wage,TEXT("wages"),F.StorageId))continue;
    F.Employment.Add({G.Id,Workers});G.Employed+=Workers;G.DailyIncomeCents+=Workers*F.PaidDailyWageCents;Affordable-=Workers;
   }
   if(!F.Employment.IsEmpty())F.PaidUntilHour=Hour+Scenario.Economy.PayrollHours;
@@ -147,7 +147,7 @@ void FSimulation::EconomyHour(int64 Hour)
  if(Scenario.Economy.Stage>=4){TransportHour(Hour);Costs(Hour);Spoil();}
  Payroll(Hour);Produce(Hour);
  if(Scenario.Economy.Stage>=2)ExpireOrders();
- if(Scenario.Economy.Stage>=4){OperatingService(Hour);Companies(Hour);}
+ if(Scenario.Economy.Stage>=4){DeliveryService(Hour);OperatingService(Hour);Companies(Hour);}
  if(Scenario.Economy.Stage>=3)Demand(Hour);
  if(Scenario.Economy.Stage>=2)MatchOrders();
  if(Scenario.Economy.Stage>=3)Consume();

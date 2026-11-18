@@ -1806,7 +1806,15 @@
     "RuleDefaultBuyBudgetCents": 50000,
     "RuleMaxBuyBudgetCents": 1000000000,
     "RuleMaxWageCents": 100000,
-    "RuleMaxStockKg": 1000000
+    "RuleMaxStockKg": 1000000,
+    "DeliveryMaxRules": 64,
+    "DeliveryMinIntervalHours": 6,
+    "DeliveryMaxIntervalHours": 168,
+    "DeliveryMaxDurationHours": 8760,
+    "DeliveryMaxKg": 2000,
+    "DeliveryReturnGraceHours": 24,
+    "DeliveryPromiseHours": 24,
+    "DeliveryDefaultFreightCapCents": 10000
   },
   "HubSchema": 1
 }

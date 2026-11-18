@@ -90,6 +90,7 @@ bool UCoISimulationSubsystem::SubmitPlayer(CoISim::FCommand C,int64 Token,int64&
  else if(C.Kind==CoISim::ECommandKind::CancelOrder)C.Order.ActorId=Actor;
  else if(C.Kind==CoISim::ECommandKind::BookTransport){C.Transport.OwnerId=Actor;C.Transport.Id=FString::Printf(TEXT("player.haul.%lld"),C.Sequence);}
  else if(C.Kind==CoISim::ECommandKind::CancelTransport)C.Transport.OwnerId=Actor;
+ else if(C.Kind==CoISim::ECommandKind::Delivery){C.Delivery.OwnerId=Actor;if(C.Delivery.Action==TEXT("create"))C.Delivery.Id=FString::Printf(TEXT("delivery.%lld"),C.Sequence);}
  else if(C.Kind==CoISim::ECommandKind::OperatingRule){C.Rule.OwnerId=Actor;C.Rule.Explicit=true;}
  else if(C.Kind==CoISim::ECommandKind::Invest){C.Investment.OwnerId=Actor;C.Investment.Id=FString::Printf(TEXT("investment.%lld"),C.Sequence);}
  else {Error=TEXT("Dieser Befehl ist keine Spieleraktion.");return false;}
@@ -189,3 +190,5 @@ bool UCoISimulationSubsystem::LoadSlot(int32 Slot, FString &Error)
 }
 
 bool UCoISimulationSubsystem::PreviewOperatingRule(CoISim::FOperatingRule R,FString& E) const {check(IsInGameThread());R.OwnerId=Simulation.GetSession().PlayerCompanyId;R.Explicit=true;return Simulation.PreviewOperatingRule(R,E);}
+
+bool UCoISimulationSubsystem::PreviewDelivery(CoISim::FDeliveryRequest R,FString& E) const {check(IsInGameThread());R.OwnerId=Simulation.GetSession().PlayerCompanyId;return Simulation.PreviewDelivery(R,E);}

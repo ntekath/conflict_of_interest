@@ -55,14 +55,14 @@ bool Decode(const FString &Json, FSaveData &D, FString &E)
         !Root->TryGetStringField(TEXT("Checksum"), Checksum) || !Root->TryGetObjectField(TEXT("Payload"), Payload))
         return Fail(TEXT("Ungültiger Spielstandkopf."));
     double VersionCode = 0;
-    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || VersionCode != 2)
-        return Fail(TEXT("Inkompatible Spielstandversion. AP08.5 benötigt Version 2; Version 1 wird nicht verändert."));
+    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || VersionCode != 3)
+        return Fail(TEXT("Inkompatible Spielstandversion. AP08.6 benötigt Version 3; ältere Dateien bleiben unverändert."));
     FRead R{*Payload, E, true};
     D.Fields(R);
     R.Complete();
     if (!E.IsEmpty())
         return false;
-    if (D.FormatVersion != 2 || D.SimulationVersion != 2 || D.DefinitionsVersion != 2 || D.Platform != TEXT("Win64") ||
+    if (D.FormatVersion != 3 || D.SimulationVersion != 3 || D.DefinitionsVersion != 3 || D.Platform != TEXT("Win64") ||
         D.RandomAlgorithm != TEXT("entity-fnv-splitmix-v1"))
         return Fail(TEXT("Inkompatible Spielstand-, Simulations- oder Definitionsversion."));
     if (Checksum != Digest(D))
@@ -130,7 +130,7 @@ bool FSimulation::SaveGameJson(FString &Json, FString &E, int32 Speed) const
         P.Order = C.Order;
         P.Transport = C.Transport;
         P.Investment = C.Investment;
-        P.Rule = C.Rule;
+        P.Rule = C.Rule;P.Delivery=C.Delivery;
         D.Pending.Add(P);
     }
     for (const auto &C : Results)
@@ -190,7 +190,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
     int64 LastTarget = -1, LastSeq = -1;
     for (const auto &P : D.Pending)
     {
-        if (P.Kind < 0 || P.Kind > (int64)ECommandKind::OperatingRule || P.Origin < 0 ||
+        if (P.Kind < 0 || P.Kind > (int64)ECommandKind::Delivery || P.Origin < 0 ||
             P.Origin > (int64)ECommandOrigin::Autonomous || P.Sequence <= 0 || P.Sequence > D.LastSequence ||
             Sequences.Contains(P.Sequence) || P.TargetStep <= C.State.Step ||
             P.TargetStep - C.State.Step > C.Scenario.Settings.CommandHorizonSteps || P.TargetStep < LastTarget ||
@@ -212,7 +212,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
         Cmd.Order = P.Order;
         Cmd.Transport = P.Transport;
         Cmd.Investment = P.Investment;
-        Cmd.Rule = P.Rule;
+        Cmd.Rule = P.Rule;Cmd.Delivery=P.Delivery;
         if (!C.Authorized(Cmd, E))
             return false;
         C.Pending.Add(Cmd);

@@ -307,7 +307,7 @@ void FSimulation::OperatingService(int64 H)
                                     R.Id, Error))
                     Cause(Error);
             }
-            int64 Need = FMath::Max(0LL, G.TargetKg - (Quantity - Reserved) - Incoming - Ordered);
+            int64 Need = FMath::Max(0LL, G.TargetKg - (Quantity - Reserved) - Incoming - Ordered - DeliveryPromises(R.OwnerId,W->Id,G.GoodId));
             if (!G.BuyLimitCents || !Need)
                 continue;
             const auto *Good = Find(Scenario.Definitions.Goods, G.GoodId);

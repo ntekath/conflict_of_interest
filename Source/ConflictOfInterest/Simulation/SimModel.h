@@ -46,6 +46,12 @@ struct FBuildPlotDef {FString Id,CityId,Kind,ResourceSiteId;COI_RECORD(COI_F(Id)
 struct FInvestmentRequest {FString Id,OwnerId,CityId,Action,DefinitionId,PlotId,TargetId;COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(CityId);COI_F(Action);COI_F(DefinitionId);COI_F(PlotId);COI_F(TargetId);)};
 struct FConstructionProject {FString Id,OwnerId,CityId,DefinitionId,PlotId,TargetId,AssetId,StorageId,Status;int64 StartHour=0,FinishHour=0,CostCents=0;COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(CityId);COI_F(DefinitionId);COI_F(PlotId);COI_F(TargetId);COI_F(AssetId);COI_F(StorageId);COI_F(Status);COI_F(StartHour);COI_F(FinishHour);COI_F(CostCents);)};
 struct FAssetSale {FString Id,SellerId,AssetId,CityId,Kind;int64 PriceCents=0,ExpiresHour=0;bool Active=true;COI_RECORD(COI_F(Id);COI_F(SellerId);COI_F(AssetId);COI_F(CityId);COI_F(Kind);COI_F(PriceCents);COI_F(ExpiresHour);COI_F(Active);)};
+struct FDeliveryTerms {FString SourceAssetId,DestinationAssetId,FromCityId,ToCityId,GoodId,VehicleId;int64 Kg=0,IntervalHours=24,StartHour=0,EndHour=0,PriceCentsPerKg=0,MaxFreightCents=10000;bool MarketFallback=false;COI_RECORD(COI_F(SourceAssetId);COI_F(DestinationAssetId);COI_F(FromCityId);COI_F(ToCityId);COI_F(GoodId);COI_F(VehicleId);COI_F(Kg);COI_F(IntervalHours);COI_F(StartHour);COI_F(EndHour);COI_F(PriceCentsPerKg);COI_F(MaxFreightCents);COI_F(MarketFallback);)};
+struct FDeliveryRequest {FString Id,OwnerId,Action;FDeliveryTerms Terms;COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(Action);COI_F(Terms);)};
+struct FDeliveryContract {FString Id,OwnerId,SupplierId,BuyerId,SourceStoreId,DestinationStoreId,Status,Cause;FDeliveryTerms Terms;int64 AcceptedHour=0,AcceptedUnitCents=0,NextDueHour=0,LastMissedKg=0,RequestedKg=0,BookedKg=0,DeliveredKg=0,MissedKg=0;COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(SupplierId);COI_F(BuyerId);COI_F(SourceStoreId);COI_F(DestinationStoreId);COI_F(Status);COI_F(Cause);COI_F(Terms);COI_F(AcceptedHour);COI_F(AcceptedUnitCents);COI_F(NextDueHour);COI_F(LastMissedKg);COI_F(RequestedKg);COI_F(BookedKg);COI_F(DeliveredKg);COI_F(MissedKg);)};
+struct FDeliverySlot {FString Id,ContractId,OutboundId,ReturnId,Status,Cause;int64 DueHour=0,RequestedKg=0,BookedKg=0,DeliveredKg=0,MissedKg=0,PurchaseCents=0,InternalValueCents=0,ReturnHoldCents=0,ReturnCostCents=0,ReturnDeadlineHour=0;bool Accounted=false;COI_RECORD(COI_F(Id);COI_F(ContractId);COI_F(OutboundId);COI_F(ReturnId);COI_F(Status);COI_F(Cause);COI_F(DueHour);COI_F(RequestedKg);COI_F(BookedKg);COI_F(DeliveredKg);COI_F(MissedKg);COI_F(PurchaseCents);COI_F(InternalValueCents);COI_F(ReturnHoldCents);COI_F(ReturnCostCents);COI_F(ReturnDeadlineHour);COI_F(Accounted);)};
+struct FSiteLedger {FString Id,ActorId,SiteId;int64 ExternalRevenueCents=0,ExternalCostCents=0,InternalCreditCents=0,InternalDebitCents=0;COI_RECORD(COI_F(Id);COI_F(ActorId);COI_F(SiteId);COI_F(ExternalRevenueCents);COI_F(ExternalCostCents);COI_F(InternalCreditCents);COI_F(InternalDebitCents);)};
+struct FInternalTransfer {FString Id,ActorId,SourceId,DestinationId,GoodId;int64 Kg=0,ValueCents=0;COI_RECORD(COI_F(Id);COI_F(ActorId);COI_F(SourceId);COI_F(DestinationId);COI_F(GoodId);COI_F(Kg);COI_F(ValueCents);)};
 struct FDefinitions
 {
  TArray<FConstructionDef> Construction;TArray<FBuildPlotDef> BuildPlots;TArray<FResourceSiteDef> ResourceSites;TArray<FGoodDef> Goods; TArray<FCompanyDef> Companies; TArray<FNeedDef> Needs; TArray<FGroupDef> Groups;
@@ -107,9 +113,10 @@ struct FTransportOffer
 };
 struct FTransport
 {
+ FString DeliveryId,ReportSiteId;int64 DeliveredKg=0,DeliveredBookCents=0,ActualArrivalHour=0;
  FString Id,OwnerId,ProviderId,VehicleId,FromCityId,ToCityId,GoodId,CargoInventoryId,DestinationStorageId,Service,Status;
  int64 RequestedDepartureHour=0;FString SourceInventoryId;bool Empty=false;int64 OperatingCents=0,FreightCents=0,RouteKm=0; int64 Kg=0,DepartureStep=0,ArrivalStep=0,CostCents=0,ReservedIncomingPoints=0;
- COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(ProviderId);COI_F(VehicleId);COI_F(FromCityId);COI_F(ToCityId);COI_F(GoodId);COI_F(CargoInventoryId);COI_F(DestinationStorageId);COI_F(Service);COI_F(Status);COI_O(RequestedDepartureHour);COI_O(SourceInventoryId);COI_O(Empty);COI_O(OperatingCents);COI_O(FreightCents);COI_O(RouteKm);COI_F(Kg);COI_F(DepartureStep);COI_F(ArrivalStep);COI_F(CostCents);COI_F(ReservedIncomingPoints);)
+ COI_RECORD(COI_O(DeliveryId);COI_O(ReportSiteId);COI_O(DeliveredKg);COI_O(DeliveredBookCents);COI_O(ActualArrivalHour);COI_F(Id);COI_F(OwnerId);COI_F(ProviderId);COI_F(VehicleId);COI_F(FromCityId);COI_F(ToCityId);COI_F(GoodId);COI_F(CargoInventoryId);COI_F(DestinationStorageId);COI_F(Service);COI_F(Status);COI_O(RequestedDepartureHour);COI_O(SourceInventoryId);COI_O(Empty);COI_O(OperatingCents);COI_O(FreightCents);COI_O(RouteKm);COI_F(Kg);COI_F(DepartureStep);COI_F(ArrivalStep);COI_F(CostCents);COI_F(ReservedIncomingPoints);)
 };
 struct FReservation
 {
@@ -136,6 +143,7 @@ struct FGoodsAudit
 };
 struct FEconomyRules
 {
+ int64 DeliveryMaxRules=64,DeliveryMinIntervalHours=6,DeliveryMaxIntervalHours=168,DeliveryMaxDurationHours=8760,DeliveryMaxKg=2000,DeliveryReturnGraceHours=24,DeliveryPromiseHours=24,DeliveryDefaultFreightCapCents=10000;
  int64 RuleBudgetHours=24,RuleDefaultBuyBudgetCents=50000,RuleMaxBuyBudgetCents=1000000000,RuleMaxWageCents=100000,RuleMaxStockKg=1000000;
  bool MapPublicRouteActivity=true;
  int64 MapTrucksPerRoute=3,MapTrucksTotal=100,MapTruckZoom=16000,MapRouteDetailZoom=12000;
@@ -145,7 +153,7 @@ struct FEconomyRules
  int64 RentalCentsPerPointDay=1,MaxOrderKg=100000,MaxPriceCents=1000000,MaxOpenOrders=512,HistoryLimit=256;
  int64 DailyBudgetPermille=500,LocalHaulKm=1,RouteDetourPermille=1400,FreightMarkupPermille=200,BookingLeadHours=1;
  int64 InputTargetHours=48,ProducerReserveKg=100,TraderMaxLoadKg=2000,TraderCashReserveCents=10000,TraderMinProfitCents=100,TraderMarkupPermille=200;
- COI_RECORD(COI_O(RuleBudgetHours);COI_O(RuleDefaultBuyBudgetCents);COI_O(RuleMaxBuyBudgetCents);COI_O(RuleMaxWageCents);COI_O(RuleMaxStockKg);COI_F(MapPublicRouteActivity);COI_F(MapTrucksPerRoute);COI_F(MapTrucksTotal);COI_F(MapTruckZoom);COI_F(MapRouteDetailZoom);COI_F(UiLowCashCents);COI_F(UiCapacityWarningPermille);COI_F(UiEventLimit);COI_F(UiVisibleEvents);COI_F(UiHistoryDays);COI_F(MaxBookingDelayHours);COI_F(Stage);COI_F(PayrollHours);COI_F(DecisionHours);COI_F(DemandHours);COI_F(CostsHours);COI_F(OrderLifetimeHours);COI_F(PickupGraceHours);COI_F(RentalCentsPerPointDay);COI_F(MaxOrderKg);COI_F(MaxPriceCents);COI_F(MaxOpenOrders);COI_F(HistoryLimit);COI_F(DailyBudgetPermille);COI_F(LocalHaulKm);COI_F(RouteDetourPermille);COI_F(FreightMarkupPermille);COI_F(BookingLeadHours);COI_F(InputTargetHours);COI_F(ProducerReserveKg);COI_F(TraderMaxLoadKg);COI_F(TraderCashReserveCents);COI_F(TraderMinProfitCents);COI_F(TraderMarkupPermille);)
+ COI_RECORD(COI_O(DeliveryMaxRules);COI_O(DeliveryMinIntervalHours);COI_O(DeliveryMaxIntervalHours);COI_O(DeliveryMaxDurationHours);COI_O(DeliveryMaxKg);COI_O(DeliveryReturnGraceHours);COI_O(DeliveryPromiseHours);COI_O(DeliveryDefaultFreightCapCents);COI_O(RuleBudgetHours);COI_O(RuleDefaultBuyBudgetCents);COI_O(RuleMaxBuyBudgetCents);COI_O(RuleMaxWageCents);COI_O(RuleMaxStockKg);COI_F(MapPublicRouteActivity);COI_F(MapTrucksPerRoute);COI_F(MapTrucksTotal);COI_F(MapTruckZoom);COI_F(MapRouteDetailZoom);COI_F(UiLowCashCents);COI_F(UiCapacityWarningPermille);COI_F(UiEventLimit);COI_F(UiVisibleEvents);COI_F(UiHistoryDays);COI_F(MaxBookingDelayHours);COI_F(Stage);COI_F(PayrollHours);COI_F(DecisionHours);COI_F(DemandHours);COI_F(CostsHours);COI_F(OrderLifetimeHours);COI_F(PickupGraceHours);COI_F(RentalCentsPerPointDay);COI_F(MaxOrderKg);COI_F(MaxPriceCents);COI_F(MaxOpenOrders);COI_F(HistoryLimit);COI_F(DailyBudgetPermille);COI_F(LocalHaulKm);COI_F(RouteDetourPermille);COI_F(FreightMarkupPermille);COI_F(BookingLeadHours);COI_F(InputTargetHours);COI_F(ProducerReserveKg);COI_F(TraderMaxLoadKg);COI_F(TraderCashReserveCents);COI_F(TraderMinProfitCents);COI_F(TraderMarkupPermille);)
 };
 struct FMarketTotal
 {
@@ -174,6 +182,7 @@ struct FDayMetrics
 };
 struct FState
 {
+ TArray<FDeliveryContract> Deliveries;TArray<FDeliverySlot> DeliverySlots;TArray<FSiteLedger> SiteLedgers;TArray<FInternalTransfer> InternalTransfers;
  TArray<FOperatingRule> OperatingRules;TArray<FOperatingStatus> OperatingStatus;
  TArray<FConstructionProject> Projects;TArray<FAssetSale> AssetSales;TArray<FResourceSite> ResourceSites;bool DeveloperModified=false;int64 DeveloperMoneySources=0,DeveloperMoneySinks=0;
 
@@ -183,7 +192,7 @@ struct FState
  TArray<FInventory> Inventories; TArray<FMarketOrder> Orders; TArray<FTrade> Trades;
  TArray<FTransport> Transports; TArray<FTransportOffer> Offers; TArray<FReservation> Reservations;
  TArray<FRegion> Regions; TArray<FCountry> Countries;
- COI_RECORD(COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
+ COI_RECORD(COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
 };
 struct FSettings
 {

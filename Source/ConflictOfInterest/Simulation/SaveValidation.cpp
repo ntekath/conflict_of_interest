@@ -187,6 +187,7 @@ bool FSimulation::ValidateSaveState(FString &E) const
         const auto *V = Find(W.Vehicles, J.VehicleId);
         const auto *T = V ? Find(D.VehicleTypes, V->TypeId) : nullptr;
         bool Active = J.Status == TEXT("planned") || J.Status == TEXT("moving");
+        if (J.DeliveredKg<0||J.DeliveredKg>J.Kg||J.DeliveredBookCents<0||J.ActualArrivalHour<0||J.ActualArrivalHour>H||(J.Status==TEXT("arrived")?J.ActualArrivalHour!=J.ArrivalStep:J.ActualArrivalHour!=0)||(!J.ReportSiteId.IsEmpty()&&!Find(W.Warehouses,J.ReportSiteId)&&!Find(W.Vehicles,J.ReportSiteId)))return Fail(J.Id);
         if (!V || !T || !Find(W.Companies, J.OwnerId) || !Find(W.Companies, J.ProviderId) ||
             !Find(D.Places, J.FromCityId) || !Find(D.Places, J.ToCityId) || J.DepartureStep < 0 ||
             J.ArrivalStep <= J.DepartureStep || J.CostCents < 0 || J.OperatingCents < 0 || J.FreightCents < 0 ||

@@ -6,13 +6,13 @@
 #include "GeoMapData.h"
 namespace CoISim
 {
-enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest,OperatingRule };
+enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest,OperatingRule,Delivery };
 enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
- ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;
+ ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;FDeliveryRequest Delivery;
 };
 struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason,ActorId,ObjectId; };
 struct FRegionProposal { int32 Index=0; int64 Step=0; uint32 Random=0; };
@@ -55,6 +55,7 @@ public:
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
  bool AuditRuntime(FString& Error) const;
+ bool PreviewDelivery(const FDeliveryRequest&,FString&) const;
  bool PreviewOperatingRule(const FOperatingRule&,FString&) const;
  bool PreviewInvestment(const FInvestmentRequest&,struct FInvestmentQuote&,FString&) const;
  const FSession& GetSession() const {return Session;}
@@ -80,10 +81,13 @@ private:
  bool Invest(const FInvestmentRequest&,FString&);void ConstructionHour(int64 Hour);
  void InitializeOperatingRules();void OperatingService(int64 Hour);bool ChangeOperatingRule(const FOperatingRule&,FString&);
  bool OperatingEnabled(const FOperatingRule&) const;int64 OfferedWage(const FFacility&) const;int64 PlannedJobs(const FFacility&) const;FString OperatingCause(const FOperatingRule&) const;bool ValidateOperatingRules(FString&) const;
+ FString DeliveryStore(const FString&) const;void DeliveryService(int64 Hour);bool ChangeDelivery(const FDeliveryRequest&,FString&);bool ValidateDeliveries(FString&) const;
+ bool DeliveryTransportReferenced(const FString&) const;int64 DeliveryPromises(const FString&,const FString&,const FString&) const;void RunDeliveryDue(const FString&,int64);void ProgressDelivery(const FString&,int64);
+ FSiteLedger& SiteLedger(const FString&,const FString&);void SitePayment(const FString&,const FString&,int64,bool);void InternalDelivery(const FDeliveryContract&,int64);
  void EconomyHour(int64 Hour);
  void Payroll(int64 Hour);
  void Produce(int64 Hour);
- bool Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason);
+ bool Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason,const FString& FromSite=TEXT(""),const FString& ToSite=TEXT(""));
  FString ActorAccount(const FString& ActorId) const;
  int32 StockIndex(const FString& Actor,const FString& Store,const FString& Good) const;
  int32 EnsureStock(const FString& Actor,const FString& Store,const FString& Good);
@@ -95,7 +99,7 @@ private:
  bool CancelOrder(const FString& Id,const FString& Actor,const FString& Status);
  void MatchOrders(); void ExpireOrders();
  void Demand(int64 Hour);void Consume();
- bool BookTransport(FTransport Job,FString& Error);bool CancelTransport(const FString& Id,const FString& Actor);
+ bool BookTransport(FTransport Job,FString& Error,bool DeliveryInternal=false);bool CancelTransport(const FString& Id,const FString& Actor);
  int64 RouteKm(const FString& From,const FString& To) const;
  void TransportHour(int64 Hour);void Costs(int64 Hour);void Spoil();void Companies(int64 Hour);void Trader(int64 Hour);
  void Offer(const FString& Actor,const FString& Store,const FString& Good,const FString& Side,int64 Kg,int64 Price);

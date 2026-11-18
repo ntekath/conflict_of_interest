@@ -34,7 +34,7 @@ void FSimulation::MatchOrders() {
  for(int32 BI:Buys)for(int32 SI:Sells){auto& B=State.Orders[BI];auto& S=State.Orders[SI];if(!B.RemainingKg||!S.RemainingKg||B.ActorId==S.ActorId||B.MarketId!=S.MarketId||B.GoodId!=S.GoodId||B.StorageId!=S.StorageId||B.LimitCentsPerKg<S.LimitCentsPerKg)continue;
   int32 Existing=StockIndex(B.ActorId,S.StorageId,S.GoodId);int64 Headroom=1000000000-(Existing==INDEX_NONE?0:State.Inventories[Existing].QuantityKg);int64 Kg=FMath::Min3(B.RemainingKg,S.RemainingKg,Headroom);if(Kg<=0)continue;int64 Price=B.Sequence<S.Sequence?B.LimitCentsPerKg:S.LimitCentsPerKg,Cost=Kg*Price;
   auto* BA=Find(State.Accounts,ActorAccount(B.ActorId));BA->ReservedCents-=Kg*B.LimitCentsPerKg;B.ReservedCents-=Kg*B.LimitCentsPerKg;
-  const bool Paid=Pay(BA->Id,ActorAccount(S.ActorId),Cost,TEXT("trade"));check(Paid);
+  const bool Paid=Pay(BA->Id,ActorAccount(S.ActorId),Cost,TEXT("trade"),B.StorageId,S.StorageId);check(Paid);
   if(auto* G=Find(State.Groups,B.ActorId)){G->DailySpentCents+=Cost;if(Find(Scenario.Definitions.Goods,B.GoodId)->NeedCategory==TEXT("luxury"))G->LuxurySpentCents+=Cost;}
   int32 Source=StockIndex(S.ActorId,S.StorageId,S.GoodId);State.Inventories[Source].ReservedKg-=Kg;S.ReservedKg-=Kg;
   int64 SpoilCredit=TakeSpoilCredit(Source,Kg);int64 Value=TakeStock(Source,Kg);int32 Dest=EnsureStock(B.ActorId,S.StorageId,S.GoodId);if(!State.Inventories[Dest].QuantityKg)State.Inventories[Dest].AcquiredHour=State.EconomyHour;State.Inventories[Dest].SpoilRemainder+=SpoilCredit;State.Inventories[Dest].QuantityKg+=Kg;State.Inventories[Dest].BookValueCents+=Cost;

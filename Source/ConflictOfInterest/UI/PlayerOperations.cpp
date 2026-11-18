@@ -38,7 +38,7 @@ void UCoIPlayerHUD::OperatingInfo(const FString &Asset)
                  TEXT(" · Lohnangebot ") + OpMoney(R->DailyWageCents) + TEXT(" je Stelle/Tag"),
              12);
     }
-    Text(Body, X->Cause, 12);
+    Text(Body, X->Cause, 12);Button(Body,TEXT("Lieferbeziehung ab diesem Asset …"),TEXT("deliveryNew|")+Asset);
     Button(Body, R->RecipeId.IsEmpty() ? TEXT("Lagerregeln …") : TEXT("Betriebsregeln …"), TEXT("operate|") + Asset);
 }
 void UCoIPlayerHUD::OpenOperating(const FString &Asset)
