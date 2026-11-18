@@ -6,13 +6,13 @@
 #include "GeoMapData.h"
 namespace CoISim
 {
-enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport };
+enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest };
 enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
- ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;
+ ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;
 };
 struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason,ActorId,ObjectId; };
 struct FRegionProposal { int32 Index=0; int64 Step=0; uint32 Random=0; };
@@ -55,6 +55,7 @@ public:
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
  bool AuditRuntime(FString& Error) const;
+ bool PreviewInvestment(const FInvestmentRequest&,struct FInvestmentQuote&,FString&) const;
  const FSession& GetSession() const {return Session;}
  bool IsAutonomous(const FString& Id) const;
  FString EconomicFingerprint() const;
@@ -72,6 +73,7 @@ private:
  bool Apply(const FCommand&,FString& Reason);
  bool RunStep();
  void Aggregate(); void Publish();
+ bool Invest(const FInvestmentRequest&,FString&);void ConstructionHour(int64 Hour);
  void EconomyHour(int64 Hour);
  void Payroll(int64 Hour);
  void Produce(int64 Hour);

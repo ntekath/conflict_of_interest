@@ -1,4 +1,5 @@
 #include "SimulationSubsystem.h"
+#include "Investments.h"
 #include "GeoCatalog.h"
 #include "GeoMapData.h"
 #include "EngineUtils.h"
@@ -89,6 +90,7 @@ bool UCoISimulationSubsystem::SubmitPlayer(CoISim::FCommand C,int64 Token,int64&
  else if(C.Kind==CoISim::ECommandKind::CancelOrder)C.Order.ActorId=Actor;
  else if(C.Kind==CoISim::ECommandKind::BookTransport){C.Transport.OwnerId=Actor;C.Transport.Id=FString::Printf(TEXT("player.haul.%lld"),C.Sequence);}
  else if(C.Kind==CoISim::ECommandKind::CancelTransport)C.Transport.OwnerId=Actor;
+ else if(C.Kind==CoISim::ECommandKind::Invest){C.Investment.OwnerId=Actor;C.Investment.Id=FString::Printf(TEXT("investment.%lld"),C.Sequence);}
  else {Error=TEXT("Dieser Befehl ist keine Spieleraktion.");return false;}
  Ticket=C.Sequence;if(!Simulation.Enqueue(MoveTemp(C),Error)){Error=CoISim::PlayerReason(Error);return false;}
  LastPlayerToken=Token;PublishPresentation();return true;
@@ -119,3 +121,5 @@ bool UCoISimulationSubsystem::RestartDeveloper(const FString& Id,int64 Seed,FStr
 }
 bool UCoISimulationSubsystem::ExportDeveloper(FString& Result){if(JournalFailed){Result=TEXT("Journal-/Konfigurationsschreibfehler; siehe Entwicklungslog.");return false;}const FString Target=DeveloperDirectory/TEXT("ConsoleExport.jsonl");if(IFileManager::Get().Copy(*Target,*(DeveloperDirectory/TEXT("ConsoleJournal.jsonl")),true,true)!=COPY_OK){Result=TEXT("Journalexport nicht möglich.");return false;}Result=Target+TEXT("; vollständige Konfiguration je Generation: Configuration_<Generation>.json");return true;}
 #endif
+
+bool UCoISimulationSubsystem::PreviewInvestment(CoISim::FInvestmentRequest R,CoISim::FInvestmentQuote& Q,FString& E) const {check(IsInGameThread());R.OwnerId=Simulation.GetSession().PlayerCompanyId;return Simulation.PreviewInvestment(R,Q,E);}

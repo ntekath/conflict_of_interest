@@ -37,7 +37,7 @@ bool FSimulation::Enqueue(FCommand Command,FString& Error)
  if(Command.Sequence<=LastIssuedSequence||Command.Sequence>1000000000000LL||Command.TargetStep<=State.Step||Command.TargetStep-State.Step>Scenario.Settings.CommandHorizonSteps)
  {Error=TEXT("Duplicate/nonmonotonic sequence, past target or excessive horizon");return false;}
  if(Pending.Num()>=Scenario.Settings.MaxPendingCommands){Error=TEXT("Command queue full; caller must retry explicitly");return false;}
- if(Command.Kind>ECommandKind::CancelTransport){Error=TEXT("Unsupported command kind");return false;}
+ if(Command.Kind>ECommandKind::Invest){Error=TEXT("Unsupported command kind");return false;}
  if(!Authorized(Command,Error))return false;
  LastIssuedSequence=Command.Sequence;Pending.Add(MoveTemp(Command));
  Pending.Sort([](const FCommand& A,const FCommand& B){return A.TargetStep==B.TargetStep?A.Sequence<B.Sequence:A.TargetStep<B.TargetStep;});
@@ -50,6 +50,7 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
  if(!Authorized(Command,Reason))return false;
+ if(Command.Kind==ECommandKind::Invest)return Invest(Command.Investment,Reason);
  if(Command.Kind==ECommandKind::BookTransport)return BookTransport(Command.Transport,Reason);
  if(Command.Kind==ECommandKind::CancelTransport){bool OK=CancelTransport(Command.Transport.Id,Command.Transport.OwnerId);Reason=OK?TEXT("Cancelled"):TEXT("Not cancellable");return OK;}
  if(Command.Kind==ECommandKind::PlaceOrder)return PlaceOrder(Command.Order,Reason);
@@ -97,8 +98,8 @@ bool FSimulation::RunStep()
   {
    if(C.TargetStep>Next)break;
    FCommandResult Result;Result.Sequence=C.Sequence;Result.Step=Next;
-   Result.ActorId=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:C.Transport.OwnerId;Result.ObjectId=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.Id:C.Transport.Id;
-   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(Result.ActorId==Session.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
+   Result.ActorId=C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:C.Transport.OwnerId;Result.ObjectId=C.Kind==ECommandKind::Invest?C.Investment.Id:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.Id:C.Transport.Id;
+   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(C.Kind==ECommandKind::Invest&&C.Investment.Action==TEXT("buy"))if(const auto* Sale=Find(State.AssetSales,C.Investment.TargetId))Result.ObjectId=Sale->AssetId;if(Result.ActorId==Session.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::Invest?TEXT("investment"):C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,C.Kind==ECommandKind::Invest?Result.Reason:Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
   }
   if(Done)Pending.RemoveAt(0,Done,EAllowShrinking::No);
   if(Results.Num()>128)Results.RemoveAt(0,Results.Num()-128,EAllowShrinking::No);
@@ -107,7 +108,7 @@ bool FSimulation::RunStep()
  // Match all queued market commands against the committed state before the next hour ages stock.
  if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}
  for(int64 Hour=State.Step*Scenario.Settings.HoursPerStep;Hour<Next*Scenario.Settings.HoursPerStep;++Hour)
- {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;if(State.EconomyHour%24==0)FinishDayMetrics(Next);PlayerWarnings();}
+ {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;ConstructionHour(Hour+1);if(State.EconomyHour%24==0)FinishDayMetrics(Next);PlayerWarnings();}
  // Snapshot inputs are const and independent of rendering. Results have disjoint per-region slots.
  TArray<FRegionProposal> Proposals;Proposals.SetNum(State.Regions.Num());
  {
@@ -172,7 +173,7 @@ void FSimulation::Publish()
 FString FSimulation::Fingerprint() const
 {
  FFingerprint F;F.Write(Scenario);F.Write(State);F.Write(LastIssuedSequence);
- for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);}return F.Finish();
+ for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);F.Write(C.Investment);}return F.Finish();
 }
 }
 
@@ -180,7 +181,7 @@ namespace CoISim {
 bool FSimulation::IsAutonomous(const FString& Id) const {return Id!=Session.PlayerCompanyId&&Find(State.Companies,Id)!=nullptr;}
 bool FSimulation::Authorized(const FCommand& C,FString& Error) const {
  if(C.Origin==ECommandOrigin::System)return true; // trusted scenario/test harness, never exposed by the player bridge
- FString Actor=(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:(C.Kind==ECommandKind::BookTransport||C.Kind==ECommandKind::CancelTransport)?C.Transport.OwnerId:C.Resources.ActorId;
+ FString Actor=C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:(C.Kind==ECommandKind::BookTransport||C.Kind==ECommandKind::CancelTransport)?C.Transport.OwnerId:C.Resources.ActorId;
  if(C.CompanyId!=Actor||!Find(State.Companies,Actor)||(C.Origin==ECommandOrigin::Player?Actor!=Session.PlayerCompanyId:!IsAutonomous(Actor))){Error=TEXT("Company control authorization failed");return false;}return true;
 }
 FString FSimulation::EconomicFingerprint() const {auto Economic=State;Economic.PlayerDays.Reset();Economic.PlayerEvents.Reset();FFingerprint F;F.Write(Scenario.Definitions);F.Write(Scenario.Settings);F.Write(Economic);return F.Finish();}

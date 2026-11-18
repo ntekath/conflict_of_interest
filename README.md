@@ -75,3 +75,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP08.1](Docs/AP08.1.md): gemeinsame Stadthubs, getrennte Hauptsitze/Heimatorte und begrenzte physische Umlandquellen; Migration ohne zusätzliche Assets.
 
 [AP08.2](Docs/AP08.2.md): Stadtbildschirm mit Übersicht, bestehenden lokalen Markt-/Lager-/Transportaktionen, eigenen Assets und transparent noch nicht ausführbaren Investitionen. Einstieg über „Stadt“ oder die Kartenauswahl.
+
+[AP08.3](Docs/AP08.3.md): Stadt → Investitionen ermöglicht gedeckten Lager-/Farmbau, verzögerten Lagerausbau und Käufe ausdrücklich angebotener unbelasteter Assets. Kosten, Dauer, Bauplätze und Angebote liegen im Szenario; Speichern folgt AP08.4.

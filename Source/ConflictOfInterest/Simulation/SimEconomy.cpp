@@ -1,5 +1,6 @@
 #include "SimCore.h"
 #include "CityHubs.h"
+#include "Investments.h"
 #include "SimArchive.h"
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 namespace CoISim
@@ -47,7 +48,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -57,7 +58,7 @@ bool FSimulation::AuditRuntime(FString& Error) const
  for(const auto& G:State.Groups)
  {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
 
- for(const auto& A:State.Accounts){int64 Backed=0;for(const auto& O:State.Orders)if(ActorAccount(O.ActorId)==A.Id)Backed+=O.ReservedCents;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")){if(ActorAccount(J.OwnerId)==A.Id)Backed+=J.CostCents;if(J.OwnerId!=J.ProviderId&&ActorAccount(J.ProviderId)==A.Id)Backed+=J.OperatingCents;}for(const auto& R:State.Reservations)if(R.Active&&R.AccountId==A.Id)Backed+=R.MoneyCents;if(Backed!=A.ReservedCents)return Fail(TEXT("Unbacked money hold: ")+A.Id);}
+ for(const auto& A:State.Accounts){int64 Backed=0;for(const auto& P:State.Projects)if(P.Status==TEXT("building")&&ActorAccount(P.OwnerId)==A.Id)Backed+=P.CostCents;for(const auto& O:State.Orders)if(ActorAccount(O.ActorId)==A.Id)Backed+=O.ReservedCents;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")){if(ActorAccount(J.OwnerId)==A.Id)Backed+=J.CostCents;if(J.OwnerId!=J.ProviderId&&ActorAccount(J.ProviderId)==A.Id)Backed+=J.OperatingCents;}for(const auto& R:State.Reservations)if(R.Active&&R.AccountId==A.Id)Backed+=R.MoneyCents;if(Backed!=A.ReservedCents)return Fail(TEXT("Unbacked money hold: ")+A.Id);}
  for(const auto& I:State.Inventories){int64 Backed=0;for(const auto& O:State.Orders)if(O.Side==TEXT("sell")&&O.ActorId==I.OwnerId&&O.StorageId==I.StorageId&&O.GoodId==I.GoodId)Backed+=O.ReservedKg;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")&&J.SourceInventoryId==I.Id)Backed+=J.Kg;for(const auto& R:State.Reservations)if(R.Active&&R.InventoryId==I.Id)Backed+=R.Kg;if(Backed!=I.ReservedKg)return Fail(TEXT("Unbacked stock hold: ")+I.Id);
   if(!Find(State.Warehouses,I.StorageId)){bool Cargo=false;for(const auto& J:State.Transports)if(J.Status==TEXT("moving")&&J.CargoInventoryId==I.Id)Cargo=true;if(!Cargo)return Fail(TEXT("Stock without physical location: ")+I.Id);}
  }

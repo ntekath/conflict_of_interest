@@ -2,7 +2,7 @@
 #include "SimModel.h"
 namespace CoISim {
 struct FStoreView {
- FString Id,Name,CityId,OwnerName;bool Own=false,Public=false,Blocked=false;TArray<FString> AcceptedGoods;
+ FString TypeId;FString Id,Name,CityId,OwnerName;bool Own=false,Public=false,Blocked=false;TArray<FString> AcceptedGoods;
  int64 Capacity=0,Used=0,Incoming=0,DailyCost=0,Arrears=0;
 };
 struct FVehicleView {
@@ -19,7 +19,7 @@ struct FCityPresence {FString CompanyId,Name;bool Headquarters=false,Own=false;i
 struct FCityView {FString Id,Name,RegionId;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FString> Groups;TArray<FCityPresence> Presence;};
 struct FPlayerView {
  FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
- TArray<FCityView> Cities;TArray<FStoreView> Stores;TArray<FVehicleView> Vehicles;TArray<FInventory> Stocks;
+ TArray<FConstructionProject> Projects;TArray<FAssetSale> AssetSales;TArray<FString> OccupiedPlots;TArray<FCityView> Cities;TArray<FStoreView> Stores;TArray<FVehicleView> Vehicles;TArray<FInventory> Stocks;
  TArray<FMarketOrder> Orders;TArray<FTrade> Trades;TArray<FMarketTotal> Markets;TArray<FTransport> Shipments;TArray<FFacility> Facilities;
  TArray<FRouteActivity> Routes;TArray<FPlayerDay> Days;TArray<FPlayerEvent> Events;
 };

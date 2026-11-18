@@ -21,6 +21,7 @@ public:
  void TogglePause();void SetSpeed(int32 Value);bool Restart();
  bool Submit(CoISim::FCommand Command,FString& Error);
  bool SubmitPlayer(CoISim::FCommand Command,int64 Token,int64& Ticket,FString& Error);
+ bool PreviewInvestment(CoISim::FInvestmentRequest Request,CoISim::FInvestmentQuote& Quote,FString& Error) const;
  const TArray<CoISim::FCommandResult>& GetCommandResults() const {return Simulation.GetResults();}
  const CoISim::FSnapshot& GetSnapshot() const {return Presentation.Get();}
  const CoISim::FDiagnostics& GetDiagnostics() const {return Simulation.GetDiagnostics();}
