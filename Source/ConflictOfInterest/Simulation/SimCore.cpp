@@ -84,7 +84,8 @@ bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 }
 bool FSimulation::RunStep()
 {
- if(!Loaded)return false;
+ if(!Loaded||InStep)return false;
+ TGuardValue<bool> StepBoundary(InStep,true);
  FDateTime Start;FDateTime::ParseIso8601(*(Scenario.StartDate+TEXT("T00:00:00Z")),Start);
  if(State.Step>=(FDateTime::MaxValue().GetTicks()-Start.GetTicks())/(ETimespan::TicksPerHour*Scenario.Settings.HoursPerStep))return false;
  TRACE_CPUPROFILER_EVENT_SCOPE(CoI_SimulationStep);

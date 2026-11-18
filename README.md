@@ -69,3 +69,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP07.2](Docs/AP07.2.md): gerichtete Routen, freigegebene öffentliche Aktivitätsaggregation und begrenzte Lkw-Beispiele aus veröffentlichter Spielzeit.
 
 [AP07.3](Docs/AP07.3.md): Karte/Markt/Lager/Transporte verbinden, Planung vorbelegen und Objekte auf der Karte zentrieren; Tests und Messvergleich dokumentiert.
+
+[AP07a](Docs/AP07a.md): lokale Entwicklerkonsole mit F10 (nur Editor/Development), sicheren Eingriffen, budgetiertem Stunden-Vorschub und JSONL-Journal. `help` listet Befehle; Shipping enthält keine Entwickler-Endpunkte.

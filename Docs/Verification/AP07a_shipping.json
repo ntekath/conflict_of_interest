@@ -1,0 +1,23 @@
+{
+  "shipping": "Binaries/Win64/ConflictOfInterest-Win64-Shipping.exe",
+  "checks": [
+    {
+      "marker": "COI_DEVELOPER_CONSOLE_AP07A",
+      "development_present": true,
+      "shipping_present": false
+    },
+    {
+      "marker": "money add COMPANY SIGNED_CENTS",
+      "development_present": true,
+      "shipping_present": false
+    },
+    {
+      "marker": "goods add COMPANY STORAGE GOOD KG",
+      "development_present": true,
+      "shipping_present": false
+    }
+  ],
+  "legacy_mutating_exec_absent": true,
+  "compile_time_boundary": "static_assert in DeveloperConsoleTests.cpp",
+  "result": "PASS"
+}

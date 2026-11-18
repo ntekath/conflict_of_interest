@@ -1,5 +1,6 @@
 #pragma once
 #include "SimModel.h"
+#include "DeveloperBuild.h"
 #include "PlayerView.h"
 #include "MapMetrics.h"
 #include "GeoMapData.h"
@@ -59,6 +60,10 @@ public:
  FString EconomicFingerprint() const;
  bool IsLoaded() const { return Loaded; }
 private:
+#if COI_WITH_DEV_CONSOLE
+ friend class FDeveloperConsole;
+#endif
+ bool InStep=false;
  FSession Session;FScenario Scenario; FState State; FSnapshot Snapshot; FDiagnostics Diagnostics;
  TArray<FCommand> Pending; TArray<FCommandResult> Results;
  uint64 Generation=0,Version=0; int64 LastIssuedSequence=0,CreditMicros=0;

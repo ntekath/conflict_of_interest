@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Simulation/DeveloperBuild.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/PlayerController.h"
 #include "CoIGameMode.generated.h"
@@ -11,9 +12,12 @@ public: ACoIPlayerController();
  bool IsMapPointerBlocked() const;bool IsMapKeyboardBlocked() const;void ClosePlayerView();
  UFUNCTION(Exec) void MapStatus();
  UFUNCTION(Exec) void SimStatus();
- UFUNCTION(Exec) void SimRestart();
+#if COI_WITH_DEV_CONSOLE
+ void ToggleDeveloperConsole();
+ TSharedPtr<class SCoIDeveloperConsole> DeveloperWidget;FKey DeveloperKey;bool DeveloperOpen=false;
+#endif
 private: UPROPERTY() TObjectPtr<class UCoIMapInterface> MapInterface;
-protected: virtual void BeginPlay() override;virtual void SetupInputComponent() override;
+protected: virtual void EndPlay(const EEndPlayReason::Type Reason) override;virtual void BeginPlay() override;virtual void SetupInputComponent() override;
 };
 UCLASS()
 class CONFLICTOFINTEREST_API ACoIGameMode : public AGameModeBase

@@ -1,10 +1,10 @@
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
-Stand: 17.11.2026. US-Szenario mit Spielbeginn 1913. AP01–AP06 sind laut Projektinhaber umgesetzt; der Code wurde hier nicht geprüft. Nächster notwendiger Schritt ist AP06a (Unternehmenssteuerung) vor AP07. Bestehende Implementierung gezielt anpassen, keinen erneuten Projektneustart durchführen.
+Stand: 17.11.2026. AP01–AP06 sowie AP07.2 und AP07.3 sind laut Projektinhaber umgesetzt. AP06a und AP07.1 wurden nicht gesondert als abgeschlossen bestätigt; deren tatsächlichen Stand vor Folgepaketen prüfen. Nächste Ergänzung: AP07a Entwicklerkonsole, danach AP07b Klimarisiko. Der Projektcode wurde hier nicht geprüft; bestehende Implementierung gezielt ergänzen.
 
 ## Masterprompt für Codex
 
-Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; AP01–AP06 nicht erneut bauen; AP06a vor AP07 umsetzen. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
+Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; abgeschlossene Pakete nicht erneut bauen; offene Voraussetzungen einschließlich AP06a und AP07.1 anhand des Codes prüfen. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
 
 ### Spielvision
 
@@ -446,14 +446,64 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 - UI bei 1280×720 und 1920×1080 sowie mehreren Zoomstufen visuell prüfen. Layer, Legende und Auftragsdialoge bleiben bedienbar.
 - Anzahl visueller Fahrzeuge bleibt innerhalb der Limits; Schritt-/Frame-Zeit mit aktivierter und deaktivierter Routenansicht vergleichen und dokumentieren.
 
-### AP07a – Klimarisiko, Vorräte und erster Interessenkonflikt
+### AP07a – Entwicklerkonsole und kontrollierte Simulationseingriffe
 
-**Voraussetzung:** AP07. Neue Ergänzung; bestehende Paketnummern bleiben erhalten.
+**Voraussetzung:** AP07 einschließlich bestätigter Steuerungszuordnung aus AP06a. Bereits vorhandene Diagnosefunktionen wiederverwenden.
+
+**Ziel:** Zustände untersuchen, reproduzierbare Tests vorbereiten und später Ereignisse gezielt auslösen, ohne die Simulation durch unkontrollierte Eingriffe zu beschädigen.
+
+**Umfang und Oberfläche**
+- Separate, per konfigurierbarer Taste einblendbare Konsole mit Texteingabe, begrenztem Ausgabeprotokoll und Befehlshistorie. Hilfe und Parameterbeschreibungen anbieten.
+- Nicht im normalen Spieler-HUD platzieren. Geöffnete Konsole fängt Tastatur/Maus-Eingaben ab; keine gleichzeitigen Kamera-/Handelsbefehle.
+- Befehle nach Lesefunktionen und Eingriffen unterscheiden; Ergebnisse mit Zustandsschritt und stabilen Objekt-IDs anzeigen. Such-/Listenbefehle helfen beim Finden gültiger IDs.
+- Nur Editor-/Development-Builds. Mutierende Entwickler-Endpunkte und UI in Shipping nicht registrieren; ausgeblendetes Widget allein reicht nicht. Keine allgemeine C++-/Shell-/Dateicode-Ausführung.
+- Keine Netzwerk- oder Fernadministration. Rechte gelten nur für diese lokale Entwicklungsoberfläche und sind unabhängig vom gewählten Spielerunternehmen.
+
+**Befehlsgruppen – Namen sind Vorschläge**
+| Gruppe | Funktionen / Beispiel |
+|---|---|
+| Hilfe / Objekte finden | help; Unternehmen, Regionen, Lager, Fahrzeuge und Aufträge nach ID/Name auflisten |
+| Zustand lesen | inspect company ID; inspect inventory ID; Geld, Besitz, Reservierungen, Aufträge und Herkunft erklären |
+| Simulationssteuerung | pause; step 1; advance 24; positive ganzzahlige Stunden, nach Abschluss wieder pausiert |
+| Testszenario herstellen | money set/add COMPANY CENTS; goods add OWNER STORAGE GOOD KG |
+| Assets | vehicle relocate ID PLACE; nur freies Fahrzeug ohne gebundene Verpflichtungen |
+| Validierung | validate world; referenzielle Integrität, Konten, Reservierungen, Warenmengen und Kapazitäten prüfen |
+| Reproduzierbarkeit | Szenario-ID/-Version, Start-Seed, aktuellen Schritt und verwendete Konfiguration anzeigen |
+| Ereignisse ab AP07b | event start drought REGION SEVERITY HOURS; event stop ID; aktive Ereignisse auflisten |
+
+**Befehlsverarbeitung und Konsistenz**
+1. Zentral registrierte, typisierte Befehle mit Prüfung von Parameteranzahl, Wertebereichen, gültigen IDs, Einheit und Zustand. Fehlermeldung nennt das Problem; fehlgeschlagene Mutation hinterlässt keine Teiländerung.
+2. Mutationen gehen durch eine eigene Entwickler-Befehlsschnittstelle in die autoritative Simulation. Sie werden geordnet an einer abgeschlossenen Schrittgrenze ausgeführt, niemals direkt aus dem Widget an Actor-/Wirtschaftsdaten.
+3. Bei Pause darf ein Eingriff an der aktuellen abgeschlossenen Grenze ausgeführt werden, ohne eine zusätzliche Wirtschaftsstunde vorzutäuschen. Snapshot-Version aktualisieren und UI konsistent informieren.
+4. Laufende Jobs beachten: Befehl anfordern, sichere Grenze erreichen, validieren, ausführen, veröffentlichen. Keine gleichzeitige Snapshot-Mutation und kein blockierendes langes Warten im Game Thread.
+5. step/advance verwenden dieselbe Stundenlogik wie normaler Betrieb; keine vergrößerten Zeitschritte oder übersprungenen Löhne/Transporte. Lange Vorschübe budgetiert über Frames abarbeiten, Fortschritt anzeigen und an Schrittgrenzen abbrechen können. Keine weiteren mutierenden Befehle während eines Vorschubs zulassen; Status/Abbruch bleiben möglich.
+6. money set darf den Kontostand nicht unter bestehende Geldreservierungen setzen. Warenzugabe prüft Eigentümer, Lagerzugangsrecht und freie Kapazität; Fahrzeugversetzung lehnt gebundene Fahrzeuge ab. Keine stillschweigende Auflösung laufender Verträge.
+7. Bewusste Testzugaben von Geld und Waren sind ausgewiesene Entwicklerquellen/-senken. Bilanzen unterscheiden normale Wirtschaftsflüsse und Eingriffe; kein anschließender falscher Bilanzalarm. Bestehende Waren werden nicht dupliziert.
+8. Erfolgreiche und abgelehnte Eingriffe mit eindeutiger Befehlssequenz, Schritt, Parametern und Ergebnis protokollieren; bei erfolgreichen Mutationen relevante Vorher-/Nachherwerte erfassen. Maschinenlesbaren Logexport im Entwicklungsverzeichnis anbieten. Normales Spiel erzeugt keine Entwicklerzugaben.
+9. Seed anzeigen; Änderung bei laufender Partie vorerst nicht erlauben. Reproduzierbare Neustarts über explizites Szenario/Seed durchführen. Das Log unterstützt Reproduktion, ist noch kein vollständiges automatisches Replay-System.
+10. Keine pauschalen Cheats für Spielerfirmen: CompanyId explizit adressieren, sodass dieselben Tests für NPCs möglich sind. Normale Spielerberechtigungen bleiben unverändert; Konsolenprivilegien dürfen nicht in deren Befehlsweg gelangen.
+11. Nach Eingriffen gezielte Invarianten prüfen; validate world verändert den Zustand nicht. Fehler mit betroffenen IDs melden, nicht automatisch unbekannte Zustände reparieren.
+12. Ereignisregistry/-schnittstelle schlank vorbereiten, aber keine Dürrelogik vor AP07b implementieren. Unbekannte bzw. noch nicht implementierte Ereignisse klar ablehnen.
+
+**Abnahme**
+- Geld oder Ware für ein beliebiges existierendes Unternehmen gültig hinzufügen; Kontostand/Bestand und Snapshot aktualisieren sich mit einem dokumentierten Entwicklereingriff.
+- Geld unter Reservierungen, Ware über Lagerkapazität, ungültige IDs, negative Zeit und Versetzen eines eingesetzten Lkw werden ohne Teiländerung abgelehnt.
+- Im pausierten Spiel ändert inspect nichts. Eine gültige Mutation aktualisiert den Snapshot ohne automatische Produktion/Konsum; step 1 führt genau eine Wirtschaftsstunde aus.
+- advance 24 ergibt auf derselben Plattform aus identischem Zustand/Seed/Befehlen dieselben fachlichen Ergebnisse wie 24 normale Einzelschritte. Abbruch erfolgt nur zwischen vollständigen Schritten.
+- UI, Karte und offene Ansichten zeigen nach Eingriffen konsistente Zustände. Zustellung, Löhne und Reservierungsfreigabe erfolgen nicht doppelt.
+- Start/Stop während laufender Worker-Jobs, PIE-Ende und erneuter Szenariostart hinterlassen keine alten Befehle, Jobs oder Objektzugriffe.
+- Shipping-Build enthält keine registrierten mutierenden Konsolenbefehle und keinen alternativen Spielerzugang dazu; Test im Build dokumentieren.
+- Ereignisbefehle vor AP07b melden „nicht implementiert“. Nach AP07b starten/beenden sie Ereignisse über dieselbe autoritative Schnittstelle.
+
+### AP07b – Klimarisiko, Vorräte und erster Interessenkonflikt
+
+**Voraussetzung:** AP07 und AP07a. Ereignisse nutzen die validierten Entwicklerbefehle der Konsole.
 
 **Ziel:** Die besondere Identität des Spiels wird im Wirtschaftskern erlebbar.
 
 **Aufgaben**
 - Konfigurierbare regionale Dürre mit zeitlich begrenzter Auswirkung auf Nahrungsproduktion ergänzen.
+- Start-/Stop-/Listenbefehle in der Entwicklerkonsole aus AP07a registrieren. Stärke, Dauer, Region, Prognose und aktiven Zustand validieren; Stop entfernt nur den laufenden Effekt und macht bereits geschehene Wirtschaftsfolgen nicht rückgängig.
 - Prognose und tatsächliches Ereignis trennen: Prognosen nennen Risiko und Zeitraum, nicht den sicheren zukünftigen Zustand. Mit festen Seeds reproduzierbare Testfälle ermöglichen.
 - Produktionseinbruch, Bestände, Marktpreise und unerfüllten Bedarf über bestehende Regeln verbinden; kein pauschaler Krisenpreis-Multiplikator.
 - Versorgung, Lagerbestand, Verderb, Kosten und Gewinn im Panel oder einer kurzen Historie sichtbar machen.
@@ -461,6 +511,7 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 
 **Abnahme**
 - Zwei feste Testfälle zeigen eingetretene und ausgebliebene Dürre.
+- Konsole kann eine Dürre starten und stoppen; ungültige Parameter hinterlassen keinen Teilzustand. Geskriptete Tests und normale Ereignisauslösung verwenden dieselben Wirtschaftsregeln.
 - Früher Einkauf verändert Angebot sofort; spätere Lieferung kann Mangel reduzieren.
 - Zurückhalten kann Gewinnchancen und Versorgungsprobleme erhöhen, garantiert aber keinen Gewinn.
 - Ausbleibende Krise kann durch Lagerkosten, Verderb und Preisentwicklung Verluste verursachen.
@@ -468,7 +519,7 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 
 ### AP08 – Strategien und Konkurrenzverhalten vertiefen
 
-**Voraussetzung:** AP07a. Autonome Unternehmen bestehen bereits seit AP05.
+**Voraussetzung:** AP07b. Autonome Unternehmen bestehen bereits seit AP05.
 
 **Ziel:** Bestehende Akteure planen vorausschauender und verfolgen unterschiedliche Interessen.
 
@@ -495,7 +546,7 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 
 **Aufgaben**
 - PlayerCompanyId, Szenario-ID und Controller-Zuordnung beim Laden validieren; KI-Zuordnung vor dem ersten weiteren Simulationsschritt wiederherstellen. Kein Rückfall auf eine feste Standardfirma.
-- Versioniertes Speicherformat für Zeit, Konten, Eigentumsbestände, Betriebsstätten, Konsumentengruppen, Bedürfnisse/Versorgung, Orderbücher, Reservierungen, Preisverlauf, Unternehmensentscheidungen, aktive Transporte, Fahrzeugstandorte/-belegung, Lagerkapazitätsreservierungen, Fixkosten-/Lohnzeitpunkte, Zahlungsrückstände, Klimazustand und Zufallszustand ergänzen.
+- Versioniertes Speicherformat für Zeit, Konten, Eigentumsbestände, Betriebsstätten, Konsumentengruppen, Bedürfnisse/Versorgung, Orderbücher, Reservierungen, Preisverlauf, Unternehmensentscheidungen, aktive Transporte, Fahrzeugstandorte/-belegung, Lagerkapazitätsreservierungen, Fixkosten-/Lohnzeitpunkte, Zahlungsrückstände, Klimazustand, Kennzeichnung bisheriger Entwicklereingriffe und Zufallszustand ergänzen.
 - Geschäftshistorie begrenzen oder archivieren; offene Aufträge und abrechnungsrelevante Zustände vollständig erhalten.
 - Referenzen über stabile IDs speichern; Darstellung beim Laden rekonstruieren.
 - Inkompatible oder beschädigte Spielstände verständlich abweisen.

@@ -48,10 +48,10 @@ bool FSimulation::AuditRuntime(FString& Error) const
 {
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
- if(Money!=State.InitialMoneyCents)return Fail(TEXT("Global money conservation failed"));
+ if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
  for(const auto& I:State.Inventories)if(I.QuantityKg<0||I.QuantityKg>1000000000||I.ReservedKg<0||I.ReservedKg>I.QuantityKg||I.BookValueCents<0)return Fail(TEXT("Physical stock: ")+I.Id);
  for(const auto& S:State.Warehouses)if(S.ReservedIncomingPoints<0||UsedStorage(S.Id)+S.ReservedIncomingPoints>Find(Scenario.Definitions.WarehouseTypes,S.TypeId)->CapacityPoints)return Fail(TEXT("Storage capacity: ")+S.Id);
- for(const auto& G:State.GoodsAudit){int64 Actual=0;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Actual+=I.QuantityKg;if(Actual!=G.InitialKg+G.ProducedKg-G.InputKg-G.ConsumedKg-G.SpoiledKg)return Fail(TEXT("Goods source/sink equation: ")+G.Id);}
+ for(const auto& G:State.GoodsAudit){int64 Actual=0;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Actual+=I.QuantityKg;if(Actual!=G.InitialKg+G.DeveloperAddedKg+G.ProducedKg-G.InputKg-G.ConsumedKg-G.SpoiledKg)return Fail(TEXT("Goods source/sink equation: ")+G.Id);}
  for(const auto& G:State.Groups)
  {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
 

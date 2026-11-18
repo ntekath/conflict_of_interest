@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "SimCore.h"
+#include "DeveloperConsole.h"
 #include "SimulationSubsystem.generated.h"
 DECLARE_MULTICAST_DELEGATE(FCoISimulationChanged);
 // Sole authoritative UE owner. All entry points run synchronously on the Game Thread.
@@ -28,8 +29,17 @@ public:
  double GetGameThreadMicros() const {return GameThreadMicros;}
  const FString& GetError() const {return LoadError;}
  FString Fingerprint() const {return Simulation.Fingerprint();}
+#if COI_WITH_DEV_CONSOLE
+ bool ExecuteDeveloper(const FString& Text);
+ FString DeveloperStatus() const{return Dev.Status(Simulation);}
+ const CoISim::FDeveloperConsole& Developer() const{return Dev;}
+#endif
  FCoISimulationChanged OnChanged;
 private:
+#if COI_WITH_DEV_CONSOLE
+ CoISim::FDeveloperConsole Dev;FString DeveloperDirectory;bool JournalFailed=false;
+ void InitializeDeveloper();bool RestartDeveloper(const FString&,int64,FString&);bool ExportDeveloper(FString&);
+#endif
  CoISim::FPresentationSnapshot Presentation;void PublishPresentation();
  CoISim::FSimulation Simulation;
  bool Paused=true;int32 Speed=1;double FractionalMicros=0,NotifySeconds=0,GameThreadMicros=0;
