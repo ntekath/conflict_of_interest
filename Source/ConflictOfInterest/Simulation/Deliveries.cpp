@@ -358,6 +358,7 @@ void FSimulation::RunDeliveryDue(const FString &ContractId, int64 H)
             Qty = 0;
         else if (Contract.SupplierId != Contract.BuyerId)
             Qty = FMath::Min(Qty, Free / FMath::Max(1LL, R.PriceCentsPerKg));
+        if(Contract.Id.StartsWith(TEXT("retail.supply."))){const auto* Rule=Find(State.OperatingRules,Contract.DestinationStoreId);const auto* Status=Find(State.OperatingStatus,Contract.DestinationStoreId);int64 Spent=Status&&Status->BudgetWindow==H/Scenario.Economy.RuleBudgetHours?Status->SpentCents:0,Held=0;for(const auto& O:State.Orders)if(O.Status==TEXT("open")&&O.Side==TEXT("buy")&&O.RuleId==Contract.DestinationStoreId)Held+=O.ReservedCents;Qty=Rule&&Rule->Enabled?(Contract.SupplierId==Contract.BuyerId?Qty:FMath::Min(Qty,FMath::Max(0LL,Rule->BuyBudgetCents-Spent-Held)/FMath::Max(1LL,R.PriceCentsPerKg))):0;}
         if (Qty <= 0)
         {
             Error = TEXT("Fälligkeit ausgefallen: verfügbare Quellware, freies Zielvolumen oder gedecktes "
@@ -400,6 +401,8 @@ void FSimulation::RunDeliveryDue(const FString &ContractId, int64 H)
             Stock.BookValueCents += Price;
             Stock.SpoilRemainder += Credit;
             Slot->PurchaseCents = Price;
+            if(Contract.Id.StartsWith(TEXT("retail.supply."))){auto* Status=Find(State.OperatingStatus,Contract.DestinationStoreId);if(Status->BudgetWindow!=H/Scenario.Economy.RuleBudgetHours){Status->BudgetWindow=H/Scenario.Economy.RuleBudgetHours;Status->SpentCents=0;}Status->SpentCents+=Price;}
+
         }
         FTransport Job;
         Job.Id = X.Id + TEXT(".out");

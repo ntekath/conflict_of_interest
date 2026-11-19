@@ -16,6 +16,7 @@ void FSimulation::Trader(int64 H) {
  for(const auto& Company:Scenario.Definitions.Companies){if(!IsAutonomous(Company.Id)||Company.DecisionProfile!=TEXT("trader"))continue;const FString Actor=Company.Id;auto* Cash=Find(State.Accounts,ActorAccount(Actor));
   // Pick an observed destination bid for already owned stock. Prefer a paid carrier over own vehicle.
   for(int32 I=0;I<State.Inventories.Num();++I){const FInventory Stock=State.Inventories[I];const auto* From=Find(State.Warehouses,Stock.StorageId);if(Stock.OwnerId!=Actor||!From||Stock.QuantityKg<=0||Stock.RentArrearsCents)continue;
+   if(Scenario.Economy.RetailEnabled&&!Find(Scenario.Definitions.WarehouseTypes,From->TypeId)->RetailOffers.IsEmpty()&&From->OwnerId==Actor)continue;
    // Own asks must release cargo before evaluating physical availability.
    for(auto& O:State.Orders)if(O.ActorId==Actor&&O.Side==TEXT("sell")&&O.StorageId==Stock.StorageId&&O.GoodId==Stock.GoodId&&O.Status==TEXT("open"))CancelOrder(O.Id,Actor,TEXT("route_evaluation"));
    const auto Current=State.Inventories[I];int64 BestProfit=Scenario.Economy.TraderMinProfitCents-1;FTransport Best;

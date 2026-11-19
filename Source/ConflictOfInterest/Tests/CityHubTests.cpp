@@ -9,7 +9,7 @@
 #include "Serialization/JsonSerializer.h"
 using namespace CoISim;
 namespace {
-bool HubFixture(FString& J,FCoIGeoMapData& G){FString E;auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));return C&&G.Load(C->DefinitionJson,E)&&FFileHelper::LoadFileToString(J,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim")));}
+bool HubFixture(FString& J,FCoIGeoMapData& G){FString E;auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));return C&&G.Load(C->DefinitionJson,E)&&FFileHelper::LoadFileToString(J,*(FPaths::ProjectContentDir()/TEXT("Simulation/ap092_legacy_fixture.coisim")));}
 FString HubJson(TSharedPtr<FJsonObject> R){FString J;FJsonSerializer::Serialize(R.ToSharedRef(),TJsonWriterFactory<>::Create(&J));return J;}
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCityHubMigration,"CoI.Hubs.MigrationAndTransit",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)

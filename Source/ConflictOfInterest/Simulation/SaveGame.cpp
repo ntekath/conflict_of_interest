@@ -8,6 +8,7 @@ namespace
 FString Digest(const FSaveData &D)
 {
     FFingerprint H;
+    H.LegacyRetail = D.FormatVersion == 4;
     H.Write(D);
     return H.Finish();
 }
@@ -55,15 +56,18 @@ bool Decode(const FString &Json, FSaveData &D, FString &E)
         !Root->TryGetStringField(TEXT("Checksum"), Checksum) || !Root->TryGetObjectField(TEXT("Payload"), Payload))
         return Fail(TEXT("Ungültiger Spielstandkopf."));
     double VersionCode = 0;
-    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || VersionCode != 4)
-        return Fail(TEXT("Inkompatible Spielstandversion. AP09.2 benötigt Version 4; ältere Dateien bleiben unverändert."));
+    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || (VersionCode != 4 && VersionCode != 5))
+        return Fail(TEXT("Inkompatible Spielstandversion. AP09.3 benötigt Version 5 (Version 4 wird geprüft migriert); "
+                         "ältere Dateien bleiben unverändert."));
     FRead R{*Payload, E, true};
+    R.LegacyRetail = VersionCode == 4;
     D.Fields(R);
     R.Complete();
     if (!E.IsEmpty())
         return false;
-    if (D.FormatVersion != 4 || D.SimulationVersion != 4 || D.DefinitionsVersion != 4 || D.Platform != TEXT("Win64") ||
-        D.RandomAlgorithm != TEXT("entity-fnv-splitmix-v1"))
+    if (((D.FormatVersion != 4 || D.SimulationVersion != 4 || D.DefinitionsVersion != 4) &&
+         (D.FormatVersion != 5 || D.SimulationVersion != 5 || D.DefinitionsVersion != 5)) ||
+        D.Platform != TEXT("Win64") || D.RandomAlgorithm != TEXT("entity-fnv-splitmix-v1"))
         return Fail(TEXT("Inkompatible Spielstand-, Simulations- oder Definitionsversion."));
     if (Checksum != Digest(D))
         return Fail(TEXT("Prüfsumme stimmt nicht: Spielstand beschädigt oder verändert."));
@@ -130,7 +134,8 @@ bool FSimulation::SaveGameJson(FString &Json, FString &E, int32 Speed) const
         P.Order = C.Order;
         P.Transport = C.Transport;
         P.Investment = C.Investment;
-        P.Rule = C.Rule;P.Delivery=C.Delivery;
+        P.Rule = C.Rule;
+        P.Delivery = C.Delivery;
         D.Pending.Add(P);
     }
     for (const auto &C : Results)
@@ -164,7 +169,57 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
     FSaveData D;
     if (!Decode(Json, D, E))
         return false;
-    if (D.CompatibilityHash != SaveCompatibility(D.Scenario) || D.CompatibilityHash != SaveCompatibility(Expected))
+    const bool MigrateRetail = D.FormatVersion == 4;
+    if (MigrateRetail)
+    {
+        auto LegacyExpected = Expected;
+        TSet<FString> RetailTypes;
+        for (const auto &T : Expected.Definitions.WarehouseTypes)
+            if (!T.RetailOffers.IsEmpty())
+                RetailTypes.Add(T.Id);
+        LegacyExpected.Definitions.WarehouseTypes.RemoveAll(
+            [&](const FWarehouseDef &T) { return RetailTypes.Contains(T.Id); });
+        LegacyExpected.Definitions.Construction.RemoveAll(
+            [&](const FConstructionDef &X) { return RetailTypes.Contains(X.TypeId); });
+        LegacyExpected.Definitions.BuildPlots.RemoveAll(
+            [](const FBuildPlotDef &X) { return X.Id.StartsWith(TEXT("retail.plot.")); });
+        LegacyExpected.InitialState.Warehouses.RemoveAll(
+            [&](const FWarehouse &X) { return RetailTypes.Contains(X.TypeId); });
+        LegacyExpected.InitialState.AssetSales.RemoveAll(
+            [](const FAssetSale &X) { return X.Id.StartsWith(TEXT("retail.sale.")); });
+        LegacyExpected.Economy.LegacyHouseholdPurchases = D.Scenario.Economy.LegacyHouseholdPurchases;
+        auto LegacyHash = [](FScenario S) {
+            S.Settings.Seed = 0;
+            S.PlayerCompanyId.Empty();
+            FFingerprint H;
+            H.LegacyRetail = true;
+            H.Write(S);
+            return H.Finish();
+        };
+        if (D.CompatibilityHash != LegacyHash(D.Scenario) || D.CompatibilityHash != LegacyHash(LegacyExpected))
+        {
+            E = TEXT("Version-4-Migration: Basisszenario stimmt nicht überein.");
+            return false;
+        }
+        const auto OldSeed = D.Scenario.Settings.Seed;
+        D.Scenario = Expected;
+        D.Scenario.Settings.Seed = OldSeed;
+        D.Scenario.PlayerCompanyId = D.Session.PlayerCompanyId;
+        for (const auto &W : D.Scenario.InitialState.Warehouses)
+            if (!Find(D.State.Warehouses, W.Id))
+            {
+                if (!RetailTypes.Contains(W.TypeId))
+                {
+                    E = TEXT("Migration würde ein unbekanntes Asset ergänzen.");
+                    return false;
+                }
+                D.State.Warehouses.Add(W);
+            }
+        for (const auto &Sale : D.Scenario.InitialState.AssetSales)
+            if (!Find(D.State.AssetSales, Sale.Id) && Sale.Id.StartsWith(TEXT("retail.sale.")))
+                D.State.AssetSales.Add(Sale);
+    }
+    else if (D.CompatibilityHash != SaveCompatibility(D.Scenario) || D.CompatibilityHash != SaveCompatibility(Expected))
     {
         E = TEXT("Szenario-/Konfigurationsdaten passen nicht zu diesem Spielstand.");
         return false;
@@ -176,6 +231,20 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
     C.State = MoveTemp(D.State);
     C.Session = MoveTemp(D.Session);
     C.Loaded = true;
+    if (MigrateRetail)
+    {
+        TArray<FString> OldOrders;
+        for (const auto &O : C.State.Orders)
+            if (O.Status == TEXT("open") && Find(C.State.Groups, O.ActorId))
+                OldOrders.Add(O.Id);
+        for (const auto &Id : OldOrders)
+        {
+            const auto Copy = *Find(C.State.Orders, Id);
+            C.CancelOrder(Id, Copy.ActorId, TEXT("cancelled"));
+        }
+        C.InitializeOperatingRules();
+    }
+
     if (D.LastSequence < 0 || D.SnapshotVersion < 0 || D.CreditMicros < 0 ||
         D.CreditMicros > C.Scenario.Settings.RealMicrosPerStep * C.Scenario.Settings.MaxBacklogSteps ||
         D.Pending.Num() > C.Scenario.Settings.MaxPendingCommands || D.Results.Num() > 128)
@@ -212,7 +281,8 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
         Cmd.Order = P.Order;
         Cmd.Transport = P.Transport;
         Cmd.Investment = P.Investment;
-        Cmd.Rule = P.Rule;Cmd.Delivery=P.Delivery;
+        Cmd.Rule = P.Rule;
+        Cmd.Delivery = P.Delivery;
         if (!C.Authorized(Cmd, E))
             return false;
         C.Pending.Add(Cmd);

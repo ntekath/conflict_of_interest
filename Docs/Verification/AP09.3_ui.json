@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-19",
+  "method": "Native Unreal game using computer-use @oai/sky; screenshots inspected directly, no debug grants",
+  "1280x720": {
+    "passed": true,
+    "observed": [
+      "Chicago → Eigene Assets: own empty food shop, physical stock/capacity, 1200 kg/day, 2 jobs, actual paid staff, quality, revenue and cost basis.",
+      "Simulation at 16x: physical replenishment and actual sales observed; price/invoice mismatch in provisional defaults detected and corrected in data, not compensated by money.",
+      "Final dialog: only food is editable, buy limit 10 and retail price 12 Cent/kg; target 1000 kg, budget 50000 Cent, minimum 0; valid preview, buttons reachable, scrolling inside dialog."
+    ]
+  },
+  "1920x1080": {
+    "passed": true,
+    "observed": [
+      "City household panel explicitly says purchases only from shop stocks.",
+      "Own Chicago food shop: price 0.12 USD/kg, purchase limit 0.10 USD/kg, quality 1000, staffing, budget, capacity, goods cost basis and revenue readable.",
+      "Rule dialog accessible; misleading warehouse surplus caption subsequently replaced and verified at 720p."
+    ]
+  },
+  "saveFilesOverwritten": false,
+  "testWindowsClosed": true
+}

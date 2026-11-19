@@ -48,7 +48,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -148,7 +148,7 @@ void FSimulation::EconomyHour(int64 Hour)
  if(Scenario.Economy.Stage>=4){TransportHour(Hour);Costs(Hour);Spoil();}
  Payroll(Hour);Produce(Hour);
  if(Scenario.Economy.Stage>=2)ExpireOrders();
- if(Scenario.Economy.Stage>=4){DeliveryService(Hour);OperatingService(Hour);Companies(Hour);}
+ if(Scenario.Economy.Stage>=4){DeliveryService(Hour);OperatingService(Hour);Companies(Hour);if(Scenario.Economy.RetailEnabled)RetailPlan(Hour);}
  if(Scenario.Economy.Stage>=3)Demand(Hour);
  if(Scenario.Economy.Stage>=2)MatchOrders();
  if(Scenario.Economy.Stage>=3)Consume();

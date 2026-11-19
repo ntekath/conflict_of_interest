@@ -9,7 +9,7 @@
 #include "Serialization/JsonSerializer.h"
 using namespace CoISim;
 namespace {
-bool CityScreenFixture(FString& J,FCoIGeoMapData& G){FString E;auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));return C&&G.Load(C->DefinitionJson,E)&&FFileHelper::LoadFileToString(J,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim")));}
+bool CityScreenFixture(FString& J,FCoIGeoMapData& G){FString E;auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));return C&&G.Load(C->DefinitionJson,E)&&FFileHelper::LoadFileToString(J,*(FPaths::ProjectContentDir()/TEXT("Simulation/ap092_legacy_fixture.coisim")));}
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCityScreenProjection,"CoI.CityScreen.ScopePrivacyAndNavigation",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FCityScreenProjection::RunTest(const FString&){FString J,E;FCoIGeoMapData G;if(!CityScreenFixture(J,G))return false;FSimulation S;if(!S.Load(J,G,E))return false;auto P=S.GetSnapshot().Player;const auto Hash=S.Fingerprint();int64 Residents=0;for(const auto& C:P.Cities)Residents+=C.Residents;TestEqual(TEXT("City resident assignments count each group once"),Residents,S.GetSnapshot().Population);

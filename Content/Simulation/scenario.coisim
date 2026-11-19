@@ -478,6 +478,67 @@
     ],
     "WarehouseTypes": [
       {
+        "Id": "retail.type.food",
+        "CapacityPoints": 5000,
+        "DailyCostCents": 100,
+        "RetailJobs": 2,
+        "RetailWageCents": 150,
+        "RetailDailyKg": 1200,
+        "RetailOffers": [
+          {
+            "GoodId": "good.food",
+            "PriceCents": 12,
+            "QualityPermille": 1000,
+            "TargetKg": 1000,
+            "BuyLimitCents": 10
+          }
+        ],
+        "RetailName": "Lebensmittelgeschäft"
+      },
+      {
+        "Id": "retail.type.food.large",
+        "CapacityPoints": 10000,
+        "DailyCostCents": 180,
+        "RetailJobs": 3,
+        "RetailWageCents": 150,
+        "RetailDailyKg": 2400,
+        "RetailOffers": [
+          {
+            "GoodId": "good.food",
+            "PriceCents": 12,
+            "QualityPermille": 1000,
+            "TargetKg": 1000,
+            "BuyLimitCents": 10
+          }
+        ],
+        "RetailName": "Großes Lebensmittelgeschäft"
+      },
+      {
+        "Id": "retail.type.mixed",
+        "CapacityPoints": 10000,
+        "DailyCostCents": 200,
+        "RetailJobs": 3,
+        "RetailWageCents": 150,
+        "RetailDailyKg": 1600,
+        "RetailOffers": [
+          {
+            "GoodId": "good.food",
+            "PriceCents": 12,
+            "QualityPermille": 1000,
+            "TargetKg": 1000,
+            "BuyLimitCents": 10
+          },
+          {
+            "GoodId": "good.luxury",
+            "PriceCents": 120,
+            "QualityPermille": 1000,
+            "TargetKg": 100,
+            "BuyLimitCents": 100
+          }
+        ],
+        "RetailName": "Gemischtwarenladen"
+      },
+      {
         "Id": "warehouse.player",
         "CapacityPoints": 10000,
         "DailyCostCents": 100
@@ -609,6 +670,39 @@
         "DurationHours": 24
       },
       {
+        "Id": "retail.build.food",
+        "Name": "Lebensmittelgeschäft",
+        "Kind": "warehouse",
+        "TypeId": "retail.type.food",
+        "StorageTypeId": "",
+        "FromTypeId": "",
+        "ProviderAccountId": "account.company.services",
+        "CostCents": 150000,
+        "DurationHours": 24
+      },
+      {
+        "Id": "retail.build.food.large",
+        "Name": "Großes Lebensmittelgeschäft",
+        "Kind": "warehouse",
+        "TypeId": "retail.type.food.large",
+        "StorageTypeId": "",
+        "FromTypeId": "retail.type.food",
+        "ProviderAccountId": "account.company.services",
+        "CostCents": 200000,
+        "DurationHours": 24
+      },
+      {
+        "Id": "retail.build.mixed",
+        "Name": "Gemischtwarenladen",
+        "Kind": "warehouse",
+        "TypeId": "retail.type.mixed",
+        "StorageTypeId": "",
+        "FromTypeId": "",
+        "ProviderAccountId": "account.company.services",
+        "CostCents": 200000,
+        "DurationHours": 24
+      },
+      {
         "Id": "upgrade.warehouse",
         "Name": "Lager auf 20.000 Punkte ausbauen",
         "Kind": "warehouse",
@@ -689,6 +783,54 @@
       },
       {
         "Id": "plot.city.us.pittsburgh.warehouse.2",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.chicago.0",
+        "CityId": "city.us.chicago",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.chicago.1",
+        "CityId": "city.us.chicago",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.cleveland.0",
+        "CityId": "city.us.cleveland",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.cleveland.1",
+        "CityId": "city.us.cleveland",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.detroit.0",
+        "CityId": "city.us.detroit",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.detroit.1",
+        "CityId": "city.us.detroit",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.pittsburgh.0",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "retail.plot.pittsburgh.1",
         "CityId": "city.us.pittsburgh",
         "Kind": "warehouse",
         "ResourceSiteId": ""
@@ -1437,6 +1579,36 @@
     ],
     "Warehouses": [
       {
+        "Id": "retail.store.chicago.merchant",
+        "DisplayName": "Lebensmittelgeschäft · Chicago",
+        "TypeId": "retail.type.food",
+        "OwnerId": "company.merchant",
+        "CityId": "city.us.chicago",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "retail.store.chicago.player",
+        "DisplayName": "Lebensmittelgeschäft · Chicago",
+        "TypeId": "retail.type.food",
+        "OwnerId": "company.player",
+        "CityId": "city.us.chicago",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "retail.store.detroit.luxury",
+        "DisplayName": "Gemischtwarenladen · Detroit",
+        "TypeId": "retail.type.mixed",
+        "OwnerId": "company.luxury",
+        "CityId": "city.us.detroit",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
         "Id": "storage.food",
         "TypeId": "warehouse.standard",
         "OwnerId": "company.food",
@@ -1689,6 +1861,16 @@
     "Countries": [],
     "AssetSales": [
       {
+        "Id": "retail.sale.chicago",
+        "SellerId": "company.merchant",
+        "AssetId": "retail.store.chicago.merchant",
+        "CityId": "city.us.chicago",
+        "Kind": "warehouse",
+        "PriceCents": 150000,
+        "ExpiresHour": 168,
+        "Active": true
+      },
+      {
         "Id": "sale.pittsburgh.warehouse",
         "SellerId": "company.services",
         "AssetId": "storage.service.pittsburgh",
@@ -1825,11 +2007,12 @@
     "DeliveryPromiseHours": 24,
     "DeliveryDefaultFreightCapCents": 10000,
     "HouseholdModel": true,
-    "LegacyHouseholdPurchases": true,
+    "LegacyHouseholdPurchases": false,
     "WarehouseJobs": 2,
     "TraderJobs": 3,
     "VehicleJobs": 1,
-    "ServiceWageCents": 150
+    "ServiceWageCents": 150,
+    "RetailEnabled": true
   },
   "HubSchema": 1
 }

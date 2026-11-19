@@ -4,9 +4,11 @@ namespace CoISim {
 bool FSimulation::PlaceOrder(FMarketOrder O,FString& Error) {
  auto Reject=[&](const TCHAR* E){Error=E;return false;};const auto& E=Scenario.Economy;
  auto* A=Find(State.Accounts,ActorAccount(O.ActorId));auto* S=Find(State.Warehouses,O.StorageId);auto* P=Find(Scenario.Definitions.Places,O.CityId);
+ if(E.RetailEnabled&&Find(State.Groups,O.ActorId))return Reject(TEXT("Haushalte kaufen ausschließlich aus Geschäftsbeständen."));
  int64 Open=0;for(const auto& R:State.Orders)if(R.Status==TEXT("open"))++Open;
+ if(E.RetailEnabled&&S&&O.ActorId==S->OwnerId&&O.Side==TEXT("sell")){const auto* T=Find(Scenario.Definitions.WarehouseTypes,S->TypeId);if(T&&T->RetailOffers.ContainsByPredicate([&](const FRetailOffer& X){return X.GoodId==O.GoodId;}))return Reject(TEXT("Ladensortiment ist dem Einzelhandel vorbehalten."));}
  if(!O.RuleId.IsEmpty()||!A||!S||!P||S->CityId!=P->Id||Find(Scenario.Definitions.Regions,P->RegionId)->MarketId!=O.MarketId||!Find(Scenario.Definitions.Goods,O.GoodId)||O.Id.IsEmpty()||O.Id.Len()>128||Find(State.Orders,O.Id)||Open>=E.MaxOpenOrders||O.OriginalKg<=0||O.OriginalKg>E.MaxOrderKg||O.LimitCentsPerKg<=0||O.LimitCentsPerKg>E.MaxPriceCents||(O.Side!=TEXT("buy")&&O.Side!=TEXT("sell")))return Reject(TEXT("Invalid order, physical pickup or book limit"));
- if(auto* G=Find(State.Groups,O.ActorId)){if(!E.LegacyHouseholdPurchases)return Reject(TEXT("Household wholesale purchase disabled: retail transition"));if(O.Side==TEXT("sell"))return Reject(TEXT("Households do not resell"));int64 Holds=0;for(const auto& R:State.Orders)if(R.ActorId==G->Id)Holds+=R.ReservedCents;if(O.OriginalKg*O.LimitCentsPerKg>G->BudgetCents-G->DailySpentCents-Holds)return Reject(TEXT("Household budget exhausted"));}
+ if(auto* G=Find(State.Groups,O.ActorId)){if(E.RetailEnabled||!E.LegacyHouseholdPurchases)return Reject(TEXT("Household wholesale purchase disabled: retail transition"));if(O.Side==TEXT("sell"))return Reject(TEXT("Households do not resell"));int64 Holds=0;for(const auto& R:State.Orders)if(R.ActorId==G->Id)Holds+=R.ReservedCents;if(O.OriginalKg*O.LimitCentsPerKg>G->BudgetCents-G->DailySpentCents-Holds)return Reject(TEXT("Household budget exhausted"));}
  if(O.Side==TEXT("buy")&&S->ArrearsCents)return Reject(TEXT("Storage arrears"));
  O.ReservedCents=O.ReservedKg=0;O.RemainingKg=O.OriginalKg;
  if(O.Side==TEXT("buy")){int64 Cost=O.OriginalKg*O.LimitCentsPerKg;if(Cost>A->BalanceCents-A->ReservedCents)return Reject(TEXT("Insufficient available money"));O.ReservedCents=Cost;}

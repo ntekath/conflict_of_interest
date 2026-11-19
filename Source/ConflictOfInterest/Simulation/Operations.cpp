@@ -48,6 +48,7 @@ FOperatingRule DefaultOperatingRule(const FScenario &S, const FString &Id, const
             X.GoodId = G.Id;
             R.Goods.Add(X);
         }
+    if(!F&&S.Economy.RetailEnabled){const auto* W=Find(S.InitialState.Warehouses,Id);const auto* T=W?Find(S.Definitions.WarehouseTypes,W->TypeId):nullptr;if(T&&!T->RetailOffers.IsEmpty()){R.Explicit=true;R.Enabled=true;R.DailyWageCents=T->RetailWageCents;for(auto& G:R.Goods)if(const auto* Offer=T->RetailOffers.FindByPredicate([&](const FRetailOffer& X){return X.GoodId==G.GoodId;})){G.TargetKg=Offer->TargetKg;G.BuyLimitCents=Offer->BuyLimitCents;G.SellLimitCents=Offer->PriceCents;}}}
     return R;
 }
 } // namespace
@@ -57,7 +58,9 @@ void FSimulation::InitializeOperatingRules()
         auto *R = Find(State.OperatingRules, Id);
         if (!R)
         {
-            State.OperatingRules.Add(DefaultOperatingRule(Scenario, Id, Owner, F));
+            auto New=DefaultOperatingRule(Scenario,Id,Owner,F);const auto* Store=Find(State.Warehouses,Id);const auto* RetailType=Store?Find(Scenario.Definitions.WarehouseTypes,Store->TypeId):nullptr;
+            if(!F&&Scenario.Economy.RetailEnabled&&RetailType&&!RetailType->RetailOffers.IsEmpty()){New.Explicit=true;New.Enabled=true;New.DailyWageCents=RetailType->RetailWageCents;for(auto& G:New.Goods)if(const auto* Offer=RetailType->RetailOffers.FindByPredicate([&](const FRetailOffer& X){return X.GoodId==G.GoodId;})){G.TargetKg=Offer->TargetKg;G.BuyLimitCents=Offer->BuyLimitCents;G.SellLimitCents=Offer->PriceCents;}}
+            State.OperatingRules.Add(New);
             FOperatingStatus X;
             X.Id = Id;
             X.BudgetWindow = State.EconomyHour / Scenario.Economy.RuleBudgetHours;
@@ -119,6 +122,8 @@ bool FSimulation::PreviewOperatingRule(const FOperatingRule &R, FString &E) cons
             G.BuyLimitCents > Q.MaxPriceCents || G.SellLimitCents < 0 || G.SellLimitCents > Q.MaxPriceCents)
             return Fail(TEXT("Warenregel ungültig: Reserve ≤ Zielbestand; Mengen und Cent/kg innerhalb der Grenzen."));
         Goods.Add(G.GoodId);
+        if(Q.RetailEnabled&&!F){const auto* Shop=Find(Scenario.Definitions.WarehouseTypes,W->TypeId);if(!Shop->RetailOffers.IsEmpty()&&!Shop->RetailOffers.ContainsByPredicate([&](const FRetailOffer& X){return X.GoodId==G.GoodId;})&&(G.BuyLimitCents||G.SellLimitCents||G.TargetKg||G.MinimumKg))return Fail(TEXT("Geschäftsregeln nur für das definierte Sortiment; andere Waren können separat transportiert werden."));}
+
         if (T)
         {
             bool Input = T->Inputs.ContainsByPredicate([&](const FAmount &A) { return A.GoodId == G.GoodId; }),
@@ -300,7 +305,7 @@ void FSimulation::OperatingService(int64 H)
                     (24 * Output->Kg);
                 SellPrice = FMath::Max(1LL, ((Unit + Overhead) * (1000 + T->MarginPermille) + 999) / 1000);
             }
-            if (SellPrice && Quantity - Reserved > Keep)
+            if (SellPrice && !(Scenario.Economy.RetailEnabled&&!Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailOffers.IsEmpty()) && Quantity - Reserved > Keep)
             {
                 FString Error;
                 if (!OperatingOrder(R.OwnerId, W->Id, G.GoodId, TEXT("sell"), Quantity - Reserved - Keep, SellPrice,

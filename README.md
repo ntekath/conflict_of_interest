@@ -86,4 +86,6 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [AP09.1](Docs/AP09.1.md): Bestandsaufnahme, verbindliche Phasen-/Migrationsplanung und ausführbare 30-Tage-Referenz.
 
-[AP09.2](Docs/AP09.2.md): gemeinsamer Lohnlauf für Produktions-, Lager-/Handels- und Fahrzeugstellen; reale Gruppenersparnisse, Sparziele, verzögerter Wohlstand und Haushaltsanzeige in Stadt → Übersicht. Direkte Haushaltskäufe bleiben ausdrücklich Übergangsmodus bis AP09.3. Aktuelle Save-Version **4**; ältere Versionen bleiben unverändert inkompatibel.
+[AP09.2](Docs/AP09.2.md): gemeinsamer Lohnlauf für Produktions-, Lager-/Handels- und Fahrzeugstellen; reale Gruppenersparnisse, Sparziele, verzögerter Wohlstand und Haushaltsanzeige in Stadt → Übersicht. Direkte Haushaltskäufe bleiben ausdrücklich Übergangsmodus bis AP09.3. Historischer AP09.2-Stand: Save-Version **4**; ältere Versionen bleiben unverändert inkompatibel.
+
+[AP09.3](Docs/AP09.3.md): Lebensmittelgeschäfte und Gemischtwarenläden nutzen reale Bestände, Beschäftigung und bezahlten Nachschub. Haushalte kaufen ausschließlich im Einzelhandel; Preis/Qualität beeinflussen die Verteilung. Stadt → Eigene Assets → Lagerregeln steuert Sortimentspreise/Nachschub, Investitionen bietet Bau/Ausbau/Kauf. Save-Version **5** migriert geprüfte Version-4-Partien einschließlich laufender B2B-/Lieferaufträge; ältere Versionen 1–3 bleiben inkompatibel. Standardszenario weiterhin stark unterversorgt; Abnahmen und Grenzen dokumentiert.

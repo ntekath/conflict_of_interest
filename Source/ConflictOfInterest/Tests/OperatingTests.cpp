@@ -14,7 +14,7 @@ bool OperatingFixture(FString &J, FCoIGeoMapData &G, TFunction<void(TSharedPtr<F
     FString E;
     auto *C = LoadObject<UCoIGeoCatalog>(nullptr, TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));
     if (!C || !G.Load(C->DefinitionJson, E) ||
-        !FFileHelper::LoadFileToString(J, *(FPaths::ProjectContentDir() / TEXT("Simulation/scenario.coisim"))))
+        !FFileHelper::LoadFileToString(J, *(FPaths::ProjectContentDir() / TEXT("Simulation/ap092_legacy_fixture.coisim"))))
         return false;
     TSharedPtr<FJsonObject> R;
     FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);if(R->HasField(TEXT("Economy")))R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),false);

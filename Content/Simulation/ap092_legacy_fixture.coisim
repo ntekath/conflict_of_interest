@@ -1,0 +1,1835 @@
+{
+  "Schema": 2,
+  "Id": "scenario.us.great_lakes.1913",
+  "StartDate": "1913-01-01",
+  "PlayerCompanyId": "company.player",
+  "BalancingNotice": "All economics, resources, capacities, population, technology parameters and costs are fictional TEST balancing values, not historical claims.",
+  "Currency": "USD",
+  "Settings": {
+    "Seed": 1913,
+    "HoursPerStep": 1,
+    "RealMicrosPerStep": 1000000,
+    "MaxStepsPerFrame": 4,
+    "MaxBacklogSteps": 8,
+    "MaxPendingCommands": 256,
+    "CommandHorizonSteps": 720,
+    "StepBudgetMicros": 2000
+  },
+  "Definitions": {
+    "Goods": [
+      {
+        "Id": "good.food",
+        "Name": "Nahrung",
+        "Unit": "kg",
+        "NeedCategory": "basic",
+        "StoragePointsPerKg": 1,
+        "SpoilPartsPerMillionPerDay": 10000,
+        "InitialUnitCostCents": 2,
+        "InputLimitCents": 12,
+        "MapPriceLowCents": 2,
+        "MapPriceHighCents": 12
+      },
+      {
+        "Id": "good.luxury",
+        "Name": "Luxuswaren",
+        "Unit": "kg",
+        "NeedCategory": "luxury",
+        "StoragePointsPerKg": 4,
+        "SpoilPartsPerMillionPerDay": 1000,
+        "InitialUnitCostCents": 50,
+        "InputLimitCents": 120,
+        "MapPriceLowCents": 30,
+        "MapPriceHighCents": 120
+      },
+      {
+        "Id": "good.ore",
+        "Name": "Erz",
+        "Unit": "kg",
+        "NeedCategory": "none",
+        "StoragePointsPerKg": 1,
+        "SpoilPartsPerMillionPerDay": 0,
+        "InitialUnitCostCents": 2,
+        "InputLimitCents": 8,
+        "MapPriceLowCents": 2,
+        "MapPriceHighCents": 8
+      },
+      {
+        "Id": "good.tools",
+        "Name": "Werkzeuge",
+        "Unit": "kg",
+        "NeedCategory": "none",
+        "StoragePointsPerKg": 3,
+        "SpoilPartsPerMillionPerDay": 0,
+        "InitialUnitCostCents": 15,
+        "InputLimitCents": 80,
+        "MapPriceLowCents": 10,
+        "MapPriceHighCents": 80
+      },
+      {
+        "Id": "good.wood",
+        "Name": "Holz",
+        "Unit": "kg",
+        "NeedCategory": "none",
+        "StoragePointsPerKg": 2,
+        "SpoilPartsPerMillionPerDay": 0,
+        "InitialUnitCostCents": 2,
+        "InputLimitCents": 10,
+        "MapPriceLowCents": 2,
+        "MapPriceHighCents": 10
+      }
+    ],
+    "Companies": [
+      {
+        "Id": "company.carrier",
+        "Name": "Great Lakes Freight (TEST)",
+        "DecisionProfile": "carrier",
+        "AccountingOnly": false,
+        "Playable": true,
+        "Description": "Transportbetrieb mit zwei Lkw.",
+        "StartCityId": "city.us.detroit",
+        "HeadquartersCityId": "city.us.detroit"
+      },
+      {
+        "Id": "company.external",
+        "Name": "Offen bilanzierter externer Sektor (TEST)",
+        "DecisionProfile": "service",
+        "AccountingOnly": true,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": ""
+      },
+      {
+        "Id": "company.food",
+        "Name": "Prairie Food (TEST)",
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": true,
+        "Description": "Nahrungsproduzent ohne eigene Lkw.",
+        "StartCityId": "city.us.chicago",
+        "HeadquartersCityId": "city.us.chicago"
+      },
+      {
+        "Id": "company.luxury",
+        "Name": "Detroit Crafts (TEST)",
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.detroit"
+      },
+      {
+        "Id": "company.merchant",
+        "Name": "Lakes Merchant (TEST)",
+        "DecisionProfile": "trader",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.cleveland"
+      },
+      {
+        "Id": "company.ore",
+        "Name": "Allegheny Ore (TEST)",
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.pittsburgh"
+      },
+      {
+        "Id": "company.player",
+        "Name": "Spielerhandel",
+        "DecisionProfile": "trader",
+        "AccountingOnly": false,
+        "Playable": true,
+        "Description": "Kleines Handelshaus mit Lager und eigenem Lkw.",
+        "StartCityId": "city.us.detroit",
+        "HeadquartersCityId": "city.us.detroit"
+      },
+      {
+        "Id": "company.services",
+        "Name": "Lager- und Betriebskostenkonto (TEST)",
+        "DecisionProfile": "service",
+        "AccountingOnly": true,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": ""
+      },
+      {
+        "Id": "company.tools",
+        "Name": "Steel Tools (TEST)",
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.pittsburgh"
+      },
+      {
+        "Id": "company.wood",
+        "Name": "Lake Timber (TEST)",
+        "DecisionProfile": "producer",
+        "AccountingOnly": false,
+        "Playable": false,
+        "Description": "",
+        "StartCityId": "",
+        "HeadquartersCityId": "city.us.cleveland"
+      }
+    ],
+    "Needs": [
+      {
+        "Id": "need.high",
+        "BasicGoodId": "good.food",
+        "LuxuryGoodId": "good.luxury",
+        "BasicKgPerThousandPerDay": 140,
+        "LuxuryKgPerThousandPerDay": 30,
+        "BasicMaxPriceCents": 12,
+        "LuxuryMaxPriceCents": 120,
+        "LuxuryBudgetPermille": 300,
+        "SavingPermille": 300,
+        "WealthDays": 30,
+        "MaxExtraPermille": 250
+      },
+      {
+        "Id": "need.low",
+        "BasicGoodId": "good.food",
+        "LuxuryGoodId": "good.luxury",
+        "BasicKgPerThousandPerDay": 100,
+        "LuxuryKgPerThousandPerDay": 1,
+        "BasicMaxPriceCents": 12,
+        "LuxuryMaxPriceCents": 120,
+        "LuxuryBudgetPermille": 50,
+        "SavingPermille": 100,
+        "WealthDays": 30,
+        "MaxExtraPermille": 250
+      },
+      {
+        "Id": "need.middle",
+        "BasicGoodId": "good.food",
+        "LuxuryGoodId": "good.luxury",
+        "BasicKgPerThousandPerDay": 120,
+        "LuxuryKgPerThousandPerDay": 10,
+        "BasicMaxPriceCents": 12,
+        "LuxuryMaxPriceCents": 120,
+        "LuxuryBudgetPermille": 150,
+        "SavingPermille": 200,
+        "WealthDays": 30,
+        "MaxExtraPermille": 250
+      }
+    ],
+    "Groups": [
+      {
+        "Id": "group.chicago.high",
+        "RegionId": "region.test.chicago",
+        "NeedProfileId": "need.high",
+        "IncomeBand": "high",
+        "ConsumptionCityId": "city.us.chicago"
+      },
+      {
+        "Id": "group.chicago.low",
+        "RegionId": "region.test.chicago",
+        "NeedProfileId": "need.low",
+        "IncomeBand": "low",
+        "ConsumptionCityId": "city.us.chicago"
+      },
+      {
+        "Id": "group.chicago.middle",
+        "RegionId": "region.test.chicago",
+        "NeedProfileId": "need.middle",
+        "IncomeBand": "middle",
+        "ConsumptionCityId": "city.us.chicago"
+      },
+      {
+        "Id": "group.cleveland.high",
+        "RegionId": "region.test.cleveland",
+        "NeedProfileId": "need.high",
+        "IncomeBand": "high",
+        "ConsumptionCityId": "city.us.cleveland"
+      },
+      {
+        "Id": "group.cleveland.low",
+        "RegionId": "region.test.cleveland",
+        "NeedProfileId": "need.low",
+        "IncomeBand": "low",
+        "ConsumptionCityId": "city.us.cleveland"
+      },
+      {
+        "Id": "group.cleveland.middle",
+        "RegionId": "region.test.cleveland",
+        "NeedProfileId": "need.middle",
+        "IncomeBand": "middle",
+        "ConsumptionCityId": "city.us.cleveland"
+      },
+      {
+        "Id": "group.detroit.high",
+        "RegionId": "region.test.detroit",
+        "NeedProfileId": "need.high",
+        "IncomeBand": "high",
+        "ConsumptionCityId": "city.us.detroit"
+      },
+      {
+        "Id": "group.detroit.low",
+        "RegionId": "region.test.detroit",
+        "NeedProfileId": "need.low",
+        "IncomeBand": "low",
+        "ConsumptionCityId": "city.us.detroit"
+      },
+      {
+        "Id": "group.detroit.middle",
+        "RegionId": "region.test.detroit",
+        "NeedProfileId": "need.middle",
+        "IncomeBand": "middle",
+        "ConsumptionCityId": "city.us.detroit"
+      },
+      {
+        "Id": "group.pittsburgh.high",
+        "RegionId": "region.test.pittsburgh",
+        "NeedProfileId": "need.high",
+        "IncomeBand": "high",
+        "ConsumptionCityId": "city.us.pittsburgh"
+      },
+      {
+        "Id": "group.pittsburgh.low",
+        "RegionId": "region.test.pittsburgh",
+        "NeedProfileId": "need.low",
+        "IncomeBand": "low",
+        "ConsumptionCityId": "city.us.pittsburgh"
+      },
+      {
+        "Id": "group.pittsburgh.middle",
+        "RegionId": "region.test.pittsburgh",
+        "NeedProfileId": "need.middle",
+        "IncomeBand": "middle",
+        "ConsumptionCityId": "city.us.pittsburgh"
+      }
+    ],
+    "Regions": [
+      {
+        "Id": "region.test.chicago",
+        "CountryId": "country.usa",
+        "MarketId": "market.chicago",
+        "FarmlandPermille": 800,
+        "ForestKg": 100000,
+        "OreKg": 0
+      },
+      {
+        "Id": "region.test.cleveland",
+        "CountryId": "country.usa",
+        "MarketId": "market.cleveland",
+        "FarmlandPermille": 300,
+        "ForestKg": 800000,
+        "OreKg": 100000
+      },
+      {
+        "Id": "region.test.detroit",
+        "CountryId": "country.usa",
+        "MarketId": "market.detroit",
+        "FarmlandPermille": 250,
+        "ForestKg": 300000,
+        "OreKg": 0
+      },
+      {
+        "Id": "region.test.pittsburgh",
+        "CountryId": "country.usa",
+        "MarketId": "market.pittsburgh",
+        "FarmlandPermille": 100,
+        "ForestKg": 150000,
+        "OreKg": 900000
+      }
+    ],
+    "Places": [
+      {
+        "Id": "city.us.chicago",
+        "Name": "Chicago",
+        "RegionId": "region.test.chicago",
+        "Latitude": 41.847961283364114,
+        "Longitude": -87.63523655322338
+      },
+      {
+        "Id": "city.us.cleveland",
+        "Name": "Cleveland",
+        "RegionId": "region.test.cleveland",
+        "Latitude": 41.4719327,
+        "Longitude": -81.6969441
+      },
+      {
+        "Id": "city.us.detroit",
+        "Name": "Detroit",
+        "RegionId": "region.test.detroit",
+        "Latitude": 42.33355800559568,
+        "Longitude": -83.05133408216001
+      },
+      {
+        "Id": "city.us.pittsburgh",
+        "Name": "Pittsburgh",
+        "RegionId": "region.test.pittsburgh",
+        "Latitude": 40.4319445,
+        "Longitude": -80.0019313
+      }
+    ],
+    "FacilityTypes": [
+      {
+        "Id": "facility_type.food",
+        "Name": "food (TEST)",
+        "ResourceRequirement": "farmland",
+        "Inputs": [],
+        "Outputs": [
+          {
+            "GoodId": "good.food",
+            "Kg": 100
+          }
+        ],
+        "CapacityBatchesPerHour": 1,
+        "Jobs": 20,
+        "DailyWageCents": 150,
+        "DailyOperatingCostCents": 300,
+        "MarginPermille": 200
+      },
+      {
+        "Id": "facility_type.luxury",
+        "Name": "luxury (TEST)",
+        "ResourceRequirement": "none",
+        "Inputs": [
+          {
+            "GoodId": "good.tools",
+            "Kg": 10
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 10
+          }
+        ],
+        "Outputs": [
+          {
+            "GoodId": "good.luxury",
+            "Kg": 10
+          }
+        ],
+        "CapacityBatchesPerHour": 1,
+        "Jobs": 20,
+        "DailyWageCents": 150,
+        "DailyOperatingCostCents": 300,
+        "MarginPermille": 200
+      },
+      {
+        "Id": "facility_type.ore",
+        "Name": "ore (TEST)",
+        "ResourceRequirement": "ore",
+        "Inputs": [],
+        "Outputs": [
+          {
+            "GoodId": "good.ore",
+            "Kg": 100
+          }
+        ],
+        "CapacityBatchesPerHour": 1,
+        "Jobs": 20,
+        "DailyWageCents": 150,
+        "DailyOperatingCostCents": 300,
+        "MarginPermille": 200
+      },
+      {
+        "Id": "facility_type.tools",
+        "Name": "tools (TEST)",
+        "ResourceRequirement": "none",
+        "Inputs": [
+          {
+            "GoodId": "good.ore",
+            "Kg": 100
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 20
+          }
+        ],
+        "Outputs": [
+          {
+            "GoodId": "good.tools",
+            "Kg": 40
+          }
+        ],
+        "CapacityBatchesPerHour": 1,
+        "Jobs": 20,
+        "DailyWageCents": 150,
+        "DailyOperatingCostCents": 300,
+        "MarginPermille": 200
+      },
+      {
+        "Id": "facility_type.wood",
+        "Name": "wood (TEST)",
+        "ResourceRequirement": "forest",
+        "Inputs": [],
+        "Outputs": [
+          {
+            "GoodId": "good.wood",
+            "Kg": 100
+          }
+        ],
+        "CapacityBatchesPerHour": 1,
+        "Jobs": 20,
+        "DailyWageCents": 150,
+        "DailyOperatingCostCents": 300,
+        "MarginPermille": 200
+      }
+    ],
+    "WarehouseTypes": [
+      {
+        "Id": "warehouse.player",
+        "CapacityPoints": 10000,
+        "DailyCostCents": 100
+      },
+      {
+        "Id": "warehouse.player.large",
+        "CapacityPoints": 20000,
+        "DailyCostCents": 200
+      },
+      {
+        "Id": "warehouse.standard",
+        "CapacityPoints": 50000,
+        "DailyCostCents": 300
+      }
+    ],
+    "VehicleTypes": [
+      {
+        "Id": "vehicle_type.truck",
+        "Mode": "truck",
+        "CapacityKg": 2000,
+        "SpeedKmPerHour": 20,
+        "CostCentsPerKm": 5,
+        "DailyCostCents": 100
+      }
+    ],
+    "ResourceSites": [
+      {
+        "Id": "site|city.us.chicago|farmland",
+        "CityId": "city.us.chicago",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 800,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.chicago|forest",
+        "CityId": "city.us.chicago",
+        "Kind": "forest",
+        "InitialKg": 100000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.cleveland|farmland",
+        "CityId": "city.us.cleveland",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 300,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.cleveland|forest",
+        "CityId": "city.us.cleveland",
+        "Kind": "forest",
+        "InitialKg": 800000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.cleveland|ore",
+        "CityId": "city.us.cleveland",
+        "Kind": "ore",
+        "InitialKg": 100000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.detroit|farmland",
+        "CityId": "city.us.detroit",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 250,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.detroit|forest",
+        "CityId": "city.us.detroit",
+        "Kind": "forest",
+        "InitialKg": 300000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.pittsburgh|farmland",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "farmland",
+        "InitialKg": 0,
+        "SuitabilityPermille": 100,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.pittsburgh|forest",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "forest",
+        "InitialKg": 150000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      },
+      {
+        "Id": "site|city.us.pittsburgh|ore",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "ore",
+        "InitialKg": 900000,
+        "SuitabilityPermille": 1000,
+        "MaxBatchesPerHour": 1
+      }
+    ],
+    "Construction": [
+      {
+        "Id": "build.farm",
+        "Name": "Nahrungsbetrieb mit Betriebslager",
+        "Kind": "facility",
+        "TypeId": "facility_type.food",
+        "StorageTypeId": "warehouse.player",
+        "FromTypeId": "",
+        "ProviderAccountId": "account.company.external",
+        "CostCents": 600000,
+        "DurationHours": 48
+      },
+      {
+        "Id": "build.warehouse",
+        "Name": "Lagerhaus (10.000 Punkte)",
+        "Kind": "warehouse",
+        "TypeId": "warehouse.player",
+        "StorageTypeId": "",
+        "FromTypeId": "",
+        "ProviderAccountId": "account.company.external",
+        "CostCents": 200000,
+        "DurationHours": 24
+      },
+      {
+        "Id": "upgrade.warehouse",
+        "Name": "Lager auf 20.000 Punkte ausbauen",
+        "Kind": "warehouse",
+        "TypeId": "warehouse.player.large",
+        "StorageTypeId": "",
+        "FromTypeId": "warehouse.player",
+        "ProviderAccountId": "account.company.external",
+        "CostCents": 150000,
+        "DurationHours": 24
+      }
+    ],
+    "BuildPlots": [
+      {
+        "Id": "plot.city.us.chicago.farm",
+        "CityId": "city.us.chicago",
+        "Kind": "facility",
+        "ResourceSiteId": "site|city.us.chicago|farmland"
+      },
+      {
+        "Id": "plot.city.us.chicago.warehouse.1",
+        "CityId": "city.us.chicago",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.chicago.warehouse.2",
+        "CityId": "city.us.chicago",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.cleveland.farm",
+        "CityId": "city.us.cleveland",
+        "Kind": "facility",
+        "ResourceSiteId": "site|city.us.cleveland|farmland"
+      },
+      {
+        "Id": "plot.city.us.cleveland.warehouse.1",
+        "CityId": "city.us.cleveland",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.cleveland.warehouse.2",
+        "CityId": "city.us.cleveland",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.detroit.farm",
+        "CityId": "city.us.detroit",
+        "Kind": "facility",
+        "ResourceSiteId": "site|city.us.detroit|farmland"
+      },
+      {
+        "Id": "plot.city.us.detroit.warehouse.1",
+        "CityId": "city.us.detroit",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.detroit.warehouse.2",
+        "CityId": "city.us.detroit",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.pittsburgh.farm",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "facility",
+        "ResourceSiteId": "site|city.us.pittsburgh|farmland"
+      },
+      {
+        "Id": "plot.city.us.pittsburgh.warehouse.1",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      },
+      {
+        "Id": "plot.city.us.pittsburgh.warehouse.2",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "warehouse",
+        "ResourceSiteId": ""
+      }
+    ]
+  },
+  "InitialState": {
+    "Step": 0,
+    "Accounts": [
+      {
+        "Id": "account.company.carrier",
+        "OwnerId": "company.carrier",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.external",
+        "OwnerId": "company.external",
+        "BalanceCents": 0,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.food",
+        "OwnerId": "company.food",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.luxury",
+        "OwnerId": "company.luxury",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.merchant",
+        "OwnerId": "company.merchant",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.ore",
+        "OwnerId": "company.ore",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.player",
+        "OwnerId": "company.player",
+        "BalanceCents": 2500000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.services",
+        "OwnerId": "company.services",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.tools",
+        "OwnerId": "company.tools",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.company.wood",
+        "OwnerId": "company.wood",
+        "BalanceCents": 5000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.chicago.high",
+        "OwnerId": "group.chicago.high",
+        "BalanceCents": 2000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.chicago.low",
+        "OwnerId": "group.chicago.low",
+        "BalanceCents": 500000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.chicago.middle",
+        "OwnerId": "group.chicago.middle",
+        "BalanceCents": 1000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.cleveland.high",
+        "OwnerId": "group.cleveland.high",
+        "BalanceCents": 2000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.cleveland.low",
+        "OwnerId": "group.cleveland.low",
+        "BalanceCents": 500000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.cleveland.middle",
+        "OwnerId": "group.cleveland.middle",
+        "BalanceCents": 1000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.detroit.high",
+        "OwnerId": "group.detroit.high",
+        "BalanceCents": 2000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.detroit.low",
+        "OwnerId": "group.detroit.low",
+        "BalanceCents": 500000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.detroit.middle",
+        "OwnerId": "group.detroit.middle",
+        "BalanceCents": 1000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.pittsburgh.high",
+        "OwnerId": "group.pittsburgh.high",
+        "BalanceCents": 2000000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.pittsburgh.low",
+        "OwnerId": "group.pittsburgh.low",
+        "BalanceCents": 500000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.group.pittsburgh.middle",
+        "OwnerId": "group.pittsburgh.middle",
+        "BalanceCents": 1000000,
+        "ReservedCents": 0
+      }
+    ],
+    "Companies": [
+      {
+        "Id": "company.carrier",
+        "AccountId": "account.company.carrier"
+      },
+      {
+        "Id": "company.external",
+        "AccountId": "account.company.external"
+      },
+      {
+        "Id": "company.food",
+        "AccountId": "account.company.food"
+      },
+      {
+        "Id": "company.luxury",
+        "AccountId": "account.company.luxury"
+      },
+      {
+        "Id": "company.merchant",
+        "AccountId": "account.company.merchant"
+      },
+      {
+        "Id": "company.ore",
+        "AccountId": "account.company.ore"
+      },
+      {
+        "Id": "company.player",
+        "AccountId": "account.company.player"
+      },
+      {
+        "Id": "company.services",
+        "AccountId": "account.company.services"
+      },
+      {
+        "Id": "company.tools",
+        "AccountId": "account.company.tools"
+      },
+      {
+        "Id": "company.wood",
+        "AccountId": "account.company.wood"
+      }
+    ],
+    "Groups": [
+      {
+        "Id": "group.chicago.high",
+        "AccountId": "account.group.chicago.high",
+        "Population": 1000,
+        "Workforce": 500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 200000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.chicago.low",
+        "AccountId": "account.group.chicago.low",
+        "Population": 6000,
+        "Workforce": 3000,
+        "Employed": 20,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 50000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.chicago.middle",
+        "AccountId": "account.group.chicago.middle",
+        "Population": 3000,
+        "Workforce": 1500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 100000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.cleveland.high",
+        "AccountId": "account.group.cleveland.high",
+        "Population": 1000,
+        "Workforce": 500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 200000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.cleveland.low",
+        "AccountId": "account.group.cleveland.low",
+        "Population": 6000,
+        "Workforce": 3000,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 50000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.cleveland.middle",
+        "AccountId": "account.group.cleveland.middle",
+        "Population": 3000,
+        "Workforce": 1500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 100000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.detroit.high",
+        "AccountId": "account.group.detroit.high",
+        "Population": 1000,
+        "Workforce": 500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 200000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.detroit.low",
+        "AccountId": "account.group.detroit.low",
+        "Population": 6000,
+        "Workforce": 3000,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 50000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.detroit.middle",
+        "AccountId": "account.group.detroit.middle",
+        "Population": 3000,
+        "Workforce": 1500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 100000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.pittsburgh.high",
+        "AccountId": "account.group.pittsburgh.high",
+        "Population": 1000,
+        "Workforce": 500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 200000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.pittsburgh.low",
+        "AccountId": "account.group.pittsburgh.low",
+        "Population": 6000,
+        "Workforce": 3000,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 50000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      },
+      {
+        "Id": "group.pittsburgh.middle",
+        "AccountId": "account.group.pittsburgh.middle",
+        "Population": 3000,
+        "Workforce": 1500,
+        "Employed": 0,
+        "DailyIncomeCents": 0,
+        "BudgetCents": 100000,
+        "Consumed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.wood",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.ore",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.tools",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ],
+        "UnmetNeed": [
+          {
+            "GoodId": "good.food",
+            "Kg": 0
+          },
+          {
+            "GoodId": "good.luxury",
+            "Kg": 0
+          }
+        ]
+      }
+    ],
+    "Facilities": [
+      {
+        "Id": "facility.food",
+        "TypeId": "facility_type.food",
+        "OwnerId": "company.food",
+        "CityId": "city.us.chicago",
+        "StorageId": "storage.food",
+        "CostRecipientAccountId": "account.company.services",
+        "UtilizationPermille": 0,
+        "PayrollArrearsCents": 0,
+        "Employment": [
+          {
+            "GroupId": "group.chicago.low",
+            "Workers": 20
+          }
+        ],
+        "ResourceSiteId": "site|city.us.chicago|farmland",
+        "ResourceBatchesPerHour": 1
+      },
+      {
+        "Id": "facility.luxury",
+        "TypeId": "facility_type.luxury",
+        "OwnerId": "company.luxury",
+        "CityId": "city.us.detroit",
+        "StorageId": "storage.luxury",
+        "CostRecipientAccountId": "account.company.services",
+        "UtilizationPermille": 0,
+        "PayrollArrearsCents": 0,
+        "Employment": []
+      },
+      {
+        "Id": "facility.ore",
+        "TypeId": "facility_type.ore",
+        "OwnerId": "company.ore",
+        "CityId": "city.us.pittsburgh",
+        "StorageId": "storage.ore",
+        "CostRecipientAccountId": "account.company.services",
+        "UtilizationPermille": 0,
+        "PayrollArrearsCents": 0,
+        "Employment": [],
+        "ResourceSiteId": "site|city.us.pittsburgh|ore",
+        "ResourceBatchesPerHour": 1
+      },
+      {
+        "Id": "facility.tools",
+        "TypeId": "facility_type.tools",
+        "OwnerId": "company.tools",
+        "CityId": "city.us.pittsburgh",
+        "StorageId": "storage.tools",
+        "CostRecipientAccountId": "account.company.services",
+        "UtilizationPermille": 0,
+        "PayrollArrearsCents": 0,
+        "Employment": []
+      },
+      {
+        "Id": "facility.wood",
+        "TypeId": "facility_type.wood",
+        "OwnerId": "company.wood",
+        "CityId": "city.us.cleveland",
+        "StorageId": "storage.wood",
+        "CostRecipientAccountId": "account.company.services",
+        "UtilizationPermille": 0,
+        "PayrollArrearsCents": 0,
+        "Employment": [],
+        "ResourceSiteId": "site|city.us.cleveland|forest",
+        "ResourceBatchesPerHour": 1
+      }
+    ],
+    "Warehouses": [
+      {
+        "Id": "storage.food",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.food",
+        "CityId": "city.us.chicago",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.luxury",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.luxury",
+        "CityId": "city.us.detroit",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.merchant",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.merchant",
+        "CityId": "city.us.cleveland",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.ore",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.ore",
+        "CityId": "city.us.pittsburgh",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.player",
+        "TypeId": "warehouse.player",
+        "OwnerId": "company.player",
+        "CityId": "city.us.detroit",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.service.chicago",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.services",
+        "CityId": "city.us.chicago",
+        "CostRecipientAccountId": "account.company.external",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.service.cleveland",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.services",
+        "CityId": "city.us.cleveland",
+        "CostRecipientAccountId": "account.company.external",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.service.detroit",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.services",
+        "CityId": "city.us.detroit",
+        "CostRecipientAccountId": "account.company.external",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.service.pittsburgh",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.services",
+        "CityId": "city.us.pittsburgh",
+        "CostRecipientAccountId": "account.company.external",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.tools",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.tools",
+        "CityId": "city.us.pittsburgh",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      },
+      {
+        "Id": "storage.wood",
+        "TypeId": "warehouse.standard",
+        "OwnerId": "company.wood",
+        "CityId": "city.us.cleveland",
+        "CostRecipientAccountId": "account.company.services",
+        "ReservedIncomingPoints": 0,
+        "ArrearsCents": 0
+      }
+    ],
+    "Vehicles": [
+      {
+        "Id": "vehicle.carrier.1",
+        "TypeId": "vehicle_type.truck",
+        "OwnerId": "company.carrier",
+        "CityId": "city.us.detroit",
+        "TransportId": "",
+        "CostRecipientAccountId": "account.company.services",
+        "Bound": false,
+        "HomeCityId": "city.us.detroit"
+      },
+      {
+        "Id": "vehicle.carrier.2",
+        "TypeId": "vehicle_type.truck",
+        "OwnerId": "company.carrier",
+        "CityId": "city.us.cleveland",
+        "TransportId": "",
+        "CostRecipientAccountId": "account.company.services",
+        "Bound": false,
+        "HomeCityId": "city.us.cleveland"
+      },
+      {
+        "Id": "vehicle.merchant",
+        "TypeId": "vehicle_type.truck",
+        "OwnerId": "company.merchant",
+        "CityId": "city.us.cleveland",
+        "TransportId": "",
+        "CostRecipientAccountId": "account.company.services",
+        "Bound": false,
+        "HomeCityId": "city.us.cleveland"
+      },
+      {
+        "Id": "vehicle.player",
+        "TypeId": "vehicle_type.truck",
+        "OwnerId": "company.player",
+        "CityId": "city.us.detroit",
+        "TransportId": "",
+        "CostRecipientAccountId": "account.company.services",
+        "Bound": false,
+        "HomeCityId": "city.us.detroit"
+      }
+    ],
+    "Inventories": [
+      {
+        "Id": "stock.food.food",
+        "GoodId": "good.food",
+        "OwnerId": "company.food",
+        "StorageId": "storage.food",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.luxury.luxury",
+        "GoodId": "good.luxury",
+        "OwnerId": "company.luxury",
+        "StorageId": "storage.luxury",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.luxury.tools",
+        "GoodId": "good.tools",
+        "OwnerId": "company.luxury",
+        "StorageId": "storage.luxury",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.luxury.wood",
+        "GoodId": "good.wood",
+        "OwnerId": "company.luxury",
+        "StorageId": "storage.luxury",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.merchant.wood",
+        "GoodId": "good.wood",
+        "OwnerId": "company.merchant",
+        "StorageId": "storage.merchant",
+        "QuantityKg": 2000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.ore.ore",
+        "GoodId": "good.ore",
+        "OwnerId": "company.ore",
+        "StorageId": "storage.ore",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.player.food",
+        "GoodId": "good.food",
+        "OwnerId": "company.player",
+        "StorageId": "storage.player",
+        "QuantityKg": 100,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.tools.ore",
+        "GoodId": "good.ore",
+        "OwnerId": "company.tools",
+        "StorageId": "storage.tools",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.tools.tools",
+        "GoodId": "good.tools",
+        "OwnerId": "company.tools",
+        "StorageId": "storage.tools",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.tools.wood",
+        "GoodId": "good.wood",
+        "OwnerId": "company.tools",
+        "StorageId": "storage.tools",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "stock.wood.wood",
+        "GoodId": "good.wood",
+        "OwnerId": "company.wood",
+        "StorageId": "storage.wood",
+        "QuantityKg": 1000,
+        "ReservedKg": 0
+      }
+    ],
+    "Orders": [],
+    "Trades": [],
+    "Transports": [],
+    "Offers": [
+      {
+        "Id": "offer.detroit.chicago",
+        "ProviderId": "company.carrier",
+        "VehicleId": "vehicle.carrier.1",
+        "FromCityId": "city.us.detroit",
+        "ToCityId": "city.us.chicago",
+        "AvailableKg": 2000,
+        "FixedCents": 1000,
+        "CentsPerKg": 5,
+        "ExpiresStep": 24
+      }
+    ],
+    "Reservations": [],
+    "Regions": [],
+    "Countries": [],
+    "AssetSales": [
+      {
+        "Id": "sale.pittsburgh.warehouse",
+        "SellerId": "company.services",
+        "AssetId": "storage.service.pittsburgh",
+        "CityId": "city.us.pittsburgh",
+        "Kind": "warehouse",
+        "PriceCents": 300000,
+        "ExpiresHour": 168,
+        "Active": true
+      }
+    ]
+  },
+  "ContractExamples": {
+    "Orders": [
+      {
+        "Id": "example.buy",
+        "ActorId": "company.player",
+        "MarketId": "market.detroit",
+        "CityId": "city.us.detroit",
+        "StorageId": "storage.player",
+        "GoodId": "good.food",
+        "Side": "buy",
+        "Status": "draft",
+        "OriginalKg": 10,
+        "RemainingKg": 10,
+        "LimitCentsPerKg": 12,
+        "Sequence": 1,
+        "CreatedStep": 0,
+        "ExpiresStep": 24,
+        "ReservedCents": 0,
+        "ReservedKg": 0
+      },
+      {
+        "Id": "example.sell",
+        "ActorId": "company.merchant",
+        "MarketId": "market.detroit",
+        "CityId": "city.us.detroit",
+        "StorageId": "storage.service.detroit",
+        "GoodId": "good.food",
+        "Side": "sell",
+        "Status": "draft",
+        "OriginalKg": 10,
+        "RemainingKg": 10,
+        "LimitCentsPerKg": 12,
+        "Sequence": 2,
+        "CreatedStep": 0,
+        "ExpiresStep": 24,
+        "ReservedCents": 0,
+        "ReservedKg": 0
+      }
+    ],
+    "Trades": [
+      {
+        "Id": "example.trade",
+        "BuyOrderId": "example.buy",
+        "SellOrderId": "example.sell",
+        "BuyerId": "company.player",
+        "SellerId": "company.merchant",
+        "MarketId": "market.detroit",
+        "CityId": "city.us.detroit",
+        "GoodId": "good.food",
+        "Step": 1,
+        "QuantityKg": 10,
+        "PriceCentsPerKg": 12,
+        "TotalCents": 120
+      }
+    ],
+    "Transports": [
+      {
+        "Id": "example.transport",
+        "OwnerId": "company.player",
+        "ProviderId": "company.carrier",
+        "VehicleId": "vehicle.carrier.1",
+        "FromCityId": "city.us.detroit",
+        "ToCityId": "city.us.chicago",
+        "GoodId": "good.food",
+        "CargoInventoryId": "stock.player.food",
+        "DestinationStorageId": "storage.service.chicago",
+        "Service": "rented_truck",
+        "Status": "draft",
+        "Kg": 10,
+        "DepartureStep": 1,
+        "ArrivalStep": 25,
+        "CostCents": 1500,
+        "ReservedIncomingPoints": 0
+      }
+    ]
+  },
+  "Economy": {
+    "Stage": 5,
+    "PayrollHours": 24,
+    "DecisionHours": 6,
+    "DemandHours": 24,
+    "CostsHours": 24,
+    "OrderLifetimeHours": 12,
+    "PickupGraceHours": 24,
+    "RentalCentsPerPointDay": 1,
+    "MaxOrderKg": 100000,
+    "MaxPriceCents": 1000000,
+    "MaxOpenOrders": 512,
+    "HistoryLimit": 256,
+    "DailyBudgetPermille": 500,
+    "LocalHaulKm": 1,
+    "RouteDetourPermille": 1400,
+    "FreightMarkupPermille": 200,
+    "BookingLeadHours": 1,
+    "InputTargetHours": 72,
+    "ProducerReserveKg": 100,
+    "TraderMaxLoadKg": 2000,
+    "TraderCashReserveCents": 10000,
+    "TraderMinProfitCents": 100,
+    "TraderMarkupPermille": 200,
+    "UiLowCashCents": 10000,
+    "UiCapacityWarningPermille": 100,
+    "UiEventLimit": 64,
+    "UiVisibleEvents": 1,
+    "UiHistoryDays": 7,
+    "MaxBookingDelayHours": 168,
+    "MapPublicRouteActivity": true,
+    "MapTrucksPerRoute": 3,
+    "MapTrucksTotal": 100,
+    "MapTruckZoom": 16000,
+    "MapRouteDetailZoom": 12000,
+    "RuleBudgetHours": 24,
+    "RuleDefaultBuyBudgetCents": 50000,
+    "RuleMaxBuyBudgetCents": 1000000000,
+    "RuleMaxWageCents": 100000,
+    "RuleMaxStockKg": 1000000,
+    "DeliveryMaxRules": 64,
+    "DeliveryMinIntervalHours": 6,
+    "DeliveryMaxIntervalHours": 168,
+    "DeliveryMaxDurationHours": 8760,
+    "DeliveryMaxKg": 2000,
+    "DeliveryReturnGraceHours": 24,
+    "DeliveryPromiseHours": 24,
+    "DeliveryDefaultFreightCapCents": 10000,
+    "HouseholdModel": true,
+    "LegacyHouseholdPurchases": true,
+    "WarehouseJobs": 2,
+    "TraderJobs": 3,
+    "VehicleJobs": 1,
+    "ServiceWageCents": 150
+  },
+  "HubSchema": 1
+}

@@ -12,7 +12,7 @@ namespace
 bool SimulationFixture(FString& Json,FCoIGeoMapData& Geo)
 {
  auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));FString Error;
- if(!C||!Geo.Load(C->DefinitionJson,Error)||!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim"))))return false;
+ if(!C||!Geo.Load(C->DefinitionJson,Error)||!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/ap092_legacy_fixture.coisim"))))return false;
  TSharedPtr<FJsonObject> Root;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root);Root->GetObjectField(TEXT("Economy"))->SetNumberField(TEXT("Stage"),0);
  Json.Empty();FJsonSerializer::Serialize(Root.ToSharedRef(),TJsonWriterFactory<>::Create(&Json));return true;
 }

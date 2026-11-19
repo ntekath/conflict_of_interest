@@ -38,6 +38,12 @@ void UCoIPlayerHUD::OperatingInfo(const FString &Asset)
                  TEXT(" · Lohnangebot ") + OpMoney(R->DailyWageCents) + TEXT(" je Stelle/Tag"),
              12);
     }
+    if(const auto* W=Find(P.Stores,Asset)){const auto* T=Find(P.Catalog.WarehouseTypes,W->TypeId);if(T&&!T->RetailOffers.IsEmpty()){
+        Text(Body,TEXT("GESCHÄFT · realer Verkaufsbestand am Lagerort · nur Haushaltsverkauf aus dem Sortiment"),13,true);
+        Text(Body,TEXT("Heute verkauft ")+OpNum(W->RetailSoldKg)+TEXT(" kg · Erlös ")+OpMoney(W->RetailRevenueCents)+TEXT(" · abgegangener Warenbuchwert ")+OpMoney(W->RetailCostCents)+TEXT(". Kein vollständiger Periodengewinn; laufende Kosten siehe Standortbericht."),12);
+        Text(Body,TEXT("Verkaufskapazität ")+OpNum(T->RetailDailyKg)+TEXT(" kg/Tag bei ")+OpNum(T->RetailJobs)+TEXT(" bezahlten Stellen, Lohn ")+OpMoney(T->RetailWageCents)+TEXT(" pro Stelle/Tag. Bei weniger Personal proportional begrenzt."),12);
+        for(const auto& O:T->RetailOffers){const auto* Good=Find(P.Catalog.Goods,O.GoodId);const auto* Price=R->Goods.FindByPredicate([&](const FStockRule& X){return X.GoodId==O.GoodId;});Text(Body,(Good?Good->Name:TEXT("Ware"))+TEXT(" · Qualität ")+OpNum(O.QualityPermille)+TEXT("/1000 · Preis ")+OpMoney(Price?Price->SellLimitCents:0)+TEXT(" / kg · Einkaufslimit ")+OpMoney(Price?Price->BuyLimitCents:0)+TEXT(" / kg (Vorgaben unter Lagerregeln; Übergang bis AP09.4)."),12);}
+        Text(Body,T->RetailName+TEXT(" · zugeordnete Stellen ")+OpNum(W->RetailWorkers)+TEXT(" / ")+OpNum(T->RetailJobs)+TEXT(" · bezahlt bis ")+Time(W->RetailPaidUntil),12);Text(Body,W->RetailCause,12);}}
     Text(Body, X->Cause, 12);Button(Body,TEXT("Lieferbeziehung ab diesem Asset …"),TEXT("deliveryNew|")+Asset);
     Button(Body, R->RecipeId.IsEmpty() ? TEXT("Lagerregeln …") : TEXT("Betriebsregeln …"), TEXT("operate|") + Asset);
 }
@@ -119,8 +125,10 @@ void UCoIPlayerHUD::OpenOperating(const FString &Asset)
          TEXT("Das Kaufbudget gilt je fester Simulationsperiode. Löhne, Betrieb, Lager und Transport sind "
               "separate Verpflichtungen. Gemeinsame Firmenliquidität gilt für alle Assets."),
          11);
+    const auto* ShopStore=Find(P.Stores,OperatingDraft.Id);const auto* ShopType=ShopStore?Find(P.Catalog.WarehouseTypes,ShopStore->TypeId):nullptr;const bool IsShop=P.Rules.RetailEnabled&&ShopType&&!ShopType->RetailOffers.IsEmpty();
     for (const auto &G : OperatingDraft.Goods)
     {
+        if(IsShop&&!ShopType->RetailOffers.ContainsByPredicate([&](const FRetailOffer& O){return O.GoodId==G.GoodId;}))continue;
         Text(Form, Good(G.GoodId).ToUpper(), 13, true);
         auto *Values = Row(Form);
         Field(Values, TEXT("op.") + G.GoodId + TEXT(".min"), TEXT("Mindestreserve kg"), OpNum(G.MinimumKg));
@@ -136,10 +144,11 @@ void UCoIPlayerHUD::OpenOperating(const FString &Asset)
             Field(Values, TEXT("op.") + G.GoodId + TEXT(".buy"), TEXT("Einkauf max. Cent/kg; 0 aus"),
                   OpNum(G.BuyLimitCents));
         if (Output)
-            Field(Values, TEXT("op.") + G.GoodId + TEXT(".sell"), TEXT("Überschuss min. Cent/kg; 0 aus"),
+            Field(Values, TEXT("op.") + G.GoodId + TEXT(".sell"), IsShop?TEXT("Ladenpreis Cent/kg; 0 aus"):TEXT("Überschuss min. Cent/kg; 0 aus"),
                   OpNum(G.SellLimitCents));
     }
-    Text(Form,
+    if(IsShop)Text(Form,TEXT("Haushalte kaufen aus eigenem verfügbarem Bestand über der Mindestreserve. Zielbestand ist ein Nachschubziel, keine Verkaufssperre. Kaufbudget begrenzt automatische Warenkäufe inklusive erzeugter Lieferregeln; Fracht und Löhne bleiben reale separate Kosten. Nur das angezeigte Sortiment ist freigegeben."),12);
+    else Text(Form,
          TEXT("Verkauft wird nur verfügbare Ware über Reserve UND Zielbestand. Einkauf berücksichtigt vorhandene "
               "Mengen, offene eigene Kaufaufträge und bereits unterwegs befindliche Ware. Keine automatische "
               "kostenlose Ortsverlagerung: Angebote an fremden Lagern brauchen weiterhin reale Transporte. Änderungen "
@@ -173,6 +182,7 @@ bool UCoIPlayerHUD::ReadOperatingForm(FString &Error)
     }
     for (auto &G : OperatingDraft.Goods)
     {
+        if(!Fields.Contains(TEXT("op.")+G.GoodId+TEXT(".min"))){G.MinimumKg=G.TargetKg=G.BuyLimitCents=G.SellLimitCents=0;continue;}
         if (!ReadPositive(TEXT("op.") + G.GoodId + TEXT(".min"), G.MinimumKg, true) ||
             !ReadPositive(TEXT("op.") + G.GoodId + TEXT(".target"), G.TargetKg, true))
         {

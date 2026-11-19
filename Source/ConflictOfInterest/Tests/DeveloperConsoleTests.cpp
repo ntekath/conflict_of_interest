@@ -8,7 +8,7 @@
 #include "Simulation/SimArchive.h"
 using namespace CoISim;
 namespace {
-bool DeveloperFixture(FString& Json,FCoIGeoMapData& Geo){FString E;auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));return C&&Geo.Load(C->DefinitionJson,E)&&FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim")));}
+bool DeveloperFixture(FString& Json,FCoIGeoMapData& Geo){FString E;auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));return C&&Geo.Load(C->DefinitionJson,E)&&FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/ap092_legacy_fixture.coisim")));}
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FDeveloperMutations,"CoI.Developer.AtomicMutationsAndAudit",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FDeveloperMutations::RunTest(const FString&){FString J,E;FCoIGeoMapData G;if(!DeveloperFixture(J,G))return false;FSimulation S;if(!S.Load(J,G,E))return false;FDeveloperConsole D;TArray<FDevRecord> Journal;D.Journal=[&](const FDevRecord& R){Journal.Add(R);};

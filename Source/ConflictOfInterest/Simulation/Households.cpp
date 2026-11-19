@@ -55,10 +55,10 @@ void FSimulation::HouseholdPayroll(int64 H)
     {
         if (const auto *W = Find(State.Warehouses, S.Id))
             Jobs.Add({W->Id, W->OwnerId, W->CityId, W->Id,
-                      Find(Scenario.Definitions.Companies, W->OwnerId)->DecisionProfile == TEXT("trader")
+                      Scenario.Economy.RetailEnabled&&!Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailOffers.IsEmpty()?Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailJobs:Find(Scenario.Definitions.Companies, W->OwnerId)->DecisionProfile == TEXT("trader")
                           ? Q.TraderJobs
                           : Q.WarehouseJobs,
-                      Q.ServiceWageCents, nullptr, &S});
+                      Scenario.Economy.RetailEnabled&&!Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailOffers.IsEmpty()?Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailWageCents:Q.ServiceWageCents, nullptr, &S});
         else if (const auto *V = Find(State.Vehicles, S.Id))
             Jobs.Add({V->Id, V->OwnerId, V->HomeCityId, V->Id, Q.VehicleJobs, Q.ServiceWageCents, nullptr, &S});
     }

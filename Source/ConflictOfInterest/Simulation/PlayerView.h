@@ -3,7 +3,7 @@
 namespace CoISim {
 struct FStoreView {
  FString TypeId;FString Id,Name,CityId,OwnerId,OwnerName;bool Own=false,Public=false,Blocked=false;TArray<FString> AcceptedGoods;
- int64 Capacity=0,Used=0,Incoming=0,DailyCost=0,Arrears=0;
+ int64 RetailWorkers=0,RetailPaidUntil=0;int64 RetailSoldKg=0,RetailRevenueCents=0,RetailCostCents=0;FString RetailCause;int64 Capacity=0,Used=0,Incoming=0,DailyCost=0,Arrears=0;
 };
 struct FVehicleView {
  FString HomeCityId;FString Id,Name,ProviderId,ProviderName,CityId,JobId;bool Own=false,Bound=false,Blocked=false;

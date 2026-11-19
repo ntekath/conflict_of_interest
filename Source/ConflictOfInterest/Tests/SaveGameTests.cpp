@@ -19,7 +19,7 @@ bool SaveFixture(FString &J, FCoIGeoMapData &G)
     FString E;
     auto *C = LoadObject<UCoIGeoCatalog>(nullptr, TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));
     return C && G.Load(C->DefinitionJson, E) &&
-           FFileHelper::LoadFileToString(J, *(FPaths::ProjectContentDir() / TEXT("Simulation/scenario.coisim")));
+           FFileHelper::LoadFileToString(J, *(FPaths::ProjectContentDir() / TEXT("Simulation/ap092_legacy_fixture.coisim")));
 }
 FCommand SaveCommand(FSimulation &S, ECommandKind K)
 {

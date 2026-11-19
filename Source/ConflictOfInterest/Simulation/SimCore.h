@@ -84,6 +84,7 @@ private:
  FString DeliveryStore(const FString&) const;void DeliveryService(int64 Hour);bool ChangeDelivery(const FDeliveryRequest&,FString&);bool ValidateDeliveries(FString&) const;
  bool DeliveryTransportReferenced(const FString&) const;int64 DeliveryPromises(const FString&,const FString&,const FString&) const;void RunDeliveryDue(const FString&,int64);void ProgressDelivery(const FString&,int64);
  FSiteLedger& SiteLedger(const FString&,const FString&);void SitePayment(const FString&,const FString&,int64,bool);void InternalDelivery(const FDeliveryContract&,int64);
+ void RetailPlan(int64 Hour);void RetailConsume();bool ValidateRetail(FString&) const;
  void HouseholdPayroll(int64 Hour);bool ValidateHouseholds(FString&) const;
  void EconomyHour(int64 Hour);
  void Payroll(int64 Hour);

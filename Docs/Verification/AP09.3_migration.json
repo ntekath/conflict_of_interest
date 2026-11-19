@@ -1,0 +1,54 @@
+{
+  "baseline": "a99eeeec44ef659042694c3b7a9e3415979df138",
+  "archivedFixtureMatchesBaseline": true,
+  "moneyGoodsPopulationExistingAssetsPreserved": true,
+  "settingsUnchanged": true,
+  "existingInitialWarehouseRecordsUnchanged": true,
+  "addedEmptyWarehouses": [
+    {
+      "Id": "retail.store.chicago.merchant",
+      "DisplayName": "Lebensmittelgeschäft · Chicago",
+      "TypeId": "retail.type.food",
+      "OwnerId": "company.merchant",
+      "CityId": "city.us.chicago",
+      "CostRecipientAccountId": "account.company.services",
+      "ReservedIncomingPoints": 0,
+      "ArrearsCents": 0
+    },
+    {
+      "Id": "retail.store.chicago.player",
+      "DisplayName": "Lebensmittelgeschäft · Chicago",
+      "TypeId": "retail.type.food",
+      "OwnerId": "company.player",
+      "CityId": "city.us.chicago",
+      "CostRecipientAccountId": "account.company.services",
+      "ReservedIncomingPoints": 0,
+      "ArrearsCents": 0
+    },
+    {
+      "Id": "retail.store.detroit.luxury",
+      "DisplayName": "Gemischtwarenladen · Detroit",
+      "TypeId": "retail.type.mixed",
+      "OwnerId": "company.luxury",
+      "CityId": "city.us.detroit",
+      "CostRecipientAccountId": "account.company.services",
+      "ReservedIncomingPoints": 0,
+      "ArrearsCents": 0
+    }
+  ],
+  "addedAssetSale": [
+    {
+      "Id": "retail.sale.chicago",
+      "SellerId": "company.merchant",
+      "AssetId": "retail.store.chicago.merchant",
+      "CityId": "city.us.chicago",
+      "Kind": "warehouse",
+      "PriceCents": 150000,
+      "ExpiresHour": 168,
+      "Active": true
+    }
+  ],
+  "newInitialMoneyCents": 0,
+  "newInitialGoodsKg": 0,
+  "note": "Three explicitly configured empty starting shops. Their initial setup is a declared scenario asset extension, not a paid runtime construction. Existing ownership and assets are retained."
+}
