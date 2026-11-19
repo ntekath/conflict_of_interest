@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-19",
+  "method": "Native game, computer-use @oai/sky, screenshots visually inspected",
+  "720p": {
+    "passed": true,
+    "hour": 9,
+    "city": "Detroit",
+    "employment": 27,
+    "highGroupWageCentsPerDay": 4050,
+    "notes": "Group values wrap/scroll; transitional household purchase mode explicit. Final German names subsequently checked in 1080p."
+  },
+  "1080p": {
+    "passed": true,
+    "hour": 7,
+    "employment": 27,
+    "highGroupWageCentsPerDay": 4050,
+    "highSavingsCents": 2004050,
+    "notes": "German group/commodity names; all 3 groups, unmet needs and savings readable; no developer additions. Test window closed without saving."
+  }
+}

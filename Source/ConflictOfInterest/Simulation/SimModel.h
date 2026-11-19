@@ -16,8 +16,9 @@ struct FGoodDef
 struct FCompanyDef { FString Id,Name,DecisionProfile,Description,StartCityId,HeadquartersCityId;bool Playable=false,AccountingOnly=false; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(DecisionProfile);COI_F(Playable);COI_F(AccountingOnly);COI_F(Description);COI_F(StartCityId);COI_O(HeadquartersCityId);) };
 struct FNeedDef
 {
+ int64 SavingPermille=200,WealthDays=30,MaxExtraPermille=250;
  FString Id,BasicGoodId,LuxuryGoodId; int64 BasicKgPerThousandPerDay=0,LuxuryKgPerThousandPerDay=0,BasicMaxPriceCents=0,LuxuryMaxPriceCents=0,LuxuryBudgetPermille=0;
- COI_RECORD(COI_F(Id);COI_F(BasicGoodId);COI_F(LuxuryGoodId);COI_F(BasicKgPerThousandPerDay);COI_F(LuxuryKgPerThousandPerDay);COI_F(BasicMaxPriceCents);COI_F(LuxuryMaxPriceCents);COI_F(LuxuryBudgetPermille);)
+ COI_RECORD(COI_O(SavingPermille);COI_O(WealthDays);COI_O(MaxExtraPermille);COI_F(Id);COI_F(BasicGoodId);COI_F(LuxuryGoodId);COI_F(BasicKgPerThousandPerDay);COI_F(LuxuryKgPerThousandPerDay);COI_F(BasicMaxPriceCents);COI_F(LuxuryMaxPriceCents);COI_F(LuxuryBudgetPermille);)
 };
 struct FGroupDef { FString Id,RegionId,NeedProfileId,IncomeBand,ConsumptionCityId; COI_RECORD(COI_F(Id);COI_F(RegionId);COI_F(NeedProfileId);COI_F(IncomeBand);COI_F(ConsumptionCityId);) };
 struct FRegionDef
@@ -63,10 +64,11 @@ struct FAccount { FString Id,OwnerId; int64 BalanceCents=0,ReservedCents=0; COI_
 struct FCompany { FString Id,AccountId; COI_RECORD(COI_F(Id);COI_F(AccountId);) };
 struct FGroup
 {
+ int64 WealthPermille=0,LastIncomeCents=0,LastSpentCents=0,NextBudgetHour=0;
  FString Id,AccountId; int64 Population=0,Workforce=0,Employed=0,DailyIncomeCents=0,BudgetCents=0;
  int64 DailySpentCents=0,LuxurySpentCents=0,BasicRemainder=0,LuxuryRemainder=0;
  TArray<FAmount> MissedNeed; TArray<FAmount> Consumed,UnmetNeed;
- COI_RECORD(COI_F(Id);COI_F(AccountId);COI_F(Population);COI_F(Workforce);COI_F(Employed);COI_F(DailyIncomeCents);COI_F(BudgetCents);COI_O(DailySpentCents);COI_O(LuxurySpentCents);COI_O(BasicRemainder);COI_O(LuxuryRemainder);COI_O(MissedNeed);COI_F(Consumed);COI_F(UnmetNeed);)
+ COI_RECORD(COI_O(WealthPermille);COI_O(LastIncomeCents);COI_O(LastSpentCents);COI_O(NextBudgetHour);COI_F(Id);COI_F(AccountId);COI_F(Population);COI_F(Workforce);COI_F(Employed);COI_F(DailyIncomeCents);COI_F(BudgetCents);COI_O(DailySpentCents);COI_O(LuxurySpentCents);COI_O(BasicRemainder);COI_O(LuxuryRemainder);COI_O(MissedNeed);COI_F(Consumed);COI_F(UnmetNeed);)
 };
 struct FEmployment { FString GroupId; int64 Workers=0; COI_RECORD(COI_F(GroupId);COI_F(Workers);) };
 struct FFacility
@@ -143,6 +145,7 @@ struct FGoodsAudit
 };
 struct FEconomyRules
 {
+ bool HouseholdModel=false,LegacyHouseholdPurchases=true;int64 WarehouseJobs=2,TraderJobs=3,VehicleJobs=1,ServiceWageCents=150;
  int64 DeliveryMaxRules=64,DeliveryMinIntervalHours=6,DeliveryMaxIntervalHours=168,DeliveryMaxDurationHours=8760,DeliveryMaxKg=2000,DeliveryReturnGraceHours=24,DeliveryPromiseHours=24,DeliveryDefaultFreightCapCents=10000;
  int64 RuleBudgetHours=24,RuleDefaultBuyBudgetCents=50000,RuleMaxBuyBudgetCents=1000000000,RuleMaxWageCents=100000,RuleMaxStockKg=1000000;
  bool MapPublicRouteActivity=true;
@@ -153,7 +156,7 @@ struct FEconomyRules
  int64 RentalCentsPerPointDay=1,MaxOrderKg=100000,MaxPriceCents=1000000,MaxOpenOrders=512,HistoryLimit=256;
  int64 DailyBudgetPermille=500,LocalHaulKm=1,RouteDetourPermille=1400,FreightMarkupPermille=200,BookingLeadHours=1;
  int64 InputTargetHours=48,ProducerReserveKg=100,TraderMaxLoadKg=2000,TraderCashReserveCents=10000,TraderMinProfitCents=100,TraderMarkupPermille=200;
- COI_RECORD(COI_O(DeliveryMaxRules);COI_O(DeliveryMinIntervalHours);COI_O(DeliveryMaxIntervalHours);COI_O(DeliveryMaxDurationHours);COI_O(DeliveryMaxKg);COI_O(DeliveryReturnGraceHours);COI_O(DeliveryPromiseHours);COI_O(DeliveryDefaultFreightCapCents);COI_O(RuleBudgetHours);COI_O(RuleDefaultBuyBudgetCents);COI_O(RuleMaxBuyBudgetCents);COI_O(RuleMaxWageCents);COI_O(RuleMaxStockKg);COI_F(MapPublicRouteActivity);COI_F(MapTrucksPerRoute);COI_F(MapTrucksTotal);COI_F(MapTruckZoom);COI_F(MapRouteDetailZoom);COI_F(UiLowCashCents);COI_F(UiCapacityWarningPermille);COI_F(UiEventLimit);COI_F(UiVisibleEvents);COI_F(UiHistoryDays);COI_F(MaxBookingDelayHours);COI_F(Stage);COI_F(PayrollHours);COI_F(DecisionHours);COI_F(DemandHours);COI_F(CostsHours);COI_F(OrderLifetimeHours);COI_F(PickupGraceHours);COI_F(RentalCentsPerPointDay);COI_F(MaxOrderKg);COI_F(MaxPriceCents);COI_F(MaxOpenOrders);COI_F(HistoryLimit);COI_F(DailyBudgetPermille);COI_F(LocalHaulKm);COI_F(RouteDetourPermille);COI_F(FreightMarkupPermille);COI_F(BookingLeadHours);COI_F(InputTargetHours);COI_F(ProducerReserveKg);COI_F(TraderMaxLoadKg);COI_F(TraderCashReserveCents);COI_F(TraderMinProfitCents);COI_F(TraderMarkupPermille);)
+ COI_RECORD(COI_O(HouseholdModel);COI_O(LegacyHouseholdPurchases);COI_O(WarehouseJobs);COI_O(TraderJobs);COI_O(VehicleJobs);COI_O(ServiceWageCents);COI_O(DeliveryMaxRules);COI_O(DeliveryMinIntervalHours);COI_O(DeliveryMaxIntervalHours);COI_O(DeliveryMaxDurationHours);COI_O(DeliveryMaxKg);COI_O(DeliveryReturnGraceHours);COI_O(DeliveryPromiseHours);COI_O(DeliveryDefaultFreightCapCents);COI_O(RuleBudgetHours);COI_O(RuleDefaultBuyBudgetCents);COI_O(RuleMaxBuyBudgetCents);COI_O(RuleMaxWageCents);COI_O(RuleMaxStockKg);COI_F(MapPublicRouteActivity);COI_F(MapTrucksPerRoute);COI_F(MapTrucksTotal);COI_F(MapTruckZoom);COI_F(MapRouteDetailZoom);COI_F(UiLowCashCents);COI_F(UiCapacityWarningPermille);COI_F(UiEventLimit);COI_F(UiVisibleEvents);COI_F(UiHistoryDays);COI_F(MaxBookingDelayHours);COI_F(Stage);COI_F(PayrollHours);COI_F(DecisionHours);COI_F(DemandHours);COI_F(CostsHours);COI_F(OrderLifetimeHours);COI_F(PickupGraceHours);COI_F(RentalCentsPerPointDay);COI_F(MaxOrderKg);COI_F(MaxPriceCents);COI_F(MaxOpenOrders);COI_F(HistoryLimit);COI_F(DailyBudgetPermille);COI_F(LocalHaulKm);COI_F(RouteDetourPermille);COI_F(FreightMarkupPermille);COI_F(BookingLeadHours);COI_F(InputTargetHours);COI_F(ProducerReserveKg);COI_F(TraderMaxLoadKg);COI_F(TraderCashReserveCents);COI_F(TraderMinProfitCents);COI_F(TraderMarkupPermille);)
 };
 struct FMarketTotal
 {
@@ -180,8 +183,10 @@ struct FDayMetrics
  int64 Day=0,CompletedStep=0;bool Complete=false;TArray<FDayMetric> Rows;
  COI_RECORD(COI_F(Day);COI_F(CompletedStep);COI_F(Complete);COI_F(Rows);)
 };
+struct FServiceEmployment {FString Id;int64 PaidUntilHour=0;TArray<FEmployment> Employment;COI_RECORD(COI_F(Id);COI_F(PaidUntilHour);COI_F(Employment);)};
 struct FState
 {
+ TArray<FServiceEmployment> ServiceEmployment;
  TArray<FDeliveryContract> Deliveries;TArray<FDeliverySlot> DeliverySlots;TArray<FSiteLedger> SiteLedgers;TArray<FInternalTransfer> InternalTransfers;
  TArray<FOperatingRule> OperatingRules;TArray<FOperatingStatus> OperatingStatus;
  TArray<FConstructionProject> Projects;TArray<FAssetSale> AssetSales;TArray<FResourceSite> ResourceSites;bool DeveloperModified=false;int64 DeveloperMoneySources=0,DeveloperMoneySinks=0;
@@ -192,7 +197,7 @@ struct FState
  TArray<FInventory> Inventories; TArray<FMarketOrder> Orders; TArray<FTrade> Trades;
  TArray<FTransport> Transports; TArray<FTransportOffer> Offers; TArray<FReservation> Reservations;
  TArray<FRegion> Regions; TArray<FCountry> Countries;
- COI_RECORD(COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
+ COI_RECORD(COI_O(ServiceEmployment);COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
 };
 struct FSettings
 {

@@ -48,7 +48,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -56,7 +56,7 @@ bool FSimulation::AuditRuntime(FString& Error) const
  for(const auto& S:State.Warehouses)if(S.ReservedIncomingPoints<0||UsedStorage(S.Id)+S.ReservedIncomingPoints>Find(Scenario.Definitions.WarehouseTypes,S.TypeId)->CapacityPoints)return Fail(TEXT("Storage capacity: ")+S.Id);
  for(const auto& G:State.GoodsAudit){int64 Actual=0;for(const auto& I:State.Inventories)if(I.GoodId==G.Id)Actual+=I.QuantityKg;if(Actual!=G.InitialKg+G.DeveloperAddedKg+G.ProducedKg-G.InputKg-G.ConsumedKg-G.SpoiledKg)return Fail(TEXT("Goods source/sink equation: ")+G.Id);}
  for(const auto& G:State.Groups)
- {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
+ {int64 Workers=0;for(const auto& F:State.Facilities)for(const auto& J:F.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;for(const auto& S:State.ServiceEmployment)for(const auto& J:S.Employment)if(J.GroupId==G.Id)Workers+=J.Workers;if(Workers!=G.Employed||Workers>G.Workforce)return Fail(TEXT("Employment: ")+G.Id);}
 
  for(const auto& A:State.Accounts){int64 Backed=0;for(const auto& X:State.DeliverySlots){const auto* C=Find(State.Deliveries,X.ContractId);if(C&&ActorAccount(C->BuyerId)==A.Id)Backed+=X.ReturnHoldCents;}for(const auto& P:State.Projects)if(P.Status==TEXT("building")&&ActorAccount(P.OwnerId)==A.Id)Backed+=P.CostCents;for(const auto& O:State.Orders)if(ActorAccount(O.ActorId)==A.Id)Backed+=O.ReservedCents;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")){if(ActorAccount(J.OwnerId)==A.Id)Backed+=J.CostCents;if(J.OwnerId!=J.ProviderId&&ActorAccount(J.ProviderId)==A.Id)Backed+=J.OperatingCents;}for(const auto& R:State.Reservations)if(R.Active&&R.AccountId==A.Id)Backed+=R.MoneyCents;if(Backed!=A.ReservedCents)return Fail(TEXT("Unbacked money hold: ")+A.Id);}
  for(const auto& I:State.Inventories){int64 Backed=0;for(const auto& O:State.Orders)if(O.Side==TEXT("sell")&&O.ActorId==I.OwnerId&&O.StorageId==I.StorageId&&O.GoodId==I.GoodId)Backed+=O.ReservedKg;for(const auto& J:State.Transports)if(J.Status==TEXT("planned")&&J.SourceInventoryId==I.Id)Backed+=J.Kg;for(const auto& R:State.Reservations)if(R.Active&&R.InventoryId==I.Id)Backed+=R.Kg;if(Backed!=I.ReservedKg)return Fail(TEXT("Unbacked stock hold: ")+I.Id);
@@ -70,6 +70,7 @@ void FSimulation::Payroll(int64 Hour)
 {
  TRACE_CPUPROFILER_EVENT_SCOPE(CoI_Payroll);
  if(Hour%Scenario.Economy.PayrollHours)return;
+ if(Scenario.Economy.HouseholdModel){HouseholdPayroll(Hour);return;}
  for(auto& G:State.Groups){G.Employed=0;G.DailyIncomeCents=0;}
  TArray<int32> Order;for(int32 I=0;I<State.Facilities.Num();++I)Order.Add(I);
  Order.Sort([&](int32 A,int32 B){return OfferedWage(State.Facilities[A])==OfferedWage(State.Facilities[B])?State.Facilities[A].Id<State.Facilities[B].Id:OfferedWage(State.Facilities[A])>OfferedWage(State.Facilities[B]);});

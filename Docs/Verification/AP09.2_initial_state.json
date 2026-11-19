@@ -1,0 +1,30 @@
+{
+  "baseline": "96931d0",
+  "InitialStateUnchanged": true,
+  "SettingsUnchanged": true,
+  "newEconomyFields": {
+    "HouseholdModel": true,
+    "LegacyHouseholdPurchases": true,
+    "WarehouseJobs": 2,
+    "TraderJobs": 3,
+    "VehicleJobs": 1,
+    "ServiceWageCents": 150
+  },
+  "profileParameters": {
+    "need.high": {
+      "SavingPermille": 300,
+      "WealthDays": 30,
+      "MaxExtraPermille": 250
+    },
+    "need.low": {
+      "SavingPermille": 100,
+      "WealthDays": 30,
+      "MaxExtraPermille": 250
+    },
+    "need.middle": {
+      "SavingPermille": 200,
+      "WealthDays": 30,
+      "MaxExtraPermille": 250
+    }
+  }
+}

@@ -11,7 +11,7 @@ namespace {
 bool EconomyFixture(FString& J,FCoIGeoMapData& G,int Stage,TFunction<void(TSharedPtr<FJsonObject>)> Edit={}) {
  auto* C=LoadObject<UCoIGeoCatalog>(nullptr,TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));FString E;
  if(!C||!G.Load(C->DefinitionJson,E)||!FFileHelper::LoadFileToString(J,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim"))))return false;
- TSharedPtr<FJsonObject> R;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J),R);R->GetObjectField(TEXT("Economy"))->SetNumberField(TEXT("Stage"),Stage);if(Edit)Edit(R);
+ TSharedPtr<FJsonObject> R;FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J),R);if(R->HasField(TEXT("Economy")))R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),false);R->GetObjectField(TEXT("Economy"))->SetNumberField(TEXT("Stage"),Stage);if(Edit)Edit(R);
  J.Empty();FJsonSerializer::Serialize(R.ToSharedRef(),TJsonWriterFactory<>::Create(&J));return true;
 }
 }
@@ -32,7 +32,6 @@ bool FProduction::RunTest(const FString&) {
  TestEqual(TEXT("Insufficient finite ore no extraction batch"),Find(S.GetState().GoodsAudit,FString(TEXT("good.ore")))->ProducedKg,0LL);
  TestTrue(TEXT("No hidden funding or goods"),S.AuditRuntime(E));return true;
 }
-
 namespace {
 FCommand Order(FSimulation& S,const TCHAR* Id,const TCHAR* Actor,const TCHAR* Side,int64 Kg,int64 Price,const TCHAR* Store=TEXT("storage.player"),const TCHAR* City=TEXT("city.us.detroit")) {
  FCommand C;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Kind=ECommandKind::PlaceOrder;
@@ -60,7 +59,6 @@ bool FMarket::RunTest(const FString&) {
  for(int H=0;H<14;++H)S.StepOnce();TestEqual(TEXT("Expiry releases stock"),Find(S.GetState().Orders,FString(TEXT("same")))->ReservedKg,0LL);
  TestEqual(TEXT("Expiry releases money"),Find(S.GetState().Orders,FString(TEXT("self")))->ReservedCents,0LL);TestTrue(TEXT("Trade conserves all funds and goods"),S.AuditRuntime(E));return true;
 }
-
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FConsumer,"CoI.Economy.ActualConsumption",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FConsumer::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,3,[](auto R){for(auto V:R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Needs"))){V->AsObject()->SetNumberField(TEXT("BasicKgPerThousandPerDay"),1);V->AsObject()->SetNumberField(TEXT("LuxuryKgPerThousandPerDay"),1);}});FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
@@ -75,7 +73,6 @@ bool FConsumer::RunTest(const FString&) {
  int64 Missed=0;for(const auto& R:S.GetState().Groups)for(const auto& U:R.MissedNeed)if(U.GoodId==TEXT("good.food"))Missed+=U.Kg;TestEqual(TEXT("Shortage visible across four regions"),Missed,4400LL);
  for(const auto& O:S.GetState().Orders)TestTrue(TEXT("No luxury buys while basic missing"),O.GoodId!=TEXT("good.luxury"));return TestTrue(TEXT("No hidden funding"),S.AuditRuntime(E));
 }
-
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTransportTest,"CoI.Economy.TransportAndCosts",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FTransportTest::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,4,[](auto R){for(auto V:R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Companies")))if(V->AsObject()->GetStringField(TEXT("DecisionProfile"))!=TEXT("player")&&V->AsObject()->GetStringField(TEXT("DecisionProfile"))!=TEXT("carrier"))V->AsObject()->SetStringField(TEXT("DecisionProfile"),TEXT("service"));});FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
@@ -95,7 +92,6 @@ bool FAutonomous::RunTest(const FString&) {
  for(int H=0;H<72;++H){S.StepOnce();if(!S.AuditRuntime(E)){AddError(FString::Printf(TEXT("Hour %d: %s"),H,*E));return false;}for(const auto& T:S.GetState().Trades){MerchantBought|=T.BuyerId==TEXT("company.merchant");MerchantSold|=T.SellerId==TEXT("company.merchant");}for(const auto& T:S.GetState().Transports)Shipped|=!T.Empty&&T.OwnerId==TEXT("company.merchant")&&T.FromCityId!=T.ToCityId&&T.Service==TEXT("rented_truck")&&T.Status==TEXT("arrived");}
  TestTrue(TEXT("Merchant purchases actual offers"),MerchantBought);TestTrue(TEXT("Merchant sells actual inventory"),MerchantSold);TestTrue(TEXT("Merchant pays carrier for intercity delivery"),Shipped);TestTrue(TEXT("Consumer actual food"),Find(S.GetState().GoodsAudit,FString(TEXT("good.food")))->ConsumedKg>0);TestTrue(TEXT("Real freight fee booked"),Find(S.GetState().CashTotals,FString(TEXT("freight")))!=nullptr);return true;
 }
-
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FWeeks,"CoI.Economy.FourWeeksConservationAndReplay",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FWeeks::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,5);FSimulation A,B,C;for(auto* S:{&A,&B,&C})if(!TestTrue(TEXT("Load"),S->Load(J,G,E)))return false;
@@ -115,7 +111,6 @@ bool FWeeks::RunTest(const FString&) {
  const FString Folder=FPaths::ProjectSavedDir()/TEXT("Diagnostics");IFileManager::Get().MakeDirectory(*Folder,true);TestTrue(TEXT("Write reproducible report"),FFileHelper::SaveStringToFile(Report,*(Folder/TEXT("AP05_28days.md")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM));FFileHelper::SaveStringToFile(Csv,*(Folder/TEXT("AP05_28days.csv")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
  return true;
 }
-
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMonthBaseline,"CoI.Audit.ThirtyDayBaseline",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FMonthBaseline::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,5);FSimulation A,B,C;for(auto* S:{&A,&B,&C})if(!TestTrue(TEXT("Load"),S->Load(J,G,E)))return false;
@@ -135,7 +130,6 @@ bool FMonthBaseline::RunTest(const FString&) {
  const FString Folder=FPaths::ProjectSavedDir()/TEXT("Diagnostics");IFileManager::Get().MakeDirectory(*Folder,true);TestTrue(TEXT("Write reproducible report"),FFileHelper::SaveStringToFile(Report,*(Folder/TEXT("AP09.1_30days.md")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM));FFileHelper::SaveStringToFile(Csv,*(Folder/TEXT("AP09.1_30days.csv")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
  return true;
 }
-
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMarketEdges,"CoI.Economy.OrderPriorityAndRejection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FMarketEdges::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,2);FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;
@@ -148,4 +142,18 @@ bool FMarketEdges::RunTest(const FString&) {
  FCommand C;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;C.Kind=ECommandKind::CancelOrder;C.Order.Id=TEXT("expensive");C.Order.ActorId=TEXT("company.food");Submit(C);S.StepOnce();TestFalse(TEXT("Wrong actor cannot cancel"),S.GetResults().Last().Accepted);
  for(int H=0;H<14;++H)S.StepOnce();TestEqual(TEXT("No trade does not refresh last price"),S.GetState().MarketTotals[0].LastHour,PriceHour);TestTrue(TEXT("Stale quote explicitly marked"),S.GetSnapshot().EconomyDetails.FindChecked(TEXT("city.us.detroit")).Contains(TEXT("veraltet")));return TestTrue(TEXT("All holds fully backed"),S.AuditRuntime(E));
 }
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHouseholds,"CoI.Households.IncomeSavingsAndReplay",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHouseholds::RunTest(const FString&){FString J,E,Disk;FCoIGeoMapData G;EconomyFixture(J,G,5,[](auto R){R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),true);});FSimulation S,Replay;if(!S.Load(J,G,E)){AddError(E);return false;}
+ const auto Initial=S.GetState();S.StepOnce();int64 Income=0,Received=0;for(const auto& X:S.GetState().Groups){Income+=X.DailyIncomeCents;Received+=Find(S.GetState().Accounts,X.AccountId)->BalanceCents-Find(Initial.Accounts,X.AccountId)->BalanceCents;TestTrue(TEXT("Workforce capped, distinct from population"),X.Employed<=X.Workforce&&X.Workforce<=X.Population);TestTrue(TEXT("One-time wealth change bounded"),X.WealthPermille<=9);}
+ TestTrue(TEXT("Real extra-productive employment"),!S.GetState().ServiceEmployment.IsEmpty());TestTrue(TEXT("Funded wages exist"),Income>0);TestTrue(TEXT("Purchases may spend received income but cannot invent it"),Received<=Income);
+ for(int H=1;H<51;++H){S.StepOnce();if(!S.ValidateSaveState(E)){AddError(E);return false;}}
+ if(!S.SaveGameJson(Disk,E)){AddError(E);return false;}int32 Speed=1;if(!Replay.LoadGameJson(Disk,G,S.GetScenario(),E,Speed)){AddError(E);return false;}
+ for(int H=0;H<24*30;++H){S.StepOnce();Replay.StepOnce();if(!S.AuditRuntime(E)){AddError(E);return false;}if(S.Fingerprint()!=Replay.Fingerprint()){AddError(TEXT("Household replay mismatch"));return false;}}
+ return true;}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHouseholdPoor,"CoI.Households.UnfundedNeedsAndNoDuplicateIncome",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHouseholdPoor::RunTest(const FString&){FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,5,[](auto R){auto Q=R->GetObjectField(TEXT("Economy"));Q->SetBoolField(TEXT("HouseholdModel"),true);Q->SetBoolField(TEXT("LegacyHouseholdPurchases"),false);for(auto X:R->GetObjectField(TEXT("InitialState"))->GetArrayField(TEXT("Groups")))X->AsObject()->SetNumberField(TEXT("BudgetCents"),0);for(auto A:R->GetObjectField(TEXT("InitialState"))->GetArrayField(TEXT("Accounts")))A->AsObject()->SetNumberField(TEXT("BalanceCents"),0);});FSimulation S;if(!S.Load(J,G,E)){AddError(E);return false;}S.StepOnce();int64 Wanted=0;for(const auto& X:S.GetState().Groups){TestEqual(TEXT("No unfunded jobs"),X.Employed,0LL);TestEqual(TEXT("No fabricated income"),X.DailyIncomeCents,0LL);for(const auto& U:X.UnmetNeed)Wanted+=U.Kg;TestEqual(TEXT("No money means no budget"),X.BudgetCents,0LL);}TestTrue(TEXT("Needs exist before money"),Wanted>0);for(int H=0;H<48;++H)S.StepOnce();for(const auto& A:S.GetState().Accounts)TestEqual(TEXT("Statistics do not create money"),A.BalanceCents,0LL);for(const auto& O:S.GetState().Orders)TestNull(TEXT("Transition off creates no household B2B orders"),Find(S.GetState().Groups,O.ActorId));return TestTrue(TEXT("Conservation"),S.AuditRuntime(E));}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FHouseholdLoss,"CoI.Households.JobLossPreservesSavings",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FHouseholdLoss::RunTest(const FString&){FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,1,[](auto R){R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),true);});FSimulation S;if(!S.Load(J,G,E)){AddError(E);return false;}S.StepOnce();int64 BeforeIncome=0,BeforeCash=0;for(const auto& X:S.GetState().Groups){BeforeIncome+=X.DailyIncomeCents;BeforeCash+=Find(S.GetState().Accounts,X.AccountId)->BalanceCents;}
+ const auto* F=S.GetState().Facilities.FindByPredicate([](const FFacility& X){return X.OwnerId==TEXT("company.food");});if(!F)return false;auto Rule=*Find(S.GetState().OperatingRules,F->Id);Rule.UtilizationPermille=0;Rule.Explicit=true;FCommand C;C.Kind=ECommandKind::OperatingRule;C.Rule=Rule;C.CompanyId=F->OwnerId;C.Origin=ECommandOrigin::Autonomous;C.Generation=S.GetGeneration();C.Sequence=S.NextSequence();C.TargetStep=S.GetState().Step+1;if(!S.Enqueue(C,E)){AddError(E);return false;}for(int H=0;H<24;++H)S.StepOnce();int64 AfterIncome=0,AfterCash=0;for(const auto& X:S.GetState().Groups){AfterIncome+=X.DailyIncomeCents;AfterCash+=Find(S.GetState().Accounts,X.AccountId)->BalanceCents;}TestTrue(TEXT("Job closure lowers next wage income"),AfterIncome<BeforeIncome);TestTrue(TEXT("Existing savings are retained without consumption"),AfterCash>=BeforeCash);return TestTrue(TEXT("No money created"),S.AuditRuntime(E));}
 #endif

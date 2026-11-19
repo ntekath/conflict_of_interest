@@ -9,6 +9,7 @@ bool SaleClear(const FState& W,const FAssetSale& Sale,int64 Hour,FString& E){
  auto Fail=[&](const FString& Why){E=TEXT("Assetkauf gesperrt: ")+Why;return false;};const auto* F=Sale.Kind==TEXT("facility")?Find(W.Facilities,Sale.AssetId):nullptr;const auto* Store=Find(W.Warehouses,F?F->StorageId:Sale.AssetId);
  if(!Store||(Sale.Kind==TEXT("facility")&&!F)||Store->CityId!=Sale.CityId||Store->OwnerId!=Sale.SellerId||(F&&(F->OwnerId!=Sale.SellerId||F->CityId!=Sale.CityId)))return Fail(TEXT("Angebot passt nicht mehr zum Eigentümer/Standort."));
  for(const auto& C:W.Deliveries)if(C.Status==TEXT("active")&&(C.SourceStoreId==Store->Id||C.DestinationStoreId==Store->Id))return Fail(TEXT("Aktive Lieferbeziehung am Asset; zuerst geordnet stoppen."));
+ for(const auto& J:W.ServiceEmployment)if(J.Id==Store->Id&&J.PaidUntilHour>Hour&&!J.Employment.IsEmpty())return Fail(TEXT("Bezahlte Lagerstellen noch gebunden; erst geordnet freigeben."));
  if(InvestmentBusy(W,Sale.AssetId)||InvestmentBusy(W,Store->Id))return Fail(TEXT("Laufendes Ausbauprojekt."));
  if(Store->ReservedIncomingPoints||Store->ArrearsCents)return Fail(TEXT("Zielreservierung oder Lagerrückstand."));
  for(const auto& I:W.Inventories)if(I.StorageId==Store->Id&&(I.QuantityKg||I.ReservedKg||I.RentArrearsCents))return Fail(TEXT("Lager muss leer und ohne Waren-/Mietverpflichtungen sein."));

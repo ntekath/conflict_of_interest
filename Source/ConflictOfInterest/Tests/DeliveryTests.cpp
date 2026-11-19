@@ -17,7 +17,7 @@ bool DlvFixture(FString &J, FCoIGeoMapData &G, TFunction<void(TSharedPtr<FJsonOb
         !FFileHelper::LoadFileToString(J, *(FPaths::ProjectContentDir() / TEXT("Simulation/scenario.coisim"))))
         return false;
     TSharedPtr<FJsonObject> R;
-    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);if(R->HasField(TEXT("Economy")))R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),false);
     if (Edit)
         Edit(R);
     J.Empty();
@@ -88,7 +88,7 @@ FString DlvRepack(FSaveData &D)
 FSaveData DlvUnpack(const FString &J)
 {
     TSharedPtr<FJsonObject> R;
-    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);if(R->HasField(TEXT("Economy")))R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),false);
     FSaveData D;
     FString E;
     FRead Reader{R->GetObjectField(TEXT("Payload")), E, true};

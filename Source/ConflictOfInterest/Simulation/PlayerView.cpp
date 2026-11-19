@@ -64,7 +64,7 @@ void FSimulation::PublishPlayer(FSnapshot& Out) const {
  }
  for(const auto& Place:P.Catalog.Places){FCityView City;City.Id=Place.Id;City.Name=Place.Name;City.RegionId=Place.RegionId;
   if(const auto* R=Find(State.Regions,Place.RegionId)){City.RegionalEmployed=R->Employed;City.RegionalPopulation=R->Population;}
-  for(const auto& G:State.Groups){const auto* Def=Find(P.Catalog.Groups,G.Id);if(Def->ConsumptionCityId==Place.Id){City.Residents+=G.Population;City.Workforce+=G.Workforce;City.Groups.Add(Def->IncomeBand);}}
+  for(const auto& G:State.Groups){const auto* Def=Find(P.Catalog.Groups,G.Id);if(Def->ConsumptionCityId==Place.Id){City.Residents+=G.Population;City.Workforce+=G.Workforce;City.Groups.Add((Def->IncomeBand==TEXT("high")?FString(TEXT("hoch")):Def->IncomeBand==TEXT("low")?FString(TEXT("niedrig")):FString(TEXT("mittel")))+FString::Printf(TEXT(" · Lohn %lld Cent/Tag · Konsum %lld Cent · Ersparnisse %lld Cent · arbeitslos %lld/%lld · Wohlstand +%lld/1000"),G.DailyIncomeCents,G.DailySpentCents,Find(State.Accounts,G.AccountId)->BalanceCents,G.Workforce-G.Employed,G.Workforce,G.WealthPermille));for(const auto& Need:G.UnmetNeed)City.Groups.Last()+=FString::Printf(TEXT(" · Fehlbedarf %s %lld kg"),*Find(P.Catalog.Goods,Need.GoodId)->Name,Need.Kg);}}
   for(const auto& I:P.Stocks)if(const auto* W=Find(P.Stores,I.StorageId);W&&W->CityId==Place.Id)City.OwnStockKg+=I.QuantityKg;
   for(const auto& C:P.Catalog.Companies){FCityPresence X;X.CompanyId=C.Id;X.Name=C.Name;X.Own=C.Id==P.ActorId;X.Headquarters=C.HeadquartersCityId==Place.Id;
    for(const auto& W:State.Warehouses)if(W.CityId==Place.Id&&W.OwnerId==C.Id)++X.Warehouses;

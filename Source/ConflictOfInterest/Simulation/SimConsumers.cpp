@@ -4,13 +4,15 @@ namespace CoISim {
 static FAmount& Amount(TArray<FAmount>& Rows,const FString& Good){for(auto& R:Rows)if(R.GoodId==Good)return R;Rows.Add({Good,0});return Rows.Last();}
 void FSimulation::Demand(int64 Hour) {
  for(auto& G:State.Groups){const auto* D=Find(Scenario.Definitions.Groups,G.Id);const auto* N=Find(Scenario.Definitions.Needs,D->NeedProfileId);auto* A=Find(State.Accounts,G.AccountId);
-  if(Hour%Scenario.Economy.DemandHours==0){for(auto& O:State.Orders)if(O.ActorId==G.Id&&O.Status==TEXT("open"))CancelOrder(O.Id,G.Id,TEXT("day_end"));
+  if(Hour%Scenario.Economy.DemandHours==0){
+   if(Scenario.Economy.HouseholdModel){G.LastSpentCents=G.DailySpentCents;G.LastIncomeCents=G.DailyIncomeCents;G.NextBudgetHour=Hour+Scenario.Economy.DemandHours;int64 Reference=FMath::Max(1LL,G.Population*N->BasicKgPerThousandPerDay/1000*N->BasicMaxPriceCents);int64 CashDays=FMath::Clamp((A->BalanceCents-A->ReservedCents)/Reference,0LL,30LL);int64 Target=CashDays*N->MaxExtraPermille/30;for(const auto& U:G.UnmetNeed)if(U.GoodId==N->BasicGoodId&&U.Kg>0)Target/=2;G.WealthPermille+=(Target-G.WealthPermille)/N->WealthDays;}for(auto& O:State.Orders)if(O.ActorId==G.Id&&O.Status==TEXT("open"))CancelOrder(O.Id,G.Id,TEXT("day_end"));
    for(const auto& U:G.UnmetNeed)Amount(G.MissedNeed,U.GoodId).Kg+=U.Kg;
-   G.BasicRemainder+=G.Population*N->BasicKgPerThousandPerDay;G.LuxuryRemainder+=G.Population*N->LuxuryKgPerThousandPerDay;
+   G.BasicRemainder+=G.Population*N->BasicKgPerThousandPerDay;G.LuxuryRemainder+=G.Population*N->LuxuryKgPerThousandPerDay*(1000+(Scenario.Economy.HouseholdModel?G.WealthPermille:0))/1000;
    Amount(G.UnmetNeed,N->BasicGoodId).Kg=G.BasicRemainder/1000;G.BasicRemainder%=1000;Amount(G.UnmetNeed,N->LuxuryGoodId).Kg=G.LuxuryRemainder/1000;G.LuxuryRemainder%=1000;
    DayMetric(D->RegionId,N->BasicGoodId).HouseholdWantedKg+=Amount(G.UnmetNeed,N->BasicGoodId).Kg;DayMetric(D->RegionId,N->LuxuryGoodId).HouseholdWantedKg+=Amount(G.UnmetNeed,N->LuxuryGoodId).Kg;
-   G.BudgetCents=(A->BalanceCents-A->ReservedCents)*Scenario.Economy.DailyBudgetPermille/1000;G.DailySpentCents=G.LuxurySpentCents=0;
+   G.BudgetCents=(A->BalanceCents-A->ReservedCents)*Scenario.Economy.DailyBudgetPermille/1000;if(Scenario.Economy.HouseholdModel)G.BudgetCents=FMath::Min(G.BudgetCents,(A->BalanceCents-A->ReservedCents)*(1000-N->SavingPermille)/1000);G.DailySpentCents=G.LuxurySpentCents=0;
   }
+  if(!Scenario.Economy.LegacyHouseholdPurchases)continue;
   // Basic need is a prerequisite, including when no affordable basic offer exists.
   bool Basic=Amount(G.UnmetNeed,N->BasicGoodId).Kg>0;FString Good=Basic?N->BasicGoodId:N->LuxuryGoodId;int64 Due=Amount(G.UnmetNeed,Good).Kg;
   if(!Due)continue;bool HasOrder=false;for(const auto& O:State.Orders)if(O.ActorId==G.Id&&O.GoodId==Good&&O.Status==TEXT("open"))HasOrder=true;if(HasOrder)continue;

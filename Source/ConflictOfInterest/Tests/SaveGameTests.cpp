@@ -47,7 +47,7 @@ FString Repack(FSaveData &D)
 FSaveData Unpack(const FString &J)
 {
     TSharedPtr<FJsonObject> R;
-    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);
+    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);if(R->HasField(TEXT("Economy")))R->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("HouseholdModel"),false);
     FString E;
     FRead Read{R->GetObjectField(TEXT("Payload")), E, true};
     FSaveData D;

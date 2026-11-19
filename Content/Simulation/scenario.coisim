@@ -189,7 +189,10 @@
         "LuxuryKgPerThousandPerDay": 30,
         "BasicMaxPriceCents": 12,
         "LuxuryMaxPriceCents": 120,
-        "LuxuryBudgetPermille": 300
+        "LuxuryBudgetPermille": 300,
+        "SavingPermille": 300,
+        "WealthDays": 30,
+        "MaxExtraPermille": 250
       },
       {
         "Id": "need.low",
@@ -199,7 +202,10 @@
         "LuxuryKgPerThousandPerDay": 1,
         "BasicMaxPriceCents": 12,
         "LuxuryMaxPriceCents": 120,
-        "LuxuryBudgetPermille": 50
+        "LuxuryBudgetPermille": 50,
+        "SavingPermille": 100,
+        "WealthDays": 30,
+        "MaxExtraPermille": 250
       },
       {
         "Id": "need.middle",
@@ -209,7 +215,10 @@
         "LuxuryKgPerThousandPerDay": 10,
         "BasicMaxPriceCents": 12,
         "LuxuryMaxPriceCents": 120,
-        "LuxuryBudgetPermille": 150
+        "LuxuryBudgetPermille": 150,
+        "SavingPermille": 200,
+        "WealthDays": 30,
+        "MaxExtraPermille": 250
       }
     ],
     "Groups": [
@@ -1814,7 +1823,13 @@
     "DeliveryMaxKg": 2000,
     "DeliveryReturnGraceHours": 24,
     "DeliveryPromiseHours": 24,
-    "DeliveryDefaultFreightCapCents": 10000
+    "DeliveryDefaultFreightCapCents": 10000,
+    "HouseholdModel": true,
+    "LegacyHouseholdPurchases": true,
+    "WarehouseJobs": 2,
+    "TraderJobs": 3,
+    "VehicleJobs": 1,
+    "ServiceWageCents": 150
   },
   "HubSchema": 1
 }

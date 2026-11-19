@@ -82,4 +82,8 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [AP08.5](Docs/AP08.5.md): Stadt → Eigene Assets → Lager-/Betriebsregeln steuert expliziten automatischen Einkauf/Verkauf, Ziele/Reserven, Preislimits, Kaufbudgets, geplante Auslastung und Lohnangebote. Gemeinsame Konten/Bestände werden nicht mehrfach reserviert. Regeln und Fälligkeiten werden mitgespeichert. Historischer AP08.5-Stand: Save-Version 2; aktuell gilt die unten genannte AP08.6-Version.
 
-[AP08.6](Docs/AP08.6.md): Transporte → Lieferregeln plant interne und zustimmungspflichtige externe Dauerversorgung mit realen bezahlten Hin-/Rückfahrten. Fehltermine, Teilmengen und Marktauffüllung sind nachvollziehbar; Standortberichte trennen Zahlungen, interne Verrechnung und Lagerbuchwert. Aktuelle Save-Version 3; ältere Versionen 1/2 bleiben unverändert inkompatibel.
+[AP08.6](Docs/AP08.6.md): Transporte → Lieferregeln plant interne und zustimmungspflichtige externe Dauerversorgung mit realen bezahlten Hin-/Rückfahrten. Fehltermine, Teilmengen und Marktauffüllung sind nachvollziehbar; Standortberichte trennen Zahlungen, interne Verrechnung und Lagerbuchwert. Historischer AP08.6-Stand: Save-Version 3; ältere Versionen 1/2 bleiben unverändert inkompatibel.
+
+[AP09.1](Docs/AP09.1.md): Bestandsaufnahme, verbindliche Phasen-/Migrationsplanung und ausführbare 30-Tage-Referenz.
+
+[AP09.2](Docs/AP09.2.md): gemeinsamer Lohnlauf für Produktions-, Lager-/Handels- und Fahrzeugstellen; reale Gruppenersparnisse, Sparziele, verzögerter Wohlstand und Haushaltsanzeige in Stadt → Übersicht. Direkte Haushaltskäufe bleiben ausdrücklich Übergangsmodus bis AP09.3. Aktuelle Save-Version **4**; ältere Versionen bleiben unverändert inkompatibel.

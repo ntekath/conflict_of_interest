@@ -55,14 +55,14 @@ bool Decode(const FString &Json, FSaveData &D, FString &E)
         !Root->TryGetStringField(TEXT("Checksum"), Checksum) || !Root->TryGetObjectField(TEXT("Payload"), Payload))
         return Fail(TEXT("Ungültiger Spielstandkopf."));
     double VersionCode = 0;
-    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || VersionCode != 3)
-        return Fail(TEXT("Inkompatible Spielstandversion. AP08.6 benötigt Version 3; ältere Dateien bleiben unverändert."));
+    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || VersionCode != 4)
+        return Fail(TEXT("Inkompatible Spielstandversion. AP09.2 benötigt Version 4; ältere Dateien bleiben unverändert."));
     FRead R{*Payload, E, true};
     D.Fields(R);
     R.Complete();
     if (!E.IsEmpty())
         return false;
-    if (D.FormatVersion != 3 || D.SimulationVersion != 3 || D.DefinitionsVersion != 3 || D.Platform != TEXT("Win64") ||
+    if (D.FormatVersion != 4 || D.SimulationVersion != 4 || D.DefinitionsVersion != 4 || D.Platform != TEXT("Win64") ||
         D.RandomAlgorithm != TEXT("entity-fnv-splitmix-v1"))
         return Fail(TEXT("Inkompatible Spielstand-, Simulations- oder Definitionsversion."));
     if (Checksum != Digest(D))
