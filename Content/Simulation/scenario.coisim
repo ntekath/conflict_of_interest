@@ -2012,7 +2012,154 @@
     "TraderJobs": 3,
     "VehicleJobs": 1,
     "ServiceWageCents": 150,
-    "RetailEnabled": true
+    "RetailEnabled": true,
+    "AccountingEnabled": true,
+    "AccountingPricingHours": 24,
+    "AccountingNormalUtilizationPermille": 800,
+    "AccountingNormalTradeKgDay": 1000,
+    "AccountingDefaultMarkupPermille": 200,
+    "AccountingMaxMarkupPermille": 2000,
+    "AccountingHistoryMonths": 24,
+    "AccountingOpeningAssets": [
+      {
+        "Id": "retail.store.chicago.merchant",
+        "OwnerId": "company.merchant",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "retail.store.chicago.player",
+        "OwnerId": "company.player",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "retail.store.detroit.luxury",
+        "OwnerId": "company.luxury",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.food",
+        "OwnerId": "company.food",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.luxury",
+        "OwnerId": "company.luxury",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.merchant",
+        "OwnerId": "company.merchant",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.ore",
+        "OwnerId": "company.ore",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.player",
+        "OwnerId": "company.player",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.service.chicago",
+        "OwnerId": "company.services",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.service.cleveland",
+        "OwnerId": "company.services",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.service.detroit",
+        "OwnerId": "company.services",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.service.pittsburgh",
+        "OwnerId": "company.services",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.tools",
+        "OwnerId": "company.tools",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "storage.wood",
+        "OwnerId": "company.wood",
+        "ValueCents": 50000,
+        "Known": true
+      },
+      {
+        "Id": "vehicle.carrier.1",
+        "OwnerId": "company.carrier",
+        "ValueCents": 200000,
+        "Known": true
+      },
+      {
+        "Id": "vehicle.carrier.2",
+        "OwnerId": "company.carrier",
+        "ValueCents": 200000,
+        "Known": true
+      },
+      {
+        "Id": "vehicle.merchant",
+        "OwnerId": "company.merchant",
+        "ValueCents": 200000,
+        "Known": true
+      },
+      {
+        "Id": "vehicle.player",
+        "OwnerId": "company.player",
+        "ValueCents": 200000,
+        "Known": true
+      },
+      {
+        "Id": "facility.food",
+        "OwnerId": "company.food",
+        "ValueCents": 300000,
+        "Known": true
+      },
+      {
+        "Id": "facility.luxury",
+        "OwnerId": "company.luxury",
+        "ValueCents": 300000,
+        "Known": true
+      },
+      {
+        "Id": "facility.ore",
+        "OwnerId": "company.ore",
+        "ValueCents": 300000,
+        "Known": true
+      },
+      {
+        "Id": "facility.tools",
+        "OwnerId": "company.tools",
+        "ValueCents": 300000,
+        "Known": true
+      },
+      {
+        "Id": "facility.wood",
+        "OwnerId": "company.wood",
+        "ValueCents": 300000,
+        "Known": true
+      }
+    ]
   },
   "HubSchema": 1
 }

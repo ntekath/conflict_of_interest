@@ -1,6 +1,7 @@
 #include "ProfilingDebugging/CpuProfilerTrace.h"
 #include "SimArchive.h"
 #include "SimCore.h"
+#include "Accounting.h"
 namespace CoISim
 {
 namespace
@@ -196,7 +197,7 @@ void FSimulation::RetailConsume()
                         continue;
                     const auto *PriceRule =
                         R->Goods.FindByPredicate([&](const FStockRule &X) { return X.GoodId == Good; });
-                    int64 Price = PriceRule ? PriceRule->SellLimitCents : 0;
+                    int64 Price = PriceRule ? PriceRule->SellLimitCents : 0;if(Scenario.Economy.AccountingEnabled&&PriceRule){const auto* Q=AccountingFindPrice(State.AccountingPrices,W.OwnerId,W.Id,Good);Price=Q&&PriceRule->SellLimitCents?AccountingPrice(Q->Base(),PriceRule->AccountingMarkupPermille,Scenario.Economy.MaxPriceCents):0;}
                     if (Price <= 0 || Price > (Basic ? N->BasicMaxPriceCents : N->LuxuryMaxPriceCents) ||
                         Price > Budget)
                         continue;
@@ -239,7 +240,7 @@ void FSimulation::RetailConsume()
                     if (!Pay(G.AccountId, ActorAccount(W->OwnerId), Cost, TEXT("retail_sale"), W->Id, W->Id))
                         continue;
                     TakeSpoilCredit(I, Kg);
-                    int64 Book = TakeStock(I, Kg);
+                    int64 Book = TakeStock(I, Kg);AccountingSale(W->OwnerId,Cost,Book);
                     G.DailySpentCents += Cost;
                     if (!Basic)
                         G.LuxurySpentCents += Cost;

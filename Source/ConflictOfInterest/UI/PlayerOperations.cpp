@@ -2,6 +2,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "PlayerHUD.h"
+#include "Simulation/Accounting.h"
 #include "Simulation/SimArchive.h"
 #include "Simulation/SimulationSubsystem.h"
 using namespace CoISim;
@@ -42,7 +43,7 @@ void UCoIPlayerHUD::OperatingInfo(const FString &Asset)
         Text(Body,TEXT("GESCHÄFT · realer Verkaufsbestand am Lagerort · nur Haushaltsverkauf aus dem Sortiment"),13,true);
         Text(Body,TEXT("Heute verkauft ")+OpNum(W->RetailSoldKg)+TEXT(" kg · Erlös ")+OpMoney(W->RetailRevenueCents)+TEXT(" · abgegangener Warenbuchwert ")+OpMoney(W->RetailCostCents)+TEXT(". Kein vollständiger Periodengewinn; laufende Kosten siehe Standortbericht."),12);
         Text(Body,TEXT("Verkaufskapazität ")+OpNum(T->RetailDailyKg)+TEXT(" kg/Tag bei ")+OpNum(T->RetailJobs)+TEXT(" bezahlten Stellen, Lohn ")+OpMoney(T->RetailWageCents)+TEXT(" pro Stelle/Tag. Bei weniger Personal proportional begrenzt."),12);
-        for(const auto& O:T->RetailOffers){const auto* Good=Find(P.Catalog.Goods,O.GoodId);const auto* Price=R->Goods.FindByPredicate([&](const FStockRule& X){return X.GoodId==O.GoodId;});Text(Body,(Good?Good->Name:TEXT("Ware"))+TEXT(" · Qualität ")+Display::Percent(double(O.QualityPermille)/1000.)+TEXT(" des Referenzniveaus · Preis ")+OpMoney(Price?Price->SellLimitCents:0)+TEXT(" / kg · Einkaufslimit ")+OpMoney(Price?Price->BuyLimitCents:0)+TEXT(" / kg (Vorgaben unter Lagerregeln; Übergang bis AP09.4)."),12);}
+        for(const auto& O:T->RetailOffers){const auto* Good=Find(P.Catalog.Goods,O.GoodId);const auto* Price=R->Goods.FindByPredicate([&](const FStockRule& X){return X.GoodId==O.GoodId;});Text(Body,(Good?Good->Name:TEXT("Ware"))+TEXT(" · Qualität ")+Display::Percent(double(O.QualityPermille)/1000.)+TEXT(" des Referenzniveaus · Preis ")+OpMoney(P.Rules.AccountingEnabled&&Price&&Price->SellLimitCents&&AccountingFindPrice(P.AccountingPrices,P.ActorId,W->Id,O.GoodId)?AccountingPrice(AccountingFindPrice(P.AccountingPrices,P.ActorId,W->Id,O.GoodId)->Base(),Price->AccountingMarkupPermille,P.Rules.MaxPriceCents):Price?Price->SellLimitCents:0)+TEXT(" / kg · Einkaufslimit ")+OpMoney(Price?Price->BuyLimitCents:0)+TEXT(" / kg (Kostenbasis und Aufschlag unter Lagerregeln)."),12);}
         Text(Body,T->RetailName+TEXT(" · zugeordnete Stellen ")+OpNum(W->RetailWorkers)+TEXT(" / ")+OpNum(T->RetailJobs)+TEXT(" · bezahlt bis ")+Time(W->RetailPaidUntil),12);Text(Body,W->RetailCause,12);}}
     Text(Body, X->Cause, 12);Button(Body,TEXT("Lieferbeziehung ab diesem Asset …"),TEXT("deliveryNew|")+Asset);
     Button(Body, R->RecipeId.IsEmpty() ? TEXT("Lagerregeln …") : TEXT("Betriebsregeln …"), TEXT("operate|") + Asset);
@@ -143,7 +144,8 @@ void UCoIPlayerHUD::OpenOperating(const FString &Asset)
         if (Input)
             Field(Values, TEXT("op.") + G.GoodId + TEXT(".buy"), TEXT("Einkauf max. USD/kg; 0 aus"),
                   OpNum(G.BuyLimitCents));
-        if (Output)
+        if (Output&&P.Rules.AccountingEnabled){Choice(Values,TEXT("op.")+G.GoodId+TEXT(".enabled"),TEXT("Verkaufsfreigabe"),{{TEXT("no"),TEXT("Kein Verkauf")},{TEXT("yes"),TEXT("Freigegeben")}},G.SellLimitCents?TEXT("yes"):TEXT("no"));Field(Values,TEXT("op.")+G.GoodId+TEXT(".markup"),TEXT("Aufschlag %"),OpNum(G.AccountingMarkupPermille));CostInfo(Form,W->Id,G.GoodId,G.AccountingMarkupPermille);}
+        else if (Output)
             Field(Values, TEXT("op.") + G.GoodId + TEXT(".sell"), IsShop?TEXT("Ladenpreis USD/kg; 0 aus"):TEXT("Überschuss min. USD/kg; 0 aus"),
                   OpNum(G.SellLimitCents));
     }
@@ -192,6 +194,7 @@ bool UCoIPlayerHUD::ReadOperatingForm(FString &Error)
         for (int Side = 0; Side < 2; ++Side)
         {
             const FString Key = TEXT("op.") + G.GoodId + (Side ? TEXT(".sell") : TEXT(".buy"));
+            if(Side&&P.Rules.AccountingEnabled&&Fields.Contains(TEXT("op.")+G.GoodId+TEXT(".markup"))){int64 Percent=0;if(!ReadPositive(TEXT("op.")+G.GoodId+TEXT(".markup"),Percent,true)||Percent>P.Rules.AccountingMaxMarkupPermille){Error=TEXT("Ungültiger Verkaufsaufschlag in Prozent.");return false;}G.AccountingMarkupPermille=Percent;G.SellLimitCents=Id(TEXT("op.")+G.GoodId+TEXT(".enabled"))==TEXT("yes")?1:0;continue;}
             if (Fields.Contains(Key) && !ReadPositive(Key, Side ? G.SellLimitCents : G.BuyLimitCents, true))
             {
                 Error = TEXT("Preislimit als USD/kg mit maximal zwei Nachkommastellen ab 0 eingeben.");

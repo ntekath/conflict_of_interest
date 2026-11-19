@@ -22,7 +22,7 @@ bool FSimulation::Load(const FString& Json,const FCoIGeoMapData& Geo,FString& Er
  Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Session={Scenario.Id,Scenario.PlayerCompanyId};Loaded=true;
  for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;Region.RemainingForestKg=R.ForestKg;Region.RemainingOreKg=R.OreKg;State.Regions.Add(Region);}
  for(const auto& X:Scenario.Definitions.ResourceSites)State.ResourceSites.Add({X.Id,X.InitialKg,0});
- InitializeOperatingRules();InitializeAudit();BeginDayMetrics(0);Aggregate();Publish();return true;
+ InitializeOperatingRules();InitializeAudit();InitializeAccounting();BeginDayMetrics(0);Aggregate();Publish();return true;
 }
 void FSimulation::Shutdown()
 {
@@ -110,7 +110,7 @@ bool FSimulation::RunStep()
  // Match all queued market commands against the committed state before the next hour ages stock.
  if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}
  for(int64 Hour=State.Step*Scenario.Settings.HoursPerStep;Hour<Next*Scenario.Settings.HoursPerStep;++Hour)
- {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;ConstructionHour(Hour+1);if(State.EconomyHour%24==0)FinishDayMetrics(Next);PlayerWarnings();}
+ {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;CloseAccounting(Hour+1);ConstructionHour(Hour+1);if(State.EconomyHour%24==0)FinishDayMetrics(Next);PlayerWarnings();}
  // Snapshot inputs are const and independent of rendering. Results have disjoint per-region slots.
  TArray<FRegionProposal> Proposals;Proposals.SetNum(State.Regions.Num());
  {

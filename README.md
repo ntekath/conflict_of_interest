@@ -1,7 +1,7 @@
 # Conflict of Interest
 
 Konzeptioneller Neustart: US-Testgebiet, Spielbeginn 01.01.1913. Verbindlicher Entwurf:
-[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP09.3 sowie UI01**. Aktive Karte: Großer-Seen-US-Ausschnitt.
+[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP09.4 sowie UI01**. Aktive Karte: Großer-Seen-US-Ausschnitt.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 
@@ -91,3 +91,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP09.3](Docs/AP09.3.md): Lebensmittelgeschäfte und Gemischtwarenläden nutzen reale Bestände, Beschäftigung und bezahlten Nachschub. Haushalte kaufen ausschließlich im Einzelhandel; Preis/Qualität beeinflussen die Verteilung. Stadt → Eigene Assets → Lagerregeln steuert Sortimentspreise/Nachschub, Investitionen bietet Bau/Ausbau/Kauf. Save-Version **5** migriert geprüfte Version-4-Partien einschließlich laufender B2B-/Lieferaufträge; ältere Versionen 1–3 bleiben inkompatibel. Standardszenario weiterhin stark unterversorgt; Abnahmen und Grenzen dokumentiert.
 
 [UI01](Docs/UI01.md): gemeinsame Snapshot-Kennzahlen, korrekte eigene Mitarbeiter-/Standortzählung, erklärte fehlende Monats-/Bewertungsdaten und einheitliche USD-/Prozent-/Mengenformate. Geldfelder erwarten USD mit maximal zwei Nachkommastellen (ohne Tausendertrennzeichen); interne Buchungen bleiben centgenau. UI02–UI06 folgen getrennt.
+
+[AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. Save-Version **6** migriert geprüfte Version-4/5-Partien. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.

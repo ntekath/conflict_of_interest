@@ -43,7 +43,7 @@ struct FStoredResult
 };
 struct FSaveData
 {
-    int64 FormatVersion = 5, SimulationVersion = 5, DefinitionsVersion = 5, SnapshotVersion = 0, LastSequence = 0,
+    int64 FormatVersion = 6, SimulationVersion = 6, DefinitionsVersion = 6, SnapshotVersion = 0, LastSequence = 0,
           CreditMicros = 0, Speed = 1;
     FString Platform = TEXT("Win64"), RandomAlgorithm = TEXT("entity-fnv-splitmix-v1"), SavedUtc, CompatibilityHash;
     FScenario Scenario;

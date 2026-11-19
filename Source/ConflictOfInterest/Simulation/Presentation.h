@@ -39,6 +39,7 @@ FString Time(const FString &StartDate, int64 Hour);
 FString Period(const FString &StartDate, int64 BeginHour, int64 EndHour);
 // Editable USD have no thousands separator; comma or dot, at most two decimals.
 FString MoneyInput(int64 Cents);
+FString MarkupInput(int64 Permille);bool ParseMarkupInput(const FString&,int64& Permille);bool IsMarkupField(const FString& Key);
 bool ParseMoneyInput(const FString &, int64 &Cents, bool AllowZero = false);
 bool IsMoneyField(const FString &Key);
 FString Empty(EDisplayState State);

@@ -1,4 +1,5 @@
 #include "SimCore.h"
+#include "Accounting.h"
 #include "SimArchive.h"
 #include "GeoTransform.h"
 #include "PlayerView.h"
@@ -7,7 +8,7 @@ int64 FSimulation::RouteKm(const FString& From,const FString& To) const {
  const auto* A=Find(Scenario.Definitions.Places,From);const auto* B=Find(Scenario.Definitions.Places,To);if(!A||!B)return 0;
  return From==To?Scenario.Economy.LocalHaulKm:FMath::Max(1LL,(int64)FMath::CeilToDouble(CoIGeo::DistanceKm(A->Latitude,A->Longitude,B->Latitude,B->Longitude)*Scenario.Economy.RouteDetourPermille/1000.));
 }
-bool FSimulation::BookTransport(FTransport J,FString& Error,bool DeliveryInternal) {
+bool FSimulation::BookTransport(FTransport J,FString& Error,bool DeliveryInternal) {J.AccountingServicePayerId.Empty();J.AccountingServiceCents=0;
  auto Fail=[&](const TCHAR* M){Error=M;return false;};if(!DeliveryInternal&&(!J.DeliveryId.IsEmpty()||!J.ReportSiteId.IsEmpty()))return Fail(TEXT("Reserved delivery metadata"));J.DeliveredKg=J.DeliveredBookCents=J.ActualArrivalHour=0;auto* V=Find(State.Vehicles,J.VehicleId);auto* A=Find(State.Accounts,ActorAccount(J.OwnerId));auto* Source=Find(State.Inventories,J.SourceInventoryId);auto* Dest=Find(State.Warehouses,J.DestinationStorageId);
  if(!V||!A||J.Id.IsEmpty()||J.Id.Len()>128||Find(State.Transports,J.Id)||V->Bound||V->ArrearsCents||V->CityId!=J.FromCityId||!Find(Scenario.Definitions.Places,J.ToCityId))return Fail(TEXT("Unavailable vehicle or invalid route"));
  const auto* VT=Find(Scenario.Definitions.VehicleTypes,V->TypeId);J.ProviderId=V->OwnerId;
@@ -39,15 +40,15 @@ bool FSimulation::CancelTransport(const FString& Id,const FString& Actor) {
  auto* J=Find(State.Transports,Id);if(!J||J->OwnerId!=Actor||J->Status!=TEXT("planned"))return false;
  Find(State.Accounts,ActorAccount(Actor))->ReservedCents-=J->CostCents;if(Actor!=J->ProviderId)Find(State.Accounts,ActorAccount(J->ProviderId))->ReservedCents-=J->OperatingCents;
  if(!J->Empty){Find(State.Inventories,J->SourceInventoryId)->ReservedKg-=J->Kg;Find(State.Warehouses,J->DestinationStorageId)->ReservedIncomingPoints-=J->ReservedIncomingPoints;}
- auto* V=Find(State.Vehicles,J->VehicleId);V->Bound=false;V->TransportId.Empty();J->Status=TEXT("cancelled");return true;
+ auto* V=Find(State.Vehicles,J->VehicleId);V->Bound=false;V->TransportId.Empty();AccountingPrepaidService(*J);J->Status=TEXT("cancelled");return true;
 }
 void FSimulation::TransportHour(int64 Hour) {
  for(auto& J:State.Transports){auto* V=Find(State.Vehicles,J.VehicleId);
   if(J.Status==TEXT("planned")&&J.DepartureStep<=Hour){auto* A=Find(State.Accounts,ActorAccount(J.OwnerId));auto* P=Find(State.Accounts,ActorAccount(J.ProviderId));A->ReservedCents-=J.CostCents;if(J.OwnerId!=J.ProviderId){P->ReservedCents-=J.OperatingCents;const bool FreightPaid=Pay(A->Id,P->Id,J.FreightCents,TEXT("freight"),J.ReportSiteId.IsEmpty()?(Find(State.Inventories,J.SourceInventoryId)?Find(State.Inventories,J.SourceInventoryId)->StorageId:V->Id):J.ReportSiteId,V->Id);check(FreightPaid);}const bool OperationPaid=Pay(P->Id,V->CostRecipientAccountId,J.OperatingCents,TEXT("haul_operation"),J.OwnerId==J.ProviderId?(J.ReportSiteId.IsEmpty()?(Find(State.Inventories,J.SourceInventoryId)?Find(State.Inventories,J.SourceInventoryId)->StorageId:V->Id):J.ReportSiteId):V->Id);check(OperationPaid);
-   if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.SourceInventoryId;});State.Inventories[I].ReservedKg-=J.Kg;int64 SpoilCredit=TakeSpoilCredit(I,J.Kg);int64 Value=TakeStock(I,J.Kg);FInventory C;C.Id=TEXT("cargo.")+J.Id;C.OwnerId=J.OwnerId;C.GoodId=J.GoodId;C.StorageId=C.Id;C.SpoilRemainder=SpoilCredit;C.QuantityKg=J.Kg;C.BookValueCents=Value+J.CostCents;J.CargoInventoryId=C.Id;State.Inventories.Add(MoveTemp(C));}
-   J.Status=TEXT("moving");V->CityId.Empty();
+   if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.SourceInventoryId;});State.Inventories[I].ReservedKg-=J.Kg;int64 SpoilCredit=TakeSpoilCredit(I,J.Kg);FAccountingCost Parts;int64 Value=TakeStock(I,J.Kg,&Parts);FInventory C;C.Id=TEXT("cargo.")+J.Id;C.OwnerId=J.OwnerId;C.GoodId=J.GoodId;C.StorageId=C.Id;C.SpoilRemainder=SpoilCredit;C.QuantityKg=J.Kg;C.BookValueCents=Value+J.CostCents;if(Scenario.Economy.AccountingEnabled){C.AccountingCost=Parts;C.AccountingCost.Freight+=J.CostCents;}J.CargoInventoryId=C.Id;State.Inventories.Add(MoveTemp(C));}
+   if(Scenario.Economy.AccountingEnabled){if(J.Empty)AccountingPeriod(J.OwnerId).FreightExpense+=J.CostCents;if(J.OwnerId!=J.ProviderId)AccountingPeriod(J.ProviderId).FreightExpense+=J.OperatingCents;}AccountingPrepaidService(J);J.Status=TEXT("moving");V->CityId.Empty();
   }
-  if(J.Status==TEXT("moving")&&J.ArrivalStep<=Hour){J.ActualArrivalHour=Hour;if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.CargoInventoryId;});FInventory Cargo=State.Inventories[I];J.DeliveredKg=Cargo.QuantityKg;J.DeliveredBookCents=Cargo.BookValueCents;State.Inventories.RemoveAt(I);int32 D=EnsureStock(J.OwnerId,J.DestinationStorageId,J.GoodId);if(!State.Inventories[D].QuantityKg)State.Inventories[D].AcquiredHour=Hour;State.Inventories[D].SpoilRemainder+=Cargo.SpoilRemainder;State.Inventories[D].QuantityKg+=Cargo.QuantityKg;State.Inventories[D].BookValueCents+=Cargo.BookValueCents;Find(State.Warehouses,J.DestinationStorageId)->ReservedIncomingPoints-=J.ReservedIncomingPoints;}
+  if(J.Status==TEXT("moving")&&J.ArrivalStep<=Hour){J.ActualArrivalHour=Hour;if(!J.Empty){int32 I=State.Inventories.IndexOfByPredicate([&](const FInventory& X){return X.Id==J.CargoInventoryId;});FInventory Cargo=State.Inventories[I];J.DeliveredKg=Cargo.QuantityKg;J.DeliveredBookCents=Cargo.BookValueCents;State.Inventories.RemoveAt(I);int32 D=EnsureStock(J.OwnerId,J.DestinationStorageId,J.GoodId);if(!State.Inventories[D].QuantityKg)State.Inventories[D].AcquiredHour=Hour;State.Inventories[D].SpoilRemainder+=Cargo.SpoilRemainder;State.Inventories[D].QuantityKg+=Cargo.QuantityKg;State.Inventories[D].BookValueCents+=Cargo.BookValueCents;if(Scenario.Economy.AccountingEnabled)AccountingAdd(State.Inventories[D].AccountingCost,Cargo.AccountingCost);Find(State.Warehouses,J.DestinationStorageId)->ReservedIncomingPoints-=J.ReservedIncomingPoints;}
    J.Status=TEXT("arrived");if(J.OwnerId==Session.PlayerCompanyId)PlayerEvent(TEXT("transport"),J.Id,TEXT("Lieferung angekommen. Fahrzeug und verbleibende Ware stehen am Ziel bereit."));V->CityId=J.ToCityId;V->Bound=false;V->TransportId.Empty();
   }
  }

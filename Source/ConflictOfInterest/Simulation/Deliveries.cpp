@@ -135,10 +135,7 @@ bool FSimulation::PreviewDelivery(const FDeliveryRequest &Request, FString &E) c
     if (R.FromCityId == R.ToCityId)
         Back.Cost = 0;
     if (Out.Cost + Back.Cost > R.MaxFreightCents)
-        return Fail(FString::Printf(
-            TEXT(
-                "Kostenrahmen zu klein: Hin- und Rückfahrt zusammen mindestens %lld Cent für diese Fahrzeugzuordnung."),
-            Out.Cost + Back.Cost));
+        return Fail(TEXT("Kostenrahmen zu klein: Hin- und Rückfahrt zusammen mindestens ")+Display::Money(Out.Cost+Back.Cost)+TEXT(" für diese Fahrzeugzuordnung."));
     if (Supplier->Id != Buyer->Id)
     {
         const FString Partner = Supplier->Id == Request.OwnerId ? Buyer->Id : Supplier->Id;
@@ -162,19 +159,9 @@ bool FSimulation::PreviewDelivery(const FDeliveryRequest &Request, FString &E) c
             return Fail(TEXT("Partnerzustimmung fehlt: aktuell muss ein sichtbares passendes Verkaufsangebot/Kaufgebot "
                              "mindestens die Intervallmenge decken."));
         if (Selling ? R.PriceCentsPerKg < Quote : R.PriceCentsPerKg * R.Kg + Out.Cost + Back.Cost > Quote * R.Kg)
-            return Fail(FString::Printf(TEXT("Partner lehnt ab: öffentliches Limit %lld Cent/kg; bei fremdem Käufer "
-                                             "zählt Festpreis plus gedeckte Hin-/Rückfracht."),
-                                        Quote));
+            return Fail(TEXT("Partner lehnt ab: öffentliches Limit ")+Display::Money(Quote)+TEXT(" / kg; bei fremdem Käufer zählt Festpreis plus gedeckte Hin-/Rückfracht."));
     }
-    E = FString::Printf(TEXT("%s: %lld kg alle %lld h von %s nach %s. Fester Waren-/Verrechnungspreis %lld Cent/kg; "
-                             "Transportkäufer ist der Zielinhaber. Hin-/Rückfahrt voraussichtlich %lld Cent, "
-                             "Kostenrahmen %lld Cent je Fälligkeit. Fehlmengen verfallen je Termin; keine "
-                             "Strafzahlung. Bereits gebuchte Fahrten laufen auch nach Stopp/Ende weiter."),
-                        Supplier->Id == Buyer->Id
-                            ? TEXT("Interne Versorgung ohne Warenzahlung")
-                            : TEXT("Externer Vertrag mit Partnerzustimmung nach öffentlichem Angebot"),
-                        R.Kg, R.IntervalHours, *Find(D.Places, R.FromCityId)->Name, *Find(D.Places, R.ToCityId)->Name,
-                        R.PriceCentsPerKg, Out.Cost + Back.Cost, R.MaxFreightCents);
+    E = FString(Supplier->Id == Buyer->Id ? TEXT("Interne Versorgung ohne Warenzahlung") : TEXT("Externer Vertrag mit Partnerzustimmung nach öffentlichem Angebot")) + TEXT(": ") + Display::Quantity(R.Kg) + TEXT(" alle ") + Display::Duration(R.IntervalHours) + TEXT(" von ") + Find(D.Places,R.FromCityId)->Name + TEXT(" nach ") + Find(D.Places,R.ToCityId)->Name + TEXT(". Vertraglich fester Waren-/Verrechnungspreis ") + Display::Money(R.PriceCentsPerKg) + TEXT(" / kg; Transportkäufer ist der Zielinhaber. Hin-/Rückfahrt voraussichtlich ") + Display::Money(Out.Cost+Back.Cost) + TEXT("; Kostenrahmen ") + Display::Money(R.MaxFreightCents) + TEXT(" je Fälligkeit. Fehlmengen verfallen je Termin; keine Strafzahlung. Bereits gebuchte Fahrten laufen auch nach Stopp/Ende weiter. Interne Aufschläge verändern keine Konzernwarenkosten und keinen Konzernumsatz.");
     return true;
 }
 bool FSimulation::ChangeDelivery(const FDeliveryRequest &R, FString &E)
@@ -387,7 +374,7 @@ void FSimulation::RunDeliveryDue(const FString &ContractId, int64 H)
                 return false;
             }
             int64 Credit = TakeSpoilCredit(Source, Qty);
-            TakeStock(Source, Qty);
+            int64 SoldBook=TakeStock(Source, Qty);AccountingSale(Contract.SupplierId,Price,SoldBook);
             CargoSource = EnsureStock(Contract.BuyerId, Contract.SourceStoreId, R.GoodId);
             if (State.Inventories[CargoSource].QuantityKg > 1000000000 - Qty)
             {
@@ -398,7 +385,7 @@ void FSimulation::RunDeliveryDue(const FString &ContractId, int64 H)
             if (!Stock.QuantityKg)
                 Stock.AcquiredHour = H;
             Stock.QuantityKg += Qty;
-            Stock.BookValueCents += Price;
+            Stock.BookValueCents += Price;if(Scenario.Economy.AccountingEnabled)Stock.AccountingCost.Material+=Price;
             Stock.SpoilRemainder += Credit;
             Slot->PurchaseCents = Price;
             if(Contract.Id.StartsWith(TEXT("retail.supply."))){auto* Status=Find(State.OperatingStatus,Contract.DestinationStoreId);if(Status->BudgetWindow!=H/Scenario.Economy.RuleBudgetHours){Status->BudgetWindow=H/Scenario.Economy.RuleBudgetHours;Status->SpentCents=0;}Status->SpentCents+=Price;}
@@ -554,6 +541,7 @@ void FSimulation::ProgressDelivery(const FString &SlotId, int64 H)
         return;
     }
     X = Find(State.DeliverySlots, SlotId);
+    if(Scenario.Economy.AccountingEnabled&&Provider!=C.BuyerId){auto* Job=Find(State.Transports,Back.Id);Job->AccountingServicePayerId=C.BuyerId;Job->AccountingServiceCents=Cost;}
     X->ReturnId = Back.Id;
     X->Status = TEXT("returning");
     X->Cause = TEXT("Bezahlte Rückfahrt gebucht; Fahrzeug wird nicht teleportiert.");

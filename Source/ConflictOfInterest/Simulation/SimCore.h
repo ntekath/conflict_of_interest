@@ -86,6 +86,9 @@ private:
  FSiteLedger& SiteLedger(const FString&,const FString&);void SitePayment(const FString&,const FString&,int64,bool);void InternalDelivery(const FDeliveryContract&,int64);
  void RetailPlan(int64 Hour);void RetailConsume();bool ValidateRetail(FString&) const;
  void HouseholdPayroll(int64 Hour);bool ValidateHouseholds(FString&) const;
+ void AccountingCharge(const FString&,const FString&,int64,int64);int64 AccountingChargeHour(const FString&,const FString&,int64) const;void AccountingPrepaidService(FTransport&);void InitializeAccounting();void AccountingHour(int64);void RefreshAccountingPrices(int64,bool Force=false);void CloseAccounting(int64);bool ValidateAccounting(FString&) const;
+ FAccountingPeriod& AccountingPeriod(const FString&);void AccountingPayment(const FString&,const FString&,int64,const FString&);void AccountingSale(const FString&,int64,int64);FAccountingCost AccountingProduction(const FFacility&,int64,int64);
+ void AccountingAssetBuy(const FString&,const FString&,const FString&,int64);void AccountingConstruction(const FConstructionProject&);
  void EconomyHour(int64 Hour);
  void Payroll(int64 Hour);
  void Produce(int64 Hour);
@@ -93,7 +96,7 @@ private:
  FString ActorAccount(const FString& ActorId) const;
  int32 StockIndex(const FString& Actor,const FString& Store,const FString& Good) const;
  int32 EnsureStock(const FString& Actor,const FString& Store,const FString& Good);
- int64 TakeStock(int32 Index,int64 Kg);int64 TakeSpoilCredit(int32 Index,int64 Kg);
+ int64 TakeStock(int32 Index,int64 Kg,FAccountingCost* Removed=nullptr);int64 TakeSpoilCredit(int32 Index,int64 Kg);
  FPlayerDay& PlayerDay();void PlayerEvent(const FString& Kind,const FString& Object,const FString& Text);void PlayerWarnings();void PublishPlayer(FSnapshot&) const;
  void BeginDayMetrics(int64 Day);void FinishDayMetrics(int64 Step);FDayMetric& DayMetric(const FString& Region,const FString& Good);
  void InitializeAudit();void PublishEconomy(FSnapshot& Out) const;

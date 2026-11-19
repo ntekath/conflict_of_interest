@@ -1,0 +1,45 @@
+{
+  "package": "AP09.4",
+  "date_local": "2026-11-20",
+  "engine": "5.8.4",
+  "test_count": 73,
+  "new_accounting_tests": 12,
+  "resolutions": [
+    {
+      "size": [
+        1280,
+        720
+      ],
+      "checks": [
+        "sale dialog uses percent markup instead of free USD sale price",
+        "basis USD 0.03/kg and markup 20% yield rounded USD 0.04/kg",
+        "entered 80,5%, refreshed preview USD 0.06/kg, 100 kg calculation USD 6.00",
+        "confirmation reachable; details scroll in dialog",
+        "budgeted advance 744 uses ordinary economy hours, no money/goods commands",
+        "01.02.1913 January result USD -398.58 matches company detail",
+        "January: revenue USD 8.04, COGS USD 20.10, period expense USD 372.00, spoilage USD 14.52"
+      ]
+    },
+    {
+      "size": [
+        1920,
+        1080
+      ],
+      "checks": [
+        "retail operating dialog exposes sale permission and percentage markup",
+        "explicit startup basis, unit-cost components, time and version readable",
+        "purchase limit USD 0.10/kg remains a procurement cap; sale price derived USD 0.04/kg",
+        "fields, buttons and scrollable cost details reachable"
+      ]
+    }
+  ],
+  "save_version": 6,
+  "builds": [
+    "Editor Development succeeded",
+    "Game Development succeeded",
+    "Game Shipping succeeded"
+  ],
+  "developer_money_or_goods_sources": false,
+  "existing_save_slots_overwritten": false,
+  "capture": "Native screenshots inspected through computer-use; findings recorded as text."
+}

@@ -93,8 +93,10 @@ void FSimulation::HouseholdPayroll(int64 H)
             if (Count)
                 J.Facility->PaidUntilHour = H + Q.PayrollHours;
         }
-        else
+        else{
             J.Service->PaidUntilHour = H + Q.PayrollHours;
+            if(Scenario.Economy.AccountingEnabled)J.Service->AccountingPaidDailyWageCents=J.Wage;
+        }
     }
 }
 bool FSimulation::ValidateHouseholds(FString &E) const
@@ -126,7 +128,7 @@ bool FSimulation::ValidateHouseholds(FString &E) const
         const auto *W = Find(State.Warehouses, S.Id);
         const auto *V = Find(State.Vehicles, S.Id);
         if (Seen.Contains(S.Id) || (!W && !V) || S.PaidUntilHour < 0 ||
-            S.PaidUntilHour > State.EconomyHour + Q.PayrollHours)
+            S.PaidUntilHour > State.EconomyHour + Q.PayrollHours || (Q.AccountingEnabled && (S.AccountingPaidDailyWageCents < 0 || S.AccountingPaidDailyWageCents > 1000000 || (!S.Employment.IsEmpty() && !S.AccountingPaidDailyWageCents))))
         {
             E = TEXT("Invalid employment asset: ") + S.Id;
             return false;

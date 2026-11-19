@@ -1,0 +1,25 @@
+{
+  "format_version": 6,
+  "supported_migrations": [
+    4,
+    5
+  ],
+  "checks": [
+    "legacy canonical checksum including old AccountingOnly field",
+    "baseline scenario compatibility",
+    "version 5 cargo moving, balances and reservations unchanged",
+    "physical quantities and aggregate carrying amounts unchanged",
+    "new accounting begins at loaded hour; no invented prior monthly result",
+    "version 6 save/reload identical through arrival and month boundary",
+    "malformed cost component total rejected atomically",
+    "prepaid hired return recognized exactly once after save/load",
+    "actual paid service wage retained across an asset type upgrade",
+    "uncertain legacy weekly payroll extends uncertified opening period across month boundary"
+  ],
+  "limitations": [
+    "old detailed component history is not reconstructed",
+    "partial opening month is not reported as a full monthly result",
+    "unknown legacy asset basis yields unavailable disposal/monthly valuation",
+    "versions 1 through 3 remain incompatible"
+  ]
+}

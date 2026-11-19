@@ -8,7 +8,7 @@ namespace
 FString Digest(const FSaveData &D)
 {
     FFingerprint H;
-    H.LegacyRetail = D.FormatVersion == 4;
+    H.LegacyRetail = D.FormatVersion == 4;H.LegacyAccounting=D.FormatVersion<6;
     H.Write(D);
     return H.Finish();
 }
@@ -56,17 +56,17 @@ bool Decode(const FString &Json, FSaveData &D, FString &E)
         !Root->TryGetStringField(TEXT("Checksum"), Checksum) || !Root->TryGetObjectField(TEXT("Payload"), Payload))
         return Fail(TEXT("Ungültiger Spielstandkopf."));
     double VersionCode = 0;
-    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || (VersionCode != 4 && VersionCode != 5))
-        return Fail(TEXT("Inkompatible Spielstandversion. AP09.3 benötigt Version 5 (Version 4 wird geprüft migriert); "
+    if (!(*Payload)->TryGetNumberField(TEXT("FormatVersion"), VersionCode) || (VersionCode != 4 && VersionCode != 5 && VersionCode != 6))
+        return Fail(TEXT("Inkompatible Spielstandversion. AP09.4 benötigt Version 6 (Version 4/5 werden geprüft migriert); "
                          "ältere Dateien bleiben unverändert."));
     FRead R{*Payload, E, true};
-    R.LegacyRetail = VersionCode == 4;
+    R.LegacyRetail = VersionCode == 4;R.LegacyAccounting=VersionCode<6;
     D.Fields(R);
     R.Complete();
     if (!E.IsEmpty())
         return false;
     if (((D.FormatVersion != 4 || D.SimulationVersion != 4 || D.DefinitionsVersion != 4) &&
-         (D.FormatVersion != 5 || D.SimulationVersion != 5 || D.DefinitionsVersion != 5)) ||
+         (D.FormatVersion != 5 || D.SimulationVersion != 5 || D.DefinitionsVersion != 5) && (D.FormatVersion != 6 || D.SimulationVersion != 6 || D.DefinitionsVersion != 6)) ||
         D.Platform != TEXT("Win64") || D.RandomAlgorithm != TEXT("entity-fnv-splitmix-v1"))
         return Fail(TEXT("Inkompatible Spielstand-, Simulations- oder Definitionsversion."));
     if (Checksum != Digest(D))
@@ -219,6 +219,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
             if (!Find(D.State.AssetSales, Sale.Id) && Sale.Id.StartsWith(TEXT("retail.sale.")))
                 D.State.AssetSales.Add(Sale);
     }
+    else if(D.FormatVersion==5){auto Hash=[](FScenario S){S.Settings.Seed=0;S.PlayerCompanyId.Empty();FFingerprint H;H.LegacyAccounting=true;H.Write(S);return H.Finish();};if(D.CompatibilityHash!=Hash(D.Scenario)||D.CompatibilityHash!=Hash(Expected)){E=TEXT("Version-5-Migration: Basisszenario passt nicht.");return false;}const auto Seed=D.Scenario.Settings.Seed;D.Scenario=Expected;D.Scenario.Settings.Seed=Seed;D.Scenario.PlayerCompanyId=D.Session.PlayerCompanyId;}
     else if (D.CompatibilityHash != SaveCompatibility(D.Scenario) || D.CompatibilityHash != SaveCompatibility(Expected))
     {
         E = TEXT("Szenario-/Konfigurationsdaten passen nicht zu diesem Spielstand.");
@@ -245,6 +246,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
         C.InitializeOperatingRules();
     }
 
+    if(D.FormatVersion<6)C.InitializeAccounting();
     if (D.LastSequence < 0 || D.SnapshotVersion < 0 || D.CreditMicros < 0 ||
         D.CreditMicros > C.Scenario.Settings.RealMicrosPerStep * C.Scenario.Settings.MaxBacklogSteps ||
         D.Pending.Num() > C.Scenario.Settings.MaxPendingCommands || D.Results.Num() > 128)

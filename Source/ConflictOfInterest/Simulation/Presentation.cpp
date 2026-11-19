@@ -104,6 +104,9 @@ bool ParseMoneyInput(const FString &Input, int64 &Cents, bool AllowZero)
     Cents = Result;
     return true;
 }
+FString MarkupInput(int64 Permille){return LexToString(Permille/10)+(Permille%10?FString::Printf(TEXT(",%lld"),Permille%10):FString());}
+bool ParseMarkupInput(const FString& S,int64& Permille){int64 N=0;if(!ParseMoneyInput(S,N,true)||N%10)return false;Permille=N/10;return true;}
+bool IsMarkupField(const FString& Key){return Key==TEXT("markup")||(Key.StartsWith(TEXT("op."))&&Key.EndsWith(TEXT(".markup")));}
 bool IsMoneyField(const FString &Key)
 {
     return Key == TEXT("price") || Key == TEXT("op.wage") || Key == TEXT("op.budget") ||
@@ -219,6 +222,12 @@ FCompanyPresentation CompanyPresentation(const FState &S, const FDefinitions &D,
                                      ? Begin.ToString(TEXT("%d.%m.%Y")) + TEXT(" bis ") +
                                            End.ToString(TEXT("%d.%m.%Y")) + TEXT(" (Ende exklusiv)")
                                      : TEXT("Seit Partiebeginn noch kein vollständig abgeschlossener Kalendermonat");
+    }
+    if(S.AccountingStartHour>=0){const FAccountingPeriod* Last=nullptr;for(const auto& Month:S.AccountingPeriods)if(Month.ActorId==Actor&&Month.Complete&&(!Last||Month.EndHour>Last->EndHour))Last=&Month;
+        P.MonthlyResult.State=EDisplayState::NoMonthlyHistory;P.MonthlyResult.Period=TEXT("Seit Beginn der Kostenrechnung noch kein vollständiger Monatsabschluss");
+        P.MonthlyResult.Source=TEXT("Persistierter monatlicher Kostenabschluss der eigenen Firma");
+        if(Last){P.MonthlyResult.Period=Display::Period(StartDate,Last->BeginHour,Last->EndHour);P.MonthlyResult.State=Last->Partial?EDisplayState::NoMonthlyHistory:Last->Known?EDisplayState::Value:EDisplayState::Unavailable;P.MonthlyResult.Value=Last->Profit();}
+        P.MonthlyResult.Calculation=TEXT("Externe Waren-/Dienstleistungserlöse minus realisierter Wareneinsatz, Löhne/Betrieb abzüglich aktivierter Herstellungskosten, Leer-/Rückfracht und Verderb, zuzüglich realisierter Assetabgänge. Keine internen Umsätze oder internen Aufschläge. Teilmonate nach Migration sind keine vollständige Monatshistorie.");
     }
     P.NetWorth =
         Metric(TEXT("Nettovermögen"), TEXT("Vollständige Assetbewertung und konsolidierte Verbindlichkeiten fehlen"),

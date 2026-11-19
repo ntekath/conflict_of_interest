@@ -1,4 +1,5 @@
 #include "SimCore.h"
+#include "Accounting.h"
 #include "CityHubs.h"
 #include "Investments.h"
 #include "SimArchive.h"
@@ -16,7 +17,7 @@ bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FS
  auto* A=Find(State.Accounts,From);auto* B=Find(State.Accounts,To);
  if(!A||!B||Cents<0||Cents>A->BalanceCents-A->ReservedCents||B->BalanceCents>MAX_int64-Cents)return false;
  if(!Cents||From==To)return true;
- A->BalanceCents-=Cents;B->BalanceCents+=Cents;SitePayment(A->OwnerId,FromSite,Cents,false);SitePayment(B->OwnerId,ToSite,Cents,true);
+ A->BalanceCents-=Cents;B->BalanceCents+=Cents;AccountingPayment(A->OwnerId,B->OwnerId,Cents,Reason);SitePayment(A->OwnerId,FromSite,Cents,false);SitePayment(B->OwnerId,ToSite,Cents,true);
  if(A->OwnerId==Session.PlayerCompanyId)PlayerDay().ExpenseCents+=Cents;
  if(B->OwnerId==Session.PlayerCompanyId)PlayerDay().IncomeCents+=Cents;
  State.CashFlows.Add({From,To,Reason,State.EconomyHour,Cents});
@@ -34,9 +35,10 @@ int32 FSimulation::EnsureStock(const FString& Actor,const FString& Store,const F
 }
 int64 FSimulation::TakeSpoilCredit(int32 Index,int64 Kg)
 {auto& I=State.Inventories[Index];int64 Credit=I.QuantityKg?I.SpoilRemainder/I.QuantityKg*Kg+(I.SpoilRemainder%I.QuantityKg)*Kg/I.QuantityKg:0;I.SpoilRemainder-=Credit;return Credit;}
-int64 FSimulation::TakeStock(int32 Index,int64 Kg)
+int64 FSimulation::TakeStock(int32 Index,int64 Kg,FAccountingCost* Removed)
 {
  auto& I=State.Inventories[Index];check(Kg>=0&&Kg<=I.QuantityKg-I.ReservedKg);
+ if(Scenario.Economy.AccountingEnabled){const auto C=AccountingPortion(I.AccountingCost,Kg,I.QuantityKg);if(Removed)*Removed=C;I.AccountingCost.Material-=C.Material;I.AccountingCost.Labor-=C.Labor;I.AccountingCost.Operating-=C.Operating;I.AccountingCost.Freight-=C.Freight;I.BookValueCents-=C.Total();I.QuantityKg-=Kg;return C.Total();}
  int64 Value=I.QuantityKg?I.BookValueCents/I.QuantityKg*Kg+(I.BookValueCents%I.QuantityKg)*Kg/I.QuantityKg:0;
  I.BookValueCents-=Value;I.QuantityKg-=Kg;return Value;
 }
@@ -48,7 +50,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
@@ -135,7 +137,9 @@ void FSimulation::Produce(int64 Hour)
   int64 OutputKg=0;for(const auto& A:T->Outputs)OutputKg+=A.Kg*B;
   int64 Workers=0;for(const auto& J:F.Employment)Workers+=J.Workers;
   int64 WageCost=(Workers*F.PaidDailyWageCents+23)/24;
-  for(const auto& A:T->Outputs){int32 I=EnsureStock(F.OwnerId,F.StorageId,A.GoodId);State.Inventories[I].QuantityKg+=A.Kg*B;State.Inventories[I].BookValueCents+=(InputValue+WageCost)*(A.Kg*B)/FMath::Max(1LL,OutputKg);Find(State.GoodsAudit,A.GoodId)->ProducedKg+=A.Kg*B;}
+  FAccountingCost Manufacturing=AccountingProduction(F,B,Hour);Manufacturing.Material=InputValue;
+  int64 RemainingKg=OutputKg;FAccountingCost Remaining=Manufacturing;
+  for(const auto& A:T->Outputs){int32 I=EnsureStock(F.OwnerId,F.StorageId,A.GoodId);State.Inventories[I].QuantityKg+=A.Kg*B;if(Scenario.Economy.AccountingEnabled){auto Part=AccountingPortion(Remaining,A.Kg*B,RemainingKg);Remaining.Material-=Part.Material;Remaining.Labor-=Part.Labor;Remaining.Operating-=Part.Operating;Remaining.Freight-=Part.Freight;RemainingKg-=A.Kg*B;AccountingAdd(State.Inventories[I].AccountingCost,Part);State.Inventories[I].BookValueCents+=Part.Total();}else State.Inventories[I].BookValueCents+=(InputValue+WageCost)*(A.Kg*B)/FMath::Max(1LL,OutputKg);Find(State.GoodsAudit,A.GoodId)->ProducedKg+=A.Kg*B;}
   if(ResourceState&&Resource){ResourceState->RemainingKg-=Resource*B;ResourceState->ExtractedKg+=Resource*B;}
   if(T->ResourceRequirement==TEXT("forest"))Region->RemainingForestKg-=Resource*B;
   if(T->ResourceRequirement==TEXT("ore"))Region->RemainingOreKg-=Resource*B;
@@ -146,7 +150,7 @@ void FSimulation::EconomyHour(int64 Hour)
 {
  if(Scenario.Economy.Stage<1)return;
  if(Scenario.Economy.Stage>=4){TransportHour(Hour);Costs(Hour);Spoil();}
- Payroll(Hour);Produce(Hour);
+ Payroll(Hour);AccountingHour(Hour);RefreshAccountingPrices(Hour);Produce(Hour);
  if(Scenario.Economy.Stage>=2)ExpireOrders();
  if(Scenario.Economy.Stage>=4){DeliveryService(Hour);OperatingService(Hour);Companies(Hour);if(Scenario.Economy.RetailEnabled)RetailPlan(Hour);}
  if(Scenario.Economy.Stage>=3)Demand(Hour);

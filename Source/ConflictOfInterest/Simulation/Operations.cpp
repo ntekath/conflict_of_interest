@@ -1,5 +1,6 @@
 #include "SimArchive.h"
 #include "SimCore.h"
+#include "Accounting.h"
 namespace CoISim
 {
 namespace
@@ -49,6 +50,7 @@ FOperatingRule DefaultOperatingRule(const FScenario &S, const FString &Id, const
             R.Goods.Add(X);
         }
     if(!F&&S.Economy.RetailEnabled){const auto* W=Find(S.InitialState.Warehouses,Id);const auto* T=W?Find(S.Definitions.WarehouseTypes,W->TypeId):nullptr;if(T&&!T->RetailOffers.IsEmpty()){R.Explicit=true;R.Enabled=true;R.DailyWageCents=T->RetailWageCents;for(auto& G:R.Goods)if(const auto* Offer=T->RetailOffers.FindByPredicate([&](const FRetailOffer& X){return X.GoodId==G.GoodId;})){G.TargetKg=Offer->TargetKg;G.BuyLimitCents=Offer->BuyLimitCents;G.SellLimitCents=Offer->PriceCents;}}}
+    for(auto& G:R.Goods)G.AccountingMarkupPermille=S.Economy.AccountingDefaultMarkupPermille;
     return R;
 }
 } // namespace
@@ -121,7 +123,7 @@ bool FSimulation::PreviewOperatingRule(const FOperatingRule &R, FString &E) cons
             G.TargetKg < G.MinimumKg || G.TargetKg > Q.RuleMaxStockKg || G.BuyLimitCents < 0 ||
             G.BuyLimitCents > Q.MaxPriceCents || G.SellLimitCents < 0 || G.SellLimitCents > Q.MaxPriceCents)
             return Fail(TEXT("Warenregel ungültig: Reserve ≤ Zielbestand; Mengen und USD/kg innerhalb der Grenzen."));
-        Goods.Add(G.GoodId);
+        if(Q.AccountingEnabled&&(G.AccountingMarkupPermille<0||G.AccountingMarkupPermille>Q.AccountingMaxMarkupPermille))return Fail(TEXT("Verkaufsaufschlag außerhalb der konfigurierten Grenzen."));Goods.Add(G.GoodId);
         if(Q.RetailEnabled&&!F){const auto* Shop=Find(Scenario.Definitions.WarehouseTypes,W->TypeId);if(!Shop->RetailOffers.IsEmpty()&&!Shop->RetailOffers.ContainsByPredicate([&](const FRetailOffer& X){return X.GoodId==G.GoodId;})&&(G.BuyLimitCents||G.SellLimitCents||G.TargetKg||G.MinimumKg))return Fail(TEXT("Geschäftsregeln nur für das definierte Sortiment; andere Waren können separat transportiert werden."));}
 
         if (T)
@@ -211,6 +213,7 @@ bool FSimulation::OperatingOrder(const FString &Actor, const FString &Store, con
     O.Side = Side;
     O.OriginalKg = FMath::Min(Kg, Scenario.Economy.MaxOrderKg);
     O.LimitCentsPerKg = FMath::Min(Price, Scenario.Economy.MaxPriceCents);
+    if(const auto* R=Find(State.OperatingRules,RuleId))if(const auto* G=R->Goods.FindByPredicate([&](const FStockRule& X){return X.GoodId==Good;}))O.AccountingMarkupPermille=G->AccountingMarkupPermille;
     if (!PlaceOrder(O, Error))
         return false;
     State.Orders.Last().RuleId = RuleId;
@@ -294,7 +297,7 @@ void FSimulation::OperatingService(int64 H)
                                 Keep = FMath::Max(Keep, FMath::Max(X.MinimumKg, X.TargetKg));
                 }
             int64 SellPrice = G.SellLimitCents;
-            if (!R.Explicit && T && SellPrice)
+            if (!Scenario.Economy.AccountingEnabled && !R.Explicit && T && SellPrice)
             {
                 const auto *Output = T->Outputs.FindByPredicate([&](const FAmount &A) { return A.GoodId == G.GoodId; });
                 int64 Unit = Quantity ? (Stock->BookValueCents + Quantity - 1) / Quantity
@@ -305,6 +308,7 @@ void FSimulation::OperatingService(int64 H)
                     (24 * Output->Kg);
                 SellPrice = FMath::Max(1LL, ((Unit + Overhead) * (1000 + T->MarginPermille) + 999) / 1000);
             }
+            if(Scenario.Economy.AccountingEnabled&&SellPrice){const auto* Q=AccountingFindPrice(State.AccountingPrices,R.OwnerId,W->Id,G.GoodId);SellPrice=Q?AccountingPrice(Q->Base(),G.AccountingMarkupPermille,Scenario.Economy.MaxPriceCents):0;}
             if (SellPrice && !(Scenario.Economy.RetailEnabled&&!Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailOffers.IsEmpty()) && Quantity - Reserved > Keep)
             {
                 FString Error;

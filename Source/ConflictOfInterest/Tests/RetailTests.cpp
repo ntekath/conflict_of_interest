@@ -16,7 +16,7 @@ bool RetailFixture(FString &J, FCoIGeoMapData &G, TFunction<void(TSharedPtr<FJso
     auto *C = LoadObject<UCoIGeoCatalog>(nullptr, TEXT("/Game/Geography/Data/GeoCatalog.GeoCatalog"));
     if (!C || !G.Load(C->DefinitionJson, E) ||
         !FFileHelper::LoadFileToString(J, *(FPaths::ProjectContentDir() / TEXT("Simulation/") +
-                                            (Legacy ? TEXT("ap092_legacy_fixture.coisim") : TEXT("scenario.coisim")))))
+                                            (Legacy ? TEXT("ap092_legacy_fixture.coisim") : TEXT("ap093_legacy_fixture.coisim")))))
         return false;
     TSharedPtr<FJsonObject> R;
     FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(J), R);

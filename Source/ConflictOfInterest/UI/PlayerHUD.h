@@ -35,7 +35,7 @@ private:
  UPROPERTY() TObjectPtr<UBorder> MapControls;UPROPERTY() TObjectPtr<UBorder> MapLegend;
  UPROPERTY() TObjectPtr<UTextBlock> LegendText;UPROPERTY() TObjectPtr<UTextBlock> MetricDetails;
  UPROPERTY() TArray<TObjectPtr<UBorder>> LegendColors;
- void RefreshMap();
+ void RefreshMap();void AccountingReport();void CostInfo(class UPanelWidget*,const FString& StoreId,const FString& GoodId,int64 Markup);
  UPROPERTY() TObjectPtr<UBorder> Top;UPROPERTY() TObjectPtr<UBorder> Nav;UPROPERTY() TObjectPtr<UBorder> Work;UPROPERTY() TObjectPtr<UBorder> SelectionPanel;UPROPERTY() TObjectPtr<UBorder> Notices;UPROPERTY() TObjectPtr<UBorder> Debug;UPROPERTY() TObjectPtr<UBorder> ModalShade;UPROPERTY() TObjectPtr<UBorder> Dialog;
  UPROPERTY() TObjectPtr<UTextBlock> AccountText;UPROPERTY() TObjectPtr<UTextBlock> ClockText;UPROPERTY() TObjectPtr<UTextBlock> SelectionText;UPROPERTY() TObjectPtr<UTextBlock> NoticeText;UPROPERTY() TObjectPtr<UTextBlock> DebugText;UPROPERTY() TObjectPtr<UTextBlock> WorkTitle;UPROPERTY() TObjectPtr<UTextBlock> FormPreview;UPROPERTY() TObjectPtr<UTextBlock> FormState;
  UPROPERTY() TObjectPtr<UCoIActionButton> RouteOpenButton;
