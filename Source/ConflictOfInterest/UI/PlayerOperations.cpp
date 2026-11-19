@@ -13,7 +13,7 @@ FString OpNum(int64 N)
 }
 FString OpMoney(int64 N)
 {
-    return FText::AsNumber((double)N / 100.).ToString() + TEXT(" USD");
+    return Display::Money(N);
 }
 } // namespace
 void UCoIPlayerHUD::OperatingInfo(const FString &Asset)
@@ -42,7 +42,7 @@ void UCoIPlayerHUD::OperatingInfo(const FString &Asset)
         Text(Body,TEXT("GESCHÄFT · realer Verkaufsbestand am Lagerort · nur Haushaltsverkauf aus dem Sortiment"),13,true);
         Text(Body,TEXT("Heute verkauft ")+OpNum(W->RetailSoldKg)+TEXT(" kg · Erlös ")+OpMoney(W->RetailRevenueCents)+TEXT(" · abgegangener Warenbuchwert ")+OpMoney(W->RetailCostCents)+TEXT(". Kein vollständiger Periodengewinn; laufende Kosten siehe Standortbericht."),12);
         Text(Body,TEXT("Verkaufskapazität ")+OpNum(T->RetailDailyKg)+TEXT(" kg/Tag bei ")+OpNum(T->RetailJobs)+TEXT(" bezahlten Stellen, Lohn ")+OpMoney(T->RetailWageCents)+TEXT(" pro Stelle/Tag. Bei weniger Personal proportional begrenzt."),12);
-        for(const auto& O:T->RetailOffers){const auto* Good=Find(P.Catalog.Goods,O.GoodId);const auto* Price=R->Goods.FindByPredicate([&](const FStockRule& X){return X.GoodId==O.GoodId;});Text(Body,(Good?Good->Name:TEXT("Ware"))+TEXT(" · Qualität ")+OpNum(O.QualityPermille)+TEXT("/1000 · Preis ")+OpMoney(Price?Price->SellLimitCents:0)+TEXT(" / kg · Einkaufslimit ")+OpMoney(Price?Price->BuyLimitCents:0)+TEXT(" / kg (Vorgaben unter Lagerregeln; Übergang bis AP09.4)."),12);}
+        for(const auto& O:T->RetailOffers){const auto* Good=Find(P.Catalog.Goods,O.GoodId);const auto* Price=R->Goods.FindByPredicate([&](const FStockRule& X){return X.GoodId==O.GoodId;});Text(Body,(Good?Good->Name:TEXT("Ware"))+TEXT(" · Qualität ")+Display::Percent(double(O.QualityPermille)/1000.)+TEXT(" des Referenzniveaus · Preis ")+OpMoney(Price?Price->SellLimitCents:0)+TEXT(" / kg · Einkaufslimit ")+OpMoney(Price?Price->BuyLimitCents:0)+TEXT(" / kg (Vorgaben unter Lagerregeln; Übergang bis AP09.4)."),12);}
         Text(Body,T->RetailName+TEXT(" · zugeordnete Stellen ")+OpNum(W->RetailWorkers)+TEXT(" / ")+OpNum(T->RetailJobs)+TEXT(" · bezahlt bis ")+Time(W->RetailPaidUntil),12);Text(Body,W->RetailCause,12);}}
     Text(Body, X->Cause, 12);Button(Body,TEXT("Lieferbeziehung ab diesem Asset …"),TEXT("deliveryNew|")+Asset);
     Button(Body, R->RecipeId.IsEmpty() ? TEXT("Lagerregeln …") : TEXT("Betriebsregeln …"), TEXT("operate|") + Asset);
@@ -111,7 +111,7 @@ void UCoIPlayerHUD::OpenOperating(const FString &Asset)
         auto *Production = Row(Form);
         Field(Production, TEXT("op.util"), TEXT("Geplante Auslastung % (0–100)"),
               OpNum(OperatingDraft.UtilizationPermille / 10));
-        Field(Production, TEXT("op.wage"), TEXT("Lohnangebot Cent / Stelle / Tag"),
+        Field(Production, TEXT("op.wage"), TEXT("Lohnangebot USD / Stelle / Tag"),
               OpNum(OperatingDraft.DailyWageCents));
         Text(Form,
              TEXT("Auslastung 0 hält Produktion an. Löhne ändern sich beim nächsten regulären Lohnlauf; bereits "
@@ -119,7 +119,7 @@ void UCoIPlayerHUD::OpenOperating(const FString &Asset)
              11);
     }
     Field(Form, TEXT("op.budget"),
-          TEXT("Kaufbudget in Cent je ") + OpNum(P.Rules.RuleBudgetHours) + TEXT(" h (0 = keine neuen Käufe)"),
+          TEXT("Kaufbudget in USD je ") + OpNum(P.Rules.RuleBudgetHours) + TEXT(" h (0 = keine neuen Käufe)"),
           OpNum(OperatingDraft.BuyBudgetCents));
     Text(Form,
          TEXT("Das Kaufbudget gilt je fester Simulationsperiode. Löhne, Betrieb, Lager und Transport sind "
@@ -141,10 +141,10 @@ void UCoIPlayerHUD::OpenOperating(const FString &Asset)
             Output = T->Outputs.ContainsByPredicate([&](const FAmount &A) { return A.GoodId == G.GoodId; });
         }
         if (Input)
-            Field(Values, TEXT("op.") + G.GoodId + TEXT(".buy"), TEXT("Einkauf max. Cent/kg; 0 aus"),
+            Field(Values, TEXT("op.") + G.GoodId + TEXT(".buy"), TEXT("Einkauf max. USD/kg; 0 aus"),
                   OpNum(G.BuyLimitCents));
         if (Output)
-            Field(Values, TEXT("op.") + G.GoodId + TEXT(".sell"), IsShop?TEXT("Ladenpreis Cent/kg; 0 aus"):TEXT("Überschuss min. Cent/kg; 0 aus"),
+            Field(Values, TEXT("op.") + G.GoodId + TEXT(".sell"), IsShop?TEXT("Ladenpreis USD/kg; 0 aus"):TEXT("Überschuss min. USD/kg; 0 aus"),
                   OpNum(G.SellLimitCents));
     }
     if(IsShop)Text(Form,TEXT("Haushalte kaufen aus eigenem verfügbarem Bestand über der Mindestreserve. Zielbestand ist ein Nachschubziel, keine Verkaufssperre. Kaufbudget begrenzt automatische Warenkäufe inklusive erzeugter Lieferregeln; Fracht und Löhne bleiben reale separate Kosten. Nur das angezeigte Sortiment ist freigegeben."),12);
@@ -170,14 +170,14 @@ bool UCoIPlayerHUD::ReadOperatingForm(FString &Error)
         if (!ReadPositive(TEXT("op.util"), Percent, true) || Percent > 100 ||
             !ReadPositive(TEXT("op.wage"), OperatingDraft.DailyWageCents))
         {
-            Error = TEXT("Auslastung als ganze 0–100 % und positiven Tageslohn in Cent eingeben.");
+            Error = TEXT("Auslastung als ganze 0–100 % und positiven Tageslohn in USD eingeben.");
             return false;
         }
         OperatingDraft.UtilizationPermille = Percent * 10;
     }
     if (!ReadPositive(TEXT("op.budget"), OperatingDraft.BuyBudgetCents, true))
     {
-        Error = TEXT("Kaufbudget als ganze Centzahl ab 0 eingeben.");
+        Error = TEXT("Kaufbudget in USD ab 0 mit maximal zwei Nachkommastellen eingeben.");
         return false;
     }
     for (auto &G : OperatingDraft.Goods)
@@ -194,7 +194,7 @@ bool UCoIPlayerHUD::ReadOperatingForm(FString &Error)
             const FString Key = TEXT("op.") + G.GoodId + (Side ? TEXT(".sell") : TEXT(".buy"));
             if (Fields.Contains(Key) && !ReadPositive(Key, Side ? G.SellLimitCents : G.BuyLimitCents, true))
             {
-                Error = TEXT("Preislimit als ganze Cent/kg ab 0 eingeben.");
+                Error = TEXT("Preislimit als USD/kg mit maximal zwei Nachkommastellen ab 0 eingeben.");
                 return false;
             }
         }

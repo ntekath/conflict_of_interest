@@ -1,0 +1,55 @@
+{
+  "package": "UI01",
+  "date": "2026-11-19",
+  "engine": "5.8.4",
+  "mode": "native UnrealEditor -game, actual player UI, no developer mutations",
+  "resolutions": [
+    {
+      "size": [
+        1280,
+        720
+      ],
+      "checks": [
+        "company metrics fit, detail content scrolls",
+        "source/period/formula tooltip visible",
+        "at hour 0: employees 0, sites 2, no monthly data, net worth unavailable",
+        "at hour 6: employees 6, sites 2, free USD 24888, reserved USD 100",
+        "Chicago employees 2, residents 10000, workforce 5000; group money in USD",
+        "100 kg at entered 0,05 USD/kg: USD 5 preview",
+        "execution at older 0,04 USD/kg offer: free USD 24884, reserved USD 100",
+        "shop budget USD 500, buy/sell input USD 0,10 / 0,12"
+      ]
+    },
+    {
+      "size": [
+        1920,
+        1080
+      ],
+      "checks": [
+        "company metrics and full own asset table readable",
+        "missing history and unavailable valuation distinct from zero",
+        "no clipped metric fields",
+        "Final city tooltip: population/workforce source, 01.01.1913 timestamp, unique consumption-city assignment; no sum of repeated region totals"
+      ]
+    }
+  ],
+  "test_count": 61,
+  "new_tests": 5,
+  "save_version": 5,
+  "new_economic_sources": false,
+  "screenshots": "Inspected directly through computer-use; textual findings recorded here.",
+  "builds": {
+    "Editor": {
+      "result": "Succeeded",
+      "configuration": "Development Editor"
+    },
+    "Game": {
+      "result": "Succeeded",
+      "configuration": "Development"
+    },
+    "Shipping": {
+      "result": "Succeeded",
+      "configuration": "Shipping"
+    }
+  }
+}

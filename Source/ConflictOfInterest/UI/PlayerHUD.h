@@ -55,6 +55,8 @@ private:
  CoISim::FInvestmentRequest InvestmentDraft;void OpenInvestment(const FString&,const FString&,const FString&);
  CoISim::FCommand Draft;bool ValidDraft=false;
  void Refresh();void BuildView(const FString& NewView);void RefreshTable();void RefreshSelection();void OpenTrade(bool Buy,const FString& Id=TEXT(""));void OpenTransport(const FString& Stock=TEXT(""),bool Empty=false,const FString& Target=TEXT(""));void OpenCancel(const FString& Id,bool Transport);void OpenDialog(const FString& Title);void Preview();void Confirm();void CloseDialog();
+ void Metric(class UPanelWidget* Parent,const CoISim::FDisplayMetric& Value);
+ void Empty(class UPanelWidget* Parent,const FString& Message,const FString& Tip=TEXT(""));
  UTextBlock* Text(class UPanelWidget* Parent,const FString& Value,int32 Size=13,bool Gold=false);
  UCoIActionButton* Button(class UPanelWidget* Parent,const FString& Caption,const FString& Key,bool Accent=false,const FString& Tip=TEXT(""));
  UHorizontalBox* Row(class UPanelWidget* Parent);

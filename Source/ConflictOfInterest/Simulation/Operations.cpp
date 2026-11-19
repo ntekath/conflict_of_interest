@@ -120,7 +120,7 @@ bool FSimulation::PreviewOperatingRule(const FOperatingRule &R, FString &E) cons
         if (!Find(Scenario.Definitions.Goods, G.GoodId) || Goods.Contains(G.GoodId) || G.MinimumKg < 0 ||
             G.TargetKg < G.MinimumKg || G.TargetKg > Q.RuleMaxStockKg || G.BuyLimitCents < 0 ||
             G.BuyLimitCents > Q.MaxPriceCents || G.SellLimitCents < 0 || G.SellLimitCents > Q.MaxPriceCents)
-            return Fail(TEXT("Warenregel ungültig: Reserve ≤ Zielbestand; Mengen und Cent/kg innerhalb der Grenzen."));
+            return Fail(TEXT("Warenregel ungültig: Reserve ≤ Zielbestand; Mengen und USD/kg innerhalb der Grenzen."));
         Goods.Add(G.GoodId);
         if(Q.RetailEnabled&&!F){const auto* Shop=Find(Scenario.Definitions.WarehouseTypes,W->TypeId);if(!Shop->RetailOffers.IsEmpty()&&!Shop->RetailOffers.ContainsByPredicate([&](const FRetailOffer& X){return X.GoodId==G.GoodId;})&&(G.BuyLimitCents||G.SellLimitCents||G.TargetKg||G.MinimumKg))return Fail(TEXT("Geschäftsregeln nur für das definierte Sortiment; andere Waren können separat transportiert werden."));}
 

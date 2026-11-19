@@ -1,6 +1,6 @@
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
-Stand: 18.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wurde hier nicht geprüft. Nächster Auftrag ist AP09.1: Bestandsaufnahme der Wirtschaftsengine. AP09–AP16 sind ausgearbeitete Erstentwürfe zur späteren Verfeinerung durch den Projektinhaber. Keine erneute Implementierung abgeschlossener Pakete. Dieser Plan ersetzt die frühere Folge AP08.7/AP09–AP12.
+Stand: 19.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wurde hier nicht geprüft. Nächster Auftrag ist AP09.1: Bestandsaufnahme der Wirtschaftsengine. AP09–AP16 sind ausgearbeitete Erstentwürfe zur späteren Verfeinerung durch den Projektinhaber. Keine erneute Implementierung abgeschlossener Pakete. Dieser Plan ersetzt die frühere Folge AP08.7/AP09–AP12.
 
 ## Inhaltsverzeichnis und Arbeitsstand
 
@@ -16,12 +16,16 @@ Stand: 18.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wu
 | AP09.5 | Banken, Kredite und Geldmenge | Entwurf |
 | AP09.6 | Wirtschaftlicher Langzeittest | Entwurf |
 | AP10 | Konzernnetz und vollständiger Aufbauspieltest | Entwurf; ersetzt AP08.7 |
-| AP11 | Unternehmens-KI und Expansion | Entwurf |
+| AP11.1 | Konzernstrategien und lokale Geschäftsführung | Entwurf |
+| AP11.2 | Neugründungen und Markteintritt | Entwurf |
+| AP11.3 | Geschäftsaufgabe und geordneter Marktaustritt | Entwurf |
+| AP11.4 | Verhandelte Übernahme lokaler Unternehmen | Entwurf |
 | AP12 | Staatliche Wirtschaft und Haushalt | Entwurf |
 | AP13 | Nationale/internationale Politik und Lobbyismus | Entwurf |
 | AP14 | Ereignisse und Krisen | Entwurf |
 | AP15 | Gesamtprüfung und Auslieferung | Entwurf |
 | AP16 | Skalierung und Parallelisierung | Entwurf |
+| UI01–UI06 | Eigenes UI-/Kartenkapitel: Kennzahlen, Kartenbedienung, Stadtansicht, Details und Bedienprüfung | Neu; auf vorhandenem UI aufbauend |
 
 **Leseregel:** Die allgemeinen Leitlinien und die neuen AP09–AP16 beschreiben das Zielmodell. AP01–AP08.6 bleiben als Implementierungshistorie erhalten. Ältere Aussagen darin zu direkten Haushaltskäufen, mehreren Städten pro Region, fixer Geldmenge oder noch fehlenden Funktionen sind kein Auftrag, die neue Zielarchitektur zu umgehen. AP09.1 erfasst die tatsächlichen Abweichungen im Code. Paketnummern außerhalb der historischen Abschnitte folgen ausschließlich diesem Inhaltsverzeichnis.
 
@@ -148,6 +152,22 @@ Diese später beschlossenen Vorgaben haben Vorrang vor älteren Formulierungen i
 
 **Politischer Zielumfang**
 Nationale Regeln und internationale Abkommen, Zölle und Beschränkungen werden später autonom überprüft. Unternehmen können Vorhaben anstoßen und auf andere Vorhaben reagieren. Lobbyismus beeinflusst einen nachvollziehbaren Entscheidungsprozess, kauft nicht garantiert ein Ergebnis. Zunächst kein vollständiges Wahl-/Diplomatiespiel.
+
+### Lokale Unternehmen und überregionale Konzerne
+
+**Ziel:** Eine eigenständig lebendige Unternehmenslandschaft. Konzerne handeln mit lokalen Betrieben, beliefern sie, konkurrieren mit ihnen und können sie später übernehmen.
+
+- Dieselbe Company-Entität, dieselben Konten, Asset-, Lohn-, Waren-, Markt- und Transportregeln für alle. Kein separates Gratisversorgungssystem.
+- Ein Entscheidungsprofil unterscheidet lokale Existenzsicherung und begrenztes Wachstum von überregionaler Konzernexpansion. Das Profil ist keine zweite Wirtschaftsklasse und unabhängig von PlayerCompanyId.
+- Pro Stadt ein konfigurierbarer Startmix lokaler Produzenten, Geschäfte und Dienstleister. Standortvoraussetzungen gelten: nicht jede Stadt besitzt jede Ressource oder jede Produktionskette.
+- Einige Waren werden lokal erzeugt, andere importiert. Anfangsversorgung entsteht aus realen Beständen, Arbeitskräften, Lieferbeziehungen und Finanzierung, nicht aus garantierten kostenlosen Lieferungen.
+- Kein starres Mindestfirmenkontingent während des Spiels: Betriebsausfälle sind möglich. Neue Unternehmen reagieren verzögert auf tragfähige Geschäftsmöglichkeiten.
+- Kleine Firmen sind echte Kunden, Lieferanten und Übernahmeziele; können scheitern oder bei geeigneter Entwicklung selbst wachsen. Eine Beförderung zum Konzern darf keine Assets oder Geld erzeugen.
+- Einfacher lokaler Betrieb ist bereits Bestandteil AP09.3–09.6. Neue Gründungs-, Austritts- und Übernahmeentscheidungen folgen AP11.2–11.4.
+- Gründung benötigt eigene Mittel eines expliziten Eigentümer-/Investorenkontos und/oder einen regulären Kredit. Keine namenlose Geldquelle, kein gleichzeitig weiter verfügbares Investorengeld.
+- Firmen haben einen Eigentümer/Verkäufer. Für lokale Startszenarien genügt ein explizites aggregiertes Unternehmerkonto mit endlichen Rücklagen; bis zur Umsetzung von Ausschüttungen dessen Guthaben nicht zugleich als Haushaltskonsumbudget zählen.
+- Übernahmen brauchen Verkaufsbereitschaft und Preisverhandlung. Assets und Verpflichtungen verschwinden nicht; Mindestmodell und rechtliche Simulation sind bewusst vereinfacht.
+- Anzahl lokaler Firmen, Prüfintervalle, Eintrittswartezeiten und Finanzierungsgrenzen extern konfigurieren. Grenzen dürfen nur Rechenlast steuern, keine Versorgung garantieren.
 
 ### Darstellung und Bedienung
 
@@ -708,6 +728,8 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 - Gemeinsames Phasenschema dokumentieren: fällige Zahlungen/Ankünfte, Beschäftigung/Einkommen, Planung, B2B-Handel, Produktion, Ladenbelieferung, Einzelhandel/Konsum, Abschlüsse. Genaue Reihenfolge gegen existierenden Code prüfen und verbindlich wählen.
 - Konkrete Minimalwarenkette mit Grundbedarf und Freizeit/Luxus festlegen. Kleidung als neue Ware ergänzen, falls Bekleidungsgeschäft bereits im ersten Testszenario aktiv sein soll; anderenfalls diesen Typ zunächst nicht aktiv anbieten.
 - Migrationsplan für direkte Haushaltskäufe, bisherige Preissteuerung, Konten und alte Saves erstellen. Bestehende Werte erhalten, inkompatible Fälle explizit benennen.
+- Lokale Firmen und Konzerne inventarisieren; gemeinsame Company-Struktur und Steuerungsprofile festlegen. Bestehende Akteure nicht automatisch duplizieren.
+- Je Stadthub Startmix, Einfuhrbedarf, verfügbare Arbeitskräfte, Eigentümerkonten und Kapitalherkunft dokumentieren.
 - Reproduzierbare Baseline über 30 Spieltage mit Seed, Datenstand, Geld-/Mengenbilanz und Messwerten erstellen.
 - Eine dokumentierte Liste verbleibender Produktentscheidungen mit empfohlenen Startwerten liefern. Routineimplementierung nicht wegen jeder Zahl blockieren; grundlegende Widersprüche vor abhängigen Änderungen klären.
 
@@ -754,6 +776,8 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 - Pro Kauf Geld und Ware atomar buchen, anschließend Konsum als Warensenke erfassen. Nicht erfüllte Menge bleibt Fehlbedarf, keine Schuld ohne eigenen Kreditvertrag.
 - Für Migration einmalig sichtbare Kosten-/Preisparameter verwenden; AP09.4 ersetzt provisorische Kalkulation durch vollständige Kostenbasis.
 - Spielbare Firma kann ein Geschäft besitzen oder beliefern. Alle fremden Geschäfte laufen unter denselben Regeln.
+- Je Stadthub geeignete lokale Ladenbetreiber und lokale/überregionale Lieferanten als reale Unternehmen konfigurieren; Konkurrenz dort ermöglichen, wo Nachfrage und Kapital mehrere Anbieter tragen. Kein unendlicher Ladenbestand oder Garantieabsatz.
+- Stadtübersicht listet lokale Firmen, Tätigkeiten und öffentliche Besitzdaten; Markt-/Lieferaktionen verwenden dieselben CompanyIds.
 
 **Abnahme**
 - Konsum ohne gefüllte Geschäfte bleibt unerfüllt, auch wenn ein Produzent Vorräte hat.
@@ -817,7 +841,7 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 **Aufgaben**
 - Testfälle über 30, 180 und 365 Spieltage mit Datenstand/Seed, Firmen, Haushalten, Geschäften, Logistik und Bank konfigurieren.
 - Geldbestände und -schöpfung, Warenquellen/-senken, Beschäftigung, Preise, Reservierungen, Gewinne, Schulden und Konsum täglich protokollieren.
-- Normalszenario, Inputengpass, Konkurrenz, hohe Aufschläge und überschuldete Firma vergleichen. Ereignissystem nicht erforderlich; Anfangsbedingungen variieren.
+- Normalszenario mit lokalen Firmen und Konzernen, Inputengpass, Konkurrenz, hohe Aufschläge und überschuldete Firma vergleichen. Ereignissystem nicht erforderlich; Anfangsbedingungen variieren.
 - Zeigen, wie mehr Nachfrage zu Aufträgen und Investitionsanreizen führt, ohne garantierte Vollbeschäftigung oder Profit.
 - BIP als Wertschöpfung mit dokumentiertem Umfang und Referenzpreisen berechnen; Zwischenhandel und interne Transfers nicht mehrfach addieren. Vor vollständigem Staatssystem Abdeckungsgrenzen benennen.
 - Speicher-/Ladevergleich und verschiedene Zeitgeschwindigkeiten prüfen; wiederholte negative Bestände, falsche Reservierungen oder stilles Geldwachstum als Fehler behandeln.
@@ -827,6 +851,7 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 - Normalszenario erzeugt wiederholten Lohn–Einzelhandel–Nachschub-Kreislauf und nachvollziehbare Gewinne/Verluste.
 - Ausfälle sind wirtschaftlich erklärbar; keine technisch bedingte Blockade nach wenigen Tagen.
 - Alle Geld-/Warenabweichungen durch explizite Quellen/Senken oder Änderungen erklärbar.
+- Lokale Firmen handeln und zahlen Löhne ohne Eingriff des Spielers. Entfernte Versorgung wird nicht automatisch kostenlos ersetzt; das Szenario zeigt deren reale Abhängigkeiten.
 - Bericht benennt Zahlen, Testergebnisse, Leistungswerte und noch offene Spielentscheidungen.
 
 ### AP10 – Sichtbares Konzernnetz und vollständiger Aufbauspieltest
@@ -850,7 +875,11 @@ Eine fortsetzbare Partie ermöglicht: Unternehmen übernehmen → Versorgungslü
 - Beide Wachstumswege sind erreichbar und mit Kosten/Risiken verbunden; keine garantierte Profitmaschine.
 - Mindestens ein dokumentierter Spieltest nennt Entscheidungsstellen, Wartephasen und verbleibende Probleme. Noch nicht bestandene Kriterien sperren den Übergang zu AP11 fachlich; kein bloßes Abhaken implementierter Widgets.
 
-### AP11 – Unternehmens-KI, Expansion und Konkurrenz
+## AP11 – Unternehmenslandschaft, Konkurrenz und Lebenszyklus
+
+Die Unterpakete erweitern dieselben Unternehmen aus AP09. Keine neue Population von Spezial-NPCs neben den vorhandenen Marktteilnehmern. Reihenfolge: AP11.1 → AP11.2 → AP11.3 → AP11.4.
+
+### AP11.1 – Konzernstrategien und lokale Geschäftsführung
 
 **Voraussetzung:** AP10.
 
@@ -859,10 +888,11 @@ Eine fortsetzbare Partie ermöglicht: Unternehmen übernehmen → Versorgungslü
 **Aufgaben**
 - Bestehenden regelbasierten Assetbetrieb von strategischen Entscheidungen trennen; Spielerautomatisierung bleibt aktiv, autonome Konzernstrategie nur für NPCs.
 - Ziele/Parameter für Liquidität, nachhaltigen Gewinn, Wachstum, Spezialisierung und Risiko definieren; nicht jedes Unternehmen identisch optimieren lassen.
+- Lokale Firmen bevorzugen gesicherten Betrieb, Reserve und begrenzten Ausbau ihres Hubs; Konzerne bewerten überregionale und vertikale Expansion. Profile bleiben konfigurierbar und dürfen Entwicklung zulassen.
 - Investitionsmöglichkeiten bewerten: weiterer Standort, Produktionsintegration, Laden, Kapazitätsausbau und Kreditfinanzierung.
 - Erwartete Nachfrage, Kosten, Transport, Personal und Konkurrenz berücksichtigen; nur öffentliche und eigene Daten.
 - Periodische Entscheidungen mit begrenztem Rechenbudget; Fehlschläge und falsch eingeschätzte Chancen zulassen.
-- Unternehmensübernahmen und Preisverhandlungen nur als separate spätere Erweiterung, solange deren Verpflichtungs-/Eigentumsmodell fehlt.
+- Neue Firmen und Übernahmen noch nicht in AP11.1 erzeugen; diese folgen gezielt AP11.2–11.4.
 
 **Abnahme**
 - Mindestens zwei Strategien erzeugen unterschiedliche, begründete Expansion.
@@ -870,9 +900,77 @@ Eine fortsetzbare Partie ermöglicht: Unternehmen übernehmen → Versorgungslü
 - Unprofitable Investition belastet Liquidität; keine perfekte Kenntnis zukünftiger Krisen.
 - Mehrmonatiger Vergleich mit/ohne strategische KI sowie Save/Load dokumentiert.
 
+### AP11.2 – Neugründungen und Markteintritt
+
+**Voraussetzung:** AP11.1.
+
+**Ziel:** Neue lokale Unternehmen entstehen aus nachhaltigen Geschäftsmöglichkeiten statt garantiertem Respawn.
+
+**Aufgaben**
+- Periodisch pro Hub und geeigneter Branche beobachteten Fehlbedarf, Absatz, Preise, vorhandene Konkurrenz, Inputversorgung, Arbeitskräfte und Standortzugang bewerten.
+- Erwarteten Deckungsbeitrag und Anlaufkosten über ein konfigurierbares Beobachtungsfenster prüfen. Ein hoher Preis ohne zahlungsfähige Nachfrage genügt nicht.
+- Ein Vorhaben mit Besitzer, Standort, Geschäftsplan, Eigenmitteln, Kreditbedarf und Bau-/Kaufplan anlegen. Unternehmens-ID früh stabil vergeben, aber ohne abgeschlossene Finanzierung keine Betriebsaufnahme.
+- Eigenkapital vom realen Investorenkonto überweisen; Kredit nur nach AP09.5. Kein finanziertes Kapital zugleich an mehreren Vorhaben binden.
+- Assetbau/-kauf aus AP08.3 verwenden. Wettbewerb um geeignete Standorte, Personal und Inputs zulassen; kein Fertigbetrieb aus dem Nichts.
+- Gründungsverzögerung, Abbruch und Freigabe von Reservierungen regeln. Fehler nicht durch verdecktes Geldauffüllen lösen.
+- Anti-Pendel-Regeln: Beobachtungsdauer, Abklingzeit je Branche/Hub und begrenzte Vorhabenanzahl. Kein starres dauerhaftes Mindestangebot.
+- Vorhaben, Eigentümermittel, zugesagte Kredite und Fertigstellung speichern. Entwicklerkonsole kann bewertete Chancen anzeigen; erzwungene Testgründung bleibt klar gekennzeichneter Entwicklereingriff.
+
+**Abnahme**
+- Längerfristig profitable Versorgungslücke kann mit gedeckter Finanzierung eine Neugründung auslösen.
+- Ohne Kapital, Standort oder tragfähige Nachfrage bleibt sie aus; keine Gratisfirma.
+- Eintritt verursacht echte Zahlungen und Bauzeit. Neuer Laden braucht anschließend Waren und Beschäftigte.
+- Gleicher Seed/Zustand ergibt dieselben Entscheidungen; Laden während der Gründung erzeugt kein zweites Unternehmen.
+
+### AP11.3 – Geschäftsaufgabe und geordneter Marktaustritt
+
+**Voraussetzung:** AP11.2.
+
+**Ziel:** Unwirtschaftliche lokale Firmen können schrumpfen oder ausscheiden, ohne Buchungen oder Verpflichtungen verschwinden zu lassen.
+
+**Aufgaben**
+- Wiederholte Verluste, Zahlungsrückstände und fehlende Finanzierungsfähigkeit über Zeit bewerten; eine schlechte Woche löst nicht automatisch sofortige Löschung aus.
+- Zustände aktiv, restrukturiert/ruhend, Abwicklung und geschlossen unterscheiden. Betrieb pausieren, neue Verpflichtungen blockieren und gültige laufende Aufträge kontrolliert behandeln.
+- Offene Marktangebote stornieren und Reservierungen freigeben; Waren/Assets geordnet anbieten. Waren verderben weiter nach Regeln.
+- Bereits bezahlte Transporte erfüllen oder ausdrücklich abrechnen; gebundene Assets nicht löschen. Beschäftigte bei Stilllegung freigeben, unbezahlte Ansprüche als Verbindlichkeit erhalten.
+- Für verbleibende Gläubigerforderungen ein dokumentiertes vereinfachtes Rang-/Verteilungsschema definieren. Bankabschreibungen gemäß AP09.5 buchen; Guthaben anderer Akteure nicht willkürlich löschen.
+- Gesellschaft erst schließen, wenn wirtschaftliche Referenzen abgewickelt sind. Historische ID und Transaktionen für Berichte erhalten.
+- Frei werdende Kapazitäten und Standorte stehen regulär dem Markt offen; Schließung löst keine garantierte Ersatzgründung aus.
+- Vollständige Rechts-/Gerichtsinsolvenz nicht erforderlich. Der erste Umfang ist eine transparente spielinterne Abwicklung.
+
+**Abnahme**
+- Ausfall entzieht tatsächlich Angebot und Beschäftigung; neue Marktchancen können entstehen.
+- Keine verwaisten Fracht-, Konto-, Asset- oder Vertragsreferenzen. Abwicklung verteilt nur vorhandene Mittel.
+- Schließung erzeugt weder Gratisvermögen noch automatischen Nachfolger.
+- Save/Load mitten in Abwicklung führt Zahlungen/Reservierungsfreigaben nicht doppelt aus.
+
+### AP11.4 – Verhandelte Übernahme lokaler Unternehmen
+
+**Voraussetzung:** AP11.3.
+
+**Ziel:** Lokale Firmen sind reguläre Partner und kaufbare Unternehmen, nicht ausschließlich verdrängbare Konkurrenz.
+
+**Aufgaben**
+- Kleine Firmen erhalten explizite endliche Eigentümer-/Verkäuferkonten. Verkaufsbereitschaft nach Ertrag, Risiken, Perspektive und Angebot bewerten; Ablehnung ist möglich.
+- Übernahmeansicht mit freigegebenem Prüfbericht für Assets, Bestand, Geld, Schulden, Beschäftigung, Verträge und offene Verpflichtungen.
+- Angebotspreis und Annahmebereich nachvollziehbar bewerten; gedecktes Angebot reservieren, Frist und Abbruch regeln. Kein garantierter Kauf zum Buchwert.
+- Erstes Modell: vollständiger Erwerb durch kontrollierte Eingliederung ins Käuferunternehmen, keine börslichen Beteiligungen oder Tochterkonzern-Hierarchie.
+- Kaufpreis an bisherigen Eigentümer zahlen, nicht als Umsatz der Zielbetriebe buchen. Zielguthaben und alle übernommenen Aktiva/Verbindlichkeiten genau einmal übertragen; Ziel-ID als historische Referenz erhalten.
+- Laufende Lieferungen, Beschäftigung, Kredite, Sicherheiten und Verträge explizit prüfen und migrieren. Fremdverträge und Kredite nur übernehmen, wenn deren vereinfachte Zustimmungs-/Übertragungsregeln erfüllt sind; andernfalls Abschluss ablehnen oder geordnete Vorabklärung verlangen.
+- Nach Eingliederung Eigenhandel verhindern: ehemalige gegenseitige Aufträge stornieren bzw. als interne Beziehungen neu bewerten, ohne Erträge oder Waren zu duplizieren.
+- Keine Übernahme der Spielerfirma durch NPCs in diesem ersten Umfang. Größere Konzernfusionen und Teilbeteiligungen bleiben spätere Erweiterung.
+- Abschluss atomar an Schrittgrenze; neue private Daten erst nach legitimer Prüfung/Übernahme zugänglich machen. State, Kaufpreisreservierung und Abschlussstatus speichern.
+
+**Abnahme**
+- Freiwillige Übernahme einer lokalen Firma erweitert Besitz und Verpflichtungen des Käufers, ohne Vermögensduplikation.
+- Verkäufer erhält vereinbarten Preis, Käufer trägt übernommene Schulden. Externer Umsatz/Gewinn wird durch den Kauf nicht künstlich erhöht.
+- Abgelehntes oder nicht finanzierbares Angebot ändert keine Eigentümer.
+- Laufender Transport und Vertrag funktionieren nach Abschluss unter korrektem Besitzer weiter; automatische Regeln sind eindeutig zugewiesen.
+- Save/Load vor und nach Abschluss erzeugt weder doppelte Zahlung noch erneuten Eigentumsübergang.
+
 ### AP12 – Staatliche Wirtschaft und Haushalt
 
-**Voraussetzung:** AP11.
+**Voraussetzung:** AP11.4.
 
 **Ziel:** Staaten werden wirtschaftliche Akteure mit endlichen Mitteln und Verpflichtungen.
 
@@ -983,9 +1081,127 @@ Bei Umsetzung mit der installierten Engine-Version abgleichen:
 - Epic: Threaded Rendering / Thread-Zuständigkeit – https://dev.epicgames.com/documentation/en-us/unreal-engine/threaded-rendering-in-unreal-engine
 
 
+## 5. UI und Karte – Spieleroberfläche
+
+Stand: 19.11.2026. Eigenständige Paketfolge UI01–UI06, ohne Umnummerierung von AP09–AP16. Diese Pakete dürfen auf dem bestehenden UI vorgezogen werden; sie warten nicht auf AP16. Fehlende wirtschaftliche Berechnungen werden fachlich angebunden oder als nicht verfügbar angezeigt, niemals im Widget erfunden.
+
+Die folgenden Vorgaben präzisieren ältere HUD- und Stadtansichtsvorgaben. Vorhandene Spielaktionen, Rechteprüfung und Simulation erhalten. Ziel: Übersicht beantwortet „Wie läuft es und was kann ich tun?“, Details erklären warum.
+
+### UI01 – Kennzahlenvertrag und gemeinsame Darstellung
+
+**Voraussetzung:** Vorhandenes Firmen-HUD, PlayerCompanyId und Stadtansicht.
+
+**Aufgaben**
+- Bestehende Widgets und Datenquellen prüfen; gemeinsame Präsentationsdaten aus konsistenten Snapshots verwenden. Keine zweite UI-Buchhaltung.
+- Formatierer für USD, Prozent, Mengen und Zeiträume vereinheitlichen. Keine Centrohwerte oder internen IDs im normalen Spieler-HUD.
+- Mitarbeiter = aktive Beschäftigte eigener Assets, ohne offene Stellen oder Doppelzählung.
+- Standorte = unterschiedliche Regionshubs mit eigenen fertiggestellten aktiven Assets; Hauptsitz nicht zusätzlich zählen.
+- Ergebnis = realisiertes Ergebnis des letzten abgeschlossenen Monats nach vorhandener Kostenrechnung, interne Umsätze ausgeschlossen. Zahlungen sind nicht automatisch Gewinn.
+- Nettovermögen = bewertete Vermögenswerte abzüglich Verbindlichkeiten nach sichtbarer Bewertungsmethode. Geldreservierungen nicht nochmals als Schulden abziehen; keine Gleichsetzung mit Übernahmewert.
+- Fehlende Bewertungsgrundlage als „Nicht verfügbar“, fehlende Historie als „Noch keine Monatsdaten“ anzeigen. Keine scheinpräzisen Fantasiewerte.
+- Wiederverwendbare Kennzahlfelder, Tooltips, Tabellenzeilen und Leerzustände bereitstellen.
+
+**Abnahme**
+- Kennzahlen entsprechen dem Simulationszustand. Quelle, Zeitraum und Berechnung stehen im Tooltip.
+- Bevölkerung und Firmenbeschäftigte werden bei Hub-/Regionsaggregation nicht doppelt gezählt.
+- Fehlende Daten und echte Nullwerte sind unterscheidbar.
+
+### UI02 – Unternehmensleiste und Navigation
+
+**Voraussetzung:** UI01.
+
+**Aufgaben**
+- Links Firmenname, vorhandenes Zeichen/Firmenfarbe; daneben verfügbares Geld, Ergebnis, Mitarbeiter, Standorte und Nettovermögen.
+- Reserviertes Geld und Gesamtkontostand im Geldtooltip bzw. kompakten Detail ausweisen. Verfügbar = Kontostand minus Reservierungen.
+- Rechts Datum/Uhrzeit, Pause und bestehende Zeitgeschwindigkeiten mit eindeutigem Aktivzustand.
+- Kennzahlen öffnen passende verfügbare Unternehmensdetails. Keine funktionslosen Sprungziele.
+- Spielstände und Einstellungen ins Pausenmenü verlagern, Entwicklerdiagnose separat einblendbar halten.
+- Bei geringer Breite zwei kompakte Zeilen oder Sekundärgruppe verwenden, keine abgeschnittenen Werte.
+
+**Abnahme**
+- Unternehmenslage ist ohne Diagnoseansicht verständlich.
+- Lange Firmennamen, große Werte und negativer Gewinn bleiben lesbar.
+- Neue Partie mit anderer PlayerCompanyId aktualisiert alle Anzeigen und Aktionen.
+
+### UI03 – Mehr Kartenfläche und kontextbezogene Bedienung
+
+**Voraussetzung:** UI02 und bestehende Layer/Routen.
+
+**Aufgaben**
+- Kartenanalyse einklappbar machen; nur zum Layer passende Felder zeigen. Regionenansicht benötigt keine Warenauswahl.
+- Routen-/Fahrzeugoptionen in ausklappbare Anzeigeoptionen verlagern. Filterwerte beim Wechsel erhalten.
+- Kleine Legende am Kartenrand mit Skala, Einheit, Zeitraum und Datenstand.
+- Genau ein rechtes Auswahlpanel mit Name, Typ, Region/Land, wenigen Kennzahlen und sinnvollen Aktionen.
+- „Stadt öffnen“ als primäre Hubaktion; keine suggerierte territoriale Eigentümerschaft.
+- Großen leeren Erklärungskasten entfernen; unteren Hinweisbalken nur bei konkreter Aktion zeigen.
+- Ein dezenter Testszenariohinweis genügt; „TEST“, Hinweise zu Exemplar-Lkw und Aggregation in Tooltip/Diagnose statt Dauertext.
+- Regionsauswahl/Highlight mit Stadtfenster verbinden; Sichtbarkeitsregeln für Konkurrenten erhalten.
+
+**Abnahme**
+- Standardansicht lässt der Karte Platz statt mehrerer großer Infokästen.
+- Layer und Auswahl öffnen passende Aktionen, ohne wirtschaftliche Daten zu verändern.
+- UI-Klicks und Mausrad gelangen nicht versehentlich zur Karte.
+
+### UI04 – Kompakter Stadtbildschirm
+
+**Voraussetzung:** UI01 und UI03.
+
+**Aufgaben**
+- Kopf: „Chicago“, darunter „Wirtschaftsregion Chicago · USA“ sowie eigene Präsenz, etwa „Niederlassung · 1 Lager“.
+- Doppelte Titel, breite Formularbeschriftungen und Erklärtexte wie „kein Stadtbesitz“ entfernen. Stadtwechsel kompakt weiterhin ermöglichen.
+- Hover auf Regionsangabe hebt das abgedeckte Gebiet hervor; „Auf Karte zeigen“ zentriert auf Hub/Region.
+- Tabs: Übersicht, Markt, Eigene Assets, Investitionen. „Global“ durch separate Aktion „Unternehmensübersicht“ ersetzen.
+- Regionale Kennzahlgruppe: Bevölkerung, Arbeitslosigkeit, Grundversorgung und Kaufkraft/Konsumbudget mit Zeitraum.
+- Eigene Kennzahlgruppe: Beschäftigte, Assets nach Typ, Lagerauslastung und Standortergebnis.
+- Kennzahlen aus bestehenden fachlichen Definitionen übernehmen. Nicht definierte Kaufkraft, Versorgungsaggregation oder Standortergebnisse zunächst als nicht verfügbar kennzeichnen.
+- „Chancen und Probleme“ mit wenigen belegten Hinweisen und Aktionen ergänzen, etwa Nahrungsmangel oder fast volles eigenes Lager. Schwellen konfigurieren.
+
+**Abnahme**
+- Hub, abgedeckte Region und eigene Rolle sind sofort erkennbar.
+- Übersicht ist ohne langen Textblock verständlich.
+- Hinweise haben reale Datengrundlage und führen zum betroffenen Markt/Asset.
+
+### UI05 – Tabellen und aufklappbare Details
+
+**Voraussetzung:** UI04.
+
+**Aufgaben**
+- „Unternehmen vor Ort“ als Tabelle: Firma, Hauptsitz/Niederlassung, Tätigkeiten, öffentlich sichtbare Präsenz. Eigene Firma hervorheben.
+- Kryptische kombinierte Spalten wie „Betriebe / öffentliche Lkw“ aufteilen oder ins Detail verlegen.
+- Bevölkerung/Konsum aufklappbar: Einkommensgruppen als Zeilen, Einkommen, Ausgaben, Ersparnisse, Arbeitslosigkeit sowie Grund-/Freizeit-/Luxusversorgung verständlich darstellen.
+- USD statt Cent, klare Perioden und benannte Skalen. „+0/1000“ ohne Erklärung vermeiden.
+- Auf kleinen Auflösungen Gruppen-Details statt unlesbarer sehr breiter Tabellen.
+- Technische Texte über doppelte Summierung und IDs in Diagnose verschieben. Spielerklärungen als Tooltip.
+- Lager-, Markt-, Asset- und Investitionsaktionen weiter mit vorhandenen Dialogen verbinden.
+
+**Abnahme**
+- Nützliche Details bleiben erreichbar, dominieren aber nicht den Übersichtskopf.
+- Öffentliche Firmenansicht offenbart keine privaten Konten oder Aufträge.
+- Sortierung/Updates bewahren möglichst Auswahl und Scrollposition; leere Listen erklären ihren Zustand.
+
+### UI06 – Gestaltung und durchgängige Bedienprüfung
+
+**Voraussetzung:** UI02–UI05.
+
+**Aufgaben**
+- Ruhige dunkle Flächen, warme helle Schrift, sparsame Messingakzente und Firmenfarbe konsistent anwenden; Lesbarkeit vor historischer Dekoration.
+- Typografie, Abstände, Buttonzustände, Tooltips und Scrollbereiche vereinheitlichen.
+- 1280×720 und 1920×1080 mit DPI-Skalierung visuell prüfen, Screenshots vergleichen und Layout korrigieren.
+- Ablauf testen: Unternehmensüberblick → Stadt → Markt → Handel → Transport → Meldung → Assetdetail.
+- Fälle ohne Historie, mit Verlust, langen Namen, vielen Firmen, leerem Sortiment, vollen Lagern und laufender Simulation prüfen.
+- Escape schließt zuerst Dialog dann Hauptfenster; Texteingabe blockiert Kameratasten. Fenster pausieren nicht automatisch.
+- Snapshotwechsel, Laden und neue Unternehmenswahl auf konsistente Werte prüfen. UI-Kosten messen; Tabellen nicht pro Frame vollständig neu aufbauen.
+
+**Abnahme**
+- Firmenlage, ausgewählte Region und nächste Aktion sind ohne Diagnose verständlich.
+- Keine abgeschnittenen Schaltflächen, unlesbaren Tabellen oder Eingaben durch Fenster auf die Karte.
+- HUD, Stadt und Unternehmensansicht zeigen beim gleichen Snapshot dieselben Werte.
+- Handel, Lieferregeln, Investitionen, Firmenrechte und Save/Load funktionieren nach UI-Umbau.
+- Diagnose bleibt erreichbar, ist aber standardmäßig verborgen; fehlende fachliche Kennzahlen sind dokumentiert.
+
 ## Später zu verfeinernde Erweiterungen
 
-- Vollständige Unternehmensübernahmen, Beteiligungen und Insolvenz.
+- Größere Konzernfusionen, Beteiligungen und detailliertere Insolvenz. Einfache lokale Übernahmen und Abwicklung bestehen seit AP11.3–11.4.
 - Weitere Waren, Technikfortschritt und historisch geeignete Branchen.
 - Weitere Länder, Verkehrsarten und größere Kartenausschnitte.
 - Detaillierter Arbeitsmarkt, Qualität/Markenbindung und soziale Reaktionen.

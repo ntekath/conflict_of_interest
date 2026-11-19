@@ -13,9 +13,7 @@ FString DeliveryNum(int64 V)
 }
 FString DeliveryMoney(int64 V)
 {
-    FNumberFormattingOptions O;
-    O.SetMinimumFractionalDigits(2).SetMaximumFractionalDigits(2);
-    return FText::AsNumber((double)V / 100., &O).ToString() + TEXT(" USD");
+    return Display::Money(V);
 }
 } // namespace
 void UCoIPlayerHUD::OpenDelivery(const FString &Source)
@@ -82,8 +80,8 @@ void UCoIPlayerHUD::OpenDelivery(const FString &Source)
     Field(Dates, TEXT("delivery.start"), TEXT("Beginn in Spielstunden ab Vorschau"), TEXT("1"));
     Field(Dates, TEXT("delivery.duration"), TEXT("Laufzeit ab Beginn in Stunden"), TEXT("168"));
     auto *Prices = Row(Form);
-    Field(Prices, TEXT("delivery.price"), TEXT("Fester Waren-/Verrechnungspreis Cent/kg"), TEXT("1"));
-    Field(Prices, TEXT("delivery.freight"), TEXT("Max. Hin-/Rückfracht Cent je Termin"),
+    Field(Prices, TEXT("delivery.price"), TEXT("Fester Waren-/Verrechnungspreis USD/kg"), TEXT("1"));
+    Field(Prices, TEXT("delivery.freight"), TEXT("Max. Hin-/Rückfracht USD je Termin"),
           DeliveryNum(P.Rules.DeliveryDefaultFreightCapCents));
     Choice(Form, TEXT("form.delivery.fallback"),
            TEXT("Bei Ausfall: bestehende Zielbestandsregel am Markt ergänzen lassen"),
@@ -133,7 +131,7 @@ bool UCoIPlayerHUD::ReadDeliveryForm(FString &Error)
         !ReadPositive(TEXT("delivery.freight"), R.MaxFreightCents, true) || Delay > P.Rules.DeliveryMaxDurationHours ||
         Duration > P.Rules.DeliveryMaxDurationHours)
     {
-        Error = TEXT("Ganze gültige kg, Stunden und Centwerte innerhalb der Szenariogrenzen eingeben.");
+        Error = TEXT("Gültige ganze kg/Stunden und USD mit maximal zwei Nachkommastellen innerhalb der Szenariogrenzen eingeben.");
         return false;
     }
     R.StartHour = P.Hour + Delay;

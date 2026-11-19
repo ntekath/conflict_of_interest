@@ -1,5 +1,6 @@
 #pragma once
 #include "SimModel.h"
+#include "Presentation.h"
 namespace CoISim {
 struct FStoreView {
  FString TypeId;FString Id,Name,CityId,OwnerId,OwnerName;bool Own=false,Public=false,Blocked=false;TArray<FString> AcceptedGoods;
@@ -16,9 +17,9 @@ FTransportTerms TransportTerms(const FDefinitions& D,const FEconomyRules& E,cons
 struct FRouteActivity {FString Id,FromCityId,ToCityId;bool Own=false;int64 Active=0,Moving=0,OwnKg=0,NextArrival=0;TArray<FString> OwnJobs;};
 // Explicit public presence; no foreign cash, inventory, employment or plans.
 struct FCityPresence {FString CompanyId,Name;bool Headquarters=false,Own=false;int64 Warehouses=0,Facilities=0,PublicVehicles=0;};
-struct FCityView {FString Id,Name,RegionId;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FString> Groups;TArray<FCityPresence> Presence;};
+struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FString> Groups;TArray<FCityPresence> Presence;};
 struct FPlayerView {
- FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
+ FCompanyPresentation Company;FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
  TArray<FDeliveryContract> Deliveries;TArray<FDeliverySlot> DeliverySlots;TArray<FSiteLedger> SiteLedgers;TArray<FInternalTransfer> InternalTransfers;
  TArray<FOperatingRule> OperatingRules;TArray<FOperatingStatus> OperatingStatus;
  TArray<FConstructionProject> Projects;TArray<FAssetSale> AssetSales;TArray<FString> OccupiedPlots;TArray<FCityView> Cities;TArray<FStoreView> Stores;TArray<FVehicleView> Vehicles;TArray<FInventory> Stocks;
