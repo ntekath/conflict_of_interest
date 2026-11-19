@@ -116,6 +116,26 @@ bool FWeeks::RunTest(const FString&) {
  return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMonthBaseline,"CoI.Audit.ThirtyDayBaseline",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FMonthBaseline::RunTest(const FString&) {
+ FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,5);FSimulation A,B,C;for(auto* S:{&A,&B,&C})if(!TestTrue(TEXT("Load"),S->Load(J,G,E)))return false;
+ TestTrue(TEXT("No invented starting market price"),A.GetSnapshot().EconomyDetails.FindChecked(TEXT("city.us.chicago")).Contains(TEXT("Kein Abschluss")));
+ FString Csv=TEXT("hour,money_cents,reserved_cents,employment,food_produced_kg,food_consumed_kg,food_spoiled_kg,freight_cents\n");double MaxUs=0;int64 Delivered=0;
+ for(int H=0;H<30*24;++H){A.StepOnce();B.Advance(62500,16,false);C.Advance(250000,4,false);MaxUs=FMath::Max(MaxUs,A.GetDiagnostics().StepMicros);
+  if(!A.AuditRuntime(E)){AddError(FString::Printf(TEXT("Hour %d: %s"),H,*E));return false;}
+  if(H==100){FString Hash=B.Fingerprint();for(int I=0;I<20;++I)B.Advance(1000000,16,true);TestEqual(TEXT("Active economy pause changes nothing"),B.Fingerprint(),Hash);}
+  if((H+1)%24==0){TestEqual(TEXT("16x daily deterministic replay"),B.Fingerprint(),A.Fingerprint());TestEqual(TEXT("4x daily deterministic replay"),C.Fingerprint(),A.Fingerprint());int64 Money=0,Reserved=0;for(const auto& X:A.GetState().Accounts){Money+=X.BalanceCents;Reserved+=X.ReservedCents;}const auto* Food=Find(A.GetState().GoodsAudit,FString(TEXT("good.food")));const auto* Fee=Find(A.GetState().CashTotals,FString(TEXT("freight")));Csv+=FString::Printf(TEXT("%d,%lld,%lld,%lld,%lld,%lld,%lld,%lld\n"),H+1,Money,Reserved,A.GetSnapshot().Employed,Food->ProducedKg,Food->ConsumedKg,Food->SpoiledKg,Fee?Fee->Cents:0);}
+ }
+ TestTrue(TEXT("Bounded histories"),A.GetState().Orders.Num()<=A.GetScenario().Economy.HistoryLimit+A.GetScenario().Economy.MaxOpenOrders+64&&A.GetState().Trades.Num()<=A.GetScenario().Economy.HistoryLimit&&A.GetState().Transports.Num()<=A.GetScenario().Economy.HistoryLimit+A.GetState().Vehicles.Num());
+ const auto* Fee=Find(A.GetState().CashTotals,FString(TEXT("freight")));TestTrue(TEXT("Carrier paid over weeks"),Fee&&Fee->Cents>0);
+ FString Report=TEXT("# AP09.1: 30-day autonomous simulation\n\nSeed 1913; 720 hourly steps; no player orders, external grants or replenishment. Money, stock, capacity and reservation audit every hour. Replay fingerprints identical daily at 4x and 16x; pause checked.\n\n");Report+=A.GetSnapshot().EconomySummary+TEXT("\n\n## Cash transfers by reason (cents)\n");for(const auto& V:A.GetState().CashTotals)Report+=FString::Printf(TEXT("\n- %s: %lld"),*V.Id,V.Cents);
+ Report+=TEXT("\n\n## Final accounts (cents)\n");for(const auto& V:A.GetState().Accounts)Report+=FString::Printf(TEXT("\n- %s: balance %lld, reserved %lld"),*V.Id,V.BalanceCents,V.ReservedCents);
+ Report+=TEXT("\n\n## Shortages (kg)\n");for(const auto& V:A.GetState().Groups){Report+=TEXT("\n")+V.Id;for(const auto& U:V.UnmetNeed)Report+=FString::Printf(TEXT("; today %s=%lld"),*U.GoodId,U.Kg);for(const auto& U:V.MissedNeed)Report+=FString::Printf(TEXT("; prior days %s=%lld"),*U.GoodId,U.Kg);}
+ Report+=FString::Printf(TEXT("\n\nMaximum observed step: %.1f us (environment measurement, not a frame-rate guarantee).\nFinal fingerprint: `%s`\n"),MaxUs,*A.Fingerprint());
+ const FString Folder=FPaths::ProjectSavedDir()/TEXT("Diagnostics");IFileManager::Get().MakeDirectory(*Folder,true);TestTrue(TEXT("Write reproducible report"),FFileHelper::SaveStringToFile(Report,*(Folder/TEXT("AP09.1_30days.md")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM));FFileHelper::SaveStringToFile(Csv,*(Folder/TEXT("AP09.1_30days.csv")),FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
+ return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMarketEdges,"CoI.Economy.OrderPriorityAndRejection",EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
 bool FMarketEdges::RunTest(const FString&) {
  FString J,E;FCoIGeoMapData G;EconomyFixture(J,G,2);FSimulation S;if(!TestTrue(TEXT("Load"),S.Load(J,G,E)))return false;

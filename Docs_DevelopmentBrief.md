@@ -1,10 +1,37 @@
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
-Stand: 18.11.2026. Alle bisherigen Pakete bis einschließlich AP07a sind laut Projektinhaber umgesetzt, einschließlich AP06a und AP07.1–07.3. Kein Neustart und kein erneuter Bau abgeschlossener Pakete. Nächster Auftrag: AP08.1. AP08.1–08.7 schaffen zuerst ein tragfähiges Aufbauspiel; danach folgen AP09 Ereignisse, AP10 vertiefte KI, AP11 Gesamtprüfung und AP12 Skalierung. Der Projektcode wurde für diese Planung nicht geprüft.
+Stand: 18.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wurde hier nicht geprüft. Nächster Auftrag ist AP09.1: Bestandsaufnahme der Wirtschaftsengine. AP09–AP16 sind ausgearbeitete Erstentwürfe zur späteren Verfeinerung durch den Projektinhaber. Keine erneute Implementierung abgeschlossener Pakete. Dieser Plan ersetzt die frühere Folge AP08.7/AP09–AP12.
+
+## Inhaltsverzeichnis und Arbeitsstand
+
+| Kapitel / Paket | Inhalt | Stand |
+|---|---|---|
+| 1 | Spielvision und Grundregeln | Verbindliche Leitlinien |
+| 2 | Welt, Teilnehmer und gemeinsamer Wirtschaftszustand | Leitlinien und Modellvertrag |
+| 3 | Bestehende Implementierung AP01–AP08.6 | Laut Projektinhaber umgesetzt |
+| AP09.1 | Bestandsaufnahme und Erweiterungsvertrag | Nächster Schritt, Entwurf |
+| AP09.2 | Bevölkerung, Beschäftigung und Einkommen | Entwurf |
+| AP09.3 | Geschäfte und Konsumentenentscheidungen | Entwurf |
+| AP09.4 | Kostenrechnung und aufschlagsbasierte Preise | Entwurf |
+| AP09.5 | Banken, Kredite und Geldmenge | Entwurf |
+| AP09.6 | Wirtschaftlicher Langzeittest | Entwurf |
+| AP10 | Konzernnetz und vollständiger Aufbauspieltest | Entwurf; ersetzt AP08.7 |
+| AP11 | Unternehmens-KI und Expansion | Entwurf |
+| AP12 | Staatliche Wirtschaft und Haushalt | Entwurf |
+| AP13 | Nationale/internationale Politik und Lobbyismus | Entwurf |
+| AP14 | Ereignisse und Krisen | Entwurf |
+| AP15 | Gesamtprüfung und Auslieferung | Entwurf |
+| AP16 | Skalierung und Parallelisierung | Entwurf |
+
+**Leseregel:** Die allgemeinen Leitlinien und die neuen AP09–AP16 beschreiben das Zielmodell. AP01–AP08.6 bleiben als Implementierungshistorie erhalten. Ältere Aussagen darin zu direkten Haushaltskäufen, mehreren Städten pro Region, fixer Geldmenge oder noch fehlenden Funktionen sind kein Auftrag, die neue Zielarchitektur zu umgehen. AP09.1 erfasst die tatsächlichen Abweichungen im Code. Paketnummern außerhalb der historischen Abschnitte folgen ausschließlich diesem Inhaltsverzeichnis.
+
+**Übergreifend:** Neue Zustände und Befehle erhalten im jeweiligen Paket Save-/Load-Unterstützung, Diagnose, relevante Invariantentests und Messpunkte. Keine Aufschiebung dieser Grundlagen bis AP15/AP16. Keine politische oder krisenbedingte Reparatur eines noch nicht funktionierenden Normalbetriebs.
 
 ## Masterprompt für Codex
 
-Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; abgeschlossene Pakete bis AP07a nicht erneut bauen; ab AP08.1 vorhandene Funktionen gezielt erweitern. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
+Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; abgeschlossene Pakete bis AP08.6 nicht erneut bauen; ab AP09.1 vorhandene Funktionen gezielt erweitern. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
+
+## 1. Spielvision und Grundregeln
 
 ### Spielvision
 
@@ -21,6 +48,8 @@ Ziel ist der Aufbau eines Weltkonzerns durch Handel, Produktion, Logistik, Über
 Das Spiel ermöglicht moralisch verwerfliches Verhalten: Waren zurückhalten, auf klimabedingte Knappheit spekulieren, Konkurrenz verdrängen und später Handelsbeschränkungen über Zwischenhändler oder Drittstaaten umgehen. Dies sind abstrakte Spielsysteme; konkrete reale Umgehungsanleitungen sind nicht Teil des Designs.
 
 Konsequenzen entstehen aus Wirtschaftsregeln und reagierenden Akteuren. Kein globaler Moralwert: Versorgung, Vertrauen, Beziehungen, regulatorische Risiken und Unternehmensgewinn sind getrennte Größen. Spekulation birgt echte Verluste, weil Prognosen unsicher sind, Waren verderben und Lager Geld kosten. Für die ersten Pakete keine vollständigen Politik- oder Reputationssysteme vorwegnehmen.
+
+## 2. Welt, Teilnehmer und Wirtschaftsmodell
 
 ### Unternehmenswahl und Steuerungszuordnung
 
@@ -41,7 +70,7 @@ Die Szenariowelt enthält alle Unternehmen vor der Spielerwahl. Der Spieler übe
 
 ### Wirtschaftsmodell: Akteure, Konsumenten und regionale Märkte
 
-**Verbindliche Grundlage ab AP04/AP05, keine spätere Erweiterung nach AP11.**
+**Grundlage seit AP04/AP05; neue Präzisierungen werden über AP09 integriert.**
 
 Unternehmen sind individuelle, aktive Marktakteure mit eigenem Geld, Warenbesitz, Standorten und Entscheidungsregeln. Sie können Konkurrent, Kunde und Lieferant zugleich sein. Produzenten, Händler und Transportanbieter verfolgen eigene Interessen. Staaten werden erst mit den Politikpaketen aktive wirtschaftspolitische Akteure; ihre spätere Rolle verlangt jetzt kein vollständiges Staatssystem.
 
@@ -68,10 +97,10 @@ Produktion, Inputverbrauch, Haushaltskonsum und Verderb sind ausgewiesene Warenq
 
 ### Aufbaukern: Städte, Unternehmensassets und wirtschaftliches Reich
 
-**Vorrang vor Ereignissen:** Zuerst muss eine normale Spielsequenz aus Handel, automatischem Betrieb, Gewinn und Investition funktionieren. AP09-Ereignisse sind keine Voraussetzung dafür.
+**Vorrang vor Ereignissen:** Zuerst muss eine normale Spielsequenz aus Handel, automatischem Betrieb, Gewinn und Investition funktionieren. AP14-Ereignisse sind keine Voraussetzung dafür.
 
 - Das Unternehmen ist Eigentümer unterschiedlicher Assets und kann branchenübergreifend wachsen. Betriebsstätte und Unternehmen sind keine Synonyme.
-- Städte sind gemeinsame Wirtschaftshubs. Mehrere Unternehmen können ihren Sitz oder Niederlassungen in derselben Stadt haben. Hauptsitz ist eine einzelne Ortsreferenz; weitere Standorte bleiben möglich.
+- Jede Wirtschaftsregion besitzt genau einen Stadthub; Städte sind gemeinsame Wirtschaftshubs. Mehrere Unternehmen können ihren Sitz oder Niederlassungen in derselben Stadt haben. Hauptsitz ist eine einzelne Ortsreferenz; weitere Standorte bleiben möglich.
 - Jedes Asset ist einem Stadthub zugeordnet. Mine und Farm können räumlich im Umland liegen, werden aber über die Stadt verwaltet und benötigen dort zugeordnete geeignete Ressourcen.
 - Alle lokalen Kauf-, Bau-, Ausbau- und Betriebsaktionen erfolgen über den Stadtbildschirm. Globale Ansichten bleiben als aggregierte Navigation erhalten und öffnen dieselben Stadt-/Assetaktionen, keine zweite konkurrierende Logik.
 - Regionen behalten ihren Markt. Stadtansicht und Angebote filtern diesen nach Ort; keine zusätzlichen unabhängigen Stadtmärkte und kein kostenloser Transfer zwischen physischen Standorten.
@@ -92,7 +121,33 @@ Produktion, Inputverbrauch, Haushaltskonsum und Verderb sind ausgewiesene Warenq
 | Eigene Assets | Lager, Produktion und Fahrzeuge vor Ort; Auslastung, Kosten, Ergebnis und Betriebsregeln |
 | Investitionen | Bauoptionen, explizit angebotene Assets und Ausbauten; Kosten, Dauer, Voraussetzungen und Bestätigung |
 
-Regionale Bevölkerungszahlen bei mehreren Städten nicht jeder Stadt vollständig zuschlagen. Eine nachvollziehbare Zuordnung oder ausdrücklich regionale Anzeige verwenden. Umlandvorkommen jeweils nur einmal einem physischen Gebiet/Standort zuordnen.
+Jede Region hat genau einen Stadthub. Regionale Bevölkerungszahlen genau einmal diesem Hub zuordnen. Umlandvorkommen jeweils nur einmal einem physischen Gebiet/Standort zuordnen.
+
+### Verbindliche Präzisierungen der Wirtschaftsengine
+
+Diese später beschlossenen Vorgaben haben Vorrang vor älteren Formulierungen in abgeschlossenen Paketen.
+
+**Raum und Einzelhandel**
+- Genau ein Stadthub je Wirtschaftsregion, genau eine Region je Hub. Stadt repräsentiert alle Haushalte und Assets ihres regionalen Einzugsgebiets. Region und Stadt bleiben für Geometrie und Bedienung referenzierbar, zählen Bevölkerung aber nur einmal.
+- Der Regionsmarkt ist ausschließlich B2B: Unternehmen handeln mit Unternehmen. Haushalte stellen dort keine Kaufaufträge ein.
+- Endkonsumenten kaufen ausschließlich aus realen Geschäftsbeständen. Produzierende Betriebe dürfen nicht an Haushalte verkaufen, auch nicht als Direktverkaufsoption. Derselbe Konzern darf Produktion und separate Einzelhandelsassets besitzen.
+- Geschäftstypen: Lebensmittelgeschäft, Bekleidungsgeschäft und Gemischtwarenladen; Sortiment, Lager-/Verkaufsleistung, Personal und Fixkosten unterscheiden sich. Tatsächlich nicht vorhandene Warenketten nicht durch Gratisware ersetzen; Warenumfang in AP09.1 festlegen.
+- Innerhalb eines Hubs sind Waren weiter an Lager-/Assetorte gebunden. Regionale letzte-Meile-Transfers benötigen eine explizite, einheitliche Zeit-/Kostenregel. Kein stiller Ortswechsel; AP09.1 definiert die Integration mit bestehender Logistik.
+
+**Konsumenten und Wohlstand**
+- Regionale Haushaltsgruppen besitzen reales Geld, Beschäftigung, Löhne und Ersparnisse. Keine endlosen Kaufbudgets.
+- Grundbedürfnisse zuerst, danach Freizeitkonsum und Luxus. Innerhalb der Kategorien Angebote nach Budget, Preis, Verfügbarkeit, Qualität und später weiteren Attributen bewerten.
+- Einfache gewichtete Verteilung auf mehrere Geschäfte statt zwingend alle Haushalte beim billigsten Laden. Exakte Formel und Parameter sind zunächst Entwurf und werden reproduzierbar dokumentiert.
+- Landes-BIP ist eine aggregierte Wertschöpfungskennzahl, keine automatische Budgetquelle. Reale Kaufkraft und längerfristiger Gruppenwohlstand steuern zusätzliche Bedürfnisse. Die zuletzt vorgeschlagene Entkopplung von BIP und direkter Geldvergabe ist ein begründeter Entwurfswert, kein historischer Fakt.
+
+**Preise und Ziele**
+- Spieler stellt Kostenaufschlag ein, keinen beliebigen Festpreis: Vollkostenbasis × (1 + Aufschlag). Beispiel 10 USD Kosten + 20 % = 12 USD.
+- Beschaffung bzw. eigene Herstellung, Transport und sachgerecht zugeteilte Betriebskosten automatisch berechnen und offenlegen. Interne Transfers nicht doppelt zählen. Frühere Festpreisoptionen in AP08.5 sind in AP09.4 gezielt zu migrieren.
+- Unternehmen streben nachhaltigen Gewinn/Wachstum an und berücksichtigen Zahlungsfähigkeit. Haushalte sichern Grundbedarf und erhöhen Lebensstandard. Staaten verfolgen Versorgung, Beschäftigung, Haushalt und politische Unterstützung; BIP allein genügt nicht.
+- Geldmenge darf durch explizite Kreditgeldschöpfung wachsen. Reales Vermögen, Bargeld-/Einlagenbestände, Schulden und Preisniveau getrennt messen. Keine unbegründeten Bilanzzuflüsse.
+
+**Politischer Zielumfang**
+Nationale Regeln und internationale Abkommen, Zölle und Beschränkungen werden später autonom überprüft. Unternehmen können Vorhaben anstoßen und auf andere Vorhaben reagieren. Lobbyismus beeinflusst einen nachvollziehbaren Entscheidungsprozess, kauft nicht garantiert ein Ergebnis. Zunächst kein vollständiges Wahl-/Diplomatiespiel.
 
 ### Darstellung und Bedienung
 
@@ -247,7 +302,9 @@ Produktionsleistung ist durch Inputs, Kapazität, Standortvoraussetzungen und ve
 - Betriebskosten, Fixkosten und Gebühren werden an explizite Konten oder einen dokumentierten externen Sektor gezahlt. Keine verdeckten Geldlöschungen. Verderb betrifft passende Lager- und Frachtbestände gleichermaßen.
 - Ohne Deckung neue Aufträge stoppen und Zahlungsrückstände sichtbar führen; keine stillen negativen Geldbestände. Vollständige Insolvenzmechanik folgt später.
 
-## Arbeitspakete
+## 3. Bestehende Implementierung – AP01 bis AP08.6
+
+Die folgenden Pakete sind laut Projektinhaber umgesetzt. Sie dokumentieren den bisherigen Auftrag. Spätere Präzisierungen werden über AP09 integriert, nicht durch erneute vollständige Umsetzung dieser Pakete.
 
 ### AP01 – Projektgrundlage und Kameraprototyp
 
@@ -497,7 +554,7 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 | Assets | vehicle relocate ID PLACE; nur freies Fahrzeug ohne gebundene Verpflichtungen |
 | Validierung | validate world; referenzielle Integrität, Konten, Reservierungen, Warenmengen und Kapazitäten prüfen |
 | Reproduzierbarkeit | Szenario-ID/-Version, Start-Seed, aktuellen Schritt und verwendete Konfiguration anzeigen |
-| Ereignisse ab AP09 | event start drought REGION SEVERITY HOURS; event stop ID; aktive Ereignisse auflisten |
+| Ereignisse ab AP14 | event start drought REGION SEVERITY HOURS; event stop ID; aktive Ereignisse auflisten |
 
 **Befehlsverarbeitung und Konsistenz**
 1. Zentral registrierte, typisierte Befehle mit Prüfung von Parameteranzahl, Wertebereichen, gültigen IDs, Einheit und Zustand. Fehlermeldung nennt das Problem; fehlgeschlagene Mutation hinterlässt keine Teiländerung.
@@ -511,7 +568,7 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 9. Seed anzeigen; Änderung bei laufender Partie vorerst nicht erlauben. Reproduzierbare Neustarts über explizites Szenario/Seed durchführen. Das Log unterstützt Reproduktion, ist noch kein vollständiges automatisches Replay-System.
 10. Keine pauschalen Cheats für Spielerfirmen: CompanyId explizit adressieren, sodass dieselben Tests für NPCs möglich sind. Normale Spielerberechtigungen bleiben unverändert; Konsolenprivilegien dürfen nicht in deren Befehlsweg gelangen.
 11. Nach Eingriffen gezielte Invarianten prüfen; validate world verändert den Zustand nicht. Fehler mit betroffenen IDs melden, nicht automatisch unbekannte Zustände reparieren.
-12. Ereignisregistry/-schnittstelle schlank vorbereiten, aber keine Dürrelogik vor AP09 implementieren. Unbekannte bzw. noch nicht implementierte Ereignisse klar ablehnen.
+12. Ereignisregistry/-schnittstelle schlank vorbereiten, aber keine Dürrelogik vor AP14 implementieren. Unbekannte bzw. noch nicht implementierte Ereignisse klar ablehnen.
 
 **Abnahme**
 - Geld oder Ware für ein beliebiges existierendes Unternehmen gültig hinzufügen; Kontostand/Bestand und Snapshot aktualisieren sich mit einem dokumentierten Entwicklereingriff.
@@ -521,7 +578,7 @@ Eine Unternehmensliste/-karte zeigt Name, Tätigkeit, Startort, Kapital und wese
 - UI, Karte und offene Ansichten zeigen nach Eingriffen konsistente Zustände. Zustellung, Löhne und Reservierungsfreigabe erfolgen nicht doppelt.
 - Start/Stop während laufender Worker-Jobs, PIE-Ende und erneuter Szenariostart hinterlassen keine alten Befehle, Jobs oder Objektzugriffe.
 - Shipping-Build enthält keine registrierten mutierenden Konsolenbefehle und keinen alternativen Spielerzugang dazu; Test im Build dokumentieren.
-- Ereignisbefehle vor AP09 melden „nicht implementiert“. Nach AP09 starten/beenden sie Ereignisse über dieselbe autoritative Schnittstelle.
+- Ereignisbefehle vor AP14 melden „nicht implementiert“. Nach AP14 starten/beenden sie Ereignisse über dieselbe autoritative Schnittstelle.
 
 ## AP08 – Tragfähiges Unternehmens- und Aufbauspiel
 
@@ -583,12 +640,12 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 **Voraussetzung:** AP08.3.
 
 **Aufgaben**
-- Bisherige vollständige Speicheranforderungen aus AP11 schon jetzt für den vorhandenen Spielzustand implementieren.
+- Bisherige vollständige Speicheranforderungen aus der Gesamtprüfung (heute AP15) schon jetzt für den vorhandenen Spielzustand implementieren.
 - PlayerCompanyId, Seed/Zufallszustand, Zeit, Firmen, Konten, Bestände, Reservierungen, Orderbücher, Konsumenten, Beschäftigung, Assets und Transporte erhalten.
 - Laufende Bau-/Ausbauprojekte, Zahlungen, Verkaufsangebote und Ressourcenbindungen speichern.
 - An abgeschlossener Schrittgrenze speichern, Referenzen validieren, UI/Steuerung und Jobs sicher rekonstruieren; Save-Version und Szenario-/Definitionsversion dokumentieren.
 - Entwicklereingriffe kennzeichnen. Beschädigte/inkompatible Zustände nachvollziehbar abweisen; keine geratenen Eigentümerzuordnungen.
-- Spätere Pakete erweitern den Save-Vertrag jeweils mit ihren neuen Zuständen, nicht erst in AP11.
+- Spätere Pakete erweitern den Save-Vertrag jeweils mit ihren neuen Zuständen, nicht erst in AP15.
 
 **Abnahme**
 - Speichern während Bau, Teilausführung und Transport; Laden führt jede Fertigstellung/Zustellung/Zahlung genau einmal aus.
@@ -634,9 +691,147 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 - Interne Verrechnung verändert Standortergebnisse, aber nicht Konzernbargeld/externe Umsätze.
 - Save/Load zwischen Fälligkeit und Ankunft erzeugt keine doppelte Lieferung. Engpass und Wiederaufnahme bleiben verständlich.
 
-### AP08.7 – Sichtbares Konzernnetz und vollständiger Aufbauspieltest
+## 4. Wirtschaftsengine vervollständigen – neue Arbeitspakete
+
+**Entwurfsstatus:** Die folgenden Regeln sind konkrete Startvorschläge, damit Implementierungsaufträge prüfbar werden. Balancingwerte sind konfigurierbar. Nicht bestätigte Detailentscheidungen werden in AP09.1 sichtbar aufgelistet; sie sind keine versteckten Pflichtannahmen. Jedes Paket erweitert dieselbe Simulation.
+
+### AP09.1 – Bestandsaufnahme und Erweiterungsvertrag
 
 **Voraussetzung:** AP08.6.
+
+**Ziel:** Tatsächlichen Code und neues Zielmodell verbinden, bevor weitere Mechaniken implementiert werden.
+
+**Aufgaben**
+- Vorhandene Entitäten, Geld-/Warenflüsse, Beschäftigung, Orderbücher, Automatisierung, interne Verrechnung, Transporte, Speichern und Entwicklerbefehle inventarisieren.
+- Je System festhalten: vorhandene Klassen/Daten, erfüllte Regeln, Abweichungen und kleinster notwendiger Änderungsumfang.
+- Mapping Region ↔ Stadthub auf 1:1 validieren. Physische Assetorte und interne Transporte beibehalten.
+- Gemeinsames Phasenschema dokumentieren: fällige Zahlungen/Ankünfte, Beschäftigung/Einkommen, Planung, B2B-Handel, Produktion, Ladenbelieferung, Einzelhandel/Konsum, Abschlüsse. Genaue Reihenfolge gegen existierenden Code prüfen und verbindlich wählen.
+- Konkrete Minimalwarenkette mit Grundbedarf und Freizeit/Luxus festlegen. Kleidung als neue Ware ergänzen, falls Bekleidungsgeschäft bereits im ersten Testszenario aktiv sein soll; anderenfalls diesen Typ zunächst nicht aktiv anbieten.
+- Migrationsplan für direkte Haushaltskäufe, bisherige Preissteuerung, Konten und alte Saves erstellen. Bestehende Werte erhalten, inkompatible Fälle explizit benennen.
+- Reproduzierbare Baseline über 30 Spieltage mit Seed, Datenstand, Geld-/Mengenbilanz und Messwerten erstellen.
+- Eine dokumentierte Liste verbleibender Produktentscheidungen mit empfohlenen Startwerten liefern. Routineimplementierung nicht wegen jeder Zahl blockieren; grundlegende Widersprüche vor abhängigen Änderungen klären.
+
+**Abnahme**
+- Mappingtabelle Code → Zielregel, Phasenplan, Migrationsplan und ausführbares Baselineszenario liegen vor.
+- Keine parallele zweite Wirtschaftsengine und keine Neuimplementierung bereits korrekter Systeme.
+- Konsumenten-, B2B- und Einzelhandelsflüsse haben klar getrennte Verantwortlichkeiten.
+
+### AP09.2 – Bevölkerung, Beschäftigung und Einkommen
+
+**Voraussetzung:** AP09.1.
+
+**Ziel:** Haushalte verdienen, sparen und planen Konsum nachvollziehbar.
+
+**Aufgaben**
+- Bestehende regionale Gruppen zu drei konfigurierbaren Einkommens-/Bedürfnisprofilen erweitern, Erwerbspersonen von Gesamtbevölkerung unterscheiden.
+- Beschäftigung an Produktions-, Handels-, Lager-, Transport- und Einzelhandelsassets berücksichtigen; keine mehrfach gezählten Vollzeitkräfte.
+- Lohnperioden und Deckung prüfen. Arbeitgeber zahlen an Gruppen; Einkommensverteilung innerhalb aggregierter Gruppen dokumentieren.
+- Arbeitslosigkeit und Ersparnisse abbilden; keine unsichtbare Auffüllung. Übergangsweise externe Transfers nur mit expliziter Herkunft.
+- Tagesbedarf vor Budgetbegrenzung berechnen; Budgetpriorität Grundbedarf → Freizeit → Luxus; Reserve-/Sparziel als konfigurierbarer Entwurf.
+- Gruppenwohlstand aus gleitender realer Kaufkraft und erfüllten Bedürfnissen ableiten; Wachstum zusätzlicher Bedürfnisse begrenzen und verzögern. Kein sofortiger Bedarfsprung bei einer einmaligen Geldzugabe.
+- UI zeigt Einkommen, Konsumausgaben, Ersparnisse, Arbeitslosigkeit und Fehlbedarf je Gruppe; personenbezogene Einzelsimulation nicht erforderlich.
+- Bestehenden Kaufweg bis AP09.3 nicht unbeaufsichtigt weiterlaufen lassen: klarer Übergangsmodus, keine doppelten Käufe nach Aktivierung des Einzelhandels.
+
+**Abnahme**
+- Lohnzahlung reduziert Arbeitgeberkonto und erhöht Haushaltskonto um denselben Betrag.
+- Arbeitsplatzverlust reduziert zukünftiges Lohneinkommen; vorhandene Ersparnisse bleiben.
+- Bedarf ist bei fehlendem Geld vorhanden, aber nicht automatisch gekauft.
+- Ein BIP-/Statistikwert erzeugt kein Geld. Save/Load erhält Einkommenstermine und Gruppenstatus ohne Doppelzahlung.
+
+### AP09.3 – Geschäfte und Konsumentenentscheidungen
+
+**Voraussetzung:** AP09.2.
+
+**Ziel:** Einzelhandel ist der einzige Warenzugang der Haushalte.
+
+**Aufgaben**
+- Einzelhandelsassets mit Typ, Sortiment, Verkaufsbestand, Personal, Lager-/Verkaufsleistung und Fixkosten integrieren. Bau/Kauf/Ausbau nutzt AP08.3 und Stadtbildschirm.
+- Für das aktive Sortiment passende Produzenten und Händler konfigurieren. Keine unbegrenzten Großhandels- oder Ladenbestände.
+- Beschaffung über B2B-Aufträge bzw. bestehende Lieferverträge, physischer Transport in Ladenbestand; dieselbe Ware nicht gleichzeitig im Lager und Laden führen.
+- Haushaltskäufe aus dem B2B-Orderbuch entfernen. Produzenten an Haushalte zentral ablehnen; Besitz eines Ladens ist eine separate Voraussetzung.
+- Tagesbudget nach Prioritätsstufen auf tatsächlich verfügbare Ladenangebote verteilen. Preis, Qualität, Verfügbarkeit und zugängliches Sortiment verwenden.
+- Entscheidung deterministisch und nachvollziehbar verteilen, z. B. gewichtete Nachfrage mit erneuter Verteilung bei ausverkauften Angeboten. Keine Kaufwahrscheinlichkeit, die Preis-/Budgetlimits umgeht.
+- Pro Kauf Geld und Ware atomar buchen, anschließend Konsum als Warensenke erfassen. Nicht erfüllte Menge bleibt Fehlbedarf, keine Schuld ohne eigenen Kreditvertrag.
+- Für Migration einmalig sichtbare Kosten-/Preisparameter verwenden; AP09.4 ersetzt provisorische Kalkulation durch vollständige Kostenbasis.
+- Spielbare Firma kann ein Geschäft besitzen oder beliefern. Alle fremden Geschäfte laufen unter denselben Regeln.
+
+**Abnahme**
+- Konsum ohne gefüllte Geschäfte bleibt unerfüllt, auch wenn ein Produzent Vorräte hat.
+- Zwei Geschäfte konkurrieren; Preis-/Qualitätsänderungen verändern Absatz bei sonst gleichem Zustand nachvollziehbar.
+- Grundbedarf erhält Budgetvorrang, Luxus bleibt bei Geldmangel aus.
+- Käufer zahlen Ladenbesitzer, Ladenbestand sinkt, Verbrauch wird einmal gezählt.
+- Bereits laufende B2B-/Lieferaufträge bleiben bei Migration konsistent; Kauf und Save/Load duplizieren nichts.
+
+### AP09.4 – Kostenrechnung und aufschlagsbasierte Preise
+
+**Voraussetzung:** AP09.3.
+
+**Ziel:** Spieler steuert Aufschläge, die Engine erklärt Kosten und Ergebnis.
+
+**Aufgaben**
+- Einheitlichen Kostenfluss für Einkauf, interne Produktion, Transport und Betrieb implementieren; vorhandene interne Verrechnung integrieren.
+- Lagerkosten zunächst mit gleitenden gewichteten Anschaffungskosten bewerten; Herstellung enthält verbrauchte Inputs und zurechenbare Lohn-/Betriebskosten.
+- Zurechnung fixer Kosten über konfigurierbare normale Auslastung bzw. nachvollziehbaren Mengenbezug; Absatz null darf keine Division durch null oder endlose Preise erzeugen. Anlaufwerte und unzugeordnete Leerkosten separat zeigen.
+- Keine Aufschläge auf automatisch sich selbst rückkoppelnde Kosten. Preisberechnung zu festen Zeitpunkten mit versionierter Basis, nicht pro Kauf rekursiv.
+- Preis = Kostenbasis × (1 + Aufschlag); Geldrundung dokumentieren. Spieler setzt nur Aufschlag, nicht willkürlichen Festpreis.
+- Bestehende Verträge mit vereinbarten Preisen zunächst erfüllen; neue Markt-/Ladenangebote nach neuer Kalkulation erstellen. Altaufträge geordnet auslaufen lassen, keine rückwirkende Preisänderung.
+- Konzerninterne Bewertungsaufschläge bei Konzernabschluss eliminieren; externen Gewinn und interne Standortleistung unterscheiden.
+- UI zeigt Kostenaufteilung, Aufschlag, Preis, realisierte Erlöse, Wareneinsatz und Periodenergebnis. Margenänderung ist kein Gewinnversprechen.
+
+**Abnahme**
+- Kostenbasis 10 USD, Aufschlag 20 % ergibt 12 USD. Höhere Transportkosten erhöhen nachvollziehbar die Basis.
+- Interner Transfer erschafft weder Bargeld noch externen Konzernumsatz.
+- Nullabsatz, Neubetrieb und fehlende Einkaufshistorie liefern definierte, sichtbare Werte.
+- Tatsächlicher Periodengewinn bleibt nach externen Kosten und Leerkosten korrekt, unabhängig von kalkulatorischer Preisbasis.
+
+### AP09.5 – Finanzierung, Banken und Geldmenge
+
+**Voraussetzung:** AP09.4.
+
+**Ziel:** Investitionen können durch begrenztes, bilanziertes Kreditgeld finanziert werden.
+
+**Aufgaben**
+- Eine vereinfachte Bank als eigener Akteur bzw. Bankbilanz integrieren. Unternehmenskonten als Einlagen eindeutig führen; bisherige Kontoguthaben bei Migration nicht zusätzlich neu erschaffen.
+- Startbilanz für vorhandene Einlagen mit expliziten Gegenposten konfigurieren. Geldaggregate, Bankeinlagen, Forderungen, Eigenkapital und reale Vermögenswerte unterscheiden.
+- Kreditentscheidung nach Gewinn-/Cashflowhistorie, Verschuldung, Sicherheiten und Bankrisikobudget; historische Startfirmen ohne Historie erhalten nachvollziehbare Startkonditionen statt unbegrenztem Kredit.
+- Zusage schafft gleichzeitig Unternehmenseinlage und Bankforderung. Tilgung vermindert beide. Zinszahlung überträgt Einkommen an die Bank und ist nicht mit Tilgung zu verwechseln.
+- Kredite mit Laufzeit, Zinssatz, Zahlungsplan, ausstehendem Kapital, Rückstand und Sicherheitsreferenzen speichern. Doppelte Sicherheiten begrenzen.
+- Normale Überweisungen zwischen Firmen schaffen kein Geld. Konsolidierte Geldmenge ohne doppelt gezählte Bankgegenkonten ausweisen.
+- Erstes Modell ohne Interbankenmarkt, Zentralbankpolitik oder Haushaltskredite. Bankkosten/-ausgaben und Gewinnthesaurierung explizit behandeln.
+- Zahlungsausfall zunächst als Rückstand mit Kredit-/Investitionssperre behandeln; Forderungsabschreibung separat bilanzieren, Einlagengeld nicht pauschal im selben Betrag vernichten. Vollständige Insolvenz später.
+- Finanzierung im Unternehmens-/Investitionsdialog mit Zinsen, Tilgung und Belastung sichtbar machen; NPCs nutzen dieselben Konditionen.
+
+**Abnahme**
+- Kredit über 1.000 erhöht definierte Einlagenmenge und ausstehende Bankforderungen um 1.000.
+- Tilgung von 100 senkt beide um 100; Zinsen separat verbucht. Kauf mit diesem Geld verändert nur Besitzer, nicht nochmals die Geldmenge.
+- Bank- und Unternehmensbilanzen sind im definierten vereinfachten Modell konsistent.
+- Ungedeckter Zahlungsdienst wird nicht als erfolgreiche Tilgung markiert; Save/Load bewahrt nächste Fälligkeit.
+- Keine automatische Kreditvergabe zur Rettung jedes unprofitablen Betriebs.
+
+### AP09.6 – Wirtschaftlicher Langzeittest
+
+**Voraussetzung:** AP09.5.
+
+**Ziel:** Ein geschlossener, erklärbarer Normalbetrieb vor Konzernspiel, Politik und Krisen.
+
+**Aufgaben**
+- Testfälle über 30, 180 und 365 Spieltage mit Datenstand/Seed, Firmen, Haushalten, Geschäften, Logistik und Bank konfigurieren.
+- Geldbestände und -schöpfung, Warenquellen/-senken, Beschäftigung, Preise, Reservierungen, Gewinne, Schulden und Konsum täglich protokollieren.
+- Normalszenario, Inputengpass, Konkurrenz, hohe Aufschläge und überschuldete Firma vergleichen. Ereignissystem nicht erforderlich; Anfangsbedingungen variieren.
+- Zeigen, wie mehr Nachfrage zu Aufträgen und Investitionsanreizen führt, ohne garantierte Vollbeschäftigung oder Profit.
+- BIP als Wertschöpfung mit dokumentiertem Umfang und Referenzpreisen berechnen; Zwischenhandel und interne Transfers nicht mehrfach addieren. Vor vollständigem Staatssystem Abdeckungsgrenzen benennen.
+- Speicher-/Ladevergleich und verschiedene Zeitgeschwindigkeiten prüfen; wiederholte negative Bestände, falsche Reservierungen oder stilles Geldwachstum als Fehler behandeln.
+- Balancingkorrekturen offen dokumentieren; kein verborgenes Nachfüllen von Waren/Budgets.
+
+**Abnahme**
+- Normalszenario erzeugt wiederholten Lohn–Einzelhandel–Nachschub-Kreislauf und nachvollziehbare Gewinne/Verluste.
+- Ausfälle sind wirtschaftlich erklärbar; keine technisch bedingte Blockade nach wenigen Tagen.
+- Alle Geld-/Warenabweichungen durch explizite Quellen/Senken oder Änderungen erklärbar.
+- Bericht benennt Zahlen, Testergebnisse, Leistungswerte und noch offene Spielentscheidungen.
+
+### AP10 – Sichtbares Konzernnetz und vollständiger Aufbauspieltest
+
+**Voraussetzung:** AP09.6.
 
 **Aufgaben**
 - Eigene Stadthubs und Verbindungen als Netz in Firmenfarbe zeigen; Marker unterscheiden Hauptsitz, Niederlassung und Größenordnung eigener Präsenz.
@@ -653,79 +848,116 @@ Eine fortsetzbare Partie ermöglicht: Unternehmen übernehmen → Versorgungslü
 - Spieler erkennt Besitz, Kosten, Engpässe und Gewinnursachen in der Oberfläche ohne Konsole.
 - Regelbetrieb funktioniert ohne erneute Bestellung jeder einzelnen Fahrt. Eingriffe konzentrieren sich auf Strategie, Ausbau und Ausnahmen.
 - Beide Wachstumswege sind erreichbar und mit Kosten/Risiken verbunden; keine garantierte Profitmaschine.
-- Mindestens ein dokumentierter Spieltest nennt Entscheidungsstellen, Wartephasen und verbleibende Probleme. Noch nicht bestandene Kriterien sperren den Übergang zu AP09 fachlich; kein bloßes Abhaken implementierter Widgets.
+- Mindestens ein dokumentierter Spieltest nennt Entscheidungsstellen, Wartephasen und verbleibende Probleme. Noch nicht bestandene Kriterien sperren den Übergang zu AP11 fachlich; kein bloßes Abhaken implementierter Widgets.
 
-### AP09 – Klimarisiko, Vorräte und erster Interessenkonflikt
-
-**Voraussetzung:** AP08.7 bestanden. Ereignisse nutzen die validierten Entwicklerbefehle aus AP07a; das Basisspiel muss ohne Ereignisse funktionieren.
-
-**Ziel:** Die besondere Identität des Spiels wird im Wirtschaftskern erlebbar.
-
-**Aufgaben**
-- Konfigurierbare regionale Dürre mit zeitlich begrenzter Auswirkung auf Nahrungsproduktion ergänzen.
-- Start-/Stop-/Listenbefehle in der Entwicklerkonsole aus AP07a registrieren. Stärke, Dauer, Region, Prognose und aktiven Zustand validieren; Stop entfernt nur den laufenden Effekt und macht bereits geschehene Wirtschaftsfolgen nicht rückgängig.
-- Prognose und tatsächliches Ereignis trennen: Prognosen nennen Risiko und Zeitraum, nicht den sicheren zukünftigen Zustand. Mit festen Seeds reproduzierbare Testfälle ermöglichen.
-- Produktionseinbruch, Bestände, Marktpreise und unerfüllten Bedarf über bestehende Regeln verbinden; kein pauschaler Krisenpreis-Multiplikator.
-- Versorgung, Lagerbestand, Verderb, Kosten und Gewinn im Panel oder einer kurzen Historie sichtbar machen.
-- Die seit AP05 aktiven Produzenten, Händler und Konsumentengruppen auf veränderte Produktion und beobachtete Angebote reagieren lassen. AP10 vertieft ihre Planung; keine neue künstliche Krisennachfrage erzeugen.
-
-**Abnahme**
-- Zwei feste Testfälle zeigen eingetretene und ausgebliebene Dürre.
-- Konsole kann eine Dürre starten und stoppen; ungültige Parameter hinterlassen keinen Teilzustand. Geskriptete Tests und normale Ereignisauslösung verwenden dieselben Wirtschaftsregeln.
-- Früher Einkauf verändert Angebot sofort; spätere Lieferung kann Mangel reduzieren.
-- Zurückhalten kann Gewinnchancen und Versorgungsprobleme erhöhen, garantiert aber keinen Gewinn.
-- Ausbleibende Krise kann durch Lagerkosten, Verderb und Preisentwicklung Verluste verursachen.
-- Keine erfundenen Reputationsstrafen ohne implementiertes Reaktionssystem.
-
-### AP10 – Strategien und Konkurrenzverhalten vertiefen
-
-**Voraussetzung:** AP09. Autonome Unternehmen bestehen bereits seit AP05.
-
-**Ziel:** Bestehende Akteure planen vorausschauender und verfolgen unterschiedliche Interessen.
-
-**Aufgaben**
-- Einfache Regeln aus AP05 um mehrperiodige Handelsbewertung, Liquiditätsreserven und Bestandsziele erweitern.
-- Unterschiedliche Parameterprofile für vorsichtige Versorgung, schnellen Warenumschlag und risikoreiche Spekulation ergänzen.
-- Beobachtete Preise, transportierbare Mengen, Reisekosten, Verderb und Prognoseunsicherheit berücksichtigen.
-- Konkurrenz um knappe Angebote und Kapazitäten über die bestehenden Marktregeln austragen.
-- Entscheidungen periodisch statt pro Frame treffen und anhand beobachtbarer Informationen erklären.
-- Investitionsvorhaben als spätere Erweiterung vorbereiten, aber Betriebsbau/Übernahmen nicht vor deren eigenen Paketen implementieren.
-
-**Abnahme**
-- Unterschiedliche Profile erzeugen in identischen Szenarien nachvollziehbar unterschiedliche Entscheidungen.
-- Unternehmen können Verluste erleiden und bei fehlender Liquidität keine ungedeckten Aufträge finanzieren.
-- Kein Sonderwissen über zukünftige Ereignisse und keine exklusiven Marktregeln für KI.
-- Der Spieler ist zugleich möglicher Kunde, Lieferant und Konkurrent.
-- Bestehende autonome Aktivität funktioniert weiterhin, wenn strategische Planung deaktiviert wird.
-
-### AP11 – Paketierter Prototyp und Gesamtprüfung
+### AP11 – Unternehmens-KI, Expansion und Konkurrenz
 
 **Voraussetzung:** AP10.
 
-**Ziel:** Den aufgebauten Prototyp als Gesamtspiel verifizieren; bestehendes Speichern aus AP08.4 um alle späteren Zustände vervollständigen.
+**Ziel:** NPC-Unternehmen wachsen und reagieren aufeinander mit denselben Möglichkeiten wie der Spieler.
 
 **Aufgaben**
-- PlayerCompanyId, Szenario-ID und Controller-Zuordnung beim Laden validieren; KI-Zuordnung vor dem ersten weiteren Simulationsschritt wiederherstellen. Kein Rückfall auf eine feste Standardfirma.
-- Das seit AP08.4 bestehende versionierte Speicherformat prüfen und ergänzen; nicht neu entwickeln. Vollständigkeit für Zeit, Konten, Eigentumsbestände, Betriebsstätten, Konsumentengruppen, Bedürfnisse/Versorgung, Orderbücher, Reservierungen, Preisverlauf, Unternehmensentscheidungen, aktive Transporte, Fahrzeugstandorte/-belegung, Lagerkapazitätsreservierungen, Fixkosten-/Lohnzeitpunkte, Zahlungsrückstände, Klimazustand, Kennzeichnung bisheriger Entwicklereingriffe und Zufallszustand ergänzen.
-- Geschäftshistorie begrenzen oder archivieren; offene Aufträge und abrechnungsrelevante Zustände vollständig erhalten.
-- Referenzen über stabile IDs speichern; Darstellung beim Laden rekonstruieren.
-- Inkompatible oder beschädigte Spielstände verständlich abweisen.
-- Einen paketierten Development-Build prüfen und Startanleitung vervollständigen.
-- Kleine Messung der Simulations- und Darstellungszeiten durchführen; nur belegte Engpässe optimieren.
+- Bestehenden regelbasierten Assetbetrieb von strategischen Entscheidungen trennen; Spielerautomatisierung bleibt aktiv, autonome Konzernstrategie nur für NPCs.
+- Ziele/Parameter für Liquidität, nachhaltigen Gewinn, Wachstum, Spezialisierung und Risiko definieren; nicht jedes Unternehmen identisch optimieren lassen.
+- Investitionsmöglichkeiten bewerten: weiterer Standort, Produktionsintegration, Laden, Kapazitätsausbau und Kreditfinanzierung.
+- Erwartete Nachfrage, Kosten, Transport, Personal und Konkurrenz berücksichtigen; nur öffentliche und eigene Daten.
+- Periodische Entscheidungen mit begrenztem Rechenbudget; Fehlschläge und falsch eingeschätzte Chancen zulassen.
+- Unternehmensübernahmen und Preisverhandlungen nur als separate spätere Erweiterung, solange deren Verpflichtungs-/Eigentumsmodell fehlt.
 
 **Abnahme**
-- Speichern während einer Lieferung und Laden stellt den korrekten Zustand wieder her.
-- Laden bewahrt die übernommene Firma und deren HUD-Perspektive; keine gleichzeitige autonome KI-Steuerung dieser Firma.
-- Derselbe Transport wird nach dem Laden genau einmal zugestellt.
-- Offene und teilgefüllte Aufträge behalten korrekte Restmengen und Reservierungen; Laden bucht weder Löhne noch Handel oder Konsum doppelt.
-- Paketierter Build enthält Geodaten, UI und Materialien und läuft ohne Editor sowie ohne Kartendienst.
-- Offene Einschränkungen und Messergebnisse sind dokumentiert.
+- Mindestens zwei Strategien erzeugen unterschiedliche, begründete Expansion.
+- NPC kann ohne Sonderkapital ein Asset bauen oder kaufen und danach regulär betreiben.
+- Unprofitable Investition belastet Liquidität; keine perfekte Kenntnis zukünftiger Krisen.
+- Mehrmonatiger Vergleich mit/ohne strategische KI sowie Save/Load dokumentiert.
 
-**Meilenstein C:** Paketierter, fortsetzbarer Wirtschaftskern mit realer Karte, akteursbasierten Märkten, regionalen Konsumenten, Lebensmittelhandel, Klimarisiko, Lagerentscheidungen und mehreren autonomen Unternehmen.
+### AP12 – Staatliche Wirtschaft und Haushalt
 
-### AP12 – Skalierung messen und gezielt parallelisieren
+**Voraussetzung:** AP11.
 
-**Voraussetzung:** AP11; Messinstrumentierung besteht seit AP04.
+**Ziel:** Staaten werden wirtschaftliche Akteure mit endlichen Mitteln und Verpflichtungen.
+
+**Aufgaben**
+- Staatskonto/-haushalt und Regeln für Einnahmen, Aufträge, Transfers, Subventionen und Schuldendienst einführen.
+- Gewinnsteuer auf definierte steuerliche Ergebnisse, gegebenenfalls Lohnabgaben und Zölle als getrennte konfigurierbare Instrumente. Nationale Regeln nicht rückwirkend ändern.
+- Staatliche Aufträge für tatsächlich gelieferte Leistungen/Waren mit Budget, Annahme und Zahlung; abstrakte öffentliche Leistungen offen ausweisen.
+- Transfers/Subventionen nach Bedingungen und gedecktem Budget; Auslaufen und nicht gedeckte Zusagen regeln.
+- Staatskredite über vereinfachte Bank-/Anleihemechanik mit expliziten Käufern/Bilanzfolgen, keine Annahme unbegrenzten Staatsgeldes.
+- Haushalts-/Versorgungs-/Beschäftigungskennzahlen für spätere Regierungsentscheidungen bereitstellen; BIP nicht als einziges Ziel.
+
+**Abnahme**
+- Steuern übertragen Geld, Staatsausgaben haben Empfänger und reale Bedingungen.
+- Ein Defizit braucht vorhandene Rücklagen oder dokumentierte Finanzierung; sonst Kürzung/Rückstand.
+- Zuschüsse können Branchen fördern und belasten den Haushalt.
+- Haushaltsabschluss, Schulden, Zahlungsplan und Regeln über Save/Load konsistent.
+
+### AP13 – Nationale und internationale Politik / Lobbyismus
+
+**Voraussetzung:** AP12.
+
+**Ziel:** Politische Regeln verändern sich eigenständig und können von Unternehmen beeinflusst werden.
+
+**Aufgaben**
+- Regierung mit Agenda und Gewichten für Versorgung, Beschäftigung, Haushalt und politische Unterstützung konfigurieren.
+- Periodische Überprüfung sowie begrenzte Krisenanlässe; Vorlauf, Mindestgeltung und Abklingzeit verhindern tägliches Umschalten.
+- Vorhaben mit Status vorgeschlagen, beraten, beschlossen/abgelehnt, wirksam und ausgelaufen modellieren.
+- Unternehmen können Maßnahmen anregen und laufende Vorhaben unterstützen/bekämpfen. Lobbyressourcen kosten Geld/Zeit, Erfolg bleibt abhängig von Interessen und Gegenkräften.
+- Einflussquellen getrennt darstellen: Arbeitsplätze, Versorgung, Investitionen, Beziehungen; keine reine Geld-gegen-Gesetz-Garantie.
+- Erste Instrumente: Branchenförderung, Steuer-/Abgabenänderung, Umweltanforderungen als Produktionskosten-/Voraussetzungsregel, Zölle und begrenzte Ausnahmen.
+- Für internationale Tests zweites Land als kleines explizites Handelsszenario ergänzen, keine vollständige Weltkarte voraussetzen. Abkommen, Importregeln und Gegenmaßnahmen bilateral modellieren, keine Weltregierung.
+- Import-/Exportherkunft, Zeitpunkt, Route und Abgaben eindeutig prüfen. Abstrakte Umgehungsmechaniken erst nach funktionierenden Handelsregeln gesondert spezifizieren.
+- Politische UI zeigt Vorhaben, Betroffene, Kosten, Unsicherheit und Wirksamkeitsdatum. Korruption ist ein später zu verfeinernder Weg, keine verpflichtend sofortige Funktion.
+
+**Abnahme**
+- Staat schlägt auch ohne Spielereingriff eine begründete Maßnahme vor.
+- Spieler kann Vorhaben anstoßen und reagieren, Konkurrenten vertreten Gegeninteressen.
+- Beschlossene Regeln verändern tatsächliche Buchungen/Produktionsbedingungen genau zum Geltungszeitpunkt.
+- Bilateraler Zolltest zeigt gegensätzliche Interessen und mögliche Gegenreaktion.
+- Politikstatus, Beziehungen, laufende Lobbyaktivitäten und Regeln werden vollständig gespeichert.
+
+### AP14 – Ereignisse und Krisen
+
+**Voraussetzung:** AP13; normaler Wirtschaftskreislauf bleibt ohne Krisen spielbar.
+
+**Ziel:** Ereignisse verändern bestehende Regeln und schaffen Chancen/Risiken statt künstlicher Preiseffekte.
+
+**Aufgaben**
+- Ereignisse mit Typ, Region/Land, Stärke, Beginn, Dauer und aktiven Effekten definieren. AP07a-Ereignisregistry und Start-/Stop-/Listenbefehle jetzt implementieren.
+- Zunächst Dürre mit begrenzter Nahrungsproduktion; Prognose und tatsächlichen Verlauf trennen, Unsicherheit reproduzierbar über Seed.
+- Output, Transportkapazität oder Nachfrage nur über vorhandene Mechaniken verändern; keine pauschale garantierte Preisexplosion.
+- Firmen, Haushalte und Regierung reagieren über ihre jeweiligen Entscheidungsregeln.
+- Start/Stop und Überschneidung regeln; Stop macht bereits geschehene Verluste und Geschäfte nicht rückgängig.
+- Szenario mit Eintritt und Ausbleiben erwarteter Krise; Lagerkosten/Verderb erlauben Spekulationsverluste.
+- Laufende Effekte, Prognosen und Zufallszustand speichern und in UI/Diagnose kenntlich machen.
+
+**Abnahme**
+- Konsole löst Dürre kontrolliert aus; Versorgung und Produktion ändern sich nachvollziehbar.
+- Lieferung lindert Knappheit, Zurückhalten kann sie verschärfen, Gewinn ist nicht garantiert.
+- Ungültiger Ereignisbefehl hinterlässt keinen Teilzustand.
+- Normalpartie ohne Ereignisse bleibt funktionsfähig; Save/Load verdoppelt Effekte nicht.
+
+### AP15 – Gesamtprüfung und Auslieferung
+
+**Voraussetzung:** AP14.
+
+**Ziel:** Einen fortsetzbaren, paketierten Gesamtprototyp liefern.
+
+**Aufgaben**
+- Bestehende Saves aus AP08.4 und nachfolgenden Erweiterungen auf Vollständigkeit prüfen; kein neues Speichersystem daneben bauen.
+- Assetbau, Marktreservierungen, Einzelhandel, Kredite, Staatsregeln, Lobbyvorhaben und Ereignisse im kombinierten Save/Load-Test prüfen.
+- Development- und Shipping-Build paketieren, Daten-/Material-/UI-Verfügbarkeit offline prüfen.
+- Entwicklerkonsole und privilegierte Endpunkte in Shipping entfernen; normale Spieleraktionen behalten ihre Berechtigungsprüfungen.
+- Spielerablauf, Fehlermeldungen, Hilfe und Auflösungen prüfen; keine versteckten Debugaktionen als Pflichtbedienung.
+- Startanleitung, Grenzen, Versionierung und bekannte Probleme liefern.
+
+**Abnahme**
+- Neue Partie mit Unternehmenswahl sowie Speichern/Programmneustart/Laden vollständig bedienbar.
+- Ein wirtschaftlicher und ein politischer Langzeittest im paketierten Build bestanden.
+- Keine doppelte Zahlung, Zustellung, Fertigstellung oder Ereignisanwendung nach Laden.
+- Kritische offene Fehler und nicht geprüfte Punkte ausdrücklich benannt.
+
+### AP16 – Skalierung messen und gezielt parallelisieren
+
+**Voraussetzung:** AP15; Messinstrumentierung besteht seit AP04.
 
 **Ziel:** Mehr Regionen und Unternehmen simulieren, ohne Wirtschaftsregeln oder UI-Konsistenz zu verändern.
 
@@ -751,28 +983,22 @@ Bei Umsetzung mit der installierten Engine-Version abgleichen:
 - Epic: Threaded Rendering / Thread-Zuständigkeit – https://dev.epicgames.com/documentation/en-us/unreal-engine/threaded-rendering-in-unreal-engine
 
 
-## Spätere Erweiterungen – noch nicht implementieren
+## Später zu verfeinernde Erweiterungen
 
-1. Ganze Unternehmen übernehmen, einschließlich Assets, Verträgen und Verpflichtungen. Bau, Assetkauf und Ausbau sind bereits AP08.3.
-2. Komplexere Verträge, Exklusivität, Beteiligungen und weitere Produktionsketten. Grundlegende Lieferbeziehungen existieren seit AP08.6.
-3. Zusätzliche Flotteninvestitionen, weitere Fahrzeugtypen, Eisenbahn/Schiff und Infrastrukturausbau. Eigener Start-Lkw und mietbare Fremdtransporte existieren bereits.
-4. Bevölkerungswachstum, vertiefter Arbeitsmarkt, weitere Bedürfnisse und Substitution. Beschäftigung, Löhne, Grund- und Luxusbedarf bestehen bereits seit AP05.
-5. Größere Unternehmenslandschaft, fortgeschrittene Strategien, Markteintritt und Insolvenz. Mehrere einfache Unternehmen bestehen bereits seit AP05.
-6. Zölle, Handelsrechte, Politik, Konflikte und Unterbrechungen; abstrakte Drittstaaten-/Zwischenhändlergeschäfte mit Kosten, Entdeckungsrisiken und Reaktionen.
-   Interessen und Reaktionen getrennt nach Regierung, Bevölkerung, Partnern und Investoren modellieren.
-7. Mehrere Währungen und wirtschaftlich begründete Wechselkurse.
-8. Weltweite Ausdehnung, weitere Detailstufen und Profiling größerer Datenmengen.
-9. Visuelle Ausarbeitung: Relief, Wasser, Modelle und Kartenatmosphäre.
+- Vollständige Unternehmensübernahmen, Beteiligungen und Insolvenz.
+- Weitere Waren, Technikfortschritt und historisch geeignete Branchen.
+- Weitere Länder, Verkehrsarten und größere Kartenausschnitte.
+- Detaillierter Arbeitsmarkt, Qualität/Markenbindung und soziale Reaktionen.
+- Vertiefte Banken-/Zentralbankpolitik und weitere Finanzierung.
+- Zusätzliche politische Einflusswege und abstrakte Regelumgehung.
 
-Diese Themen sollen auf dem gemeinsamen Datenmodell aufbauen. Sie sind keine Anforderung, bereits jetzt vollständige Systeme oder leere Klassen dafür anzulegen.
+Diese Punkte sind keine Voraussetzung für die ersten geschlossenen Spieltests.
 
 ## Arbeitsregel für jeden einzelnen Auftrag
 
-Wenn ich „Setze APxx um“ schreibe:
-- Lies Masterprompt und das betreffende Paket.
-- Prüfe die Voraussetzungen im tatsächlichen Projekt.
-- Implementiere nur das Paket und notwendige Korrekturen an seinen Voraussetzungen.
-- Halte Änderungen kompiliert und überprüfbar.
-- Prüfe wirtschaftliche Invarianten mit gezielten Tests, Kartenbedienung visuell.
-- Wenn Build oder Editor hier nicht verfügbar sind, benenne das ausdrücklich und gib konkrete lokale Prüfschritte an. Behaupte keine durchgeführten Prüfungen.
-- Liefere knapp: umgesetzt, geprüft, Einschränkungen und nächstes Paket.
+- Vollständige Leitlinien und beauftragtes Paket lesen, tatsächlichen Code und bestehende Daten prüfen.
+- Abgeschlossene Systeme integrieren statt ersetzen; nur erforderliche Migrationen vornehmen.
+- Entwurfsentscheidungen, Änderungen und konfigurierbare Testwerte knapp dokumentieren.
+- Save/Load, Entwicklerkonsole, Invarianten und Messpunkte für neue Zustände im selben Paket erweitern.
+- Wirtschaftliche Buchungen gezielt prüfen, UI visuell testen. Keine behaupteten Builds/Tests, wenn die Umgebung sie nicht ausführen konnte.
+- Nach jedem Paket liefern: umgesetzt, geprüft, Einschränkungen, offene Produktfragen und nächstes Paket.

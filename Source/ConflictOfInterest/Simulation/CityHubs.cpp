@@ -18,7 +18,7 @@ bool MigrateCityHubs(FScenario& S,FString& E){
 }
 FString AssetCity(const FState& W,const FString& Id){if(const auto* F=Find(W.Facilities,Id))return F->CityId;if(const auto* S=Find(W.Warehouses,Id))return S->CityId;if(const auto* V=Find(W.Vehicles,Id))return V->CityId;return {};}
 bool ValidateCityHubs(const FScenario& S,const FState& W,bool Initial,FString& E){
- const auto& D=S.Definitions;auto Fail=[&](const FString& Id){E=TEXT("Invalid hub/resource assignment: ")+Id;return false;};if(S.HubSchema!=1)return Fail(TEXT("HubSchema"));
+ const auto& D=S.Definitions;for(const auto& Region:D.Regions){int32 Count=0;for(const auto& City:D.Places)if(City.RegionId==Region.Id)++Count;if(Count!=1){E=TEXT("AP09: Region requires exactly one city hub: ")+Region.Id;return false;}}auto Fail=[&](const FString& Id){E=TEXT("Invalid hub/resource assignment: ")+Id;return false;};if(S.HubSchema!=1)return Fail(TEXT("HubSchema"));
  for(const auto& C:D.Companies)if((!C.AccountingOnly||!C.HeadquartersCityId.IsEmpty())&&!Find(D.Places,C.HeadquartersCityId))return Fail(C.Id);
  for(const auto& X:W.Warehouses)if(!Find(D.Places,X.CityId)||!Find(D.Companies,X.OwnerId))return Fail(X.Id);
  for(const auto& V:W.Vehicles){if(!Find(D.Places,V.HomeCityId)||!Find(D.Companies,V.OwnerId))return Fail(V.Id);const auto* J=Find(W.Transports,V.TransportId);if(V.CityId.IsEmpty()){if(!J||J->Status!=TEXT("moving")||J->VehicleId!=V.Id)return Fail(V.Id);}else if(!Find(D.Places,V.CityId)||(J&&J->Status==TEXT("moving")))return Fail(V.Id);}
