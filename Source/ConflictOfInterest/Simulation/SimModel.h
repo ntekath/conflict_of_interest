@@ -23,8 +23,8 @@ struct FNeedDef
 struct FGroupDef { FString Id,RegionId,NeedProfileId,IncomeBand,ConsumptionCityId; COI_RECORD(COI_F(Id);COI_F(RegionId);COI_F(NeedProfileId);COI_F(IncomeBand);COI_F(ConsumptionCityId);) };
 struct FRegionDef
 {
- FString Id,CountryId,MarketId; int64 FarmlandPermille=0,ForestKg=0,OreKg=0;
- COI_RECORD(COI_F(Id);COI_F(CountryId);COI_F(MarketId);COI_F(FarmlandPermille);COI_F(ForestKg);COI_F(OreKg);)
+ FString Id,CountryId,MarketId,Name,CountryName; int64 FarmlandPermille=0,ForestKg=0,OreKg=0;
+ COI_RECORD(COI_O(Name);COI_O(CountryName);COI_F(Id);COI_F(CountryId);COI_F(MarketId);COI_F(FarmlandPermille);COI_F(ForestKg);COI_F(OreKg);)
 };
 struct FPlaceDef { FString Id,Name,RegionId; double Latitude=0,Longitude=0; COI_RECORD(COI_F(Id);COI_F(Name);COI_F(RegionId);COI_F(Latitude);COI_F(Longitude);) };
 struct FFacilityDef
@@ -154,10 +154,11 @@ struct FReservation
 };
 struct FRegion
 {
+ int64 FinalConsumptionCents=0,NetInventoryTransferCents=0,ModelGdpCents=0;
  FString Id; int64 RemainingForestKg=0,RemainingOreKg=0,Population=0,Employed=0,LastProcessedStep=0; uint32 DiagnosticRandom=0; TArray<FAmount> Consumed;
- COI_RECORD(COI_F(Id);COI_F(Population);COI_F(Employed);COI_O(RemainingForestKg);COI_O(RemainingOreKg);COI_F(LastProcessedStep);COI_F(DiagnosticRandom);COI_F(Consumed);)
+ COI_RECORD(COI_F(FinalConsumptionCents);COI_F(NetInventoryTransferCents);COI_F(ModelGdpCents);COI_F(Id);COI_F(Population);COI_F(Employed);COI_O(RemainingForestKg);COI_O(RemainingOreKg);COI_F(LastProcessedStep);COI_F(DiagnosticRandom);COI_F(Consumed);)
 };
-struct FCountry { FString Id; int64 Population=0,Employed=0; TArray<FAmount> Consumed; COI_RECORD(COI_F(Id);COI_F(Population);COI_F(Employed);COI_F(Consumed);) };
+struct FCountry { FString Id; int64 Population=0,Employed=0,ModelGdpCents=0; TArray<FAmount> Consumed; COI_RECORD(COI_F(ModelGdpCents);COI_F(Id);COI_F(Population);COI_F(Employed);COI_F(Consumed);) };
 struct FCashFlow
 {
  FString FromAccountId,ToAccountId,Reason; int64 Hour=0,Cents=0;

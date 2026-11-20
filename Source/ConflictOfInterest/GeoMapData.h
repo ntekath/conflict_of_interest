@@ -29,7 +29,7 @@ struct FCoIGeoHit
 };
 struct CONFLICTOFINTEREST_API FCoIGeoMapData
 {
- FString ScenarioId,StartDate;
+ FString ScenarioId,StartDate,SimulationFile;
  bool bGeographyOnly=false;
  CoIGeo::Projection Projection;
  TArray<FCoIGeoSurface> Countries,Lakes,Regions;

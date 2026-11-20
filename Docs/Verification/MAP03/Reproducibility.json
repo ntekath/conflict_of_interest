@@ -1,0 +1,21 @@
+{
+  "package": "MAP03",
+  "scenario": "scenario.de_nl.1913",
+  "save_version": 7,
+  "scenario_repeat_byte_identical": true,
+  "geography_unchanged_from_MAP02": true,
+  "files": [
+    {
+      "path": "Content/Simulation/scenario.de_nl1913.coisim",
+      "sha256": "efdb95d049f86f931e259027d313d840f7bd128970ec7c880176582f427ccd9f"
+    },
+    {
+      "path": "GeoData/Generated/de_nl_1913/map.json",
+      "sha256": "4979a3f21df5d37792837b02c5069f622f54ff94024cb310ec3722d9101898e0"
+    },
+    {
+      "path": "GeoData/Generated/de_nl_1913/validation.json",
+      "sha256": "8f040b287aa8cb751c720ebd697ac4202847b8557889a5ccc4b6867f58985dea"
+    }
+  ]
+}

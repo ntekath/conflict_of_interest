@@ -319,8 +319,8 @@ def import_map():
             raise ValueError('Region without any visible land: '+region['id'])
         region_land.append(dict(id=region['id'],name=region['name'],**triangulate(polygon_only(g))))
     minimum = list(bounds.bounds[:2]); maximum = list(bounds.bounds[2:])
-    result = dict(schema=1, scenario=dict(id='scenario.de_nl.geography.1913', start_date='1913-01-01',
-                  geography_only=True, bbox_wgs84=plan['projection']['bbox_wgs84']),
+    result = dict(schema=1, scenario=dict(id='scenario.de_nl.1913', start_date='1913-01-01',
+                  geography_only=True, simulation_file='scenario.de_nl1913.coisim', bbox_wgs84=plan['projection']['bbox_wgs84']),
                   projection=dict(method='spherical LCC 2SP',parameters=dict(RadiusKm=6371.0088,
                     OriginLatitude=52,OriginLongitude=13,Parallel1=48,Parallel2=55,UnitsPerKm=7)),
                   countries=countries,regions=regions,cities=hubs,lakes=water_surfaces,

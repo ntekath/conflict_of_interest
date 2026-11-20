@@ -36,7 +36,7 @@ TSharedRef<SWidget> UCoIMapInterface::RebuildWidget()
  if(!WidgetTree)WidgetTree=NewObject<UWidgetTree>(this,TEXT("WidgetTree"),RF_Transient);
  auto* Root=WidgetTree->ConstructWidget<UCanvasPanel>();WidgetTree->RootWidget=Root;
  for(TActorIterator<ACoIGeoReference> It(GetWorld());It;++It)if(It->Catalog){FString Error;Data.Load(It->Catalog->DefinitionJson,Error);break;}
- if(Data.bGeographyOnly)
+ if(Data.bGeographyOnly&&Data.SimulationFile.IsEmpty())
  {
   Panel=WidgetTree->ConstructWidget<UBorder>();Panel->SetBrushColor(FLinearColor(.035f,.045f,.055f,.97f));Panel->SetPadding(FMargin(14));
   auto* PreviewSlot=Root->AddChildToCanvas(Panel);PreviewSlot->SetPosition({16,16});PreviewSlot->SetSize({300,590});

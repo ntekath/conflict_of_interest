@@ -18,6 +18,7 @@ bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FS
  if(!A||!B||Cents<0||Cents>A->BalanceCents-A->ReservedCents||B->BalanceCents>MAX_int64-Cents)return false;
  if(!Cents||From==To)return true;
  A->BalanceCents-=Cents;B->BalanceCents+=Cents;AccountingPayment(A->OwnerId,B->OwnerId,Cents,Reason);SitePayment(A->OwnerId,FromSite,Cents,false);SitePayment(B->OwnerId,ToSite,Cents,true);
+ if(Reason==TEXT("retail_sale"))if(const auto* Household=Find(Scenario.Definitions.Groups,A->OwnerId))Find(State.Regions,Household->RegionId)->FinalConsumptionCents+=Cents;
  if(A->OwnerId==Session.PlayerCompanyId)PlayerDay().ExpenseCents+=Cents;
  if(B->OwnerId==Session.PlayerCompanyId)PlayerDay().IncomeCents+=Cents;
  State.CashFlows.Add({From,To,Reason,State.EconomyHour,Cents});
@@ -52,6 +53,8 @@ bool FSimulation::AuditRuntime(FString& Error) const
 {
  if(!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
+ int64 Consumption=0,Transfers=0;for(const auto& Region:State.Regions){if(Region.FinalConsumptionCents<0)return Fail(TEXT("Negative final consumption statistic"));Consumption+=Region.FinalConsumptionCents;Transfers+=Region.NetInventoryTransferCents;}
+ const auto* RetailTotal=Find(State.CashTotals,FString(TEXT("retail_sale")));if(Transfers!=0||Consumption!=(RetailTotal?RetailTotal->Cents:0))return Fail(TEXT("Regional economic statistic balance"));
  int64 Money=0;for(const auto& A:State.Accounts){if(A.BalanceCents<0||A.ReservedCents<0||A.ReservedCents>A.BalanceCents)return Fail(TEXT("Account reservation/balance: ")+A.Id);Money+=A.BalanceCents;}
  if(Money!=State.InitialMoneyCents+State.DeveloperMoneySources-State.DeveloperMoneySinks)return Fail(TEXT("Global money conservation failed"));
  for(const auto& I:State.Inventories)if(I.QuantityKg<0||I.QuantityKg>1000000000||I.ReservedKg<0||I.ReservedKg>I.QuantityKg||I.BookValueCents<0)return Fail(TEXT("Physical stock: ")+I.Id);

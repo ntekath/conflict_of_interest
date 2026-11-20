@@ -151,11 +151,19 @@ void FSimulation::Aggregate()
  for(auto& R:State.Regions)
  {
   R.Population=0;R.Employed=0;R.Consumed.Reset();for(const auto& G:Scenario.Definitions.Goods)R.Consumed.Add({G.Id,0});
+  // Cumulative model GDP proxy: final consumption + inventory change at book
+  // cost + completed new construction. Never changes accounts or household budgets.
+  R.ModelGdpCents=R.FinalConsumptionCents-R.NetInventoryTransferCents;
+  auto InRegion=[&](const FString& City){const auto* Place=Find(Scenario.Definitions.Places,City);return Place&&Place->RegionId==R.Id;};
+  for(const auto& I:Scenario.InitialState.Inventories){const auto* Store=Find(Scenario.InitialState.Warehouses,I.StorageId);if(Store&&InRegion(Store->CityId))R.ModelGdpCents-=I.QuantityKg*Find(Scenario.Definitions.Goods,I.GoodId)->InitialUnitCostCents;}
+  for(const auto& I:State.Inventories){const auto* Store=Find(State.Warehouses,I.StorageId);FString City=Store?Store->CityId:FString();if(!Store)for(const auto& Trip:State.Transports)if(Trip.CargoInventoryId==I.Id){City=Trip.FromCityId;break;}if(InRegion(City))R.ModelGdpCents+=I.BookValueCents;}
+  for(const auto& Project:State.Projects)if(Project.Status==TEXT("complete")&&InRegion(Project.CityId))R.ModelGdpCents+=Project.CostCents;
   for(const auto& G:State.Groups)if(Find(Scenario.Definitions.Groups,G.Id)->RegionId==R.Id)
   {R.Population+=G.Population;R.Employed+=G.Employed;for(const auto& Amount:G.Consumed)for(auto& Total:R.Consumed)if(Total.GoodId==Amount.GoodId)Total.Kg+=Amount.Kg;}
   const FString CountryId=Find(Scenario.Definitions.Regions,R.Id)->CountryId;auto* Country=Find(State.Countries,CountryId);
   if(!Country){FCountry New;New.Id=CountryId;for(const auto& G:Scenario.Definitions.Goods)New.Consumed.Add({G.Id,0});State.Countries.Add(New);Country=&State.Countries.Last();}
   Country->Population+=R.Population;Country->Employed+=R.Employed;
+  Country->ModelGdpCents+=R.ModelGdpCents;
   for(const auto& Amount:R.Consumed)for(auto& Total:Country->Consumed)if(Total.GoodId==Amount.GoodId)Total.Kg+=Amount.Kg;
  }
  Diagnostics.AggregateMicros=Micros()-T;

@@ -28,6 +28,8 @@ bool FCoIGeoMapData::Load(const FString& Text,FString& Error)
  const TSharedPtr<FJsonObject> *Scenario=nullptr,*Camera=nullptr,*ProjectionJson=nullptr,*Parameters=nullptr;
  if(!Root->TryGetObjectField(TEXT("scenario"),Scenario)||!(*Scenario)->TryGetStringField(TEXT("id"),Result.ScenarioId)||!Result.ScenarioId.StartsWith(TEXT("scenario."))||!(*Scenario)->TryGetStringField(TEXT("start_date"),Result.StartDate))return Fail(TEXT("Expected a geographic scenario definition."));
  (*Scenario)->TryGetBoolField(TEXT("geography_only"),Result.bGeographyOnly);
+ (*Scenario)->TryGetStringField(TEXT("simulation_file"),Result.SimulationFile);
+ if(!Result.SimulationFile.IsEmpty()&&(!Result.SimulationFile.EndsWith(TEXT(".coisim"))||Result.SimulationFile.Contains(TEXT("/"))||Result.SimulationFile.Contains(TEXT("\\"))||Result.SimulationFile.Contains(TEXT(".."))||Result.SimulationFile.Contains(TEXT(":"))))return Fail(TEXT("Invalid scenario filename."));
  FDateTime Date;if(!FDateTime::ParseIso8601(*(Result.StartDate+TEXT("T00:00:00Z")),Date))return Fail(TEXT("Invalid scenario start date."));
  if(!Root->TryGetObjectField(TEXT("projection"),ProjectionJson)||!(*ProjectionJson)->TryGetObjectField(TEXT("parameters"),Parameters))return Fail(TEXT("Missing projection parameters."));
  auto Read=[&](const TCHAR* Key,double& Out){return (*Parameters)->TryGetNumberField(Key,Out)&&FMath::IsFinite(Out);};

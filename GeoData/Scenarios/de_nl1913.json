@@ -1,0 +1,61 @@
+{
+  "notice": "MAP03: Historical geography, entirely fictional TEST economy. USD is a common accounting/test unit, not a historical German/Dutch currency claim. All opening money, stocks, resource quantities and asset values are declared here. No recurring grants. No bank, taxes or free imports.",
+  "player_company_id": "company.player",
+  "local_capital_cents": 1500000,
+  "capital_cents": {"company.player":2500000,"company.carrier":10000000,"company.food":10000000,"company.wood":5000000,"company.ore":5000000,"company.tools":5000000,"company.luxury":5000000,"company.merchant":5000000,"company.services":5000000,"company.external":0},
+  "descriptions": {"company.player":"Rotterdamer Handelshaus: Lager, Gemischtwarenladen und eigener Lkw; vorhandenen Besitz übernehmen.","company.food":"Norddeutscher Nahrungsproduzent mit drei Betrieben und endlichen Betriebslagern.","company.carrier":"Transportbetrieb in Köln mit vier bezahlten Lkw an verschiedenen Hubs."},
+  "companies": [
+    {"id":"company.player","name":"Handelshaus Maas & Rhein (TEST)","profile":"trader","home":"zuid_holland","playable":true},
+    {"id":"company.food","name":"Norddeutsche Nahrungswerke (TEST)","profile":"producer","home":"hannover","playable":true},
+    {"id":"company.wood","name":"Waldkontor (TEST)","profile":"producer","home":"baden"},
+    {"id":"company.ore","name":"Erzkontor (TEST)","profile":"producer","home":"rheinprovinz"},
+    {"id":"company.tools","name":"Werkzeugwerke (TEST)","profile":"producer","home":"rheinprovinz"},
+    {"id":"company.luxury","name":"Feinwarenkontor (TEST)","profile":"producer","home":"sachsen"},
+    {"id":"company.merchant","name":"Rheinhandel (TEST)","profile":"trader","home":"rheinprovinz"},
+    {"id":"company.carrier","name":"Rheinland Fracht (TEST)","profile":"carrier","home":"rheinprovinz","playable":true},
+    {"id":"company.services","name":"Lager- und Betriebsdienst (TEST)","profile":"service"},
+    {"id":"company.external","name":"Offener externer Abrechnungssektor (TEST)","profile":"service"}
+  ],
+  "households":[{"band":"low","population":600,"cash_cents":50000},{"band":"middle","population":300,"cash_cents":100000},{"band":"high","population":100,"cash_cents":200000}],
+  "resources": {
+    "hannover":{"farmland":800},"mecklenburg_schwerin":{"farmland":800},"ostpreussen":{"farmland":700},
+    "friesland":{"farmland":800},"groningen":{"farmland":700},"noord_brabant":{"farmland":600},
+    "baden":{"forest":800000},"bayern":{"forest":800000,"farmland":600},
+    "wuerttemberg":{"forest":500000},"rheinprovinz":{"ore":900000},"schlesien":{"ore":900000}
+  },
+  "resource_batches_per_hour":2,
+  "producer_opening_output_kg":1000,
+  "retail_opening_food_kg":300,
+  "plants":[
+    {"id":"food.hannover","owner":"company.food","home":"hannover","kind":"food"},
+    {"id":"food.mecklenburg","owner":"company.food","home":"mecklenburg_schwerin","kind":"food"},
+    {"id":"food.ostpreussen","owner":"company.food","home":"ostpreussen","kind":"food"},
+    {"id":"food.friesland","owner":"company.local.city.nl.1913.friesland","home":"friesland","kind":"food"},
+    {"id":"food.groningen","owner":"company.local.city.nl.1913.groningen","home":"groningen","kind":"food"},
+    {"id":"food.brabant","owner":"company.local.city.nl.1913.noord_brabant","home":"noord_brabant","kind":"food"},
+    {"id":"food.bayern","owner":"company.local.city.de.1913.bayern","home":"bayern","kind":"food"},
+    {"id":"wood.baden","owner":"company.wood","home":"baden","kind":"wood"},
+    {"id":"wood.bayern","owner":"company.wood","home":"bayern","kind":"wood"},
+    {"id":"ore.rhein","owner":"company.ore","home":"rheinprovinz","kind":"ore"},
+    {"id":"ore.schlesien","owner":"company.ore","home":"schlesien","kind":"ore"},
+    {"id":"tools.rhein","owner":"company.tools","home":"rheinprovinz","kind":"tools","inputs":{"ore":1000,"wood":500}},
+    {"id":"luxury.sachsen","owner":"company.luxury","home":"sachsen","kind":"luxury","inputs":{"wood":500,"tools":500}}
+  ],
+  "trading_stores":[
+    {"id":"storage.player","owner":"company.player","home":"zuid_holland","stock":{"food":300}},
+    {"id":"retail.player.rotterdam","owner":"company.player","home":"zuid_holland","type":"retail.type.mixed","name":"Maas & Rhein · Rotterdam","stock":{"food":300,"luxury":50}},
+    {"id":"storage.merchant","owner":"company.merchant","home":"rheinprovinz","stock":{"food":1000}},
+    {"id":"storage.offer.rotterdam","owner":"company.merchant","home":"zuid_holland","name":"Angebotenes Lager Rotterdam"},
+    {"id":"retail.merchant.koeln","owner":"company.merchant","home":"rheinprovinz","type":"retail.type.mixed","name":"Rheinhandel · Köln","stock":{"food":300,"luxury":50}}
+  ],
+  "vehicles":[
+    {"id":"vehicle.player","owner":"company.player","home":"zuid_holland"},
+    {"id":"vehicle.merchant","owner":"company.merchant","home":"rheinprovinz"},
+    {"id":"vehicle.carrier.1","owner":"company.carrier","home":"rheinprovinz"},
+    {"id":"vehicle.carrier.2","owner":"company.carrier","home":"hannover"},
+    {"id":"vehicle.carrier.3","owner":"company.carrier","home":"friesland"},
+    {"id":"vehicle.carrier.4","owner":"company.carrier","home":"zuid_holland"}
+  ],
+  "asset_sales":[{"id":"sale.rotterdam.warehouse","asset":"storage.offer.rotterdam","price_cents":150000}],
+  "economy":{"MaxOpenOrders":2048,"DeliveryMaxRules":256}
+}

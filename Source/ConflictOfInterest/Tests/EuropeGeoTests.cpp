@@ -20,7 +20,7 @@ bool FEuropeGeography::RunTest(const FString&)
  auto* Catalog=EuropeCatalog();if(!TestNotNull(TEXT("Offline cooked Europe catalog"),Catalog))return false;
  FCoIGeoMapData Data;FString Error;
  if(!TestTrue(TEXT("Load new map"),Data.Load(Catalog->DefinitionJson,Error))){AddError(Error);return false;}
- TestTrue(TEXT("MAP02 is geography only; no wrong US economics"),Data.bGeographyOnly);
+ TestTrue(TEXT("Historical political and physical surfaces are separate"),Data.bGeographyOnly);
  TestEqual(TEXT("Countries"),Data.Countries.Num(),2);TestEqual(TEXT("Regions"),Data.Regions.Num(),50);TestEqual(TEXT("Hubs"),Data.Cities.Num(),50);
  TSet<FString> Regions;for(const auto& Hub:Data.Cities){Regions.Add(Hub.RegionId);const auto Hit=Data.Query(Hub.Position);TestEqual(TEXT("Correct geographic hub region"),Hit.RegionId,Hub.RegionId);TestEqual(TEXT("Correct hub country"),Hit.CountryId,Hub.CountryId);}
  TestEqual(TEXT("Exactly one hub per region"),Regions.Num(),50);
@@ -61,6 +61,7 @@ bool FEuropeGeographyValidation::RunTest(const FString&)
  Reject([](auto R){R->GetObjectField(TEXT("projection"))->GetObjectField(TEXT("parameters"))->SetNumberField(TEXT("UnitsPerKm"),0);});
  Reject([](auto R){R->GetArrayField(TEXT("rivers"))[0]->AsObject()->SetBoolField(TEXT("navigable"),true);});
  Reject([](auto R){R->GetArrayField(TEXT("cities"))[0]->AsObject()->SetNumberField(TEXT("latitude"),10);});
+ Reject([](auto R){R->GetObjectField(TEXT("scenario"))->SetStringField(TEXT("simulation_file"),TEXT("../foreign.coisim"));});
  return true;
 }
 #endif

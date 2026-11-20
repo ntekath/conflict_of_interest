@@ -1,5 +1,7 @@
 # MAP02 – historischer Geografieimport
 
+**Aktueller Folgestand:** [MAP03](MAP03.md) aktiviert die Wirtschaft auf unveränderter Geometrie. Die nachfolgende Beschreibung dokumentiert die damalige MAP02-Geografievorschau; aktuelle Start-/Szenario-/Save-Vorgaben stehen in MAP03.
+
 Stand: 20.11.2026. Deutschland/Niederlande, 01.01.1913. Die MAP01-IDs bleiben erhalten: zwei Länder, 39 deutsche und elf niederländische Verwaltungsregionen, genau 50 Hubs. Implementiert ist die geografische Vorschau. Das frische Wirtschaftsszenario folgt ausdrücklich mit MAP03; Schiffbarkeit und Transportnetz folgen mit MAP04/05.
 
 ## Start und Datenfluss

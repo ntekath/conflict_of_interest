@@ -4,9 +4,9 @@
 
 Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
 Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
-Umgesetzt: **AP01 bis AP09.4, UI01, MAP01 und MAP02 (historischer Geografieimport)**.
+Umgesetzt: **AP01 bis AP09.4, UI01 und MAP01 bis MAP03**.
 [MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
-Standard ist jetzt die [MAP02-Geografievorschau](Docs/MAP02.md) mit 50 Regionen/Hubs. Die Europa-Wirtschaft folgt mit MAP03; der vorhandene Großer-Seen-US-Teststand bleibt separat spielbar.
+Standard ist jetzt das [MAP03-Wirtschaftsszenario Deutschland/Niederlande](Docs/MAP03.md) mit 50 Regionen/Hubs, 150 Haushaltsgruppen und drei konfigurierbaren Startfirmen. Der Großer-Seen-US-Teststand bleibt separat als Regression spielbar.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 
@@ -27,7 +27,7 @@ Rechner im Explorer „Switch Unreal Engine version“ auf eine kompatible UE 5.
 
 Falls Windows keine `.uproject`-Dateizuordnung hat: Unreal Engine starten → Meine Projekte → Durchsuchen → `ConflictOfInterest.uproject` auswählen.
 
-Standardlevel: `/Game/Maps/DE_NL1913`, dann **Play**. Länder, Regionen, Land/Wasser und 50 Hubs prüfen; Quellen und Genauigkeitsgrenzen: [MAP02](Docs/MAP02.md).
+Standardlevel: `/Game/Maps/DE_NL1913`, dann **Play** und **Start**. Das Handelshaus Maas & Rhein startet in Rotterdam mit 25.000 USD, Lager, Laden und Lkw. Firmenwahl, Testwerte und Nachweise: [MAP03](Docs/MAP03.md). Historische Quellen und Genauigkeitsgrenzen: [MAP02](Docs/MAP02.md).
 
 Für den bisherigen Wirtschaftsstand `/Game/Maps/GreatLakes1913` öffnen. Dessen vier orangefarbene Marker stehen
 für Chicago, Detroit, Cleveland und Pittsburgh. Spielregionen liegen ausschließlich in den USA;

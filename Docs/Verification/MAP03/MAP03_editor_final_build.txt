@@ -1,0 +1,3 @@
+MAP03_editor_final_build.txt
+Result: Succeeded
+Total execution time: 11.21 seconds

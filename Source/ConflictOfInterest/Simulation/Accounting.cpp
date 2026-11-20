@@ -356,7 +356,7 @@ bool FSimulation::ValidateAccounting(FString &E) const
     if (State.AccountingStartHour < 0 || State.AccountingStartHour > State.EconomyHour ||
         State.AccountingReliableFromHour < State.AccountingStartHour ||
         State.AccountingReliableFromHour > State.AccountingStartHour + Q.PayrollHours ||
-        State.AccountingPrices.Num() > 10000 || State.AccountingPeriods.Num() > 10000)
+        State.AccountingPrices.Num() > 100000 || State.AccountingPeriods.Num() > 10000)
         return Fail(TEXT("Ungültiger Start oder Datenumfang"));
     for (const auto &I : State.Inventories)
         if (I.AccountingCost.Material < 0 || I.AccountingCost.Labor < 0 || I.AccountingCost.Operating < 0 ||

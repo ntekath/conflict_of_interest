@@ -23,9 +23,9 @@ bool UCoISimulationSubsystem::Restart()
  Paused=true;FCoIGeoMapData Geo;bool Found=false;
  for(TActorIterator<ACoIGeoReference> It(GetWorld());It;++It)if(It->Catalog){Found=Geo.Load(It->Catalog->DefinitionJson,LoadError);break;}
  if(!Found){Stop();LoadError=TEXT("Kein gÃ¼ltiger Geokatalog fÃ¼r die Simulation.");PublishPresentation();return false;}
- if(Geo.bGeographyOnly){Stop();LoadError=TEXT("MAP02: Geografievorschau. Das passende Wirtschaftsszenario folgt mit MAP03.");PublishPresentation();return true;}
+ if(Geo.bGeographyOnly&&Geo.SimulationFile.IsEmpty()){Stop();LoadError=TEXT("MAP02: Geografievorschau. Das passende Wirtschaftsszenario folgt mit MAP03.");PublishPresentation();return true;}
  FString Json;
- if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim"))))
+ if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/(TEXT("Simulation/")+(Geo.SimulationFile.IsEmpty()?FString(TEXT("scenario.coisim")):Geo.SimulationFile)))))
  {LoadError=TEXT("Content/Simulation/scenario.coisim fehlt.");PublishPresentation();return false;}
  if(!Simulation.Load(Json,Geo,LoadError)){UE_LOG(LogTemp,Error,TEXT("COI_SIM_LOAD %s"),*LoadError);PublishPresentation();return false;}
  LastPlayerToken=0;Paused=true;Speed=1;FractionalMicros=0;NotifySeconds=0;GameThreadMicros=0;
@@ -115,7 +115,7 @@ void UCoISimulationSubsystem::InitializeDeveloper(){
 bool UCoISimulationSubsystem::ExecuteDeveloper(const FString& Text){check(IsInGameThread());CoISim::FDevCommand C;FString Error;if(CoISim::FDeveloperConsole::Parse(Text,C,Error)&&(C.Mutating||C.Kind==CoISim::EDevKind::Pause))Paused=true;const bool OK=Dev.Execute(Simulation,Text);PublishPresentation();return OK;}
 bool UCoISimulationSubsystem::RestartDeveloper(const FString& Id,int64 Seed,FString& Error){
  FString Json;FCoIGeoMapData Geo;bool Valid=false;for(TActorIterator<ACoIGeoReference> It(GetWorld());It;++It)if(It->Catalog){Valid=Geo.Load(It->Catalog->DefinitionJson,Error);break;}
- TSharedPtr<FJsonObject> Root;if(!Valid||!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim")))||!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root)||!Root.IsValid()){Error=TEXT("Konfiguriertes Szenario nicht lesbar.");return false;}
+ TSharedPtr<FJsonObject> Root;if(!Valid||!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/(TEXT("Simulation/")+(Geo.SimulationFile.IsEmpty()?FString(TEXT("scenario.coisim")):Geo.SimulationFile))))||!FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Json),Root)||!Root.IsValid()){Error=TEXT("Konfiguriertes Szenario nicht lesbar.");return false;}
  if(Root->GetStringField(TEXT("Id"))!=Id){Error=TEXT("SCENARIO muss dem vorhandenen konfigurierten Szenario entsprechen; keine Dateipfade.");return false;}
  Root->GetObjectField(TEXT("Settings"))->SetNumberField(TEXT("Seed"),Seed);FString Modified;FJsonSerializer::Serialize(Root.ToSharedRef(),TJsonWriterFactory<>::Create(&Modified));if(!Simulation.Load(Modified,Geo,Error))return false;
  Paused=true;Speed=1;LastPlayerToken=0;NotifySeconds=0;FractionalMicros=0;Dev.Reset(Simulation);
@@ -165,7 +165,7 @@ bool UCoISimulationSubsystem::LoadSlot(int32 Slot, FString &Error)
     }
     FString Config, Json;
     CoISim::FScenario Expected;
-    if (!FFileHelper::LoadFileToString(Config, *(FPaths::ProjectContentDir() / TEXT("Simulation/scenario.coisim"))))
+    if (!FFileHelper::LoadFileToString(Config, *(FPaths::ProjectContentDir() / (TEXT("Simulation/")+(Geo.SimulationFile.IsEmpty()?FString(TEXT("scenario.coisim")):Geo.SimulationFile)))))
     {
         Error = TEXT("Installierte Szenariodatei fehlt oder ist nicht lesbar.");
         return false;
