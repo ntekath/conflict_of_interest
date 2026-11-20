@@ -1,0 +1,3 @@
+MAP02_editor_final_build.txt
+Result: Succeeded
+Total execution time: 6.90 seconds

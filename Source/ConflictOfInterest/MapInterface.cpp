@@ -16,6 +16,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
+#include "Components/ButtonSlot.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/VerticalBox.h"
@@ -27,11 +28,34 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Rendering/DrawElements.h"
 #include "Styling/CoreStyle.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 TSharedRef<SWidget> UCoIMapInterface::RebuildWidget()
 {
  if(!WidgetTree)WidgetTree=NewObject<UWidgetTree>(this,TEXT("WidgetTree"),RF_Transient);
  auto* Root=WidgetTree->ConstructWidget<UCanvasPanel>();WidgetTree->RootWidget=Root;
+ for(TActorIterator<ACoIGeoReference> It(GetWorld());It;++It)if(It->Catalog){FString Error;Data.Load(It->Catalog->DefinitionJson,Error);break;}
+ if(Data.bGeographyOnly)
+ {
+  Panel=WidgetTree->ConstructWidget<UBorder>();Panel->SetBrushColor(FLinearColor(.035f,.045f,.055f,.97f));Panel->SetPadding(FMargin(14));
+  auto* PreviewSlot=Root->AddChildToCanvas(Panel);PreviewSlot->SetPosition({16,16});PreviewSlot->SetSize({300,590});
+  auto* PreviewScroll=WidgetTree->ConstructWidget<UScrollBox>();Panel->SetContent(PreviewScroll);
+  auto* Box=WidgetTree->ConstructWidget<UVerticalBox>();PreviewScroll->AddChild(Box);
+  auto AddText=[&](const FString& Text,int32 Size){auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Text));T->SetAutoWrapText(true);T->SetColorAndOpacity(FLinearColor(.94f,.90f,.79f));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",Size));Box->AddChildToVerticalBox(T)->SetPadding(FMargin(0,0,0,10));return T;};
+  AddText(TEXT("DEUTSCHLAND · NIEDERLANDE\n01.01.1913"),18);
+  ViewLabel=AddText(TEXT("50 Verwaltungsregionen · 50 Hubs"),12);
+  auto* Buttons=WidgetTree->ConstructWidget<UHorizontalBox>();Box->AddChildToVerticalBox(Buttons)->SetPadding(FMargin(0,0,0,12));
+  auto MakeButton=[&](const TCHAR* Name){auto* B=WidgetTree->ConstructWidget<UCoIMapButton>();auto* T=WidgetTree->ConstructWidget<UTextBlock>();T->SetText(FText::FromString(Name));T->SetFont(FCoreStyle::GetDefaultFontStyle("Regular",10));T->SetColorAndOpacity(FLinearColor(.08f,.08f,.07f));B->SetContent(T);CastChecked<UButtonSlot>(T->Slot)->SetPadding(FMargin(4,3));Buttons->AddChildToHorizontalBox(B)->SetPadding(FMargin(0,0,6,0));return B;};
+  MakeButton(TEXT("Regionen"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Regions);
+  MakeButton(TEXT("Länder"))->OnClicked.AddDynamic(this,&UCoIMapInterface::Countries);
+  MakeButton(TEXT("Leeren"))->OnClicked.AddDynamic(this,&UCoIMapInterface::ClearSelection);
+  Information=AddText(TEXT("Region oder Stadthub auswählen."),13);
+  AddText(TEXT("Kartenprüfung MAP02\nWirtschaft für diese Karte folgt mit MAP03.\n\nBlau: Gewässer, keine Schiffbarkeitsfreigabe. Grenzen und Küsten sind historische Kartenrekonstruktionen mit dokumentierten Unsicherheiten.\n\nWASD / Pfeile: bewegen\nMausrad: zoomen"),11);
+  auto* Credit=AddText(TEXT("Quellen & Geometriehinweise"),11);
+  for(TActorIterator<ACoIGeoReference> It(GetWorld());It;++It)if(It->Catalog){TSharedPtr<FJsonObject> Provenance;FString Attribution;if(FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(It->Catalog->ProvenanceJson),Provenance)&&Provenance->TryGetStringField(TEXT("attribution"),Attribution))Credit->SetToolTipText(FText::FromString(Attribution));break;}
+  return Super::RebuildWidget();
+ }
  PlayerHUD=CreateWidget<UCoIPlayerHUD>(GetOwningPlayer(),UCoIPlayerHUD::StaticClass());PlayerHUD->MapOwner=this;
  auto* HUDSlot=Root->AddChildToCanvas(PlayerHUD);HUDSlot->SetAnchors(FAnchors(0,0,1,1));HUDSlot->SetOffsets(FMargin(0));
  return Super::RebuildWidget();
@@ -62,18 +86,29 @@ void UCoIMapInterface::NativeDestruct()
 void UCoIMapInterface::Regions(){View=ECoIMapView::Regions;ApplyView();}
 void UCoIMapInterface::Countries(){View=ECoIMapView::Countries;ApplyView();}
 void UCoIMapInterface::Ownership(){View=ECoIMapView::Ownership;ApplyView();}
-void UCoIMapInterface::ClearSelection(){Selection.Id.Empty();RefreshInformation();}
+void UCoIMapInterface::ClearSelection(){Selection.Id.Empty();LastGeoHit={};RefreshInformation();}
 void UCoIMapInterface::ApplyView()
 {
  for(TActorIterator<AStaticMeshActor> It(GetWorld());It;++It)
   for(const auto& R:Data.Regions)if(It->ActorHasTag(FName(*R.Id)))It->SetActorHiddenInGame(View==ECoIMapView::Countries);
- if(ViewLabel)ViewLabel->SetText(FText::FromString(View==ECoIMapView::Countries?TEXT("Ansicht: Länder"):View==ECoIMapView::Regions?TEXT("Ansicht: Testregionen"):TEXT("Besitz: nicht zugewiesen")));
+ if(ViewLabel)ViewLabel->SetText(FText::FromString(View==ECoIMapView::Countries?TEXT("Ansicht: Länder"):View==ECoIMapView::Regions?TEXT("Ansicht: Verwaltungsregionen"):TEXT("Besitz: nicht zugewiesen")));
  RefreshInformation();
 }
 void UCoIMapInterface::RefreshInformation()
 {
  if(PlayerHUD){FString Summary;for(const auto& C:Data.Countries)if(C.Id==Selection.Id)Summary=C.Name+TEXT(" · Land\nWerte werden aus Regionen aggregiert.");PlayerHUD->MapSelection(Selection.Id,Summary);return;}
  if(!Information)return;
+ if(Data.bGeographyOnly)
+ {
+  FString Info=TEXT("Region oder Stadthub auswählen.\nLand-/Wasserabfrage und politische Zugehörigkeit sind getrennt.");
+  auto FindName=[&](const FString& Id,const TArray<FCoIGeoSurface>& Rows){for(const auto& R:Rows)if(R.Id==Id)return R.Name;return FString();};
+  for(const auto& C:Data.Cities)if(C.Id==Selection.Id)Info=FString::Printf(TEXT("STADTHUB\n%s\n\n%s · %s\n%.5f° N, %.5f° E\n\nEin wirtschaftlicher Hub je Region; noch kein Wirtschaftsszenario."),*C.Name,*FindName(C.RegionId,Data.Regions),*FindName(C.CountryId,Data.Countries),C.Latitude,C.Longitude);
+  for(const auto& R:Data.Regions)if(R.Id==Selection.Id){Info=R.Name+TEXT("\n")+FindName(R.CountryId,Data.Countries);for(const auto& C:Data.Cities)if(C.RegionId==R.Id)Info+=TEXT("\n\nStadthub: ")+C.Name;}
+  for(const auto& C:Data.Countries)if(C.Id==Selection.Id)Info=C.Name+TEXT("\nHistorischer europäischer Szenarioausschnitt.");
+  if(!LastGeoHit.WaterId.IsEmpty())Info+=TEXT("\n\nPhysisch: Gewässer\nKeine Schiffbarkeitsfreigabe.");
+  else if(LastGeoHit.bLand)Info+=TEXT("\n\nPhysisch: Land");
+  Information->SetText(FText::FromString(Info));return;
+ }
  FString Info=TEXT("Ort auswählen\n\nStadt vor Fläche. Wasser und freier Hintergrund heben die Auswahl auf.");
  auto Name=[&](const TArray<FCoIGeoSurface>& List,const FString& Id){for(const auto& S:List)if(S.Id==Id)return S.Name;return Id;};
  for(const auto& C:Data.Cities)if(C.Id==Selection.Id)
@@ -125,7 +160,7 @@ FReply UCoIMapInterface::NativeOnMouseButtonDown(const FGeometry& G,const FPoint
  for(const auto& R:ScreenRoutes()){double Dist=1.e9;for(int32 I=1;I<R.Points.Num();++I)Dist=FMath::Min(Dist,CoIRoutes::Distance(Pointer,R.Points[I-1],R.Points[I]));if(Dist<=10)Hits.Add({Dist,R.Id});}
  Hits.Sort([](const auto& A,const auto& B){return FMath::Abs(A.Key-B.Key)>.01?A.Key<B.Key:A.Value<B.Value;});
  if(City==INDEX_NONE&&!Hits.IsEmpty()){RoutePickCycle=(Pointer-LastRoutePointer).Size()<8?RoutePickCycle+1:0;LastRoutePointer=Pointer;Selection.Id=Hits[RoutePickCycle%Hits.Num()].Value;RefreshInformation();return FReply::Handled();}
- if(City!=INDEX_NONE)Selection.Id=Data.Cities[City].Id;
+ if(City!=INDEX_NONE){Selection.Id=Data.Cities[City].Id;LastGeoHit=Data.Query(Data.Cities[City].Position);}
  else
  {
   FVector O,D;auto* PC=GetOwningPlayer();
@@ -133,7 +168,7 @@ FReply UCoIMapInterface::NativeOnMouseButtonDown(const FGeometry& G,const FPoint
   const auto VG=UWidgetLayoutLibrary::GetPlayerScreenWidgetGeometry(PC);
   FVector2D Pixel=VG.AbsoluteToLocal(E.GetScreenSpacePosition())*UWidgetLayoutLibrary::GetViewportScale(this);
   if(PC->DeprojectScreenPositionToWorld(Pixel.X,Pixel.Y,O,D)&&D.Z<-.000001f)
-  {auto P=O+D*(-O.Z/D.Z);Selection.Id=CoISelection::Pick(Data,{P.X,P.Y},View,Centers,Visible,Pointer);}
+  {auto P=O+D*(-O.Z/D.Z);LastGeoHit=Data.Query({P.X,P.Y});Selection.Id=CoISelection::Pick(Data,{P.X,P.Y},View,Centers,Visible,Pointer);}
   else Selection.Id.Empty();
  }
  RefreshInformation();UE_LOG(LogTemp,Display,TEXT("COI_SELECT %s"),*Selection.Id);return FReply::Handled();
@@ -181,7 +216,7 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
   FVector2D P;if(!Project(C.Position,P))continue;FVector2D TextSize(C.Name.Len()*8+12,22),At=P+FVector2D(12,-12);
   if(At.X+TextSize.X>Size.X-8)At.X=P.X-TextSize.X-12;
   if(At.X<8||At.Y<8||At.Y+TextSize.Y>Size.Y-8)continue;
-  bool Blocked=PlayerHUD&&PlayerHUD->OverlayCovered(At,TextSize);for(int I=0;I<Occupied.Num();++I)if(CoISelection::Overlaps(At,TextSize,Occupied[I],OccupiedSizes[I])){Blocked=true;break;}if(Blocked)continue;
+  bool Blocked=PlayerHUD?PlayerHUD->OverlayCovered(At,TextSize):(InsidePanel(G.LocalToAbsolute(At))||InsidePanel(G.LocalToAbsolute(At+TextSize)));for(int I=0;I<Occupied.Num();++I)if(CoISelection::Overlaps(At,TextSize,Occupied[I],OccupiedSizes[I])){Blocked=true;break;}if(Blocked)continue;
   Occupied.Add(At);OccupiedSizes.Add(TextSize);
   FSlateDrawElement::MakeBox(Out,Top+2,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At))),FCoreStyle::Get().GetBrush("WhiteBrush"),ESlateDrawEffect::None,FLinearColor(.015f,.025f,.035f,.95f));
   FSlateDrawElement::MakeText(Out,Top+3,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At+FVector2D(5,1)))),C.Name,Font,ESlateDrawEffect::None,Selected?Gold:FLinearColor::White);
@@ -192,9 +227,9 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
   for(int I=0;I<R.Triangles.Num();I+=3)
   {auto A=R.Vertices[R.Triangles[I]],B=R.Vertices[R.Triangles[I+1]],C=R.Vertices[R.Triangles[I+2]];double Area=FMath::Abs((B.X-A.X)*(C.Y-A.Y)-(B.Y-A.Y)*(C.X-A.X));if(Area>Largest){Largest=Area;Anchor=(A+B+C)/3;}}
   FVector2D At;if(!Project(Anchor,At))continue;
-  FString Label=R.Name+(View==ECoIMapView::Ownership?TEXT(" | nicht zugewiesen"):TEXT(" | TEST"));FVector2D TextSize(Label.Len()*7+12,22);At-=TextSize/2;
+  FString Label=R.Name+(View==ECoIMapView::Ownership?TEXT(" | nicht zugewiesen"):(R.bTest?TEXT(" | TEST"):TEXT("")));FVector2D TextSize(Label.Len()*7+12,22);At-=TextSize/2;
   if(At.X<8||At.Y<8||At.X+TextSize.X>Size.X-8||At.Y+TextSize.Y>Size.Y-8)continue;
-  bool Blocked=PlayerHUD&&PlayerHUD->OverlayCovered(At,TextSize);for(int I=0;I<Occupied.Num();++I)if(CoISelection::Overlaps(At,TextSize,Occupied[I],OccupiedSizes[I])){Blocked=true;break;}if(Blocked)continue;
+  bool Blocked=PlayerHUD?PlayerHUD->OverlayCovered(At,TextSize):(InsidePanel(G.LocalToAbsolute(At))||InsidePanel(G.LocalToAbsolute(At+TextSize)));for(int I=0;I<Occupied.Num();++I)if(CoISelection::Overlaps(At,TextSize,Occupied[I],OccupiedSizes[I])){Blocked=true;break;}if(Blocked)continue;
   Occupied.Add(At);OccupiedSizes.Add(TextSize);
   FSlateDrawElement::MakeBox(Out,Top+2,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At))),FCoreStyle::Get().GetBrush("WhiteBrush"),ESlateDrawEffect::None,FLinearColor(.015f,.025f,.035f,.95f));
   FSlateDrawElement::MakeText(Out,Top+3,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Regular",11),ESlateDrawEffect::None,FLinearColor(.75f,.87f,.77f));

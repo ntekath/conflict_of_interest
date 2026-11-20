@@ -19,6 +19,8 @@ namespace CoISelection
  }
  inline FString PickSurface(const FCoIGeoMapData& Data,FVector2D Point,ECoIMapView View)
  {
+  if(Data.bGeographyOnly)
+  {const auto Hit=Data.Query(Point);return View==ECoIMapView::Countries?Hit.CountryId:Hit.RegionId;}
   for(const auto& Lake:Data.Lakes)if(Lake.Contains(Point))return {};
   if(View!=ECoIMapView::Countries)for(const auto& Region:Data.Regions)if(Region.Contains(Point))return Region.Id;
   for(const auto& Country:Data.Countries)if(Country.Contains(Point))return Country.Id;

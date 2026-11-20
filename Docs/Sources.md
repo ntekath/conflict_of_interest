@@ -1,5 +1,7 @@
 # Geodaten, Quellen und Lizenzen
 
+**MAP02 konkret importiert:** [Quellen, Lizenzen und Genauigkeitsgrenzen](MAP02.md) sowie `GeoData/Raw/MAP02/sources.lock.json`. Für die tatsächlich verwendeten Europa-Datensätze gilt dieses geprüfte Register einschließlich CC-BY-SA-Wassergeometrie und CC-BY-Hubpunkten. Das Datenpaket ist nicht pauschal Public Domain. MAP01 bleibt der historische Entwurfs-/Hubplan.
+
 **Neue Zielgeografie ab MAP01:** Deutschland/Niederlande 1913. Das aktuelle
 [MAP01-Quellenregister](MAP01_Sources.md) und der [Datenplan](MAP01.md) haben für
 neue Geografie Vorrang. Die folgenden Natural-Earth-Angaben dokumentieren den

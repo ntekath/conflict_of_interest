@@ -1,0 +1,9 @@
+LogAssetRegistry: Warning: PlatformFileJournal is not available on volume 'E:'. AssetRegistry discovery of files on this volume will be uncached. Unavailability reason:
+[2026.11.20-13.16.19:000][  0]LogCook: Display: FULL COOK: Incremental Cooks are disabled by default in Editor.ini:[CookSettings]:CookIncrementalDefaultIncremental=false, and commandline did not specify -forcerecook=false. Deleting previously cooked packages for platform Windows and recooking all packages discovered in the current cook.
+[2026.11.20-13.16.20:293][  0]LogCook: Display: Cooked packages 0 Packages Remain 512 Total 512
+[2026.11.20-13.16.22:821][  0]LogCook: Display: Cooked packages 130 Packages Remain 543 Total 673
+[2026.11.20-13.16.25:235][  0]LogCook: Display: Cooked packages 464 Packages Remain 209 Total 673
+[2026.11.20-13.16.26:285][  0]LogCook: Display: Cooked packages 673 Packages Remain 0 Total 673
+[2026.11.20-13.16.26:628][  0]LogCook: Display: Packages Cooked: 666, Packages Incrementally Skipped: 0, Packages Skipped by Platform: 7, Total Packages: 673
+[2026.11.20-13.16.26:634][  0]LogInit: Display: LogAssetRegistry: Warning: PlatformFileJournal is not available on volume 'E:'. AssetRegistry discovery of files on this volume will be uncached. Unavailability reason:
+[2026.11.20-13.16.26:636][  0]LogInit: Display: Success - 0 error(s), 1 warning(s)

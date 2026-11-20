@@ -23,6 +23,7 @@ bool UCoISimulationSubsystem::Restart()
  Paused=true;FCoIGeoMapData Geo;bool Found=false;
  for(TActorIterator<ACoIGeoReference> It(GetWorld());It;++It)if(It->Catalog){Found=Geo.Load(It->Catalog->DefinitionJson,LoadError);break;}
  if(!Found){Stop();LoadError=TEXT("Kein gÃ¼ltiger Geokatalog fÃ¼r die Simulation.");PublishPresentation();return false;}
+ if(Geo.bGeographyOnly){Stop();LoadError=TEXT("MAP02: Geografievorschau. Das passende Wirtschaftsszenario folgt mit MAP03.");PublishPresentation();return true;}
  FString Json;
  if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectContentDir()/TEXT("Simulation/scenario.coisim"))))
  {LoadError=TEXT("Content/Simulation/scenario.coisim fehlt.");PublishPresentation();return false;}

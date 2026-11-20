@@ -4,9 +4,9 @@
 
 Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
 Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
-Umgesetzt: **AP01 bis AP09.4, UI01 und MAP01 (historischer Datenplan)**.
+Umgesetzt: **AP01 bis AP09.4, UI01, MAP01 und MAP02 (historischer Geografieimport)**.
 [MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
-Bis zum Kartenimport ab MAP02 bleibt der vorhandene Großer-Seen-US-Teststand spielbar.
+Standard ist jetzt die [MAP02-Geografievorschau](Docs/MAP02.md) mit 50 Regionen/Hubs. Die Europa-Wirtschaft folgt mit MAP03; der vorhandene Großer-Seen-US-Teststand bleibt separat spielbar.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 
@@ -27,13 +27,15 @@ Rechner im Explorer „Switch Unreal Engine version“ auf eine kompatible UE 5.
 
 Falls Windows keine `.uproject`-Dateizuordnung hat: Unreal Engine starten → Meine Projekte → Durchsuchen → `ConflictOfInterest.uproject` auswählen.
 
-Standardlevel: `/Game/Maps/GreatLakes1913`, dann **Play**. Die vier orangefarbenen Marker stehen
+Standardlevel: `/Game/Maps/DE_NL1913`, dann **Play**. Länder, Regionen, Land/Wasser und 50 Hubs prüfen; Quellen und Genauigkeitsgrenzen: [MAP02](Docs/MAP02.md).
+
+Für den bisherigen Wirtschaftsstand `/Game/Maps/GreatLakes1913` öffnen. Dessen vier orangefarbene Marker stehen
 für Chicago, Detroit, Cleveland und Pittsburgh. Spielregionen liegen ausschließlich in den USA;
 Kanada dient als geografischer Kontext. Auswahl, Ortsinformationen und Kartenansichten: [AP03](Docs/AP03.md), [AP04](Docs/AP04.md).
 
 Die generierten `.umap`/`.uasset`-Dateien sowie Roharchive, Szenario und Importer sind versioniert.
 Zum Offline-Neuimport und zur genauen Editor-Reihenfolge: [AP02](Docs/AP02.md).
-`CoI.RebuildMap` baut jetzt die US-Karte; `CameraPrototype` bleibt als AP01-Level erhalten.
+`CoI.RebuildMap` baut jetzt die Europakarte; das BuildMap-Commandlet ohne `-Europe` behält den US-Reproduktionsweg. `CameraPrototype` bleibt als AP01-Level erhalten.
 
 WASD/Pfeile bewegen die Kamera, Mausrad zoomt zum Punkt unter dem Mauszeiger. Escape beendet
 Play; falls der Fokus nicht im Viewport liegt, den roten Stop-Knopf verwenden. Shift+F1 gibt den

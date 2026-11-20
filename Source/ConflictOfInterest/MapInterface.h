@@ -47,6 +47,7 @@ private:
  void ApplyMetricLayer();
  FCoIGeoMapData Data;
  FCoISelection Selection;
+ FCoIGeoHit LastGeoHit;
  ECoIMapView View=ECoIMapView::Regions;
  UPROPERTY() TObjectPtr<UTextBlock> Information;
  UPROPERTY() TObjectPtr<UTextBlock> ViewLabel;

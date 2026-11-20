@@ -73,25 +73,40 @@ static void Boundaries(UWorld* W,const FCoIGeoSurface& S,UMaterial* Material)
  }
  GeoMesh(W,TEXT("Border_")+S.Id.Replace(TEXT("."),TEXT("_")),S.Id,V,I,Material);
 }
-static int32 BuildUSMap()
+static int32 BuildMap(bool Europe)
 {
  FString Json,Provenance,Error;FCoIGeoMapData Data;
- if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectDir()/TEXT("GeoData/Generated/map.json")))||!Data.Load(Json,Error))
- {UE_LOG(LogTemp,Error,TEXT("Offline US import required: %s"),*Error);return 3;}
- if(!FFileHelper::LoadFileToString(Provenance,*(FPaths::ProjectDir()/TEXT("GeoData/Generated/validation.json"))))return 4;
+ const FString Folder=Europe?TEXT("GeoData/Generated/de_nl_1913/"):TEXT("GeoData/Generated/");
+ if(!FFileHelper::LoadFileToString(Json,*(FPaths::ProjectDir()/Folder/TEXT("map.json")))||!Data.Load(Json,Error))
+ {UE_LOG(LogTemp,Error,TEXT("Offline geography import required: %s"),*Error);return 3;}
+ if(!FFileHelper::LoadFileToString(Provenance,*(FPaths::ProjectDir()/Folder/TEXT("validation.json"))))return 4;
  auto* W=UEditorLoadingAndSavingUtils::NewBlankMap(false);if(!W)return 1;
  W->GetWorldSettings()->DefaultGameMode=ACoIGameMode::StaticClass();W->SpawnActor<APlayerStart>(FVector::ZeroVector,FRotator::ZeroRotator);
  auto* Water=FlatMaterial(TEXT("M_GreatLakes"),FLinearColor(.035f,.15f,.25f));
  auto* Base=FlatMaterial(TEXT("M_Land"),FLinearColor(.16f,.26f,.18f));
  auto* Context=FlatMaterial(TEXT("M_CanadaContext"),FLinearColor(.24f,.29f,.27f));
+ auto* Netherlands=Europe?FlatMaterial(TEXT("M_Netherlands1913"),FLinearColor(.34f,.27f,.16f)):Context;
  auto* Border=FlatMaterial(TEXT("M_RegionBoundary"),FLinearColor(.055f,.085f,.07f));
  auto* City=FlatMaterial(TEXT("M_City"),FLinearColor(1,.55f,.10f));
  Plane(W,{Data.Center.X,Data.Center.Y,-5},{300,300,1},FlatMaterial(TEXT("M_Outside"),FLinearColor(.018f,.035f,.05f)));
- for(const auto& S:Data.Countries)Surface(W,S,0,S.Id==TEXT("country.usa")?Base:Context);
+ for(const auto& S:Data.Land)Surface(W,S,-1,Context);
+ for(const auto& S:Data.Countries)Surface(W,S,0,Europe?(S.Id==TEXT("country.nl.1913")?Netherlands:Base):(S.Id==TEXT("country.usa")?Base:Context));
  const FLinearColor Colors[]={FLinearColor(.16f,.29f,.20f),FLinearColor(.20f,.32f,.22f),FLinearColor(.25f,.34f,.22f),FLinearColor(.28f,.35f,.25f)};
- for(int32 K=0;K<Data.Regions.Num();++K)
- {const auto& S=Data.Regions[K];Surface(W,S,.5,FlatMaterial(TEXT("M_")+S.Id.Replace(TEXT("."),TEXT("_")),Colors[K%4]));Boundaries(W,S,Border);}
+ const auto& RegionSurfaces=Europe?Data.RegionLand:Data.Regions;
+ for(int32 K=0;K<RegionSurfaces.Num();++K)
+ {const auto& S=RegionSurfaces[K];Surface(W,S,.5,FlatMaterial(TEXT("M_")+S.Id.Replace(TEXT("."),TEXT("_")),Colors[K%4]));Boundaries(W,S,Border);}
  for(const auto& S:Data.Lakes)Surface(W,S,1,Water);
+ if(Europe)
+ {
+  TArray<FVector3f> RV;TArray<int32> RI;
+  for(const auto& R:Data.Rivers)for(int32 K=1;K<R.Points.Num();++K)
+  {
+   FVector3f P(R.Points[K-1].X,R.Points[K-1].Y,2.5),Q(R.Points[K].X,R.Points[K].Y,2.5);
+   if((Q-P).IsNearlyZero())continue;auto Side=FVector3f::CrossProduct(Q-P,FVector3f(0,0,1)).GetSafeNormal()*(float)R.HalfWidth;
+   const int32 N=RV.Num();RV.Append({P+Side,P-Side,Q-Side,Q+Side});RI.Append({N,N+1,N+2,N,N+2,N+3});
+  }
+  GeoMesh(W,TEXT("EuropeRiverLines"),TEXT("display.rivers"),RV,RI,Water);
+ }
  TArray<FVector3f> Vertices;TArray<int32> Indices;
  for(const auto& C:Data.Cities)
  {
@@ -99,18 +114,20 @@ static int32 BuildUSMap()
   for(int32 K=0;K<16;++K){double Angle=2*PI*K/16;Vertices.Add({(float)(C.Position.X+45*FMath::Cos(Angle)),(float)(C.Position.Y+45*FMath::Sin(Angle)),4});}
   for(int32 K=0;K<16;++K)Indices.Append({Start,Start+1+K,Start+1+(K+1)%16});
  }
- GeoMesh(W,TEXT("CityMarkers"),TEXT("display.city_markers"),Vertices,Indices,City);
- const FString Path=TEXT("/Game/Geography/Data/GeoCatalog");auto* Package=CreatePackage(*Path);Package->FullyLoad();
- auto* Catalog=LoadObject<UCoIGeoCatalog>(nullptr,*(Path+TEXT(".GeoCatalog")));
- if(!Catalog)Catalog=NewObject<UCoIGeoCatalog>(Package,TEXT("GeoCatalog"),RF_Public|RF_Standalone);
+ GeoMesh(W,Europe?TEXT("EuropeCityMarkers"):TEXT("CityMarkers"),TEXT("display.city_markers"),Vertices,Indices,City);
+ const FString CatalogName=Europe?TEXT("GeoCatalog_DE_NL_1913"):TEXT("GeoCatalog");
+ const FString Path=TEXT("/Game/Geography/Data/")+CatalogName;auto* Package=CreatePackage(*Path);Package->FullyLoad();
+ auto* Catalog=LoadObject<UCoIGeoCatalog>(nullptr,*(Path+TEXT(".")+CatalogName));
+ if(!Catalog)Catalog=NewObject<UCoIGeoCatalog>(Package,*CatalogName,RF_Public|RF_Standalone);
  Catalog->DefinitionJson=Json;Catalog->ProvenanceJson=Provenance;SaveAsset(Catalog);W->SpawnActor<ACoIGeoReference>()->Catalog=Catalog;
- if(!UEditorLoadingAndSavingUtils::SaveMap(W,TEXT("/Game/Maps/GreatLakes1913")))return 2;
- UE_LOG(LogTemp,Display,TEXT("COI_MAP_OK GreatLakes1913 countries=%d lakes=%d regions=%d cities=%d"),Data.Countries.Num(),Data.Lakes.Num(),Data.Regions.Num(),Data.Cities.Num());return 0;
+ const FString MapPath=Europe?TEXT("/Game/Maps/DE_NL1913"):TEXT("/Game/Maps/GreatLakes1913");
+ if(!UEditorLoadingAndSavingUtils::SaveMap(W,MapPath))return 2;
+ UE_LOG(LogTemp,Display,TEXT("COI_MAP_OK %s countries=%d lakes=%d regions=%d cities=%d"),*MapPath,Data.Countries.Num(),Data.Lakes.Num(),Data.Regions.Num(),Data.Cities.Num());return 0;
 }
 int32 UCoIBuildMapCommandlet::Main(const FString& Params)
 {
  if(Params.Contains(TEXT("EconomicMaterial"))){const FString Path=TEXT("/Game/Materials/M_EconomicLayer");auto* M=LoadObject<UMaterial>(nullptr,*(Path+TEXT(".M_EconomicLayer")));if(!M){auto* P=CreatePackage(*Path);M=NewObject<UMaterial>(P,TEXT("M_EconomicLayer"),RF_Public|RF_Standalone);M->SetShadingModel(MSM_Unlit);M->TwoSided=true;auto* C=NewObject<UMaterialExpressionVectorParameter>(M);C->ParameterName=TEXT("RegionColor");C->DefaultValue=FLinearColor(.28f,.30f,.32f);M->GetExpressionCollection().AddExpression(C);M->GetEditorOnlyData()->EmissiveColor.Expression=C;M->PostEditChange();SaveAsset(M);}return 0;}
- if(!Params.Contains(TEXT("Prototype")))return BuildUSMap();
+ if(!Params.Contains(TEXT("Prototype")))return BuildMap(Params.Contains(TEXT("Europe")));
  auto* W=UEditorLoadingAndSavingUtils::NewBlankMap(false);if(!W)return 1;
  W->GetWorldSettings()->DefaultGameMode=ACoIGameMode::StaticClass();W->SpawnActor<APlayerStart>(FVector::ZeroVector,FRotator::ZeroRotator);
  auto* Water=FlatMaterial(TEXT("M_Background"),FLinearColor(.025f,.06f,.10f));

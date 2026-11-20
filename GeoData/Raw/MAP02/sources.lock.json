@@ -1,0 +1,78 @@
+{
+  "retrieved": "2026-11-20",
+  "files": [
+    {
+      "path": "GeoData/Raw/MAP02/germany1913.ohm.json.gz",
+      "sha256": "b732b2d6f345bb339f1c21156ef902bd7a549558c642f3213779b10fea5cf124"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/region_sources.json",
+      "sha256": "654a76ca5d447bf9079fba7af2f2579930bb21b2a306705f9fbc6c075727b508"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/germany1914.svg",
+      "sha256": "60470d229a277c0bad4a57e6254c4fb9000d47e06bc61ebeb074f383cdc2edc9"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/prov1890.shp",
+      "sha256": "45df4162bf6543d6064316554dcb14380e5e1afc6558235257b2ab60b7d0eec5"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/prov1890.shx",
+      "sha256": "e06e7eb24d56edd1b66deb1d42540a4d0a93bff78f697b31b8e34f863b14c052"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/prov1890.dbf",
+      "sha256": "8055ef11f4ecf3d19e42cfde7f4627e9fc38791559ff90bc0bbd2585c8af4e00"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/prov1920.shp",
+      "sha256": "88c3f56238c44dfd4e4bcb3e3bccad4984df1c2b3330b7c2c02a92f8508d78cb"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/prov1920.shx",
+      "sha256": "eb801fb28695f4437c7db9db38de14dcb6a40954a870c007023008bba046002a"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/prov1920.dbf",
+      "sha256": "78f0a49d791c54292a77f5f75b49b9886cf7d353cee61574febe5e61cf93dd81"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/cities500.zip",
+      "sha256": "36593c7d1e211fb258d82cd20976a362aa450a001d0642383d6198f420f704ae"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/hubs_wgs84.json",
+      "sha256": "31300fd78c5e3b7d28d72d733c576386a750bd771602411a84f0a518edb2d115"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/import_config.json",
+      "sha256": "db1838489931d822fc07c9163aabab2f6a9696c3d5cd723cf0bf774bac377d05"
+    },
+    {
+      "path": "GeoData/Raw/ne_10m_admin_0_countries.zip",
+      "sha256": "ce1ac7036499a0edd641fbc093cd209a98f96a49d2eca8480aaacad35138a7f6"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/rivers.zip",
+      "sha256": "ded71b01870855ccfe19b51f2ec14c9bb48fae23c0e9f3c11974d426433b5c38"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/holland1911.jpg",
+      "sha256": "f13cef0145d3bb593858fed105b08c9e611e29675a8713b4247a7edac514c061"
+    },
+    {
+      "path": "GeoData/Raw/MAP02/nlgis_metadata.json",
+      "sha256": "cf144a5e76f906e72feb91b4d972d0b4bd19ff1b651c257556221b2cfcb397b8"
+    }
+  ],
+  "urls": {
+    "ohm": "https://overpass-api.openhistoricalmap.org/api/interpreter",
+    "nlgis": "https://ssh.datastations.nl/api/datasets/:persistentId/?persistentId=doi:10.17026/dans-xb9-t677",
+    "geonames": "https://download.geonames.org/export/dump/cities500.zip",
+    "water": "https://upload.wikimedia.org/wikipedia/commons/d/de/German_Empire_1914_adm_location_map.svg?download=1",
+    "holland_plate": "https://upload.wikimedia.org/wikipedia/commons/5/5b/EB1911_-_Holland.jpg?download=1",
+    "rivers": "https://naciscdn.org/naturalearth/10m/physical/ne_10m_rivers_lake_centerlines.zip"
+  },
+  "attribution": "Historical boundaries: OpenHistoricalMap contributors (CC0 per project default and preserved per-element tags), https://www.openhistoricalmap.org/copyright. Dutch provinces: O.W.A. Boonstra (2007), NLGIS shapefiles, DANS V2.2, https://doi.org/10.17026/DANS-XB9-T677 (CC0-1.0). Hub coordinates: GeoNames, https://www.geonames.org (CC BY 4.0, https://creativecommons.org/licenses/by/4.0/). Historical water geometry: NordNordWest, German Empire 1914 adm location map.svg, https://commons.wikimedia.org/wiki/File:German_Empire_1914_adm_location_map.svg (CC BY-SA 3.0 Germany, https://creativecommons.org/licenses/by-sa/3.0/de/); adapted by extracting, transforming, simplifying and triangulating geometry. Physical context: Made with Natural Earth (Public Domain). All changes are cartographic game adaptations, not certified historical surveying. Layer-specific licences retained; no licence change to game code. Historical Dutch hydrography reference: Encyclopaedia Britannica 1911, vol.13, Holland plate after p.588 (Public Domain); modern Natural Earth delta lines are explicit generalised proxies, not 1913 channel surveys."
+}

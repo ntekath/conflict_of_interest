@@ -1,0 +1,15 @@
+{
+  "package": "MAP02",
+  "date": "2026-11-20",
+  "offline_repeat_byte_identical": true,
+  "files": [
+    {
+      "path": "GeoData/Generated/de_nl_1913/map.json",
+      "sha256": "e9c8460256dda6d6fab0890f72a58b99aa0cb72f95becef99a9a262dcc662cec"
+    },
+    {
+      "path": "GeoData/Generated/de_nl_1913/validation.json",
+      "sha256": "100c42de2ea4d99d351b405ff0a5210dc45da417bcbb2b68cff0324a5b13226a"
+    }
+  ]
+}

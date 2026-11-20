@@ -1,0 +1,3 @@
+MAP02_shipping_final_build.txt
+Result: Succeeded
+Total execution time: 16.01 seconds

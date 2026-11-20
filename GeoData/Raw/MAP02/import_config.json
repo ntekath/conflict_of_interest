@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "limitations": [
+    "OHM historical contributor reconstructions retain source fixme/notes; not survey-exact 1913.",
+    "DANS 1890 province shapes bracketed against 1920 are an explicit 1913 cartographic proxy.",
+    "Historical jurisdiction, land mask and drawn waterways are different datasets.",
+    "No water network or navigation permission; MAP04/05 only.",
+    "Modern dissolved Natural Earth neighbour land is context only, with Dutch polders removed.",
+    "Small historical source seam conflicts use reviewed cartographic priority, not claimed legal adjudication.",
+    "Kiel GeoNames point is 79 m inside generalised coast water; unchanged original coordinates, explicit 150 m shore uncertainty, no fabricated land island."
+  ],
+  "seam_priority": [
+    {
+      "winner": "region.de.1913.schleswig_holstein",
+      "loser": "region.de.1913.hannover",
+      "max_overlap_km2": 30,
+      "reason": "Overlapping historic source outlines; deterministic cartographic tie-break, source uncertainty retained."
+    },
+    {
+      "winner": "region.de.1913.hannover",
+      "loser": "region.de.1913.hessen_nassau",
+      "max_overlap_km2": 0.2,
+      "reason": "Overlapping historic source outlines; deterministic cartographic tie-break, source uncertainty retained."
+    },
+    {
+      "winner": "region.de.1913.hannover",
+      "loser": "region.de.1913.mecklenburg_schwerin",
+      "max_overlap_km2": 0.2,
+      "reason": "Overlapping historic source outlines; deterministic cartographic tie-break, source uncertainty retained."
+    },
+    {
+      "winner": "region.de.1913.sachsen_weimar_eisenach",
+      "loser": "region.de.1913.sachsen_meiningen",
+      "max_overlap_km2": 2,
+      "reason": "Overlapping historic source outlines; deterministic cartographic tie-break, source uncertainty retained."
+    },
+    {
+      "winner": "region.de.1913.hannover",
+      "loser": "region.nl.1913.overijssel",
+      "max_overlap_km2": 6,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.de.1913.hannover",
+      "loser": "region.nl.1913.drenthe",
+      "max_overlap_km2": 12,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.de.1913.hannover",
+      "loser": "region.nl.1913.groningen",
+      "max_overlap_km2": 9,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.de.1913.westfalen",
+      "loser": "region.nl.1913.overijssel",
+      "max_overlap_km2": 6,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.de.1913.westfalen",
+      "loser": "region.nl.1913.gelderland",
+      "max_overlap_km2": 8,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.de.1913.rheinprovinz",
+      "loser": "region.nl.1913.gelderland",
+      "max_overlap_km2": 7,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.de.1913.rheinprovinz",
+      "loser": "region.nl.1913.limburg",
+      "max_overlap_km2": 14,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    },
+    {
+      "winner": "region.nl.1913.noord_brabant",
+      "loser": "region.nl.1913.zeeland",
+      "max_overlap_km2": 0.1,
+      "reason": "Alignment of independently generalised historical sources; dated German OHM outline takes precedence at international seam; not a claim of survey accuracy."
+    }
+  ],
+  "probes": [
+    {
+      "name": "Berlin before 1920",
+      "latitude": 52.52437,
+      "longitude": 13.41053,
+      "region": "region.de.1913.berlin",
+      "land": true
+    },
+    {
+      "name": "Charlottenburg outside Alt-Berlin",
+      "latitude": 52.51667,
+      "longitude": 13.28333,
+      "region": "region.de.1913.brandenburg",
+      "land": true
+    },
+    {
+      "name": "Zuiderzee / later Flevoland",
+      "latitude": 52.5,
+      "longitude": 5.5,
+      "region": "",
+      "land": false
+    },
+    {
+      "name": "Buesingen Baden exclave",
+      "latitude": 47.697,
+      "longitude": 8.69,
+      "region": "region.de.1913.baden",
+      "land": true
+    },
+    {
+      "name": "Helgoland island",
+      "latitude": 54.183,
+      "longitude": 7.889,
+      "region": "region.de.1913.schleswig_holstein",
+      "land": true
+    },
+    {
+      "name": "Birkenfeld Oldenburg exclave",
+      "latitude": 49.652,
+      "longitude": 7.163,
+      "region": "region.de.1913.oldenburg",
+      "land": true
+    },
+    {
+      "name": "Eutin Oldenburg Luebeck principality",
+      "latitude": 54.137,
+      "longitude": 10.616,
+      "region": "region.de.1913.oldenburg",
+      "land": true
+    },
+    {
+      "name": "Cuxhaven Hamburg territory",
+      "latitude": 53.861,
+      "longitude": 8.694,
+      "region": "region.de.1913.hamburg",
+      "land": true
+    },
+    {
+      "name": "Bremerhaven Bremen territory",
+      "latitude": 53.544,
+      "longitude": 8.578,
+      "region": "region.de.1913.bremen",
+      "land": true
+    },
+    {
+      "name": "North Sea",
+      "latitude": 55,
+      "longitude": 5,
+      "region": "",
+      "land": false
+    },
+    {
+      "name": "Belgian background land",
+      "latitude": 50.85,
+      "longitude": 4.35,
+      "region": "",
+      "land": true
+    },
+    {
+      "name": "Schweriner See water within political region",
+      "latitude": 53.69,
+      "longitude": 11.48,
+      "region": "region.de.1913.mecklenburg_schwerin",
+      "land": false
+    },
+    {
+      "name": "Cologne Rhine left bank",
+      "latitude": 50.94,
+      "longitude": 6.95,
+      "region": "region.de.1913.rheinprovinz",
+      "land": true
+    }
+  ],
+  "hub_shore_tolerance_km": {
+    "city.de.1913.schleswig_holstein": 0.15
+  }
+}

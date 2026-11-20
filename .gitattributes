@@ -12,3 +12,7 @@
 *.zip binary
 
 *.coisim text eol=lf
+
+# MAP02 source archives and original SVG must retain their pinned upstream bytes.
+GeoData/Raw/MAP02/* -text
+GeoData/Raw/MAP02/germany1914.svg binary
