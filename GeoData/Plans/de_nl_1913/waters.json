@@ -1,0 +1,736 @@
+{
+  "schema": 1,
+  "waterbodies": [
+    {
+      "id": "water.1913.rhine",
+      "name": "Rhein / Rijn",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "supported_corridor",
+      "documented_extent": "Köln–Emmerich–Lobith; Waal–Merwede–Rotterdamer Hafengebiet separat routen.",
+      "evidence_sources": [
+        "eb1911.rhine",
+        "eb1911.zuid_holland"
+      ],
+      "network_enabled": false,
+      "note": "Erster MAP04-Korridor. Deltaarme, Fließrichtung und Hafenanschlüsse topologisch festlegen; kein gerader Seeweg über Land."
+    },
+    {
+      "id": "water.1913.waal_merwede",
+      "name": "Waal / Merwede / Nieuwe Maas",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "supported_corridor",
+      "documented_extent": "Niederländischer Delta-Abschnitt des Rotterdam–Köln-Korridors.",
+      "evidence_sources": [
+        "eb1911.rhine",
+        "eb1911.holland",
+        "eb1911.zuid_holland"
+      ],
+      "network_enabled": false,
+      "note": "Nicht mit Nederrijn/Lek zu einer unspezifischen Linie verschmelzen. Fahrwasser im Hafengebiet historisch prüfen."
+    },
+    {
+      "id": "water.1913.elbe",
+      "name": "Elbe",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "candidate_requires_segment_review",
+      "documented_extent": "Magdeburg–Hamburg/Altona als späterer Kandidat.",
+      "evidence_sources": [
+        "eb1911.elbe"
+      ],
+      "network_enabled": false,
+      "note": "Dresden ist kein zusätzlicher sächsischer Hub; Leipzig braucht kostenpflichtigen Landzubringer."
+    },
+    {
+      "id": "water.1913.oder",
+      "name": "Oder",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "candidate_requires_segment_review",
+      "documented_extent": "Breslau–Stettin als späterer Kandidat.",
+      "evidence_sources": [
+        "eb1911.oder"
+      ],
+      "network_enabled": false,
+      "note": "Nicht alle Nebenarme freigeben; historische Ausbauten und Wasserstände offen."
+    },
+    {
+      "id": "water.1913.weser",
+      "name": "Weser",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "candidate_requires_segment_review",
+      "documented_extent": "Bremen–Wesermündung als späterer Kandidat.",
+      "evidence_sources": [
+        "eb1911.weser"
+      ],
+      "network_enabled": false,
+      "note": "Bremerhaven nur Hafen-/Terminalknoten, keine zweite Wirtschaftsregion."
+    },
+    {
+      "id": "water.1913.merwede_canal",
+      "name": "Merwedekanaal (Verlauf 1913)",
+      "kind": "canal",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "existence_supported",
+      "documented_extent": "Amsterdam–Utrecht–Vreeswijk–Gorinchem; 1892-Verbindung.",
+      "evidence_sources": [
+        "rws.merwede",
+        "eb1911.holland"
+      ],
+      "network_enabled": false,
+      "note": "Heutigen Verlauf/Querschnitt nicht kopieren; kein moderner Amsterdam-Rijnkanaal."
+    },
+    {
+      "id": "water.1913.kiel_canal",
+      "name": "Kaiser-Wilhelm-Kanal",
+      "kind": "canal",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "existence_supported",
+      "documented_extent": "Brunsbüttel–Kiel-Holtenau; Eröffnung 1895.",
+      "evidence_sources": [
+        "dhm.kiel"
+      ],
+      "network_enabled": false,
+      "note": "1913 noch nicht Maße der 1914 beendeten Erweiterung voraussetzen; Kiel-Holtenau als Terminal des Kieler Hubs, Zugang und Zubringer extra prüfen."
+    },
+    {
+      "id": "water.1913.dortmund_ems",
+      "name": "Dortmund-Ems-Kanal",
+      "kind": "canal",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "existence_supported",
+      "documented_extent": "Dortmund–Ems-System; historische Anbindung belegt.",
+      "evidence_sources": [
+        "eb1911.westfalen",
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "Schleusen, Streckenführung und Fahrzeuggrenzen vor Netznutzung prüfen."
+    },
+    {
+      "id": "water.1913.north_sea",
+      "name": "Nordsee",
+      "kind": "sea",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Sichtbarer Küstenkontext.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Keine pauschale Küstentransportkante oder freie Abkürzung."
+    },
+    {
+      "id": "water.1913.baltic",
+      "name": "Ostsee",
+      "kind": "sea",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Schleswig bis Ostpreußen; historische deutsche Küste.",
+      "evidence_sources": [
+        "map.de.1911"
+      ],
+      "network_enabled": false,
+      "note": "Kein Landweg durch Dänemark; keine kostenlose Außenroute."
+    },
+    {
+      "id": "water.1913.wadden",
+      "name": "Wattenmeer",
+      "kind": "sea",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Niederländische und deutsche Insel-/Wattküste.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Wattflächen sind keine schiffbaren Flächen; Fahrrinnen separat belegen."
+    },
+    {
+      "id": "water.1913.zuiderzee",
+      "name": "Zuiderzee",
+      "kind": "sea",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Historische offene Meeresbucht.",
+      "evidence_sources": [
+        "map.nl.1911",
+        "rws.zuiderzee"
+      ],
+      "network_enabled": false,
+      "note": "Kein IJsselmeer, kein Afsluitdijk, kein Flevoland oder Noordoostpolder 1913."
+    },
+    {
+      "id": "water.1913.bodensee",
+      "name": "Bodensee",
+      "kind": "lake",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Sichtbare Wasserfläche, keine wirtschaftliche Zusatzregion.",
+      "evidence_sources": [
+        "map.de.1911"
+      ],
+      "network_enabled": false,
+      "note": "Keine Schiffbarkeit aus Sichtbarkeit ableiten; grenzüberschreitende Wasserzugehörigkeit separat modellieren."
+    },
+    {
+      "id": "water.1913.mueritz",
+      "name": "Müritz",
+      "kind": "lake",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Sichtbare Wasserfläche, keine wirtschaftliche Zusatzregion.",
+      "evidence_sources": [
+        "map.de.1911"
+      ],
+      "network_enabled": false,
+      "note": "Keine Schiffbarkeit aus Sichtbarkeit ableiten; grenzüberschreitende Wasserzugehörigkeit separat modellieren."
+    },
+    {
+      "id": "water.1913.schweriner_see",
+      "name": "Schweriner See",
+      "kind": "lake",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Sichtbare Wasserfläche, keine wirtschaftliche Zusatzregion.",
+      "evidence_sources": [
+        "map.de.1911"
+      ],
+      "network_enabled": false,
+      "note": "Keine Schiffbarkeit aus Sichtbarkeit ableiten; grenzüberschreitende Wasserzugehörigkeit separat modellieren."
+    },
+    {
+      "id": "water.1913.spirdingsee",
+      "name": "Spirdingsee (Śniardwy)",
+      "kind": "lake",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Sichtbare Wasserfläche, keine wirtschaftliche Zusatzregion.",
+      "evidence_sources": [
+        "map.de.1911"
+      ],
+      "network_enabled": false,
+      "note": "Keine Schiffbarkeit aus Sichtbarkeit ableiten; grenzüberschreitende Wasserzugehörigkeit separat modellieren."
+    },
+    {
+      "id": "water.1913.steinhuder_meer",
+      "name": "Steinhuder Meer",
+      "kind": "lake",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Sichtbare Wasserfläche, keine wirtschaftliche Zusatzregion.",
+      "evidence_sources": [
+        "map.de.1911"
+      ],
+      "network_enabled": false,
+      "note": "Keine Schiffbarkeit aus Sichtbarkeit ableiten; grenzüberschreitende Wasserzugehörigkeit separat modellieren."
+    },
+    {
+      "id": "water.1913.maas",
+      "name": "Maas",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.ijssel",
+      "name": "IJssel",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.nederrijn_lek",
+      "name": "Nederrijn / Lek",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.ems",
+      "name": "Ems",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.danube",
+      "name": "Donau",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.main",
+      "name": "Main",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.mosel",
+      "name": "Mosel",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.saale",
+      "name": "Saale",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.spree_havel",
+      "name": "Spree / Havel",
+      "kind": "river",
+      "visible_in_MAP02": true,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.neckar",
+      "name": "Neckar",
+      "kind": "river",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.vistula",
+      "name": "Weichsel",
+      "kind": "river",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.pregel",
+      "name": "Pregel",
+      "kind": "river",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.memel",
+      "name": "Memel",
+      "kind": "river",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.scheldt",
+      "name": "Schelde / Zeeland-Arme",
+      "kind": "river",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Nur sichtbarer Hauptverlauf im Ausschnitt.",
+      "evidence_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "network_enabled": false,
+      "note": "Historische Frachtabschnitte nicht pauschal recherchiert/freigegeben. Keine moderne Kanalisierung voraussetzen."
+    },
+    {
+      "id": "water.1913.north_sea_canal",
+      "name": "Noordzeekanaal",
+      "kind": "canal",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Detailgeometrie/1913-Betriebsnachweis vor optionaler Aufnahme prüfen.",
+      "evidence_sources": [
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "In MAP02 nur nach explizitem historisch-geometrischem Nachweis sichtbar aufnehmen; derzeit auf der Prüfliste."
+    },
+    {
+      "id": "water.1913.elbe_luebeck",
+      "name": "Elbe-Lübeck-Kanal",
+      "kind": "canal",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Detailgeometrie/1913-Betriebsnachweis vor optionaler Aufnahme prüfen.",
+      "evidence_sources": [
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "In MAP02 nur nach explizitem historisch-geometrischem Nachweis sichtbar aufnehmen; derzeit auf der Prüfliste."
+    },
+    {
+      "id": "water.1913.finow",
+      "name": "Finowkanal",
+      "kind": "canal",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Detailgeometrie/1913-Betriebsnachweis vor optionaler Aufnahme prüfen.",
+      "evidence_sources": [
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "In MAP02 nur nach explizitem historisch-geometrischem Nachweis sichtbar aufnehmen; derzeit auf der Prüfliste."
+    },
+    {
+      "id": "water.1913.oder_spree",
+      "name": "Oder-Spree-Kanal",
+      "kind": "canal",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Detailgeometrie/1913-Betriebsnachweis vor optionaler Aufnahme prüfen.",
+      "evidence_sources": [
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "In MAP02 nur nach explizitem historisch-geometrischem Nachweis sichtbar aufnehmen; derzeit auf der Prüfliste."
+    },
+    {
+      "id": "water.1913.ems_jade",
+      "name": "Ems-Jade-Kanal",
+      "kind": "canal",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Detailgeometrie/1913-Betriebsnachweis vor optionaler Aufnahme prüfen.",
+      "evidence_sources": [
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "In MAP02 nur nach explizitem historisch-geometrischem Nachweis sichtbar aufnehmen; derzeit auf der Prüfliste."
+    },
+    {
+      "id": "water.1913.zuid_willemsvaart",
+      "name": "Zuid-Willemsvaart",
+      "kind": "canal",
+      "visible_in_MAP02": false,
+      "geometry_sources": [
+        "map.de.1911",
+        "map.nl.1911"
+      ],
+      "geometry_status": "historical_digitisation_required",
+      "navigation_evidence": "not_cleared",
+      "documented_extent": "Detailgeometrie/1913-Betriebsnachweis vor optionaler Aufnahme prüfen.",
+      "evidence_sources": [
+        "eb1911.canal"
+      ],
+      "network_enabled": false,
+      "note": "In MAP02 nur nach explizitem historisch-geometrischem Nachweis sichtbar aufnehmen; derzeit auf der Prüfliste."
+    }
+  ],
+  "excluded": [
+    {
+      "id": "excluded.mittelland_through",
+      "name": "Durchgehender Mittellandkanal",
+      "reason": "1913 keine durchgehende fertiggestellte West-Ost-Verbindung; keine spätere Geometrie aktivieren."
+    },
+    {
+      "id": "excluded.amsterdam_rhine",
+      "name": "Amsterdam-Rijnkanaal (moderner Ausbau)",
+      "reason": "Erst 1952; stattdessen historischen Merwedekanaal prüfen."
+    },
+    {
+      "id": "excluded.rhine_main_danube",
+      "name": "Moderner Rhein-Main-Donau-Kanal",
+      "reason": "Keine 1913-Verbindung nach modernem Verlauf."
+    },
+    {
+      "id": "excluded.twente",
+      "name": "Twentekanaal",
+      "reason": "Kein 1913-Netzbestand; nicht aus modernen Geodaten übernehmen."
+    }
+  ],
+  "first_route": {
+    "id": "routeplan.1913.rotterdam_koeln",
+    "from_hub": "city.nl.1913.zuid_holland",
+    "to_hub": "city.de.1913.rheinprovinz",
+    "via": [
+      "Rotterdamer Binnen-/Seehafenanschluss",
+      "Nieuwe Maas / Merwede / Waal",
+      "Lobith / Emmerich",
+      "Köln Rheinhafen"
+    ],
+    "evidence_sources": [
+      "eb1911.rhine",
+      "eb1911.zuid_holland",
+      "eb1911.rheinprovinz"
+    ],
+    "state": "historically_supported_not_yet_graph",
+    "terminals_are_hubs": false,
+    "access_policy": "Explizite DE/NL-Zugangsfreigabe als Spielregel in MAP04; kein freier Transit in Hintergrundländern.",
+    "parameters": "Kapazität, Schiffstyp, Tiefgang, Geschwindigkeit, Kosten, Umschlag und Leerfahrt erst in MAP04/05 konfigurieren; keine historischen Zahlen erfinden."
+  },
+  "scope_note": "37 Planungsdatensätze, darunter 5 einzeln benannte Seen; weitere kleine Gewässer nicht pauschal zugesagt. Mehrarmige Flussdatensätze sind explizite Gruppen, die beim Import getrennte Feature-/Abschnitts-IDs benötigen; keine einzige universelle Navigationskante."
+}

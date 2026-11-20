@@ -1,8 +1,6 @@
-> **Aktuelle Projektregel (20.11.2026):** Während der Entwicklung keine Save-Migration. Historische Migrationsanforderungen/-nachweise unten gelten nicht mehr als aktueller Auftrag. Nur das aktuelle Save-Format laden, andernfalls neue Partie. Siehe [Projektregeln](AGENTS.md).
-
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
-Stand: 19.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wurde hier nicht geprüft. Nächster Auftrag ist AP09.1: Bestandsaufnahme der Wirtschaftsengine. AP09–AP16 sind ausgearbeitete Erstentwürfe zur späteren Verfeinerung durch den Projektinhaber. Keine erneute Implementierung abgeschlossener Pakete. Dieser Plan ersetzt die frühere Folge AP08.7/AP09–AP12.
+Stand: 20.11.2026. AP01–AP08.6 sowie AP09.1–AP09.4 sind laut Projektinhaber umgesetzt. Der Code wurde hier nicht geprüft. Bankenplanung bleibt AP09.5; neue geografische Richtung siehe MAP01–MAP06. Kartenumstellung beginnt mit MAP01, ohne abgeschlossene Wirtschaftspakete neu zu bauen. AP09–AP16 sind ausgearbeitete Erstentwürfe zur späteren Verfeinerung durch den Projektinhaber. Keine erneute Implementierung abgeschlossener Pakete. Dieser Plan ersetzt die frühere Folge AP08.7/AP09–AP12.
 
 ## Inhaltsverzeichnis und Arbeitsstand
 
@@ -11,11 +9,12 @@ Stand: 19.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wu
 | 1 | Spielvision und Grundregeln | Verbindliche Leitlinien |
 | 2 | Welt, Teilnehmer und gemeinsamer Wirtschaftszustand | Leitlinien und Modellvertrag |
 | 3 | Bestehende Implementierung AP01–AP08.6 | Laut Projektinhaber umgesetzt |
-| AP09.1 | Bestandsaufnahme und Erweiterungsvertrag | Nächster Schritt, Entwurf |
-| AP09.2 | Bevölkerung, Beschäftigung und Einkommen | Entwurf |
-| AP09.3 | Geschäfte und Konsumentenentscheidungen | Entwurf |
-| AP09.4 | Kostenrechnung und aufschlagsbasierte Preise | Entwurf |
+| AP09.1 | Bestandsaufnahme und Erweiterungsvertrag | Umgesetzt |
+| AP09.2 | Bevölkerung, Beschäftigung und Einkommen | Umgesetzt |
+| AP09.3 | Geschäfte und Konsumentenentscheidungen | Umgesetzt |
+| AP09.4 | Kostenrechnung und aufschlagsbasierte Preise | Umgesetzt |
 | AP09.5 | Banken, Kredite und Geldmenge | Entwurf |
+| AP09.5a | Öffentliche Einkommen und minimaler Staatshaushalt | Neu, vor Langzeittest |
 | AP09.6 | Wirtschaftlicher Langzeittest | Entwurf |
 | AP10 | Konzernnetz und vollständiger Aufbauspieltest | Entwurf; ersetzt AP08.7 |
 | AP11.1 | Konzernstrategien und lokale Geschäftsführung | Entwurf |
@@ -27,6 +26,7 @@ Stand: 19.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wu
 | AP14 | Ereignisse und Krisen | Entwurf |
 | AP15 | Gesamtprüfung und Auslieferung | Entwurf |
 | AP16 | Skalierung und Parallelisierung | Entwurf |
+| MAP01–MAP06 | Eigene Kartenplanung: Deutschland/Niederlande 1913, Verwaltungsregionen, Stadthubs und Wassertransport | Neu; vor geografisch abhängigen Erweiterungen |
 | UI01–UI06 | Eigenes UI-/Kartenkapitel: Kennzahlen, Kartenbedienung, Stadtansicht, Details und Bedienprüfung | Neu; auf vorhandenem UI aufbauend |
 
 **Leseregel:** Die allgemeinen Leitlinien und die neuen AP09–AP16 beschreiben das Zielmodell. AP01–AP08.6 bleiben als Implementierungshistorie erhalten. Ältere Aussagen darin zu direkten Haushaltskäufen, mehreren Städten pro Region, fixer Geldmenge oder noch fehlenden Funktionen sind kein Auftrag, die neue Zielarchitektur zu umgehen. AP09.1 erfasst die tatsächlichen Abweichungen im Code. Paketnummern außerhalb der historischen Abschnitte folgen ausschließlich diesem Inhaltsverzeichnis.
@@ -35,7 +35,7 @@ Stand: 19.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wu
 
 ## Masterprompt für Codex
 
-Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; abgeschlossene Pakete bis AP08.6 nicht erneut bauen; ab AP09.1 vorhandene Funktionen gezielt erweitern. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
+Entwickle ein Singleplayer-Strategie-, Aufbau- und Wirtschaftsspiel mit Unreal Engine 5 und C++. Prüfe zuerst das vorhandene Projekt, seine UE-Version und Projektregeln. Verwende die vorhandene Engine-Version und kompatible APIs. Setze die folgenden Arbeitspakete nacheinander um; prüfe den tatsächlichen Projektstand und setze nur das beauftragte Paket um; abgeschlossene Pakete bis AP08.6 nicht erneut bauen; ab AP09.5 vorhandene Funktionen gezielt erweitern. Nach jedem Paket liefere eine lauffähige, überprüfbare Zwischenversion, eine kurze Zusammenfassung, Prüfschritte und bekannte Einschränkungen. Implementiere spätere Pakete erst nach entsprechendem Auftrag.
 
 ## 1. Spielvision und Grundregeln
 
@@ -155,6 +155,17 @@ Diese später beschlossenen Vorgaben haben Vorrang vor älteren Formulierungen i
 **Politischer Zielumfang**
 Nationale Regeln und internationale Abkommen, Zölle und Beschränkungen werden später autonom überprüft. Unternehmen können Vorhaben anstoßen und auf andere Vorhaben reagieren. Lobbyismus beeinflusst einen nachvollziehbaren Entscheidungsprozess, kauft nicht garantiert ein Ergebnis. Zunächst kein vollständiges Wahl-/Diplomatiespiel.
 
+### Entwicklungsregel: Spielstände und begrenzte Finanzkomplexität
+
+- Während der Entwicklung keine Migration alter Spielstände auf neue inkompatible Versionen. Keine Konverter, Kompatibilitätsschichten oder heuristischen Reparaturen dafür bauen.
+- Save-/Schema-/Definitionsversion prüfen; inkompatible Saves mit „Neue Partie erforderlich“ ablehnen. Neue Tests mit frischem Szenario starten. Speichern und Laden innerhalb derselben kompatiblen Version bleiben verpflichtend.
+- Diese Regel hat Vorrang vor früheren Save-Migrationsformulierungen. Änderungen an Szenario-/Code-Daten bleiben möglich; das ist keine Verpflichtung, alte Partien zu retten.
+- Finanzmechaniken dienen Finanzierung, Risiken und Geldkreislauf. Normale Einkäufe, Löhne, Lieferungen, Steuern und Zinsen werden automatisch verbucht; kein manuelles Überweisungs-Gameplay und keine Bankwahl pro Zahlung.
+- Zunächst eine vereinfachte Bank. Kreditvergabe und Tilgung verändern die definierte Geldmenge; Zinsen, Bankausgaben, zurückbehaltene Gewinne und verfügbare Kaufkraft gesondert ausweisen.
+- Keine pauschale Geldvernichtung zur Inflationskorrektur. Angebot, Nachfrage, Produktionskapazität, Kreditbedingungen und Rückflüsse messen; Geldmenge und Inflation nicht gleichsetzen.
+- Länder setzen nationale Regeln. Öffentliche Beschäftigung und Transfers wirken regional über Gruppen und laufen zunächst aus demselben nationalen Haushalt. Keine separaten Regionalhaushalte oder einzelnen Behörden.
+- Zusätzliche Konten und Verschleierung gehören zur späteren Finanz-/Politikebene. Manuelle Umbuchungen dann nur zwischen Konten desselben wirtschaftlichen Eigentümers; normale Zahlungen an andere Akteure bleiben vertrags-/geschäftsgebunden. Ein Kontowechsel hebt keine Steuerpflicht automatisch auf.
+
 ### Lokale Unternehmen und überregionale Konzerne
 
 **Ziel:** Eine eigenständig lebendige Unternehmenslandschaft. Konzerne handeln mit lokalen Betrieben, beliefern sie, konkurrieren mit ihnen und können sie später übernehmen.
@@ -262,7 +273,9 @@ Die Namen sind Vorschläge, keine Pflichtstruktur:
 | UMG-Oberfläche | Informationen, Layerwahl und Handelsdialog |
 | Save-System | Versionierter Simulationszustand und Referenzen |
 
-### Szenario: USA 1913
+### Bisheriges Szenario: USA 1913 – durch MAP-Kapitel als aktive Vorgabe abgelöst
+
+Die folgenden US-Angaben dokumentieren den bisherigen Teststand. Neue Karten-/Startszenariodaten folgen ausschließlich MAP01–MAP06 (Deutschland/Niederlande 1913).
 
 - Spielbeginn 01.01.1913 als konfigurierbarer Szenariostart. Historische Ereignisse sind zunächst nicht fest geskriptet.
 - Ein zusammenhängender US-Ausschnitt rund um Detroit, Chicago, Cleveland und Pittsburgh dient als erster Entwicklungsumfang. Diese Ortsauswahl ist ein veränderbarer Testvorschlag; kein vollständiges Abbild aller vier Staaten erforderlich. Europa gehört nicht zum ersten Szenario.
@@ -493,7 +506,7 @@ Die folgenden Pakete sind laut Projektinhaber umgesetzt. Sie dokumentieren den b
 5. KI-Auftragsgenerierung für die übernommene Firma deaktivieren, deren wirtschaftlichen Betrieb aber weiterlaufen lassen. Initialisierung und Befehlsqueue müssen verhindern, dass vor Spielbeginn alte autonome Aufträge der ausgewählten Firma eingespielt werden.
 6. HUD, Markt-/Lager-/Transport-/Unternehmensansichten, verfügbare Aktionen, eigene Meldungen und Besitzmarkierungen auf den zentralen Kontext umstellen. Öffentlich sichtbare Fremddaten weiter gemäß Sichtbarkeitsregeln behandeln.
 7. Ein initialer ungültiger oder nicht spielbarer Firmenschlüssel erzeugt einen Fehler ohne teilweise gestartete Simulation. Bei neuer Partie UI-Kontext und Meldungen sauber initialisieren.
-8. Zuordnung als Bestandteil des zukünftigen Save-Zustands vorsehen. Falls Speichern bereits existiert, jetzt integrieren. Bei alten Spielständen Zuordnung nur übernehmen, wenn eindeutig rekonstruierbar; sonst verständlich abweisen, nicht raten.
+8. Zuordnung als Bestandteil des zukünftigen Save-Zustands vorsehen. Falls Speichern bereits existiert, jetzt integrieren. Alte inkompatible Spielstände während der Entwicklung abweisen, keine Zuordnung rekonstruieren und keine Migration bauen.
 9. Änderungen und Testauswahl dokumentieren. Noch kein Unternehmenswechsel während laufender Partie, kein umfassendes Auswahlmenü und kein erneuter Umbau korrekter Markt-/Transportregeln.
 
 **Abnahme**
@@ -729,14 +742,14 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 - Mapping Region ↔ Stadthub auf 1:1 validieren. Physische Assetorte und interne Transporte beibehalten.
 - Gemeinsames Phasenschema dokumentieren: fällige Zahlungen/Ankünfte, Beschäftigung/Einkommen, Planung, B2B-Handel, Produktion, Ladenbelieferung, Einzelhandel/Konsum, Abschlüsse. Genaue Reihenfolge gegen existierenden Code prüfen und verbindlich wählen.
 - Konkrete Minimalwarenkette mit Grundbedarf und Freizeit/Luxus festlegen. Kleidung als neue Ware ergänzen, falls Bekleidungsgeschäft bereits im ersten Testszenario aktiv sein soll; anderenfalls diesen Typ zunächst nicht aktiv anbieten.
-- Migrationsplan für direkte Haushaltskäufe, bisherige Preissteuerung, Konten und alte Saves erstellen. Bestehende Werte erhalten, inkompatible Fälle explizit benennen.
+- Umstellungsplan für Code und frische Szenariodaten zu Haushaltskäufen, Preissteuerung und Konten erstellen. Alte inkompatible Saves werden verworfen, nicht migriert. Wirtschaftliche Modellregeln erhalten, Schemaänderungen versionieren und für Tests neue Partien starten.
 - Lokale Firmen und Konzerne inventarisieren; gemeinsame Company-Struktur und Steuerungsprofile festlegen. Bestehende Akteure nicht automatisch duplizieren.
 - Je Stadthub Startmix, Einfuhrbedarf, verfügbare Arbeitskräfte, Eigentümerkonten und Kapitalherkunft dokumentieren.
 - Reproduzierbare Baseline über 30 Spieltage mit Seed, Datenstand, Geld-/Mengenbilanz und Messwerten erstellen.
 - Eine dokumentierte Liste verbleibender Produktentscheidungen mit empfohlenen Startwerten liefern. Routineimplementierung nicht wegen jeder Zahl blockieren; grundlegende Widersprüche vor abhängigen Änderungen klären.
 
 **Abnahme**
-- Mappingtabelle Code → Zielregel, Phasenplan, Migrationsplan und ausführbares Baselineszenario liegen vor.
+- Mappingtabelle Code → Zielregel, Phasenplan, Code-/Szenarioumstellungsplan und ausführbares Baselineszenario liegen vor.
 - Keine parallele zweite Wirtschaftsengine und keine Neuimplementierung bereits korrekter Systeme.
 - Konsumenten-, B2B- und Einzelhandelsflüsse haben klar getrennte Verantwortlichkeiten.
 
@@ -810,39 +823,71 @@ Diese Pakete erweitern die vorhandene Wirtschaft. Keine zweite Simulation, keine
 - Nullabsatz, Neubetrieb und fehlende Einkaufshistorie liefern definierte, sichtbare Werte.
 - Tatsächlicher Periodengewinn bleibt nach externen Kosten und Leerkosten korrekt, unabhängig von kalkulatorischer Preisbasis.
 
-### AP09.5 – Finanzierung, Banken und Geldmenge
+### AP09.5 – Vereinfachte Banken, Finanzierung und Geldkreislauf
 
-**Voraussetzung:** AP09.4.
+**Voraussetzung:** AP09.4 umgesetzt. Kostenrechnung erhalten; keine erneute Implementierung.
 
-**Ziel:** Investitionen können durch begrenztes, bilanziertes Kreditgeld finanziert werden.
+**Ziel:** Begrenzte Investitionsfinanzierung mit erklärbarer Geldschöpfung und Tilgung, ohne Zahlungsverkehr als zusätzliche Spieleraufgabe.
 
 **Aufgaben**
-- Eine vereinfachte Bank als eigener Akteur bzw. Bankbilanz integrieren. Unternehmenskonten als Einlagen eindeutig führen; bisherige Kontoguthaben bei Migration nicht zusätzlich neu erschaffen.
-- Startbilanz für vorhandene Einlagen mit expliziten Gegenposten konfigurieren. Geldaggregate, Bankeinlagen, Forderungen, Eigenkapital und reale Vermögenswerte unterscheiden.
-- Kreditentscheidung nach Gewinn-/Cashflowhistorie, Verschuldung, Sicherheiten und Bankrisikobudget; historische Startfirmen ohne Historie erhalten nachvollziehbare Startkonditionen statt unbegrenztem Kredit.
-- Zusage schafft gleichzeitig Unternehmenseinlage und Bankforderung. Tilgung vermindert beide. Zinszahlung überträgt Einkommen an die Bank und ist nicht mit Tilgung zu verwechseln.
-- Kredite mit Laufzeit, Zinssatz, Zahlungsplan, ausstehendem Kapital, Rückstand und Sicherheitsreferenzen speichern. Doppelte Sicherheiten begrenzen.
-- Normale Überweisungen zwischen Firmen schaffen kein Geld. Konsolidierte Geldmenge ohne doppelt gezählte Bankgegenkonten ausweisen.
-- Erstes Modell ohne Interbankenmarkt, Zentralbankpolitik oder Haushaltskredite. Bankkosten/-ausgaben und Gewinnthesaurierung explizit behandeln.
-- Zahlungsausfall zunächst als Rückstand mit Kredit-/Investitionssperre behandeln; Forderungsabschreibung separat bilanzieren, Einlagengeld nicht pauschal im selben Betrag vernichten. Vollständige Insolvenz später.
-- Finanzierung im Unternehmens-/Investitionsdialog mit Zinsen, Tilgung und Belastung sichtbar machen; NPCs nutzen dieselben Konditionen.
+- Eine Bankbilanz an bestehende Konten anbinden. Kein zweites Geldkonto neben vorhandener Firmenliquidität, keine Bankfilialen, kein Interbankenmarkt und keine einzelnen Haushaltsbankkonten.
+- Frisches Startszenario mit konsistenter Eröffnungsbilanz konfigurieren: vorhandene Guthaben erhalten genau einen expliziten Gegenposten. Alte Saves nicht konvertieren.
+- Geldaggregate fest definieren: kaufkräftige Einlagen der Nichtbankakteure, Kreditforderungen, Schulden, Bankeigenkapital/Ertrag und reale Assets getrennt erfassen. Bankgegenposten nicht als zusätzliches verfügbares Geld zählen.
+- Gemeinsame validierte automatische Zahlungsbuchung für Wirtschaftsvorgänge verwenden. Periodische Verpflichtungen haben Quelle, Empfänger, Zweck, Betrag/Bemessungsregel, Fälligkeit und Status; vorhandene Zahlungslogik erweitern, kein neues universelles Framework erzwingen.
+- Kreditantrag mit Betrag/Laufzeit. Bank bewertet Ergebnis-/Cashflowhistorie, bestehende Schulden, Sicherheiten und Risikobudget. Fehlende Historie hat explizite Startregeln. Kein automatisches Rettungsgeld.
+- Kredit schafft gleichzeitig Kundenguthaben und Bankforderung. Tilgung reduziert beide. Zinsen separat buchen und nicht wie Tilgung behandeln.
+- Einheitlicher konfigurierbarer Basiszins plus begründeter Risikoaufschlag. Keine automatische Inflationssteuerung oder Zentralbank-KI in diesem Paket.
+- Bank mit kleinem aggregiertem Personal-/Betriebsbudget führen. Ein konfigurierbarer Teil verfügbarer Erträge finanziert gedeckte Banklöhne und Ausgaben an reale Haushalts-/Dienstleisterkonten; verbleibender Gewinn wird zurückbehalten.
+- Bankausgaben anhand konsistenter Bilanzbuchungen behandeln: im Einbankenmodell kann Zinszahlung Einlagen reduzieren und Bankertrag erhöhen, Bankausgabe Einlagen wieder erhöhen und Bankertrag/Eigenkapital mindern. Diese Bewegungen separat ausweisen, nicht nebenher ein Bank-Girokonto mit demselben Geld führen.
+- Zinsen/Bankrücklagen sind nicht gleich Kapitaltilgung. Zurückbehaltener Gewinn kann Kaufkraft binden, garantiert aber keine stabile Inflation; keine feste Löschquote ergänzen.
+- Bankbeschäftigte nutzen vorhandenen regionalen Arbeitskräftepool, keine doppelte Beschäftigung. Kosten und Lohnperioden dokumentieren.
+- Rückstände, nächste Fälligkeit, Schuldendienst, Sicherheiten und Risiko speichern. Ungedeckte Zahlungen bleiben offen; keine stillen Negativkonten oder Verlängerung ohne Entscheidung.
+- Forderungsausfall als gesonderte Abschreibung, keine automatische Vernichtung fremder Kundenguthaben. Vollständige Insolvenz folgt bestehenden späteren Paketen.
+- Unternehmens-/Investitionsansicht zeigt Kredit, Zins, Tilgung, Restschuld und künftige Belastung. NPCs nutzen dieselben Regeln. Keine neue manuelle Überweisungsansicht.
 
 **Abnahme**
-- Kredit über 1.000 erhöht definierte Einlagenmenge und ausstehende Bankforderungen um 1.000.
-- Tilgung von 100 senkt beide um 100; Zinsen separat verbucht. Kauf mit diesem Geld verändert nur Besitzer, nicht nochmals die Geldmenge.
-- Bank- und Unternehmensbilanzen sind im definierten vereinfachten Modell konsistent.
-- Ungedeckter Zahlungsdienst wird nicht als erfolgreiche Tilgung markiert; Save/Load bewahrt nächste Fälligkeit.
-- Keine automatische Kreditvergabe zur Rettung jedes unprofitablen Betriebs.
+- Kredit 1.000: Kundeneinlagen und Forderungen steigen um 1.000. Tilgung 100: beide sinken um 100.
+- Zinszahlung und spätere Bankausgabe sind in der gewählten Bilanzkonvention nachvollziehbar und nicht doppelt gezählt.
+- Normaler Firmenkauf/Haushaltskonsum überträgt Kaufkraft, schafft keinen weiteren Kredit.
+- Einbehaltene Erträge und Bankausgaben sind getrennt sichtbar; niemand erhält unfinanzierte Gratislöhne.
+- Save/Load derselben Version dupliziert keine Fälligkeiten. Inkompatible alte Saves werden abgewiesen, nicht migriert.
+- Kreditfinanzierte Kapazitätserweiterung ist möglich, schlechte Investitionen bleiben verlustfähig.
+
+### AP09.5a – Öffentliche Einkommen und minimaler Staatshaushalt
+
+**Voraussetzung:** AP09.5. Vor AP09.6 umsetzen; keine vollständige Politik vorziehen.
+
+**Ziel:** Öffentliche Löhne und begrenzte Transfers ergänzen den Wirtschaftskreislauf ohne unbegrenzte Budgetauffüllung.
+
+**Aufgaben**
+- Ein nationales Haushaltskonto mit Startreserve; pro Region ein aggregierter öffentlicher Arbeitgeber als Ausgabenstelle desselben Haushalts. Keine neue politische KI und keine separaten Regionalbudgets.
+- Beschäftigte öffentlicher Dienste wie Verwaltung/Schulen abstrahieren. Begrenzte Stellen, Lohnangebot und reale Arbeitskräfte aus vorhandenen Gruppen; Konkurrenz mit privaten Arbeitgebern und keine Doppelzählung.
+- Öffentliche Löhne über die gemeinsame Zahlungsbuchung an Haushaltsgruppen zahlen. Öffentliche Dienste zunächst abstrakte Leistung, keine fiktive Warenproduktion oder Ladenumsätze.
+- Eine einfache konfigurierbare, gedeckelte Unterstützung für definierte berechtigte Gruppen. Anspruch, Betrag, Bezugsdauer und Priorität dokumentieren. Für 1913 als explizite Szenarioregel, nicht automatisch als historisch belegtes modernes Sozialsystem darstellen.
+- Einen minimalen festen nationalen Einnahmenmechanismus, etwa eine konfigurierte Abgabe auf vorhandene positive steuerliche Firmenergebnisse, einführen. Bemessung und Fälligkeit offenlegen; AP12 erweitert dieselbe Mechanik.
+- Einzahlungen, Löhne, Transfers und Schuldendienst getrennt im Haushalt ausweisen. Steuern sind Geldübertragung, kein zusätzlicher Geldschöpfungsakt.
+- Finanzierung aus Steuern/Reserve, optional explizit begrenzter Staatskredit über dieselbe Bank. Ohne Deckung Ausgaben nach dokumentierter Priorität begrenzen oder Rückstände führen; niemals Konsumentenbudgets automatisch passend zur Nachfrage auffüllen.
+- Keine automatische Vollbeschäftigung oder Grundversorgung. Haushalte können trotz Transfers unterversorgt bleiben.
+- Konsumentenübersicht trennt private/öffentliche Löhne und Transfers. Entwickleransicht zeigt Haushaltsquelle und Wirkung; Spieler steuert den Staat hier noch nicht.
+- Öffentliche Arbeitgeber, Ansprüche, Zahlungen und Haushaltsregeln in aktuellem Saveformat speichern, keine Altspielstandmigration.
+
+**Abnahme**
+- Öffentlicher Lohn vermindert Staatskonto und erhöht Gruppenguthaben exakt.
+- Dieselbe Personengruppe wird nicht gleichzeitig voll privat und öffentlich beschäftigt.
+- Transfer erfüllt nur konfigurierte Ansprüche und bleibt budgetbegrenzt.
+- Leerer Haushalt ohne Kreditspielraum erzeugt nachvollziehbare Kürzung/Rückstand, keine versteckte Geldquelle.
+- Mit und ohne öffentliche Einkommen können frische Vergleichsszenarien ohne Änderung der privaten Wirtschaftsregeln getestet werden.
 
 ### AP09.6 – Wirtschaftlicher Langzeittest
 
-**Voraussetzung:** AP09.5.
+**Voraussetzung:** AP09.5a.
 
 **Ziel:** Ein geschlossener, erklärbarer Normalbetrieb vor Konzernspiel, Politik und Krisen.
 
 **Aufgaben**
-- Testfälle über 30, 180 und 365 Spieltage mit Datenstand/Seed, Firmen, Haushalten, Geschäften, Logistik und Bank konfigurieren.
-- Geldbestände und -schöpfung, Warenquellen/-senken, Beschäftigung, Preise, Reservierungen, Gewinne, Schulden und Konsum täglich protokollieren.
+- Testfälle über 30, 180 und 365 Spieltage mit Datenstand/Seed, Firmen, Haushalten, Geschäften, Logistik, Bank und minimalem Staatshaushalt konfigurieren.
+- Geldbestände und -schöpfung, Tilgung, Bankzinserträge/-ausgaben, Warenquellen/-senken, private/öffentliche Beschäftigung, Transfers, Steuern, Preise, Reservierungen, Gewinne, Schulden und Konsum täglich protokollieren.
+- Vergleichsfälle mit starkem Kreditwachstum, viel Tilgung, zurückbehaltenen Bankerträgen und knappem Warenangebot auswerten. Geldmenge, Umlauf/Kaufkraft, Preisentwicklung und reale Produktionsmenge getrennt betrachten.
 - Normalszenario mit lokalen Firmen und Konzernen, Inputengpass, Konkurrenz, hohe Aufschläge und überschuldete Firma vergleichen. Ereignissystem nicht erforderlich; Anfangsbedingungen variieren.
 - Zeigen, wie mehr Nachfrage zu Aufträgen und Investitionsanreizen führt, ohne garantierte Vollbeschäftigung oder Profit.
 - BIP als Wertschöpfung mit dokumentiertem Umfang und Referenzpreisen berechnen; Zwischenhandel und interne Transfers nicht mehrfach addieren. Vor vollständigem Staatssystem Abdeckungsgrenzen benennen.
@@ -977,8 +1022,9 @@ Die Unterpakete erweitern dieselben Unternehmen aus AP09. Keine neue Population 
 **Ziel:** Staaten werden wirtschaftliche Akteure mit endlichen Mitteln und Verpflichtungen.
 
 **Aufgaben**
-- Staatskonto/-haushalt und Regeln für Einnahmen, Aufträge, Transfers, Subventionen und Schuldendienst einführen.
-- Gewinnsteuer auf definierte steuerliche Ergebnisse, gegebenenfalls Lohnabgaben und Zölle als getrennte konfigurierbare Instrumente. Nationale Regeln nicht rückwirkend ändern.
+- Minimalen Staatshaushalt aus AP09.5a gezielt erweitern, nicht neu anlegen. Bestehende öffentliche Beschäftigung, Einnahmen und Transfers übernehmen.
+- Regeln für weitere Einnahmen, Aufträge, Transfers, Subventionen und Schuldendienst ergänzen; Länder bestimmen Regeln, regionale Ausgaben laufen weiterhin aus einem Haushalt.
+- Bestehende einfache Abgabe integrieren und fachlich erweitern: Gewinnsteuer auf definierte steuerliche Ergebnisse, gegebenenfalls Lohnabgaben und Zölle als getrennte konfigurierbare Instrumente. Nationale Regeln nicht rückwirkend ändern.
 - Staatliche Aufträge für tatsächlich gelieferte Leistungen/Waren mit Budget, Annahme und Zahlung; abstrakte öffentliche Leistungen offen ausweisen.
 - Transfers/Subventionen nach Bedingungen und gedecktem Budget; Auslaufen und nicht gedeckte Zusagen regeln.
 - Staatskredite über vereinfachte Bank-/Anleihemechanik mit expliziten Käufern/Bilanzfolgen, keine Annahme unbegrenzten Staatsgeldes.
@@ -1201,6 +1247,156 @@ Die folgenden Vorgaben präzisieren ältere HUD- und Stadtansichtsvorgaben. Vorh
 - Handel, Lieferregeln, Investitionen, Firmenrechte und Save/Load funktionieren nach UI-Umbau.
 - Diagnose bleibt erreichbar, ist aber standardmäßig verborgen; fehlende fachliche Kennzahlen sind dokumentiert.
 
+## 6. Karte und geografisches Transportmodell – MAP01 bis MAP06
+
+**Stand: 20.11.2026. Verbindliche neue Zielrichtung.** Die ganze Erde bleibt das langfristige Ziel. Erster aktiver Testausschnitt wird Deutschland und Niederlande zum Szenariostart 01.01.1913. Der bisherige US-Datensatz bleibt höchstens als abgeschlossener Testbestand, nicht als aktive geografische Vorgabe. Wirtschaft, UI, Kameralogik und bestehende Aufgabenpakete werden weiterverwendet; kein neuer Spielkern.
+
+**Vorrang und Reihenfolge**
+- Dieses Kapitel ersetzt frühere allgemeine Vorgaben zum US-Startszenario und fiktiven Wirtschaftsregionen. Historische abgeschlossene AP bleiben Implementierungshistorie.
+- MAP01 legt verbindlich Quellen und Gebietseinteilung fest; MAP02–MAP04 integrieren Geografie und neue Szenariodaten. MAP05 erweitert den bestehenden Transportdienst; MAP06 prüft alles zusammen.
+- MAP01–MAP04 vor neuen geografisch abhängigen Inhalten beauftragen. Das Bankenpaket bleibt fachlich unabhängig, verwendet aber nach Kartenumstellung das neue Szenario. MAP05 nach stabilen Hub-/Hafendaten und vor spielbarer Wasserlogistik.
+- Keine Migration alter Spielstände. Neues Szenario-/Saveformat versionieren und neue Partie verlangen. Keine vorhandenen Projektstände oder Dateien ungefragt löschen.
+
+### Verbindliches Geografiemodell
+
+| Ebene | Funktion |
+|---|---|
+| Land | Nationale Regeln, Wirtschaftsauswertung und spätere Politik |
+| Verwaltungsregion | Bundesstaat, Bundesland, Provinz oder historisch vergleichbare Spieleinheit innerhalb eines Landes |
+| Stadthub | Genau ein wirtschaftlich repräsentativer Hub je Region; keine zusätzlichen Wirtschaftshubs für Hafen- oder Flussknoten |
+| Land-/Gewässergeometrie | Küsten, Inseln, Meere, Seen und Flüsse; getrennt von politischer Zugehörigkeit |
+| Transportnetz | Nutzbare Land- und Wasserverbindungen mit Zugang, Zeit, Kosten und Kapazität |
+
+- RegionId und HubId bleiben getrennte stabile Referenzen mit validierter 1:1-Zuordnung. Alle regionalen Haushalte und Assets werden genau einmal zugeordnet.
+- Hub ist die wirtschaftlich wichtigste Stadt der jeweiligen Region um 1913, nicht automatisch die Hauptstadt. Auswahlkriterien: Industrie/Handel, Beschäftigung bzw. Bevölkerung und Logistik. Quellen und kurze Begründung pro Hub; bei mehreren plausiblen Kandidaten Wahl transparent dokumentieren.
+- Historische nationale Staatsgrenzen verwenden. Deutschland 1913 nicht einfach mit heutigen Bundesländern und Grenzen abbilden.
+- Historische Verwaltungsebenen sind nicht überall vergleichbar. MAP01 erstellt eine bewusste, lückenlose Spieleinteilung: Provinzen und kleinere Gliedstaaten können als dokumentierte vergleichbare Regionen dienen. Kein stilles Vermischen überlappender Verwaltungsebenen.
+- Ziel Deutschland/Niederlande als zusammenhängendes Szenario; Nachbarländer bei Bedarf als nicht simulierten Hintergrund darstellen, ohne ihnen eine kostenlose Transitfreigabe zu geben.
+- Land/Wasser und Verwaltung sind unterschiedliche Dimensionen: Wasser kann innerhalb einer Region oder entlang einer Grenze liegen. Eine Landmaske entscheidet nicht allein über Staatszugehörigkeit.
+- Wasserfläche oder Flusslinie bedeutet nicht schiffbar. Nur ausdrücklich für 1913 freigegebene Netzabschnitte dürfen Wasserfracht tragen.
+- Hubs, Häfen, Umschlagpunkte und Flusskreuzungen sind unterschiedlich: Ein Hafenknoten kann im Umland eines Hubs liegen, besitzt aber keine zweite Bevölkerung oder einen eigenen zusätzlichen Regionsmarkt.
+- Transportplanung bleibt im Menü. Keine Fahrsteuerung, detaillierte Straßensimulation oder Schiffsphysik. Kartenfahrzeuge bleiben exemplarische Darstellung.
+
+### MAP01 – Historischer Datenplan und regionale Einteilung
+
+**Voraussetzung:** Bestehender Kartenimport, Hubmodell und funktionierende Simulation.
+
+**Aufgaben**
+- Vorhandene Import-/Darstellungs-/Szenariostruktur prüfen und kleinste erforderliche Anpassung planen.
+- Quellen für nationale Grenzen, regionale Unterteilungen, Stadtkoordinaten, Küsten, Seen und historisch schiffbare Gewässer recherchieren. Datenstand, Lizenz, Attribution, Weiterverwendbarkeit und Genauigkeit dokumentieren.
+- Eine vollständige Liste der im Testgebiet verwendeten Verwaltungsregionen mit Land, historischem Typ, Gültigkeit und Hubvorschlag erstellen.
+- Für Deutschland historische Ebenen bewusst harmonisieren; fehlende Grenzdaten als Lücke ausweisen. Keine moderne Grenze als 1913 ausgeben.
+- Jeden Hub wirtschaftlich begründen. Unklare Fälle und vorgeschlagene Spielvereinfachungen ausdrücklich kennzeichnen.
+- WGS84 als Quelldatenbasis erhalten; Projektion und Skalierung für den Ausschnitt dokumentieren, weltweiten Ausbau/Datumsgrenze als spätere Voraussetzung einplanen.
+- Gewässerliste mit sichtbarer Geometrie einerseits und belegter Schiffbarkeit andererseits erstellen. Kanäle nur einbeziehen, wenn 1913 vorhanden und nutzbar belegt.
+- Datenmanifest, IDs, Reproduktionsschritte und überprüfbare Umfangsliste liefern. Grundlegende Quellen-/Einteilungskonflikte vor MAP02 sichtbar machen.
+
+**Abnahme**
+- Länder und Regionen bilden eine dokumentierte Hierarchie ohne bewusste Überlappungsfehler.
+- Jede gewählte Region besitzt genau einen begründeten Hub.
+- Historisch belegte Daten, vereinfachte Geometrien und Balancingannahmen sind unterscheidbar.
+- Quellen/Lizenzen erlauben den vorgesehenen Import; Lücken sind nicht durch erfundene Fakten verdeckt.
+
+### MAP02 – Land, Gewässer und Verwaltungsregionen importieren
+
+**Voraussetzung:** MAP01 mit festgelegtem Datenmanifest.
+
+**Aufgaben**
+- Reproduzierbare Offline-/Editorpipeline für Länder, Regionen, Land-/Wasserflächen und Flussverläufe erweitern.
+- Geometrie vereinfachen/triangulieren, Inseln, Löcher, Grenzflüsse und Küsten behandeln. Darstellung darf keine politische Fläche ungeprüft mit Wasserfläche gleichsetzen.
+- Eindeutige Region-/Land-ID-Abfrage und getrennte Land-/Wasserabfrage bereitstellen.
+- Kleine Flüsse dürfen als Linien visualisiert werden; Maske/Fläche und Netzlinie müssen nicht dieselbe Auflösung besitzen. Kein Navigieren anhand bloßer Bildschirmfarbe.
+- Hubs nach geografischen Koordinaten positionieren. LOD-/Zoomdarstellung vorbereiten, keine Erde in Originalgröße.
+- Referenzen und Geometriequalität automatisch prüfen: ungültige Polygone, doppelte IDs, unzugeordnete Regionen und unplausible Hubpositionen.
+- Externe Datendateien/Assets für paketierten Offlinebetrieb verfügbar machen.
+
+**Abnahme**
+- Deutscher/niederländischer Ausschnitt mit nachvollziehbaren Grenzen, Küste, Wasser und allen vorgesehenen Hubs sichtbar.
+- Land-/Wasserklick und politische Auswahl stimmen an repräsentativen Testpunkten; Fluss-/Küsten-Grenzfälle dokumentiert.
+- Erneuter Import erzeugt dieselben IDs und Zuordnungen, keine manuelle Neuerstellung erforderlich.
+
+### MAP03 – Stadthubs und frisches Wirtschaftsszenario
+
+**Voraussetzung:** MAP02.
+
+**Aufgaben**
+- US-Startszenario als aktive Startvorgabe durch Deutschland/Niederlande ersetzen. Szenarioauswahl und Datenversion aktualisieren, keine laufende Partie konvertieren.
+- Alle Regionen mit genau einem Hub und einem B2B-Regionsmarkt initialisieren; vorhandene Konsumenten-/Ladenregeln beibehalten.
+- Eigene und lokale Firmen, Assets, Rohstoffe, Konten und Arbeitskräfte auf neue Hubs verteilen. Historische Belege und Spielwerte unterscheiden.
+- Minen/Farmen weiter im zugeordneten Umland; keine kostenlosen Vorkommen nur zur Vollversorgung jeder Region erzeugen.
+- Mindestens zwei bestehende spielbare Firmen mit definiertem Startbesitz konfigurieren. Standort nicht mehr fest auf Detroit referenzieren.
+- Aggregierte Bevölkerung, Beschäftigung und BIP genau einmal Land/Region zuordnen.
+- Karten-/UI-Auswahl sowie Verträge, Kostenrechnung und Finanzdienste anhand von IDs anbinden. Keine neuen geografiespezifischen Wirtschaftsregeln duplizieren.
+
+**Abnahme**
+- Frische Partie startet mit gültiger Firmenwahl auf der neuen Karte.
+- Jede Region hat einen Hub; Häfen und Flussknoten sind keine zusätzlichen Regionen.
+- Konten/Waren werden nicht aus US- und Europa-Szenario gemeinsam doppelt geladen.
+- Bestehender Handel und Stadtbildschirm funktionieren mit den neuen IDs.
+
+### MAP04 – Schiffbares Netz und Hafenanschlüsse
+
+**Voraussetzung:** MAP03, Schiffbarkeitsdaten aus MAP01.
+
+**Aufgaben**
+- Transportgraph mit expliziten Land-/Fluss-/Kanal-/Küstenkanten, Länge, Transportart, Verfügbarkeit, Kapazität sowie Zeit-/Kostenparametern.
+- Erste nutzbare deutsche/niederländische Wasserroute anhand Quellen festlegen; keine pauschale Schiffbarkeit ganzer benannter Flüsse annehmen.
+- Flussabschnitte und Anschlüsse topologisch verbinden. Kreuzende Linien sind ohne echten Knoten keine Verbindung.
+- Hafen-/Umschlaganschlüsse an Hubs, Zugang und Landzubringer dokumentieren. Binnenhub ohne Zugang erhält keinen direkten Wassertransport.
+- Ausländischer Abschnitt im Testgebiet zulässig über explizite Zugangsregeln; Zölle/Politik nur aus vorhandenen Systemen, nicht neu erfinden.
+- Nicht simulierte Randgebiete nicht als kostenloser beliebiger Abkürzungsweg verwenden.
+- Küsten-/Seeverbindungen im Datenmodell vorsehen; nur belegte und bewusst konfigurierte Testkanten aktivieren. Kein weltweiter Seehandel erforderlich.
+- Netzdiagnose zeigt fehlende Verbindungen, unzulässige Verkehrsarten und unbelegte Abschnitte. Keine Laufzeit-Wegsuche über große Geometriemeshes.
+
+**Abnahme**
+- Ein definierter Hub-zu-Hub-Wasserweg existiert, ein Hub ohne Anschluss wird korrekt abgewiesen.
+- Nicht schiffbarer Abschnitt und fehlender Umschlag verhindern unzulässige Route.
+- Kantenlängen/-zeiten kommen aus konfigurierter geografischer/netzbezogener Grundlage, nicht Bildschirmabstand.
+- Netz-ID und historische Verfügbarkeit sind reproduzierbar.
+
+### MAP05 – Wassertransport im bestehenden Planungsmenü
+
+**Voraussetzung:** MAP04 und bestehender Transport-/Reservierungsdienst.
+
+**Aufgaben**
+- Vorhandene Transportplanung um Wasserangebote und optional kombinierte Zubringer–Schiff–Weitertransport-Kette erweitern.
+- Zunächst ein geeigneter Schiffstyp bzw. begrenzter Fremdanbieter als Testumfang. Schiffe als Assets nach vorhandener Eigentumslogik, nicht als kostenlose Visualisierung behandeln.
+- Kapazität, Abfahrts-/Ankunftszeit, Umschlag, Wartezeit und Kosten vor Bestätigung zeigen. Günstigere Langstrecke darf durch Umschlag höhere Gesamtkosten erhalten.
+- Fracht und Verpflichtungen je Teilstrecke eindeutig halten. Anschluss-, Terminal- und Zielkapazität entweder für geplante Zeitfenster sichern oder nur aktuell sicher planbare Kette anbieten; keine unrealistische permanente Fahrzeugbindung über Monate.
+- Fehler/Storno vor Abfahrt atomar behandeln; während Fahrt definierter Fortsetzungs-/Wartezustand ohne Frachtteleportation.
+- Fremdanbieter erhalten Zahlungen, eigene Fahrzeuge/Schiffe bleiben gebunden und stehen nach Einsatz am korrekten Ort. Rück-/Leerfahrten weiterhin kostenpflichtig.
+- Routen auf Karte plausibel entlang Landverbindungen bzw. Gewässernetz darstellen. Wasserverkehr nicht quer über Land, Straßen nicht ohne konfigurierte Querung über offene Gewässer.
+- Exemplarische Schiffe ohne Simulationsbesitz visualisieren. Ausblenden, Zoom und Zeitbeschleunigung verändern keine Ankunft.
+- Aktuelle Saves um neue Verkehrsträger und Kettenschritte ergänzen; alte inkompatible Saves ablehnen.
+
+**Abnahme**
+- Lieferung über schiffbare Route mit korrektem Eigentum, Kosten, Fracht und Ankunft vollständig spielbar.
+- Kombination aus Land/Wasser zeigt zusätzliche Umschlagkosten/-zeit; fehlender Zugang liefert verständliche Fehlermeldung.
+- Save/Load derselben Version während Wasserfahrt liefert genau einmal.
+- Kein Gratisgeld, doppelt gebuchtes Schiff oder versehentlich unbegrenzter Hafenbestand.
+
+### MAP06 – Kartenbedienung, Welt-Erweiterbarkeit und Abnahme
+
+**Voraussetzung:** MAP02–MAP05.
+
+**Aufgaben**
+- Layer Länder, Verwaltungsregionen, Versorgung/Preise und Verkehr mit bestehendem UI-Kapitel verbinden; Firmenbesitz bleibt Asset-/Netzbesitz.
+- Länder-/Regionsgrenzen und Hubnamen nach Zoom unterschiedlich gewichten. Gewässer und schiffbare Netzabschnitte unterscheidbar darstellen.
+- Stadtkopf nennt Region/Land und hebt die genaue Region auf Hover/Auswahl hervor.
+- Schiffbarkeit/Hafenanschluss in verständlichen Tooltips zeigen; technische Datenquellen in Diagnose/Attribution statt Dauertext.
+- Tests für Insel, Landgrenze, Grenzfluss, Hafenhub, Binnenhub, Netzunterbrechung und Kartenrand.
+- Datenimport nach Ländern/Ausschnitten erweiterbar halten. Politische Hierarchie und Simulationsdaten unabhängig von Projektions-/Meshdetails.
+- Für spätere Weltkarte Anforderungen an LOD, Datenkacheln, Projektion/Datumsgrenze und nicht sichtbare Simulation dokumentieren; jetzt keinen kompletten Globus/Streaming-Framework bauen.
+- Bestehende Wirtschafts-, Finanz-, Handels- und UI-Funktionen auf neuem Szenario als Regression prüfen.
+
+**Abnahme / Kartenmeilenstein**
+- Deutschland/Niederlande nach dokumentiertem historischem Datenstand, ein wirtschaftlich begründeter Hub pro Region.
+- Land-/Gewässerdarstellung, politische Auswahl und erlaubte Transportwege sind konsistent.
+- Mindestens eine wirtschaftlich nutzbare Land- und Wasserlieferung ohne Debugeingriff möglich.
+- Gleiche Wirtschaftsergebnisse mit aktivierter/deaktivierter Fahrzeugdarstellung.
+- 1280×720 und 1920×1080 visuell geprüft, Leistungswerte und Daten-/Quellenlücken dokumentiert.
+- Erweiterung weiterer Länder erfordert neue Daten und bewusste Szenariokonfiguration, keinen Umbau der Company-/Konsumentenengine.
+
 ## Später zu verfeinernde Erweiterungen
 
 - Größere Konzernfusionen, Beteiligungen und detailliertere Insolvenz. Einfache lokale Übernahmen und Abwicklung bestehen seit AP11.3–11.4.
@@ -1215,7 +1411,7 @@ Diese Punkte sind keine Voraussetzung für die ersten geschlossenen Spieltests.
 ## Arbeitsregel für jeden einzelnen Auftrag
 
 - Vollständige Leitlinien und beauftragtes Paket lesen, tatsächlichen Code und bestehende Daten prüfen.
-- Abgeschlossene Systeme integrieren statt ersetzen; nur erforderliche Migrationen vornehmen.
+- Abgeschlossene Systeme integrieren statt ersetzen; nur erforderliche Code-/Szenarioumstellungen vornehmen; keine Altspielstandmigration.
 - Entwurfsentscheidungen, Änderungen und konfigurierbare Testwerte knapp dokumentieren.
 - Save/Load, Entwicklerkonsole, Invarianten und Messpunkte für neue Zustände im selben Paket erweitern.
 - Wirtschaftliche Buchungen gezielt prüfen, UI visuell testen. Keine behaupteten Builds/Tests, wenn die Umgebung sie nicht ausführen konnte.

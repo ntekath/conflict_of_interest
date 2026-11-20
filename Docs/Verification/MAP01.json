@@ -1,0 +1,38 @@
+{
+  "package": "MAP01",
+  "result": "PASS",
+  "counts": {
+    "countries": 2,
+    "regions": 50,
+    "hubs": 50,
+    "prussian_units": 14,
+    "other_german_states": 24,
+    "reichsland": 1,
+    "dutch_provinces": 11
+  },
+  "waters": 37,
+  "excluded_waterways": 4,
+  "per_hub_sources": 50,
+  "negative_checks_passed": [
+    "shared hub",
+    "orphan region",
+    "missing region",
+    "restricted source",
+    "missing evidence",
+    "early network",
+    "unverified canal",
+    "second population"
+  ],
+  "inputs_sha256": {
+    "manifest.json": "f430142ba8d83855cddcf4d772bba2e7c4ee0e0b7a5484a2de83481fa475119a",
+    "sources.json": "d5be862ae1418e1985dac9e23ceaca08e7fac43eb510fa756aa6c3e0635c18e9",
+    "hub_evidence.json": "7d7c570b7bff63f8498f5933687d8d6241360c88cc544382cd58700f42302079",
+    "waters.json": "2c58a672ec4920039a6a742b0fa5ce7045ef02a7e0948b0e661512a8526a2fbc"
+  },
+  "limitations": [
+    "Logical hierarchy only; polygons not yet digitised or validated.",
+    "Hub coordinates and historic containment remain MAP02.",
+    "Water geometry is not a navigable transport graph.",
+    "Runtime, economics and save format unchanged."
+  ]
+}

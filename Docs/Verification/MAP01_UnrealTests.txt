@@ -1,0 +1,8 @@
+MAP01 prerequisite regression tests, UE 5.8.4, 2026-11-20
+No C++/runtime changes; existing current editor binary used.
+[2026.11.20-12.22.06:400][600]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+Passed 1 tests. Log: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Saved\Logs\AP05_Automation.log
+[2026.11.20-12.22.20:608][600]LogAutomationController: Display: Test Completed. Result={Success} Name={AssignmentsAndResourceLimits} Path={CoI.Hubs.AssignmentsAndResourceLimits}
+[2026.11.20-12.22.20:763][603]LogAutomationController: Display: Test Completed. Result={Success} Name={MigrationAndTransit} Path={CoI.Hubs.MigrationAndTransit}
+Passed 2 tests. Log: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Saved\Logs\AP05_Automation.log
+Note: Hubs.MigrationAndTransit tests old scenario fixture upgrade, not save migration.

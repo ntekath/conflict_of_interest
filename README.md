@@ -2,8 +2,11 @@
 
 **Entwicklungsregel ab 20.11.2026:** Keine Migration alter Speicherstände. Nur das aktuelle Save-Format wird geladen; bei inkompatiblen Änderungen beginnt eine neue Partie. Verbindliche Regel: [AGENTS.md](AGENTS.md).
 
-Konzeptioneller Neustart: US-Testgebiet, Spielbeginn 01.01.1913. Verbindlicher Entwurf:
-[Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP09.4 sowie UI01**. Aktive Karte: Großer-Seen-US-Ausschnitt.
+Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
+Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
+Umgesetzt: **AP01 bis AP09.4, UI01 und MAP01 (historischer Datenplan)**.
+[MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
+Bis zum Kartenimport ab MAP02 bleibt der vorhandene Großer-Seen-US-Teststand spielbar.
 
 ![US-Testkarte](Docs/MapPreview.svg)
 

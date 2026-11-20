@@ -1,0 +1,1514 @@
+{
+  "schema": 1,
+  "id": "plan.de_nl.1913.map01",
+  "as_of": "1913-01-01",
+  "researched": "2026-11-20",
+  "scope": "Europäische Heimatgebiete beider Staaten; keine Kolonien/Überseegebiete.",
+  "activation": "planning_only_MAP02_MAP03_required",
+  "countries": [
+    {
+      "id": "country.de.1913",
+      "name": "Deutsches Reich",
+      "region_count": 39
+    },
+    {
+      "id": "country.nl.1913",
+      "name": "Niederlande",
+      "region_count": 11
+    }
+  ],
+  "expected_counts": {
+    "countries": 2,
+    "regions": 50,
+    "hubs": 50,
+    "prussian_units": 14,
+    "other_german_states": 24,
+    "reichsland": 1,
+    "dutch_provinces": 11
+  },
+  "regions": [
+    {
+      "id": "region.de.1913.ostpreussen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Ostpreußen",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.ostpreussen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.westpreussen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Westpreußen",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.westpreussen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.brandenburg",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Brandenburg ohne Berlin",
+      "historical_type": "Provinz ohne Stadtkreis Berlin",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.brandenburg",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.berlin",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Berlin",
+      "historical_type": "Provinzähnlicher Stadtkreis",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.berlin",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.pommern",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Pommern",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.pommern",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.posen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Posen",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.posen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.schlesien",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Schlesien",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.schlesien",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.sachsen_provinz",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Sachsen (Preußen)",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.sachsen_provinz",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.schleswig_holstein",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Schleswig-Holstein",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.schleswig_holstein",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.hannover",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Hannover",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.hannover",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.westfalen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Westfalen",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.westfalen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.hessen_nassau",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Hessen-Nassau",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.hessen_nassau",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.rheinprovinz",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Rheinprovinz",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.rheinprovinz",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.hohenzollern",
+      "country_id": "country.de.1913",
+      "historical_parent": "Preußen",
+      "name": "Hohenzollernsche Lande",
+      "historical_type": "Provinzähnlicher Regierungsbezirk Sigmaringen",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.hohenzollern",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.prussia",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.bayern",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Bayern",
+      "historical_type": "Königreich",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.bayern",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.sachsen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Sachsen",
+      "historical_type": "Königreich",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.sachsen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.wuerttemberg",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Württemberg",
+      "historical_type": "Königreich",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.wuerttemberg",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.baden",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Baden",
+      "historical_type": "Großherzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.baden",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.hessen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Hessen",
+      "historical_type": "Großherzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.hessen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.mecklenburg_schwerin",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Mecklenburg-Schwerin",
+      "historical_type": "Großherzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.mecklenburg_schwerin",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.sachsen_weimar_eisenach",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Sachsen-Weimar-Eisenach",
+      "historical_type": "Großherzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.sachsen_weimar_eisenach",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.mecklenburg_strelitz",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Mecklenburg-Strelitz",
+      "historical_type": "Großherzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.mecklenburg_strelitz",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.oldenburg",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Oldenburg",
+      "historical_type": "Großherzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.oldenburg",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.braunschweig",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Braunschweig",
+      "historical_type": "Herzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.braunschweig",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.sachsen_meiningen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Sachsen-Meiningen",
+      "historical_type": "Herzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.sachsen_meiningen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.sachsen_altenburg",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Sachsen-Altenburg",
+      "historical_type": "Herzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.sachsen_altenburg",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.sachsen_coburg_gotha",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Sachsen-Coburg und Gotha",
+      "historical_type": "Herzogtum (Doppelterritorium)",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.sachsen_coburg_gotha",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.anhalt",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Anhalt",
+      "historical_type": "Herzogtum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.anhalt",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.schwarzburg_rudolstadt",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Schwarzburg-Rudolstadt",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.schwarzburg_rudolstadt",
+      "territory_rule": "Ober- und Unterherrschaft einschließlich aller Exklaven, ohne Gebiete des anderen Schwarzburger Fürstentums.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.schwarzburg_sondershausen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Schwarzburg-Sondershausen",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.schwarzburg_sondershausen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.waldeck_pyrmont",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Waldeck und Pyrmont",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.waldeck_pyrmont",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.reuss_aeltere_linie",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Reuß ältere Linie",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.reuss_aeltere_linie",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.reuss_juengere_linie",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Reuß jüngere Linie",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.reuss_juengere_linie",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.schaumburg_lippe",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Schaumburg-Lippe",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.schaumburg_lippe",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.lippe",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Lippe",
+      "historical_type": "Fürstentum",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.lippe",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.luebeck",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Lübeck",
+      "historical_type": "Freie und Hansestadt",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.luebeck",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.bremen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Bremen",
+      "historical_type": "Freie Hansestadt",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.bremen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.hamburg",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Hamburg",
+      "historical_type": "Freie und Hansestadt",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.hamburg",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.de.1913.elsass_lothringen",
+      "country_id": "country.de.1913",
+      "historical_parent": "Deutsches Reich",
+      "name": "Elsass-Lothringen",
+      "historical_type": "Reichsland",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.de.1913.elsass_lothringen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.germany",
+        "map.de.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.noord_holland",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Noord-Holland",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.noord_holland",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.zuid_holland",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Zuid-Holland",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.zuid_holland",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.utrecht",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Utrecht",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.utrecht",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.zeeland",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Zeeland",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.zeeland",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.noord_brabant",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Noord-Brabant",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.noord_brabant",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.limburg",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Limburg",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.limburg",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.gelderland",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Gelderland",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.gelderland",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.overijssel",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Overijssel",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.overijssel",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.friesland",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Friesland",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.friesland",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.groningen",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Groningen",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.groningen",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    },
+    {
+      "id": "region.nl.1913.drenthe",
+      "country_id": "country.nl.1913",
+      "historical_parent": "Niederlande",
+      "name": "Drenthe",
+      "historical_type": "Provinz",
+      "valid_at": "1913-01-01",
+      "hub_id": "city.nl.1913.drenthe",
+      "territory_rule": "Alle 1913 zugehörigen Landesteile einschließlich Exklaven; kein Voronoi.",
+      "boundary_status": "pending_digitisation_MAP02",
+      "sources": [
+        "eb1911.holland",
+        "map.nl.1911"
+      ]
+    }
+  ],
+  "hubs": [
+    {
+      "id": "city.de.1913.ostpreussen",
+      "region_id": "region.de.1913.ostpreussen",
+      "name": "Königsberg",
+      "source_id": "eb1911.ostpreussen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/K%C3%B6nigsberg",
+      "economic_reason": "Ostseehandel, Hafen und regionales Gewerbe.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.westpreussen",
+      "region_id": "region.de.1913.westpreussen",
+      "name": "Danzig",
+      "source_id": "eb1911.westpreussen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Danzig",
+      "economic_reason": "Seehafen, Werften und Weichselhandel.",
+      "alternatives_and_uncertainty": "Elbing: Industriealternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.brandenburg",
+      "region_id": "region.de.1913.brandenburg",
+      "name": "Charlottenburg",
+      "source_id": "eb1911.brandenburg",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Charlottenburg",
+      "economic_reason": "Großer Industriestandort außerhalb des damaligen Berliner Stadtgebiets.",
+      "alternatives_and_uncertainty": "Potsdam: Verwaltung; Cottbus: Textilindustrie",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.berlin",
+      "region_id": "region.de.1913.berlin",
+      "name": "Berlin",
+      "source_id": "eb1911.berlin",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Berlin",
+      "economic_reason": "Überragender Bevölkerungs-, Industrie- und Handelsmittelpunkt.",
+      "alternatives_and_uncertainty": "Nur Stadtgrenze vor Groß-Berlin 1920",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.pommern",
+      "region_id": "region.de.1913.pommern",
+      "name": "Stettin",
+      "source_id": "eb1911.pommern",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Stettin",
+      "economic_reason": "Hafen- und Industriezentrum an der unteren Oder.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.posen",
+      "region_id": "region.de.1913.posen",
+      "name": "Posen",
+      "source_id": "eb1911.posen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Posen_%28city%29",
+      "economic_reason": "Regionaler Handels- und Industriemittelpunkt.",
+      "alternatives_and_uncertainty": "Bromberg: plausible Alternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.schlesien",
+      "region_id": "region.de.1913.schlesien",
+      "name": "Breslau",
+      "source_id": "eb1911.schlesien",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Breslau",
+      "economic_reason": "Großstadt, Handel und Industrie mit Oderanbindung.",
+      "alternatives_and_uncertainty": "Oberschlesisches Revier: mehr Schwerindustrie",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.sachsen_provinz",
+      "region_id": "region.de.1913.sachsen_provinz",
+      "name": "Magdeburg",
+      "source_id": "eb1911.sachsen_provinz",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Magdeburg",
+      "economic_reason": "Elbhafen, Maschinenbau und regionaler Handelsmittelpunkt.",
+      "alternatives_and_uncertainty": "Halle: Chemie und Handel",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.schleswig_holstein",
+      "region_id": "region.de.1913.schleswig_holstein",
+      "name": "Kiel",
+      "source_id": "eb1911.schleswig_holstein",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Kiel",
+      "economic_reason": "Werft-, Marine- und Industriestandort mit Hafen-/Kanalnähe und bedeutendem Handel.",
+      "alternatives_and_uncertainty": "Altona: großer Handel-/Industrieort, stark von Hamburg abhängig. Kiel wegen eigenständiger Werft-/Industriefunktion gewählt; Hafen und Kanalanschluss separat prüfen.",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.hannover",
+      "region_id": "region.de.1913.hannover",
+      "name": "Hannover",
+      "source_id": "eb1911.hannover",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Hanover_%28city%29",
+      "economic_reason": "Großes Industrie- und Eisenbahnzentrum.",
+      "alternatives_and_uncertainty": "Harburg: Hafenindustrie",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.westfalen",
+      "region_id": "region.de.1913.westfalen",
+      "name": "Dortmund",
+      "source_id": "eb1911.westfalen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Dortmund",
+      "economic_reason": "Montanindustrie und Kanal-/Eisenbahnverkehr im westfälischen Ruhrgebiet.",
+      "alternatives_and_uncertainty": "Bochum/Gelsenkirchen: Montanalternativen",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.hessen_nassau",
+      "region_id": "region.de.1913.hessen_nassau",
+      "name": "Frankfurt am Main",
+      "source_id": "eb1911.hessen_nassau",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Frankfort-on-Main",
+      "economic_reason": "Handels-, Finanz- und Eisenbahnknoten statt Verwaltungssitz Kassel.",
+      "alternatives_and_uncertainty": "Kassel: Industriealternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.rheinprovinz",
+      "region_id": "region.de.1913.rheinprovinz",
+      "name": "Köln",
+      "source_id": "eb1911.rheinprovinz",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Cologne",
+      "economic_reason": "Großer Handels- und Industriestandort mit Rheinhafen.",
+      "alternatives_and_uncertainty": "Essen/Duisburg: stärkere Schwerindustrie/Hafen; bewusste Handelsgewichtung",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.hohenzollern",
+      "region_id": "region.de.1913.hohenzollern",
+      "name": "Hechingen",
+      "source_id": "hechingen.city",
+      "source_url": "https://www.hechingen.de/de/Unsere-Stadt/Die-Zollernstadt",
+      "economic_reason": "Textilgewerbe und frühe Industrialisierung mit Bahnanschluss; wirtschaftliche Funktion statt alleiniger Gewichtung des Regierungssitzes.",
+      "alternatives_and_uncertainty": "Sigmaringen: Verwaltung und Dienstleistungsmarkt. Keine einheitliche Beschäftigtenrangliste 1913; wirtschaftlich begründeter Vorschlag, keine behauptete exakte Rangmessung.",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar.",
+      "additional_sources": [
+        "hechingen.district"
+      ]
+    },
+    {
+      "id": "city.de.1913.bayern",
+      "region_id": "region.de.1913.bayern",
+      "name": "München",
+      "source_id": "eb1911.bayern",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Munich",
+      "economic_reason": "Größter urbaner Markt des Königreichs mit Industrie und Bahnverbindungen.",
+      "alternatives_and_uncertainty": "Nürnberg: Industrie-/Handelsgewichtung könnte Auswahl ändern",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.sachsen",
+      "region_id": "region.de.1913.sachsen",
+      "name": "Leipzig",
+      "source_id": "eb1911.sachsen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Leipzig",
+      "economic_reason": "Messe, Buchhandel, Industrie und Eisenbahnknoten.",
+      "alternatives_and_uncertainty": "Dresden/Chemnitz: starke Alternativen; Handelsgewichtung entscheidet",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.wuerttemberg",
+      "region_id": "region.de.1913.wuerttemberg",
+      "name": "Stuttgart",
+      "source_id": "eb1911.wuerttemberg",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Stuttgart",
+      "economic_reason": "Bevölkerungs-, Gewerbe- und Handelskonzentration.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.baden",
+      "region_id": "region.de.1913.baden",
+      "name": "Mannheim",
+      "source_id": "eb1911.baden",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Mannheim",
+      "economic_reason": "Rheinhafen, Handel und Industrie statt Regierungssitz Karlsruhe.",
+      "alternatives_and_uncertainty": "Karlsruhe: Verwaltung und Industrie",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.hessen",
+      "region_id": "region.de.1913.hessen",
+      "name": "Mainz",
+      "source_id": "eb1911.hessen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Mainz",
+      "economic_reason": "Rheinhafen und bedeutender Wein-/Transitwarenhandel mit Industrie.",
+      "alternatives_and_uncertainty": "Offenbach: Industriealternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.mecklenburg_schwerin",
+      "region_id": "region.de.1913.mecklenburg_schwerin",
+      "name": "Rostock",
+      "source_id": "eb1911.mecklenburg_schwerin",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rostock",
+      "economic_reason": "Hafen, Seehandel und Gewerbe statt Residenz Schwerin.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.sachsen_weimar_eisenach",
+      "region_id": "region.de.1913.sachsen_weimar_eisenach",
+      "name": "Jena",
+      "source_id": "eb1911.sachsen_weimar_eisenach",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Jena",
+      "economic_reason": "Optik- und Präzisionsindustrie mit Universität.",
+      "alternatives_and_uncertainty": "Eisenach/Weimar: Industrievergleich nicht abschließend quantifiziert; EB1911 bewertet Gewerbe niedrig, Stadtchronik belegt Zeiss/Schott. Kein eindeutiger Rang behauptet.",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar.",
+      "additional_sources": [
+        "jena.history"
+      ]
+    },
+    {
+      "id": "city.de.1913.mecklenburg_strelitz",
+      "region_id": "region.de.1913.mecklenburg_strelitz",
+      "name": "Neubrandenburg",
+      "source_id": "eb1911.mecklenburg_strelitz",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Neu-Brandenburg",
+      "economic_reason": "Regionaler Handelsmarkt und Eisenbahnanbindung.",
+      "alternatives_and_uncertainty": "Neustrelitz: Verwaltung und Bahn; Rang unsicher",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.oldenburg",
+      "region_id": "region.de.1913.oldenburg",
+      "name": "Oldenburg",
+      "source_id": "eb1911.oldenburg",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Oldenburg_%28town%29",
+      "economic_reason": "Regionaler Handels- und Verkehrsstandort.",
+      "alternatives_and_uncertainty": "Delmenhorst: stärkere Industrie; Stadtartikel prüfen",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.braunschweig",
+      "region_id": "region.de.1913.braunschweig",
+      "name": "Braunschweig",
+      "source_id": "eb1911.braunschweig",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Brunswick_%28German_city%29",
+      "economic_reason": "Größter urbaner Markt, Industrie und Handel.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.sachsen_meiningen",
+      "region_id": "region.de.1913.sachsen_meiningen",
+      "name": "Sonneberg",
+      "source_id": "eb1911.sachsen_meiningen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Sonneberg",
+      "economic_reason": "Exportorientierte Spielwarenindustrie als wirtschaftlicher Schwerpunkt.",
+      "alternatives_and_uncertainty": "Meiningen: Verwaltung/Bahn; Saalfeld: Industrie; Rang unsicher",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.sachsen_altenburg",
+      "region_id": "region.de.1913.sachsen_altenburg",
+      "name": "Altenburg",
+      "source_id": "eb1911.sachsen_altenburg",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Altenburg",
+      "economic_reason": "Städtischer Handels- und Industriemittelpunkt.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.sachsen_coburg_gotha",
+      "region_id": "region.de.1913.sachsen_coburg_gotha",
+      "name": "Gotha",
+      "source_id": "eb1911.sachsen_coburg_gotha",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Gotha",
+      "economic_reason": "Industrie, Verlagswesen und größerer städtischer Markt.",
+      "alternatives_and_uncertainty": "Coburg: zweite Residenz; beide Landesteile bleiben eine Region",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.anhalt",
+      "region_id": "region.de.1913.anhalt",
+      "name": "Dessau",
+      "source_id": "eb1911.anhalt",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Dessau",
+      "economic_reason": "Industrie und größter urbaner Schwerpunkt.",
+      "alternatives_and_uncertainty": "Bernburg/Köthen: Alternativen",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.schwarzburg_rudolstadt",
+      "region_id": "region.de.1913.schwarzburg_rudolstadt",
+      "name": "Rudolstadt",
+      "source_id": "eb1911.schwarzburg_rudolstadt",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rudolstadt",
+      "economic_reason": "Regionaler Markt und Porzellangewerbe.",
+      "alternatives_and_uncertainty": "Getrennte Ober-/Unterherrschaft gemeinsam führen",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.schwarzburg_sondershausen",
+      "region_id": "region.de.1913.schwarzburg_sondershausen",
+      "name": "Arnstadt",
+      "source_id": "eb1911.schwarzburg_sondershausen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Arnstadt",
+      "economic_reason": "Gewerbe, Industrie und Eisenbahn gegenüber Residenz Sondershausen.",
+      "alternatives_and_uncertainty": "Sondershausen: Alternative; Exklaven erhalten",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.waldeck_pyrmont",
+      "region_id": "region.de.1913.waldeck_pyrmont",
+      "name": "Wildungen",
+      "source_id": "eb1911.waldeck_pyrmont",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Waldeck-Pyrmont",
+      "economic_reason": "Kurwirtschaft und regionaler Dienstleistungsmarkt.",
+      "alternatives_and_uncertainty": "Arolsen/Korbach/Pyrmont: Vergleich unsicher; keine Industriegröße erfunden",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.reuss_aeltere_linie",
+      "region_id": "region.de.1913.reuss_aeltere_linie",
+      "name": "Greiz",
+      "source_id": "eb1911.reuss_aeltere_linie",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Greiz",
+      "economic_reason": "Textilindustrie als tragender wirtschaftlicher Schwerpunkt.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.reuss_juengere_linie",
+      "region_id": "region.de.1913.reuss_juengere_linie",
+      "name": "Gera",
+      "source_id": "eb1911.reuss_juengere_linie",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Gera",
+      "economic_reason": "Großer Textil-, Industrie- und Handelsstandort.",
+      "alternatives_and_uncertainty": "Schleiz: Verwaltung, geringerer Markt",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.schaumburg_lippe",
+      "region_id": "region.de.1913.schaumburg_lippe",
+      "name": "Stadthagen",
+      "source_id": "eb1911.schaumburg_lippe",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Schaumburg-Lippe",
+      "economic_reason": "Städtischer Gewerbe-/Markthub im landwirtschaftlich und bergbaulich geprägten Fürstentum (Vorschlag; Quelle belegt Landeswirtschaft, keinen Vorrang vor Bückeburg).",
+      "alternatives_and_uncertainty": "Bückeburg: größere Residenzfunktion; Rang unsicher",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.lippe",
+      "region_id": "region.de.1913.lippe",
+      "name": "Detmold",
+      "source_id": "eb1911.lippe",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Detmold",
+      "economic_reason": "Regionaler Bevölkerungs-, Gewerbe- und Dienstleistungsschwerpunkt.",
+      "alternatives_and_uncertainty": "Lage/Lemgo: Alternativen",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.luebeck",
+      "region_id": "region.de.1913.luebeck",
+      "name": "Lübeck",
+      "source_id": "eb1911.luebeck",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/L%C3%BCbeck",
+      "economic_reason": "Ostseehafen, Handel und industrielle Verarbeitung.",
+      "alternatives_and_uncertainty": "Fürstentum Lübeck ist dagegen Teil Oldenburgs",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.bremen",
+      "region_id": "region.de.1913.bremen",
+      "name": "Bremen",
+      "source_id": "eb1911.bremen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Bremen_%28city%29",
+      "economic_reason": "Seehandel, Industrie und Weserwirtschaft.",
+      "alternatives_and_uncertainty": "Bremerhaven ist Hafenknoten derselben Region, kein zweiter Hub",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.hamburg",
+      "region_id": "region.de.1913.hamburg",
+      "name": "Hamburg",
+      "source_id": "eb1911.hamburg",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Hamburg_%28city%29",
+      "economic_reason": "Großer Seehafen und internationaler Handelsmittelpunkt.",
+      "alternatives_and_uncertainty": "Cuxhaven bleibt Hamburger Gebiet; Altona bleibt preußisch",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.de.1913.elsass_lothringen",
+      "region_id": "region.de.1913.elsass_lothringen",
+      "name": "Straßburg",
+      "source_id": "eb1911.elsass_lothringen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Strassburg",
+      "economic_reason": "Großer urbaner Markt, Handel und Verkehr im Reichsland.",
+      "alternatives_and_uncertainty": "Mülhausen: Industrie; Metz: Alternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.noord_holland",
+      "region_id": "region.nl.1913.noord_holland",
+      "name": "Amsterdam",
+      "source_id": "eb1911.noord_holland",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Amsterdam_%28Holland%29",
+      "economic_reason": "Großer Handels-, Finanz- und Hafenstandort.",
+      "alternatives_and_uncertainty": "Haarlem: Provinzverwaltung",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.zuid_holland",
+      "region_id": "region.nl.1913.zuid_holland",
+      "name": "Rotterdam",
+      "source_id": "eb1911.zuid_holland",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rotterdam",
+      "economic_reason": "Seehafen und Rheinfracht als Schwerpunkt.",
+      "alternatives_and_uncertainty": "Den Haag/Leiden: andere Wirtschaftsschwerpunkte",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.utrecht",
+      "region_id": "region.nl.1913.utrecht",
+      "name": "Utrecht",
+      "source_id": "eb1911.utrecht",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Utrecht_%28city%29",
+      "economic_reason": "Zentraler Eisenbahn-, Handels- und Marktstandort.",
+      "alternatives_and_uncertainty": "-",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.zeeland",
+      "region_id": "region.nl.1913.zeeland",
+      "name": "Vlissingen",
+      "source_id": "eb1911.zeeland",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Flushing_%28Holland%29",
+      "economic_reason": "Seehafen, Schiffbau und Verkehrsverbindung.",
+      "alternatives_and_uncertainty": "Middelburg: vergleichbarer Stadtmarkt; Hafen stark gewichtet",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.noord_brabant",
+      "region_id": "region.nl.1913.noord_brabant",
+      "name": "Tilburg",
+      "source_id": "eb1911.noord_brabant",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Tilburg",
+      "economic_reason": "Großer Textilindustrie- und Beschäftigungsstandort.",
+      "alternatives_and_uncertainty": "Breda/Den Bosch; heutiges Eindhoven nicht rückprojizieren",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.limburg",
+      "region_id": "region.nl.1913.limburg",
+      "name": "Maastricht",
+      "source_id": "eb1911.limburg",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Maastricht",
+      "economic_reason": "Industrie und Handel an der Maas.",
+      "alternatives_and_uncertainty": "Südlimburgischer Bergbau bleibt Umland, kein zusätzlicher Hub",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.gelderland",
+      "region_id": "region.nl.1913.gelderland",
+      "name": "Arnhem",
+      "source_id": "eb1911.gelderland",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Arnhem",
+      "economic_reason": "Großer urbaner Markt, Handel und Eisenbahn am Rhein.",
+      "alternatives_and_uncertainty": "Nijmegen: ernsthafte Alternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.overijssel",
+      "region_id": "region.nl.1913.overijssel",
+      "name": "Enschede",
+      "source_id": "eb1911.overijssel",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Enschede",
+      "economic_reason": "Starker Textilindustrie- und Beschäftigungsschwerpunkt.",
+      "alternatives_and_uncertainty": "Zwolle: Handels-/Verwaltungsalternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.friesland",
+      "region_id": "region.nl.1913.friesland",
+      "name": "Leeuwarden",
+      "source_id": "eb1911.friesland",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Leeuwarden",
+      "economic_reason": "Regionaler Handel und Agrarmarkt.",
+      "alternatives_and_uncertainty": "Harlingen: Hafenalternative",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.groningen",
+      "region_id": "region.nl.1913.groningen",
+      "name": "Groningen",
+      "source_id": "eb1911.groningen",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Groningen_%28town%29",
+      "economic_reason": "Regionaler Handels-, Industrie- und Agrarmarkt.",
+      "alternatives_and_uncertainty": "Delfzijl: Hafenknoten, kein zusätzlicher Hub",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    },
+    {
+      "id": "city.nl.1913.drenthe",
+      "region_id": "region.nl.1913.drenthe",
+      "name": "Meppel",
+      "source_id": "eb1911.drenthe",
+      "source_url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Meppel",
+      "economic_reason": "Handels-, Kanal- und Agrarmarktknoten.",
+      "alternatives_and_uncertainty": "Assen: Verwaltung; Emmen: Industrie; Rang unsicher",
+      "selection_status": "curated_proposal",
+      "coordinate_source": "geonames",
+      "coordinate_status": "resolve_stable_geoname_id_and_WGS84_in_MAP02",
+      "historical_point_note": "Repräsentativer Kartenanker, keine behauptete historische Gemeinde- oder Hafengrenze.",
+      "ranking_note": "Auswahl nach Industrie/Handel, urbanem Markt und Logistik; keine einheitliche quantitative Beschäftigtenrangliste 1913 verfügbar."
+    }
+  ],
+  "projection": {
+    "source_crs": "EPSG:4326",
+    "source_axis_order": "longitude,latitude",
+    "method": "spherical LCC 2SP; kein EPSG-Code",
+    "origin_latitude": 52,
+    "origin_longitude": 13,
+    "parallel_1": 48,
+    "parallel_2": 55,
+    "radius_km": 6371.0088,
+    "units_per_km": 7,
+    "ue_axes": "X=north Y=east Z=up",
+    "bbox_wgs84": [
+      2.5,
+      47,
+      23.5,
+      56.5
+    ],
+    "simplification_metres": 200,
+    "small_region_rule": "Feine Exklaven/Enklaven dürfen nicht verschwinden; separat feinere Toleranz wählen.",
+    "world_constraints": [
+      "Andere Ausschnitte über Projektionsparameter und LOD/Kacheln.",
+      "Datumsgrenze normalisieren/Polygone teilen; regionale LCC nicht global anwenden.",
+      "Transportlänge aus Geodäsie/Netz, niemals Mesh-/Bildschirmabstand."
+    ]
+  }
+}

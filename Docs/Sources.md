@@ -1,5 +1,10 @@
 # Geodaten, Quellen und Lizenzen
 
+**Neue Zielgeografie ab MAP01:** Deutschland/Niederlande 1913. Das aktuelle
+[MAP01-Quellenregister](MAP01_Sources.md) und der [Datenplan](MAP01.md) haben für
+neue Geografie Vorrang. Die folgenden Natural-Earth-Angaben dokumentieren den
+vorhandenen US-Testbestand; moderne Grenzen/Küsten sind keine 1913-Rekonstruktion.
+
 Made with Natural Earth. Kostenlose Kartendaten, keine API-Schlüssel und kein Kartendienst.
 Natural Earth stellt seine Kartendaten als Public Domain bereit, einschließlich Bearbeitung und
 kommerzieller Verwendung. Freiwillige Attribution ist im Repo und im gekochten Geokatalog enthalten.
