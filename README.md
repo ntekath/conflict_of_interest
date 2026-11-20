@@ -4,7 +4,7 @@
 
 Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
 Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
-Umgesetzt: **AP01 bis AP09.4, UI01 und MAP01 bis MAP03**.
+Umgesetzt: **AP01 bis AP09.4, UI01–UI02 und MAP01 bis MAP03**.
 [MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
 Standard ist jetzt das [MAP03-Wirtschaftsszenario Deutschland/Niederlande](Docs/MAP03.md) mit 50 Regionen/Hubs, 150 Haushaltsgruppen und drei konfigurierbaren Startfirmen. Der Großer-Seen-US-Teststand bleibt separat als Regression spielbar.
 
@@ -37,8 +37,8 @@ Die generierten `.umap`/`.uasset`-Dateien sowie Roharchive, Szenario und Importe
 Zum Offline-Neuimport und zur genauen Editor-Reihenfolge: [AP02](Docs/AP02.md).
 `CoI.RebuildMap` baut jetzt die Europakarte; das BuildMap-Commandlet ohne `-Europe` behält den US-Reproduktionsweg. `CameraPrototype` bleibt als AP01-Level erhalten.
 
-WASD/Pfeile bewegen die Kamera, Mausrad zoomt zum Punkt unter dem Mauszeiger. Escape beendet
-Play; falls der Fokus nicht im Viewport liegt, den roten Stop-Knopf verwenden. Shift+F1 gibt den
+WASD/Pfeile bewegen die Kamera, Mausrad zoomt zum Punkt unter dem Mauszeiger. Escape schließt
+Dialog/Arbeitsansicht oder öffnet das Pausenmenü. Play über den roten Stop-Knopf beenden. Shift+F1 gibt den
 Mausfokus frei. Nord ist +X, Ost +Y; Kartenebene Z=0.
 
 AP01-Fokusgrenzen: X/Y jeweils ±6500; Höhe 600–22000, Start 17000.
@@ -97,6 +97,8 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [AP09.3](Docs/AP09.3.md): Lebensmittelgeschäfte und Gemischtwarenläden nutzen reale Bestände, Beschäftigung und bezahlten Nachschub. Haushalte kaufen ausschließlich im Einzelhandel; Preis/Qualität beeinflussen die Verteilung. Stadt → Eigene Assets → Lagerregeln steuert Sortimentspreise/Nachschub, Investitionen bietet Bau/Ausbau/Kauf. Save-Version **5** migriert geprüfte Version-4-Partien einschließlich laufender B2B-/Lieferaufträge; ältere Versionen 1–3 bleiben inkompatibel. Standardszenario weiterhin stark unterversorgt; Abnahmen und Grenzen dokumentiert.
 
-[UI01](Docs/UI01.md): gemeinsame Snapshot-Kennzahlen, korrekte eigene Mitarbeiter-/Standortzählung, erklärte fehlende Monats-/Bewertungsdaten und einheitliche USD-/Prozent-/Mengenformate. Geldfelder erwarten USD mit maximal zwei Nachkommastellen (ohne Tausendertrennzeichen); interne Buchungen bleiben centgenau. UI02–UI06 folgen getrennt.
+[UI01](Docs/UI01.md): gemeinsame Snapshot-Kennzahlen, korrekte eigene Mitarbeiter-/Standortzählung, erklärte fehlende Monats-/Bewertungsdaten und einheitliche USD-/Prozent-/Mengenformate. Geldfelder erwarten USD mit maximal zwei Nachkommastellen (ohne Tausendertrennzeichen); interne Buchungen bleiben centgenau.
+
+[UI02](Docs/UI02.md): responsive Unternehmensleiste mit fünf anklickbaren Kennzahlen, eindeutiger Zeitsteuerung und Pausenmenü für Spielstände sowie lokale VSync-/FPS-Einstellungen. UI03–UI06 folgen getrennt.
 
 [AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. Save-Version **6** lädt ausschließlich die aktuelle Version; alte Partien werden während der Entwicklung nicht migriert. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.

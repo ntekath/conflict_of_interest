@@ -23,6 +23,8 @@ class CONFLICTOFINTEREST_API UCoIPlayerHUD : public UUserWidget {
 public:
  UPROPERTY() TObjectPtr<class UCoIMapInterface> MapOwner;
  void Action(const FString& Key);void MapSelection(const FString& Id,const FString& Summary=TEXT(""));bool PointerBlocked(FVector2D Absolute) const;bool OverlayCovered(FVector2D Position,FVector2D Size=FVector2D::ZeroVector) const;bool KeyboardBlocked() const;bool Escape();
+ bool IsPauseMenuOpen() const {return !MenuPage.IsEmpty();}
+ const FString& CurrentView() const {return View;}
 protected:
  virtual TSharedRef<SWidget> RebuildWidget() override;
  virtual void NativeConstruct() override;virtual void NativeDestruct() override;virtual void NativeTick(const FGeometry&,float) override;
@@ -30,6 +32,22 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
+ void BuildCompanyHeader();void LayoutCompanyHeader(double Width);void RefreshCompanyHeader();void CompanyDetail();
+ void OpenPauseMenu();void RefreshPauseMenu();void ClosePauseMenu(bool Resume);bool HeaderAction(const FString&,const FString&);
+ UPROPERTY() TObjectPtr<UCanvasPanel> HeaderCanvas;
+ UPROPERTY() TObjectPtr<UScrollBox> IdentityScroll;
+ UPROPERTY() TObjectPtr<UHorizontalBox> HeaderMetrics;
+ UPROPERTY() TObjectPtr<UVerticalBox> TimeControls;
+ UPROPERTY() TObjectPtr<UCoIActionButton> IdentityButton;
+ UPROPERTY() TObjectPtr<UTextBlock> CompanyName;
+ UPROPERTY() TArray<TObjectPtr<UCoIActionButton>> MetricButtons;
+ UPROPERTY() TArray<TObjectPtr<UTextBlock>> MetricValues;
+ UPROPERTY() TArray<TObjectPtr<UCoIActionButton>> SpeedButtons;
+ UPROPERTY() TObjectPtr<UBorder> MenuShade;
+ UPROPERTY() TObjectPtr<UBorder> MenuPanel;
+ UPROPERTY() TObjectPtr<UCoIActionButton> MenuButton;
+ FString HeaderDetail=TEXT("cash"),MenuPage;
+ bool MenuResume=false,ReturnToPause=false;
  UPROPERTY() TObjectPtr<class UCoISimulationSubsystem> Sim;
  UPROPERTY() TObjectPtr<UCanvasPanel> Root;
  UPROPERTY() TObjectPtr<UBorder> MapControls;UPROPERTY() TObjectPtr<UBorder> MapLegend;
@@ -37,7 +55,7 @@ private:
  UPROPERTY() TArray<TObjectPtr<UBorder>> LegendColors;
  void RefreshMap();void AccountingReport();void CostInfo(class UPanelWidget*,const FString& StoreId,const FString& GoodId,int64 Markup);
  UPROPERTY() TObjectPtr<UBorder> Top;UPROPERTY() TObjectPtr<UBorder> Nav;UPROPERTY() TObjectPtr<UBorder> Work;UPROPERTY() TObjectPtr<UBorder> SelectionPanel;UPROPERTY() TObjectPtr<UBorder> Notices;UPROPERTY() TObjectPtr<UBorder> Debug;UPROPERTY() TObjectPtr<UBorder> ModalShade;UPROPERTY() TObjectPtr<UBorder> Dialog;
- UPROPERTY() TObjectPtr<UTextBlock> AccountText;UPROPERTY() TObjectPtr<UTextBlock> ClockText;UPROPERTY() TObjectPtr<UTextBlock> SelectionText;UPROPERTY() TObjectPtr<UTextBlock> NoticeText;UPROPERTY() TObjectPtr<UTextBlock> DebugText;UPROPERTY() TObjectPtr<UTextBlock> WorkTitle;UPROPERTY() TObjectPtr<UTextBlock> FormPreview;UPROPERTY() TObjectPtr<UTextBlock> FormState;
+ UPROPERTY() TObjectPtr<UTextBlock> ClockText;UPROPERTY() TObjectPtr<UTextBlock> SelectionText;UPROPERTY() TObjectPtr<UTextBlock> NoticeText;UPROPERTY() TObjectPtr<UTextBlock> DebugText;UPROPERTY() TObjectPtr<UTextBlock> WorkTitle;UPROPERTY() TObjectPtr<UTextBlock> FormPreview;UPROPERTY() TObjectPtr<UTextBlock> FormState;
  UPROPERTY() TObjectPtr<UCoIActionButton> RouteOpenButton;
  UPROPERTY() TObjectPtr<UCoIActionButton> PauseButton;UPROPERTY() TObjectPtr<UCoIActionButton> ConfirmButton;
  UPROPERTY() TObjectPtr<UVerticalBox> WorkBox;UPROPERTY() TObjectPtr<UVerticalBox> Body;UPROPERTY() TObjectPtr<UVerticalBox> Form;UPROPERTY() TObjectPtr<UScrollBox> WorkScroll;
