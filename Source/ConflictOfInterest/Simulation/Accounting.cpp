@@ -108,7 +108,7 @@ void FSimulation::AccountingPayment(const FString &From, const FString &To, int6
 {
     if (!Scenario.Economy.AccountingEnabled)
         return;
-    const bool Service = Reason == TEXT("freight") || Reason == TEXT("haul_operation") ||
+    const bool Service = Reason == TEXT("bank_operating") || Reason == TEXT("freight") || Reason == TEXT("haul_operation") ||
                          Reason == TEXT("foreign_storage") || Reason == TEXT("delivery_return_freight") ||
                          Reason == TEXT("storage_fixed") || Reason == TEXT("vehicle_fixed") ||
                          Reason == TEXT("production_operation") || Reason == TEXT("construction") ||
@@ -370,7 +370,7 @@ bool FSimulation::ValidateAccounting(FString &E) const
             P.Complete != (P.EndHour <= State.EconomyHour) || P.ProductionIdle < 0 || P.GoodsRevenue < 0 ||
             P.ServiceRevenue < 0 || P.CostOfGoods < 0 || P.Wages < 0 || P.Operating < 0 || P.CapitalizedWages < 0 ||
             P.CapitalizedWages > P.Wages || P.CapitalizedOperating < 0 || P.CapitalizedOperating > P.Operating ||
-            P.FreightExpense < 0 || P.Spoilage < 0)
+            P.FreightExpense < 0 || P.Spoilage < 0 || P.FinancingExpense < 0)
             return Fail(TEXT("Monatsbeleg: ") + P.Id);
         Seen.Add(P.Id);
     }

@@ -1,6 +1,7 @@
 #include "SimCore.h"
 #include "CityHubs.h"
 #include "Investments.h"
+#include "Banking.h"
 #include "SimArchive.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -20,6 +21,7 @@ bool LoadScenario(const FString& Json,const FCoIGeoMapData& Geo,FScenario& Out,F
 }
 bool ValidateScenario(const FScenario& S,const FCoIGeoMapData& Geo,FString& Error)
 {
+ if(!ValidateBankScenario(S,Error))return false;
  const auto& Aq=S.Economy;
  if(Aq.AccountingEnabled){if(!Aq.RetailEnabled||!Aq.HouseholdModel||Aq.AccountingPricingHours<1||Aq.AccountingPricingHours>168||Aq.AccountingNormalUtilizationPermille<1||Aq.AccountingNormalUtilizationPermille>1000||Aq.AccountingNormalTradeKgDay<1||Aq.AccountingNormalTradeKgDay>1000000||Aq.AccountingDefaultMarkupPermille<0||Aq.AccountingDefaultMarkupPermille>Aq.AccountingMaxMarkupPermille||Aq.AccountingMaxMarkupPermille>10000||Aq.AccountingHistoryMonths<1||Aq.AccountingHistoryMonths>120||S.InitialState.Companies.Num()*S.InitialState.Warehouses.Num()*S.Definitions.Goods.Num()>100000){Error=TEXT("Invalid AP09.4 cost configuration or price projection size");return false;}TSet<FString> Keys;for(const auto& A:Aq.AccountingOpeningAssets){if(Keys.Contains(A.Id)||A.ValueCents<0||A.ValueCents>1000000000000LL||!Find(S.InitialState.Companies,A.OwnerId)||(!Find(S.InitialState.Warehouses,A.Id)&&!Find(S.InitialState.Facilities,A.Id)&&!Find(S.InitialState.Vehicles,A.Id))){Error=TEXT("Invalid opening asset carrying amount");return false;}Keys.Add(A.Id);}}
  if(!S.InitialState.AccountingCharges.IsEmpty()||S.InitialState.AccountingReliableFromHour!=-1||S.InitialState.AccountingStartHour!=-1||!S.InitialState.AccountingPeriods.IsEmpty()||!S.InitialState.AccountingPrices.IsEmpty()||!S.InitialState.AccountingAssets.IsEmpty()){Error=TEXT("Initial accounting runtime state must be empty");return false;}

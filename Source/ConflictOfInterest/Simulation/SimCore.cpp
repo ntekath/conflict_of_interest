@@ -22,7 +22,7 @@ bool FSimulation::Load(const FString& Json,const FCoIGeoMapData& Geo,FString& Er
  Shutdown();Scenario=MoveTemp(Candidate);State=Scenario.InitialState;Session={Scenario.Id,Scenario.PlayerCompanyId};Loaded=true;
  for(const auto& R:Scenario.Definitions.Regions){FRegion Region;Region.Id=R.Id;Region.RemainingForestKg=R.ForestKg;Region.RemainingOreKg=R.OreKg;State.Regions.Add(Region);}
  for(const auto& X:Scenario.Definitions.ResourceSites)State.ResourceSites.Add({X.Id,X.InitialKg,0});
- InitializeOperatingRules();InitializeAudit();InitializeAccounting();BeginDayMetrics(0);Aggregate();Publish();return true;
+ InitializeOperatingRules();InitializeAudit();InitializeAccounting();InitializeBank();BeginDayMetrics(0);Aggregate();Publish();return true;
 }
 void FSimulation::Shutdown()
 {
@@ -37,7 +37,7 @@ bool FSimulation::Enqueue(FCommand Command,FString& Error)
  if(Command.Sequence<=LastIssuedSequence||Command.Sequence>1000000000000LL||Command.TargetStep<=State.Step||Command.TargetStep-State.Step>Scenario.Settings.CommandHorizonSteps)
  {Error=TEXT("Duplicate/nonmonotonic sequence, past target or excessive horizon");return false;}
  if(Pending.Num()>=Scenario.Settings.MaxPendingCommands){Error=TEXT("Command queue full; caller must retry explicitly");return false;}
- if(Command.Kind>ECommandKind::Delivery){Error=TEXT("Unsupported command kind");return false;}
+ if(Command.Kind>ECommandKind::Loan){Error=TEXT("Unsupported command kind");return false;}
  if(!Authorized(Command,Error))return false;
  LastIssuedSequence=Command.Sequence;Pending.Add(MoveTemp(Command));
  Pending.Sort([](const FCommand& A,const FCommand& B){return A.TargetStep==B.TargetStep?A.Sequence<B.Sequence:A.TargetStep<B.TargetStep;});
@@ -50,6 +50,7 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
  if(!Authorized(Command,Reason))return false;
+ if(Command.Kind==ECommandKind::Loan)return ChangeLoan(Command.Loan,Reason);
  if(Command.Kind==ECommandKind::Delivery)return ChangeDelivery(Command.Delivery,Reason);
  if(Command.Kind==ECommandKind::OperatingRule)return ChangeOperatingRule(Command.Rule,Reason);
  if(Command.Kind==ECommandKind::Invest)return Invest(Command.Investment,Reason);
@@ -100,8 +101,8 @@ bool FSimulation::RunStep()
   {
    if(C.TargetStep>Next)break;
    FCommandResult Result;Result.Sequence=C.Sequence;Result.Step=Next;
-   Result.ActorId=C.Kind==ECommandKind::Delivery?C.Delivery.OwnerId:C.Kind==ECommandKind::OperatingRule?C.Rule.OwnerId:C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:C.Transport.OwnerId;Result.ObjectId=C.Kind==ECommandKind::Delivery?C.Delivery.Id:C.Kind==ECommandKind::OperatingRule?C.Rule.Id:C.Kind==ECommandKind::Invest?C.Investment.Id:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.Id:C.Transport.Id;
-   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(C.Kind==ECommandKind::Invest&&C.Investment.Action==TEXT("buy"))if(const auto* Sale=Find(State.AssetSales,C.Investment.TargetId))Result.ObjectId=Sale->AssetId;if(Result.ActorId==Session.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::Delivery?TEXT("delivery"):(C.Kind==ECommandKind::Invest||C.Kind==ECommandKind::OperatingRule)?TEXT("investment"):C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,(C.Kind==ECommandKind::Invest||C.Kind==ECommandKind::OperatingRule||C.Kind==ECommandKind::Delivery)?Result.Reason:Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
+   Result.ActorId=C.Kind==ECommandKind::Loan?C.Loan.OwnerId:C.Kind==ECommandKind::Delivery?C.Delivery.OwnerId:C.Kind==ECommandKind::OperatingRule?C.Rule.OwnerId:C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:C.Transport.OwnerId;Result.ObjectId=C.Kind==ECommandKind::Loan?C.Loan.Id:C.Kind==ECommandKind::Delivery?C.Delivery.Id:C.Kind==ECommandKind::OperatingRule?C.Rule.Id:C.Kind==ECommandKind::Invest?C.Investment.Id:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.Id:C.Transport.Id;
+   Result.Accepted=C.Generation==Generation&&Apply(C,Result.Reason);if(C.Kind==ECommandKind::Invest&&C.Investment.Action==TEXT("buy"))if(const auto* Sale=Find(State.AssetSales,C.Investment.TargetId))Result.ObjectId=Sale->AssetId;if(Result.ActorId==Session.PlayerCompanyId)PlayerEvent(C.Kind==ECommandKind::Loan?TEXT("company"):C.Kind==ECommandKind::Delivery?TEXT("delivery"):(C.Kind==ECommandKind::Invest||C.Kind==ECommandKind::OperatingRule)?TEXT("investment"):C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder?TEXT("order"):TEXT("transport"),Result.ObjectId,(C.Kind==ECommandKind::Loan||C.Kind==ECommandKind::Invest||C.Kind==ECommandKind::OperatingRule||C.Kind==ECommandKind::Delivery)?Result.Reason:Result.Accepted?TEXT("Auftrag bestätigt."):TEXT("Auftrag abgelehnt: ")+PlayerReason(Result.Reason));Results.Add(MoveTemp(Result));++Done;
   }
   if(Done)Pending.RemoveAt(0,Done,EAllowShrinking::No);
   if(Results.Num()>128)Results.RemoveAt(0,Results.Num()-128,EAllowShrinking::No);
@@ -191,7 +192,7 @@ namespace CoISim {
 bool FSimulation::IsAutonomous(const FString& Id) const {return Id!=Session.PlayerCompanyId&&Find(State.Companies,Id)!=nullptr;}
 bool FSimulation::Authorized(const FCommand& C,FString& Error) const {
  if(C.Origin==ECommandOrigin::System)return true; // trusted scenario/test harness, never exposed by the player bridge
- FString Actor=C.Kind==ECommandKind::Delivery?C.Delivery.OwnerId:C.Kind==ECommandKind::OperatingRule?C.Rule.OwnerId:C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:(C.Kind==ECommandKind::BookTransport||C.Kind==ECommandKind::CancelTransport)?C.Transport.OwnerId:C.Resources.ActorId;
+ FString Actor=C.Kind==ECommandKind::Loan?C.Loan.OwnerId:C.Kind==ECommandKind::Delivery?C.Delivery.OwnerId:C.Kind==ECommandKind::OperatingRule?C.Rule.OwnerId:C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:(C.Kind==ECommandKind::BookTransport||C.Kind==ECommandKind::CancelTransport)?C.Transport.OwnerId:C.Resources.ActorId;
  if(C.CompanyId!=Actor||!Find(State.Companies,Actor)||(C.Origin==ECommandOrigin::Player?Actor!=Session.PlayerCompanyId:!IsAutonomous(Actor))){Error=TEXT("Company control authorization failed");return false;}return true;
 }
 FString FSimulation::EconomicFingerprint() const {auto Economic=State;Economic.PlayerDays.Reset();Economic.PlayerEvents.Reset();FFingerprint F;F.Write(Scenario.Definitions);F.Write(Scenario.Settings);F.Write(Economic);return F.Finish();}

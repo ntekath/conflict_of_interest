@@ -1,5 +1,6 @@
 #include "SaveGame.h"
 #include "SimArchive.h"
+#include "Banking.h"
 namespace CoISim
 {
 namespace
@@ -284,7 +285,7 @@ bool FSimulation::ValidateSaveState(FString &E) const
         if (C.Population < 0 || C.Employed < 0 || !Amounts(C.Consumed))
             return Fail(C.Id);
     for (const auto &C : W.CashFlows)
-        if (!Find(W.Accounts, C.FromAccountId) || !Find(W.Accounts, C.ToAccountId) || C.Cents < 0 || C.Hour < 0 ||
+        if ((!Find(W.Accounts, C.FromAccountId) && !(Scenario.Economy.Bank.Enabled&&C.FromAccountId==BankLedgerId&&(C.Reason==TEXT("loan_disbursement")||C.Reason==TEXT("bank_wages")||C.Reason==TEXT("bank_operating")))) || (!Find(W.Accounts, C.ToAccountId) && !(Scenario.Economy.Bank.Enabled&&C.ToAccountId==BankLedgerId&&(C.Reason==TEXT("loan_principal")||C.Reason==TEXT("loan_interest")))) || C.Cents < 0 || C.Hour < 0 ||
             C.Hour > H)
             return Fail(TEXT("Zahlungsjournal"));
     for (const auto &C : W.CashTotals)
@@ -331,7 +332,7 @@ bool FSimulation::ValidateSaveState(FString &E) const
         (H >= 24 && (!W.LastDayMetrics.Complete || W.LastDayMetrics.Day != H / 24 - 1)))
         return Fail(TEXT("Tagesmetriken"));
     for (const auto &P : W.PlayerDays)
-        if (P.Day < 0 || P.Day > H / 24 || P.IncomeCents < 0 || P.ExpenseCents < 0 || !Amounts(P.Spoiled))
+        if (P.Day < 0 || P.Day > H / 24 || P.IncomeCents < 0 || P.ExpenseCents < 0 || P.CreditInCents < 0 || P.PrincipalOutCents < 0 || P.InterestOutCents < 0 || !Amounts(P.Spoiled))
             return Fail(P.Id);
     for (const auto &P : W.PlayerEvents)
         if (P.Hour < 0 || P.Hour > H || P.Count <= 0)

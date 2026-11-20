@@ -102,6 +102,8 @@ def main():
         w['AssetSales'].append(dict(Id=offer['id'],SellerId=asset['OwnerId'],AssetId=asset['Id'],
             CityId=asset['CityId'],Kind='warehouse',PriceCents=offer['price_cents'],ExpiresHour=168,Active=True))
     economy=copy.deepcopy(base['Economy']); economy.update(config['economy'])
+    economy['Bank']=copy.deepcopy(config['bank'])
+    economy['Bank']['OpeningBackingCents']=sum(a['BalanceCents'] for a in w['Accounts'])+economy['Bank']['OpeningCapitalCents']
     economy['AccountingOpeningAssets']=[]
     for key,price in [('Warehouses',50000),('Facilities',300000),('Vehicles',200000)]:
         for asset in w[key]:

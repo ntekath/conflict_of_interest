@@ -76,7 +76,7 @@ void UCoIPlayerHUD::AccountingReport()
                  TEXT(" − in Herstellung aktiviert ") + Display::Money(M.CapitalizedWages + M.CapitalizedOperating) +
                  TEXT(" = nicht aktivierte Periodenkosten, davon Produktionsleerkosten ") +
                  Display::Money(M.ProductionIdle) + TEXT(". Realisierter Assetabgangssaldo ") +
-                 Display::Money(M.DisposalGain) + TEXT(". Investitionszahlungen sind kein unmittelbarer Aufwand."),
+                 Display::Money(M.DisposalGain) + TEXT(". Finanzierungskosten separat ")+Display::Money(M.FinancingExpense)+ TEXT(". Investitionszahlungen sind kein unmittelbarer Aufwand."),
              11);
     }
 }

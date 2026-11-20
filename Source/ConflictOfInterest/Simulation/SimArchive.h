@@ -23,7 +23,7 @@ struct FRead
  {double N=0;if(!V->TryGetNumber(N)||!FMath::IsFinite(N)||FMath::Abs(N)>1000000000000.||FMath::FloorToDouble(N)!=N){Fail(Key);return;}X=(int64)N;}
  void Read(const TSharedPtr<FJsonValue>& V,uint32& X,const FString& Key){int64 N=0;Read(V,N,Key);if(N<0||N>MAX_uint32)Fail(Key);else X=(uint32)N;}
  template<class T> void Read(const TSharedPtr<FJsonValue>& V,TArray<T>& X,const FString& Key)
- {const TArray<TSharedPtr<FJsonValue>>* A=nullptr;const int32 Limit=Key==TEXT("AccountingPrices")?100000:10000;if(!V->TryGetArray(A)||A->Num()>Limit){Fail(Key);return;}X.Reset();for(const auto& E:*A){T Item;Read(E,Item,Key);X.Add(MoveTemp(Item));}}
+ {const TArray<TSharedPtr<FJsonValue>>* A=nullptr;const int32 Limit=(Key==TEXT("AccountingPrices")||Key==TEXT("DebtDues"))?200000:10000;if(!V->TryGetArray(A)||A->Num()>Limit){Fail(Key);return;}X.Reset();for(const auto& E:*A){T Item;Read(E,Item,Key);X.Add(MoveTemp(Item));}}
  template<class T> void Read(const TSharedPtr<FJsonValue>& V,T& X,const FString& Key)
  {const TSharedPtr<FJsonObject>* O=nullptr;if(!V->TryGetObject(O)){Fail(Key);return;}FRead Nested{*O,Error,Strict};X.Fields(Nested);Nested.Complete();}
 };

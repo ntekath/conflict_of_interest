@@ -32,7 +32,8 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
- friend class FMapHUDNavigation;
+ friend class FMapHUDNavigation;friend class FBankWidgetFlow;
+ void BankInfo();void OpenLoan(const FString& LoanId=TEXT(""));bool ReadLoanForm(FString&);CoISim::FLoanRequest LoanDraft;
  void BuildMapPanels();void RefreshMapPanels();
  bool AnalysisExpanded=false,DisplayExpanded=false;
  UPROPERTY() TObjectPtr<UBorder> DisplayOptions;

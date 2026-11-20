@@ -165,7 +165,7 @@ bool FSimulation::ValidateDeliveries(FString &E) const
         if (!Find(W.Companies, L.ActorId) ||
             (!L.SiteId.IsEmpty() && !Find(W.Warehouses, L.SiteId) && !Find(W.Vehicles, L.SiteId)) ||
             L.Id != L.ActorId + TEXT("|") + L.SiteId || L.ExternalRevenueCents < 0 || L.ExternalCostCents < 0 ||
-            L.InternalCreditCents < 0 || L.InternalDebitCents < 0)
+            L.InternalCreditCents < 0 || L.InternalDebitCents < 0 || L.CreditCents < 0 || L.PrincipalCents < 0 || L.InterestCents < 0)
             return Fail(L.Id);
         int64 Credit = 0, Debit = 0;
         for (const auto &T : W.InternalTransfers)
@@ -189,7 +189,7 @@ bool FSimulation::ValidateDeliveries(FString &E) const
             int64 Net = 0;
             for (const auto &L : W.SiteLedgers)
                 if (L.ActorId == C.Id)
-                    Net += L.ExternalRevenueCents - L.ExternalCostCents;
+                    Net += L.ExternalRevenueCents - L.ExternalCostCents+L.CreditCents-L.PrincipalCents-L.InterestCents;
             if (Net != A->BalanceCents - Initial->BalanceCents)
                 return Fail(C.Id + TEXT(" externe Zahlungen stimmen nicht mit Firmenbargeld überein"));
         }

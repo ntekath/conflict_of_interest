@@ -6,13 +6,13 @@
 #include "GeoMapData.h"
 namespace CoISim
 {
-enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest,OperatingRule,Delivery };
+enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTransport,CancelTransport,Invest,OperatingRule,Delivery,Loan };
 enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
- ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;FDeliveryRequest Delivery;
+ ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;FDeliveryRequest Delivery;FLoanRequest Loan;
 };
 struct FCommandResult { int64 Sequence=0,Step=0; bool Accepted=false; FString Reason,ActorId,ObjectId; };
 struct FRegionProposal { int32 Index=0; int64 Step=0; uint32 Random=0; };
@@ -55,6 +55,7 @@ public:
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
  bool AuditRuntime(FString& Error) const;
+ bool PreviewLoan(const FLoanRequest&,struct FLoanQuote&,FString&) const;
  bool PreviewDelivery(const FDeliveryRequest&,FString&) const;
  bool PreviewOperatingRule(const FOperatingRule&,FString&) const;
  bool PreviewInvestment(const FInvestmentRequest&,struct FInvestmentQuote&,FString&) const;
@@ -89,6 +90,8 @@ private:
  void AccountingCharge(const FString&,const FString&,int64,int64);int64 AccountingChargeHour(const FString&,const FString&,int64) const;void AccountingPrepaidService(FTransport&);void InitializeAccounting();void AccountingHour(int64);void RefreshAccountingPrices(int64,bool Force=false);void CloseAccounting(int64);bool ValidateAccounting(FString&) const;
  FAccountingPeriod& AccountingPeriod(const FString&);void AccountingPayment(const FString&,const FString&,int64,const FString&);void AccountingSale(const FString&,int64,int64);FAccountingCost AccountingProduction(const FFacility&,int64,int64);
  void AccountingAssetBuy(const FString&,const FString&,const FString&,int64);void AccountingConstruction(const FConstructionProject&);
+ void InitializeBank();void BankHour(int64 Hour);bool ChangeLoan(const FLoanRequest&,FString&);bool BankPayment(const FString&,const FString&,int64,const FString&);void BankHistoryPayment(const FString&,const FString&,int64,const FString&);void SettleLoan(FLoan&);void BankNpc(int64);
+ bool ValidateBank(FString&) const;
  void EconomyHour(int64 Hour);
  void Payroll(int64 Hour);
  void Produce(int64 Hour);

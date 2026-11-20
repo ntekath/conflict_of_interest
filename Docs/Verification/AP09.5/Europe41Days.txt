@@ -1,0 +1,1 @@
+[2026.11.20-22.50.05:997][343]LogAutomationController: 41 Tage: Einlagen 145049433, Kreditschöpfung 100000, Tilgung 50000, Zinsen 767, Banklöhne 200, Bankbetrieb 0 Cent

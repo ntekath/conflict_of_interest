@@ -245,6 +245,7 @@ void UCoIPlayerHUD::RefreshSiteReports()
                DeliveryMoney(L.InternalCreditCents) + TEXT(" / ") + DeliveryMoney(L.InternalDebitCents),
                DeliveryMoney(SiteBook)},
               {1.6f, 1, 1, 1.3f, 1});
+        if(L.CreditCents||L.PrincipalCents||L.InterestCents)Text(Body,TEXT("Finanzierung separat: Kredit +")+DeliveryMoney(L.CreditCents)+TEXT(" · Tilgung −")+DeliveryMoney(L.PrincipalCents)+TEXT(" · Zinsen −")+DeliveryMoney(L.InterestCents),11);
         if (!L.SiteId.IsEmpty())
             Text(Body,
                  TEXT("Standort-Verrechnungssaldo (kein Konzerngewinn): ") +

@@ -2,7 +2,7 @@
 #include "SimCore.h"
 namespace CoISim
 {
-inline constexpr int64 CurrentSaveVersion = 7;
+inline constexpr int64 CurrentSaveVersion = 8;
 
 // Generation is a process-local lifetime token, NEVER persisted or trusted from disk.
 struct FStoredCommand
@@ -13,7 +13,7 @@ struct FStoredCommand
     FMarketOrder Order;
     FTransport Transport;
     FInvestmentRequest Investment;
-    FOperatingRule Rule;FDeliveryRequest Delivery;
+    FOperatingRule Rule;FDeliveryRequest Delivery;FLoanRequest Loan;
     template <class R> void Fields(R &W)
     {
         W(TEXT("Kind"), Kind);
@@ -25,7 +25,7 @@ struct FStoredCommand
         W(TEXT("Order"), Order);
         W(TEXT("Transport"), Transport);
         W(TEXT("Investment"), Investment);
-        W(TEXT("Rule"), Rule);W(TEXT("Delivery"),Delivery);
+        W(TEXT("Loan"),Loan);W(TEXT("Rule"), Rule);W(TEXT("Delivery"),Delivery);
     }
 };
 struct FStoredResult

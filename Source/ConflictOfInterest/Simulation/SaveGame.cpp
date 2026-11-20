@@ -131,7 +131,7 @@ bool FSimulation::SaveGameJson(FString &Json, FString &E, int32 Speed) const
         P.Transport = C.Transport;
         P.Investment = C.Investment;
         P.Rule = C.Rule;
-        P.Delivery = C.Delivery;
+        P.Delivery = C.Delivery;P.Loan=C.Loan;
         D.Pending.Add(P);
     }
     for (const auto &C : Results)
@@ -191,7 +191,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
     int64 LastTarget = -1, LastSeq = -1;
     for (const auto &P : D.Pending)
     {
-        if (P.Kind < 0 || P.Kind > (int64)ECommandKind::Delivery || P.Origin < 0 ||
+        if (P.Kind < 0 || P.Kind > (int64)ECommandKind::Loan || P.Origin < 0 ||
             P.Origin > (int64)ECommandOrigin::Autonomous || P.Sequence <= 0 || P.Sequence > D.LastSequence ||
             Sequences.Contains(P.Sequence) || P.TargetStep <= C.State.Step ||
             P.TargetStep - C.State.Step > C.Scenario.Settings.CommandHorizonSteps || P.TargetStep < LastTarget ||
@@ -214,7 +214,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
         Cmd.Transport = P.Transport;
         Cmd.Investment = P.Investment;
         Cmd.Rule = P.Rule;
-        Cmd.Delivery = P.Delivery;
+        Cmd.Delivery = P.Delivery;Cmd.Loan=P.Loan;
         if (!C.Authorized(Cmd, E))
             return false;
         C.Pending.Add(Cmd);

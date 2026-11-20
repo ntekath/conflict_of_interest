@@ -14996,7 +14996,37 @@
         "ValueCents": 200000,
         "Known": true
       }
-    ]
+    ],
+    "Bank": {
+      "Enabled": true,
+      "NpcEnabled": true,
+      "CityId": "city.nl.1913.zuid_holland",
+      "OperatingRecipientAccountId": "account.company.services",
+      "OpeningCapitalCents": 10000000,
+      "OpeningBackingCents": 155000000,
+      "BaseRateBps": 500,
+      "StartupSpreadBps": 300,
+      "RiskSpreadBps": 200,
+      "YearHours": 8760,
+      "PaymentHours": 168,
+      "MinTermHours": 168,
+      "MaxTermHours": 8736,
+      "MaxLoanCents": 10000000,
+      "StartupLimitCents": 500000,
+      "CollateralPermille": 500,
+      "CapitalLeveragePermille": 4000,
+      "HistoryDays": 14,
+      "CoveragePermille": 1500,
+      "DefaultHours": 720,
+      "MaxLoans": 256,
+      "MaxCompanyLoans": 4,
+      "SpendPermille": 500,
+      "Jobs": 2,
+      "DailyWageCents": 200,
+      "OperatingCentsPerDay": 100,
+      "NpcDecisionHours": 168,
+      "NpcReserveCents": 100000
+    }
   },
   "ContractExamples": {
     "Orders": [],

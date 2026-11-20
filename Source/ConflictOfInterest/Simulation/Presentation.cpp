@@ -110,7 +110,7 @@ bool ParseMarkupInput(const FString& S,int64& Permille){int64 N=0;if(!ParseMoney
 bool IsMarkupField(const FString& Key){return Key==TEXT("markup")||(Key.StartsWith(TEXT("op."))&&Key.EndsWith(TEXT(".markup")));}
 bool IsMoneyField(const FString &Key)
 {
-    return Key == TEXT("price") || Key == TEXT("op.wage") || Key == TEXT("op.budget") ||
+    return Key == TEXT("loan.amount") || Key == TEXT("price") || Key == TEXT("op.wage") || Key == TEXT("op.budget") ||
            Key == TEXT("delivery.price") || Key == TEXT("delivery.freight") ||
            (Key.StartsWith(TEXT("op.")) && (Key.EndsWith(TEXT(".buy")) || Key.EndsWith(TEXT(".sell"))));
 }

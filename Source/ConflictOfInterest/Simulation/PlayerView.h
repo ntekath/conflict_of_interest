@@ -19,6 +19,7 @@ struct FRouteActivity {FString Id,FromCityId,ToCityId;bool Own=false;int64 Activ
 struct FCityPresence {FString CompanyId,Name;bool Headquarters=false,Own=false;int64 Warehouses=0,Facilities=0,PublicVehicles=0;};
 struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FString> Groups;TArray<FCityPresence> Presence;};
 struct FPlayerView {
+  FBankState Bank;int64 BankDeposits=0,BankClaims=0,BankDebt=0,RealAssetBookCents=0;TArray<FLoan> Loans;TArray<FDebtDue> DebtDues;
  TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingPeriod> AccountingPeriods;FCompanyPresentation Company;FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
  TArray<FDeliveryContract> Deliveries;TArray<FDeliverySlot> DeliverySlots;TArray<FSiteLedger> SiteLedgers;TArray<FInternalTransfer> InternalTransfers;
  TArray<FOperatingRule> OperatingRules;TArray<FOperatingStatus> OperatingStatus;
