@@ -50,14 +50,12 @@ FCommand CostTrip(bool Internal = false)
     T.Kg = 10;
     return C;
 }
-FString CostEncode(const FSaveData &D, bool Old = false)
+FString CostEncode(const FSaveData &D)
 {
     FWrite W;
-    W.LegacyAccounting = Old;
     auto Copy = D;
     Copy.Fields(W);
     FFingerprint H;
-    H.LegacyAccounting = Old;
     H.Write(D);
     auto Root = MakeShared<FJsonObject>();
     Root->SetStringField(TEXT("Format"), TEXT("CoI.Save"));
@@ -421,70 +419,8 @@ bool FCostMonth::RunTest(const FString &)
     return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCostMigration, "CoI.Accounting.VersionFiveMigrationAndCorruptionRejection",
-                                 EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-bool FCostMigration::RunTest(const FString &)
-{
-    FString OldJ, NewJ, E, Disk;
-    FCoIGeoMapData G;
-    CostFixture(OldJ, G, true);
-    CostFixture(NewJ, G);
-    FSimulation Old, Target;
-    if (!Old.Load(OldJ, G, E) || !Target.Load(NewJ, G, E))
-        return false;
-    QueueCost(Old, CostTrip(), E);
-    Old.StepOnce();
-    Old.StepOnce();
-    if (!Old.SaveGameJson(Disk, E))
-        return false;
-    FSaveData D;
-    if (!CostDecode(Disk, D, E))
-        return false;
-    D.FormatVersion = D.SimulationVersion = D.DefinitionsVersion = 5;
-    auto Scenario = D.Scenario;
-    Scenario.Settings.Seed = 0;
-    Scenario.PlayerCompanyId.Empty();
-    FFingerprint Hash;
-    Hash.LegacyAccounting = true;
-    Hash.Write(Scenario);
-    D.CompatibilityHash = Hash.Finish();
-    Disk = CostEncode(D, true);
-    int32 Speed = 1;
-    if (!Target.LoadGameJson(Disk, G, Target.GetScenario(), E, Speed))
-    {
-        AddError(E);
-        return false;
-    }
-    TestEqual(TEXT("Migration keeps time"), Target.GetState().EconomyHour, Old.GetState().EconomyHour);
-    TestEqual(TEXT("Existing transit preserved"),
-              Find(Target.GetState().Transports, FString(TEXT("cost.trip")))->Status,
-              Find(Old.GetState().Transports, FString(TEXT("cost.trip")))->Status);
-    for (const auto &A : Old.GetState().Accounts)
-    {
-        TestEqual(TEXT("Money unchanged"), Find(Target.GetState().Accounts, A.Id)->BalanceCents, A.BalanceCents);
-        TestEqual(TEXT("Holds unchanged"), Find(Target.GetState().Accounts, A.Id)->ReservedCents, A.ReservedCents);
-    }
-    for (const auto &I : Old.GetState().Inventories)
-    {
-        const auto *N = Find(Target.GetState().Inventories, I.Id);
-        if (!N)
-            return false;
-        TestEqual(TEXT("Physical amounts unchanged"), N->QuantityKg, I.QuantityKg);
-        TestEqual(TEXT("Existing carrying cost retained"), N->BookValueCents, I.BookValueCents);
-        TestEqual(TEXT("Opening components reconcile"), N->AccountingCost.Total(), N->BookValueCents);
-    }
-    TestEqual(TEXT("No fabricated prior monthly results"), Target.GetState().AccountingStartHour, 2LL);
-    TestTrue(TEXT("Save migrated v6"), Target.SaveGameJson(Disk, E));
-    D = FSaveData();
-    if (!CostDecode(Disk, D, E))
-        return false;
-    D.State.Inventories[0].AccountingCost.Material += 1;
-    const auto Before = Target.Fingerprint();
-    TestFalse(TEXT("Valid checksum but invalid cost breakdown rejected"),
-              Target.LoadGameJson(CostEncode(D), G, Target.GetScenario(), E, Speed));
-    TestEqual(TEXT("Rejected load leaves live world untouched"), Target.Fingerprint(), Before);
-    return true;
-}
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCostCorruption, "CoI.Accounting.CurrentSaveCorruptionRejected", EAutomationTestFlags::EditorContext|EAutomationTestFlags::EngineFilter)
+bool FCostCorruption::RunTest(const FString&){FString J,E,Disk;FCoIGeoMapData G;CostFixture(J,G);FSimulation S;if(!S.Load(J,G,E))return false;S.StepOnce();if(!S.SaveGameJson(Disk,E))return false;FSaveData D;if(!CostDecode(Disk,D,E))return false;D.State.Inventories[0].AccountingCost.Material+=1;const auto Before=S.Fingerprint();int32 Speed=1;TestFalse(TEXT("Invalid current-format costs rejected despite valid checksum"),S.LoadGameJson(CostEncode(D),G,S.GetScenario(),E,Speed));TestEqual(TEXT("Failed load preserves live world"),S.Fingerprint(),Before);return true;}
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCostConfig, "CoI.Accounting.InvalidConfigurationAndStableZeroSalesBasis",
                                  EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -728,73 +664,4 @@ bool FCostPaidWage::RunTest(const FString &)
     return TestTrue(TEXT("Upgrade cost invariants"), S.AuditRuntime(E));
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FCostLegacyWage, "CoI.Accounting.LegacyWeeklyPayrollDoesNotInventNextMonthProfit",
-                                 EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-bool FCostLegacyWage::RunTest(const FString &)
-{
-    FString J, E, NewJ, Disk;
-    FCoIGeoMapData G;
-    CostFixture(NewJ, G, false, [](auto R) {
-        R->GetObjectField(TEXT("Economy"))->SetNumberField(TEXT("PayrollHours"), 168);
-        for (auto X : R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("WarehouseTypes")))
-            if (X->AsObject()->GetStringField(TEXT("Id")) == TEXT("retail.type.food.large"))
-                X->AsObject()->SetNumberField(TEXT("RetailWageCents"), 350);
-        for (auto X : R->GetObjectField(TEXT("Definitions"))->GetArrayField(TEXT("Construction")))
-            if (X->AsObject()->GetStringField(TEXT("Id")) == TEXT("retail.build.food.large"))
-                X->AsObject()->SetNumberField(TEXT("DurationHours"), 3);
-    });
-    TSharedPtr<FJsonObject> Config;
-    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(NewJ), Config);
-    Config->GetObjectField(TEXT("Economy"))->SetBoolField(TEXT("AccountingEnabled"), false);
-    FJsonSerializer::Serialize(Config.ToSharedRef(), TJsonWriterFactory<>::Create(&J));
-    FSimulation Old, Target;
-    if (!Old.Load(J, G, E) || !Target.Load(NewJ, G, E))
-        return false;
-    for (int H = 0; H < 730; ++H)
-        Old.StepOnce();
-    FCommand C;
-    C.Kind = ECommandKind::Invest;
-    C.Investment.Id = TEXT("legacy.weekly.upgrade");
-    C.Investment.OwnerId = TEXT("company.player");
-    C.Investment.CityId = TEXT("city.us.chicago");
-    C.Investment.Action = TEXT("upgrade");
-    C.Investment.DefinitionId = TEXT("retail.build.food.large");
-    C.Investment.TargetId = TEXT("retail.store.chicago.player");
-    QueueCost(Old, C, E);
-    for (int H = 0; H < 5; ++H)
-        Old.StepOnce();
-    TestEqual(TEXT("Legacy upgrade exists"),
-              Find(Old.GetState().Warehouses, FString(TEXT("retail.store.chicago.player")))->TypeId,
-              FString(TEXT("retail.type.food.large")));
-    if (!Old.SaveGameJson(Disk, E))
-        return false;
-    FSaveData D;
-    if (!CostDecode(Disk, D, E))
-        return false;
-    D.FormatVersion = D.SimulationVersion = D.DefinitionsVersion = 5;
-    auto Scenario = D.Scenario;
-    Scenario.Settings.Seed = 0;
-    Scenario.PlayerCompanyId.Empty();
-    FFingerprint Hash;
-    Hash.LegacyAccounting = true;
-    Hash.Write(Scenario);
-    D.CompatibilityHash = Hash.Finish();
-    int32 Speed = 1;
-    if (!Target.LoadGameJson(CostEncode(D, true), G, Target.GetScenario(), E, Speed))
-    {
-        AddError(E);
-        return false;
-    }
-    TestEqual(TEXT("Unknown old paid service wage remains uncertified until its real pay window ends"),
-              Target.GetState().AccountingReliableFromHour, 840LL);
-    for (int H = 735; H < 745; ++H)
-        Target.StepOnce();
-    const auto *February = Target.GetState().AccountingPeriods.FindByPredicate(
-        [](const FAccountingPeriod &P) { return P.ActorId == TEXT("company.player") && P.BeginHour == 744; });
-    if (!February)
-        return false;
-    TestTrue(TEXT("Next calendar month cannot be falsely reported as fully costed"),
-             February->Partial && !February->Known);
-    return TestTrue(TEXT("Migration does not repeat wages or create resources"), Target.AuditRuntime(E));
-}
 #endif

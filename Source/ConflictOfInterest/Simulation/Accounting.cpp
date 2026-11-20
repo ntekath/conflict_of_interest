@@ -101,43 +101,7 @@ void FSimulation::InitializeAccounting()
         I.AccountingCost = {};
         I.AccountingCost.Material = I.BookValueCents;
     }
-    for (auto &E : State.ServiceEmployment)
-    {
-        if (!E.Employment.IsEmpty() && E.PaidUntilHour > State.EconomyHour)
-            State.AccountingReliableFromHour = FMath::Max(State.AccountingReliableFromHour, E.PaidUntilHour);
-        const auto *W = Find(State.Warehouses, E.Id);
-        const auto *T = W ? Find(Scenario.Definitions.WarehouseTypes, W->TypeId) : nullptr;
-        E.AccountingPaidDailyWageCents =
-            T && !T->RetailOffers.IsEmpty() ? T->RetailWageCents : Scenario.Economy.ServiceWageCents;
-    }
     State.AccountingAssets = Scenario.Economy.AccountingOpeningAssets;
-    // Reconstruction uses real completed construction costs; unknown acquired legacy assets stay explicitly unknown.
-    for (const auto &P : State.Projects)
-        if (P.Status == TEXT("complete") && P.TargetId.IsEmpty() && !Find(State.AccountingAssets, P.AssetId))
-            State.AccountingAssets.Add({P.AssetId, P.OwnerId, P.CostCents, true});
-    for (auto &A : State.AccountingAssets)
-    {
-        const auto *W = Find(State.Warehouses, A.Id);
-        const auto *F = Find(State.Facilities, A.Id);
-        const auto *V = Find(State.Vehicles, A.Id);
-        FString Owner = W ? W->OwnerId : F ? F->OwnerId : V ? V->OwnerId : TEXT("");
-        if (Owner != A.OwnerId)
-        {
-            A.OwnerId = Owner;
-            A.Known = false;
-        }
-    }
-    for (const auto &X : State.DeliverySlots)
-        if (auto *J = Find(State.Transports, X.ReturnId))
-            if (J->Status == TEXT("planned"))
-            {
-                const auto *C = Find(State.Deliveries, X.ContractId);
-                if (C && C->BuyerId != J->OwnerId)
-                {
-                    J->AccountingServicePayerId = C->BuyerId;
-                    J->AccountingServiceCents = X.ReturnCostCents;
-                }
-            }
     RefreshAccountingPrices(State.EconomyHour, true);
 }
 void FSimulation::AccountingPayment(const FString &From, const FString &To, int64 Cents, const FString &Reason)

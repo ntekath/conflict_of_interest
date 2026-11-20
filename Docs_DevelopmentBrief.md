@@ -1,3 +1,5 @@
+> **Aktuelle Projektregel (20.11.2026):** Während der Entwicklung keine Save-Migration. Historische Migrationsanforderungen/-nachweise unten gelten nicht mehr als aktueller Auftrag. Nur das aktuelle Save-Format laden, andernfalls neue Partie. Siehe [Projektregeln](AGENTS.md).
+
 # Conflict of Interest – Entwicklungsauftrag und Arbeitspakete
 
 Stand: 19.11.2026. AP01–AP08.6 sind laut Projektinhaber umgesetzt. Der Code wurde hier nicht geprüft. Nächster Auftrag ist AP09.1: Bestandsaufnahme der Wirtschaftsengine. AP09–AP16 sind ausgearbeitete Erstentwürfe zur späteren Verfeinerung durch den Projektinhaber. Keine erneute Implementierung abgeschlossener Pakete. Dieser Plan ersetzt die frühere Folge AP08.7/AP09–AP12.

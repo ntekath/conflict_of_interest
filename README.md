@@ -1,5 +1,7 @@
 # Conflict of Interest
 
+**Entwicklungsregel ab 20.11.2026:** Keine Migration alter Speicherstände. Nur das aktuelle Save-Format wird geladen; bei inkompatiblen Änderungen beginnt eine neue Partie. Verbindliche Regel: [AGENTS.md](AGENTS.md).
+
 Konzeptioneller Neustart: US-Testgebiet, Spielbeginn 01.01.1913. Verbindlicher Entwurf:
 [Entwicklungsauftrag](Docs_DevelopmentBrief.md). Umsetzung derzeit **AP01 bis AP09.4 sowie UI01**. Aktive Karte: Großer-Seen-US-Ausschnitt.
 
@@ -92,4 +94,4 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [UI01](Docs/UI01.md): gemeinsame Snapshot-Kennzahlen, korrekte eigene Mitarbeiter-/Standortzählung, erklärte fehlende Monats-/Bewertungsdaten und einheitliche USD-/Prozent-/Mengenformate. Geldfelder erwarten USD mit maximal zwei Nachkommastellen (ohne Tausendertrennzeichen); interne Buchungen bleiben centgenau. UI02–UI06 folgen getrennt.
 
-[AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. Save-Version **6** migriert geprüfte Version-4/5-Partien. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.
+[AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. Save-Version **6** lädt ausschließlich die aktuelle Version; alte Partien werden während der Entwicklung nicht migriert. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.

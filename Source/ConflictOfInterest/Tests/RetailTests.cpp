@@ -38,13 +38,7 @@ bool RetailFixture(FString &J, FCoIGeoMapData &G, TFunction<void(TSharedPtr<FJso
     FJsonSerializer::Serialize(R.ToSharedRef(), TJsonWriterFactory<>::Create(&J));
     return true;
 }
-template <class T> FString RetailHash(const T &X, bool Legacy = false)
-{
-    FFingerprint H;
-    H.LegacyRetail = Legacy;
-    H.Write(X);
-    return H.Finish();
-}
+
 TSharedPtr<FJsonObject> RetailStock(const FString &Id, const FString &Good, const FString &Owner, const FString &Store,
                                     int64 Kg)
 {
@@ -95,32 +89,7 @@ FCommand RetailCommand(FSimulation &S, ECommandKind K)
     C.CompanyId = S.GetSession().PlayerCompanyId;
     return C;
 }
-FString RetailV4(FSimulation &S, FString &E)
-{
-    FString Disk;
-    if (!S.SaveGameJson(Disk, E))
-        return {};
-    TSharedPtr<FJsonObject> Root;
-    FJsonSerializer::Deserialize(TJsonReaderFactory<>::Create(Disk), Root);
-    FSaveData D;
-    FRead Read{Root->GetObjectField(TEXT("Payload")), E, true};
-    D.Fields(Read);
-    D.FormatVersion = D.SimulationVersion = D.DefinitionsVersion = 4;
-    auto Scenario = D.Scenario;
-    Scenario.Settings.Seed = 0;
-    Scenario.PlayerCompanyId.Empty();
-    D.CompatibilityHash = RetailHash(Scenario, true);
-    FWrite W;
-    W.LegacyRetail = true;
-    D.Fields(W);
-    auto Out = MakeShared<FJsonObject>();
-    Out->SetStringField(TEXT("Format"), TEXT("CoI.Save"));
-    Out->SetStringField(TEXT("Checksum"), RetailHash(D, true));
-    Out->SetObjectField(TEXT("Payload"), W.Object);
-    Disk.Empty();
-    FJsonSerializer::Serialize(Out, TJsonWriterFactory<>::Create(&Disk));
-    return Disk;
-}
+
 } // namespace
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRetailWeights, "CoI.Retail.WeightedPriceQualityAndRealPayments",
                                  EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
@@ -379,82 +348,6 @@ bool FRetailSupply::RunTest(const FString &)
     TestTrue(TEXT("Own producer supplies separate shop through real internal transport"),S.GetState().InternalTransfers.ContainsByPredicate([](const FInternalTransfer& X){return X.ActorId==TEXT("company.luxury")&&X.DestinationId==TEXT("retail.store.detroit.luxury")&&X.Kg>0;}));
     TestTrue(TEXT("Real retail payments over time"),
              Find(S.GetState().CashTotals, FString(TEXT("retail_sale"))) != nullptr);
-    return true;
-}
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRetailMigration, "CoI.Retail.V4MigrationPreservesObligationsAndReplay",
-                                 EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
-bool FRetailMigration::RunTest(const FString &)
-{
-    FString J, E;
-    FCoIGeoMapData G;
-    RetailFixture(J, G, {}, true);
-    FSimulation Old;
-    if (!Old.Load(J, G, E))
-    {
-        AddError(E);
-        return false;
-    }
-    Old.StepOnce();
-    auto C=RetailCommand(Old,ECommandKind::Delivery);auto& R=C.Delivery;R.Id=TEXT("migration.delivery");R.OwnerId=TEXT("company.player");R.Action=TEXT("create");R.Terms.SourceAssetId=TEXT("storage.luxury");R.Terms.DestinationAssetId=TEXT("storage.player");R.Terms.FromCityId=R.Terms.ToCityId=TEXT("city.us.detroit");R.Terms.GoodId=TEXT("good.luxury");R.Terms.VehicleId=TEXT("vehicle.player");R.Terms.Kg=25;R.Terms.StartHour=1;R.Terms.EndHour=73;R.Terms.IntervalHours=24;R.Terms.PriceCentsPerKg=1000;R.Terms.MaxFreightCents=100000;
-    if(!Old.PreviewDelivery(R,E)||!Old.Enqueue(C,E)){AddError(E);return false;}Old.StepOnce();Old.StepOnce();
-    const auto* Moving=Find(Old.GetState().Transports,FString(TEXT("migration.delivery.at.1.out")));if(!TestNotNull(TEXT("Real contracted shipment exists before migration"),Moving))return false;TestEqual(TEXT("Save while contracted cargo is moving"),Moving->Status,FString(TEXT("moving")));
-    FString Disk = RetailV4(Old, E);
-    const auto Before = Old.GetState();
-    RetailFixture(J, G);
-    FSimulation Target;
-    if (!Target.Load(J, G, E))
-    {
-        AddError(E);
-        return false;
-    }
-    int32 Speed = 1;
-    if (!Target.LoadGameJson(Disk, G, Target.GetScenario(), E, Speed))
-    {
-        AddError(E);
-        return false;
-    }
-    for (const auto &A : Before.Accounts)
-        TestEqual(TEXT("Migration preserves actual money"), Find(Target.GetState().Accounts, A.Id)->BalanceCents,
-                  A.BalanceCents);
-    TestEqual(TEXT("Standing delivery contract retained"),RetailHash(Target.GetState().Deliveries),RetailHash(Before.Deliveries));TestEqual(TEXT("Delivery slot and accounting flags retained"),RetailHash(Target.GetState().DeliverySlots),RetailHash(Before.DeliverySlots));
-    TestEqual(TEXT("Physical stock preserved"), RetailHash(Target.GetState().Inventories),
-              RetailHash(Before.Inventories));
-    TestEqual(TEXT("Moving transport and reservations retained"), RetailHash(Target.GetState().Transports),
-              RetailHash(Before.Transports));
-    for (const auto &O : Before.Orders)
-        if (!Find(Before.Groups, O.ActorId))
-            TestEqual(TEXT("B2B order retained exactly"), RetailHash(*Find(Target.GetState().Orders, O.Id)),
-                      RetailHash(O));
-    for (const auto &O : Target.GetState().Orders)
-        if (Find(Target.GetState().Groups, O.ActorId))
-            TestTrue(TEXT("Old household holds released"), O.Status != TEXT("open") && !O.ReservedCents);
-    TestTrue(TEXT("Retail active after migration"), Target.GetScenario().Economy.RetailEnabled);
-    if (!Target.SaveGameJson(Disk, E))
-    {
-        AddError(E);
-        return false;
-    }
-    FSimulation Replay;
-    if (!Replay.LoadGameJson(Disk, G, Target.GetScenario(), E, Speed))
-    {
-        AddError(E);
-        return false;
-    }
-    for (int H = 0; H < 72; ++H)
-    {
-        Target.StepOnce();
-        Replay.StepOnce();
-        if (Target.Fingerprint() != Replay.Fingerprint())
-        {
-            AddError(TEXT("Migrated replay differs"));
-            return false;
-        }
-        if (!Target.AuditRuntime(E))
-        {
-            AddError(E);
-            return false;
-        }
-    }
     return true;
 }
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FRetailBuild, "CoI.Retail.BuildUpgradeAndExplicitPurchase",

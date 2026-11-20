@@ -249,8 +249,9 @@ bool FSaveRejection::RunTest(const FString &)
     Damaged.ReplaceInline(TEXT("CoI.Save"), TEXT("broken"));
     Reject(Damaged, TEXT("Wrong format"));
     Bad = Base;
-    Bad.FormatVersion = 99;
-    Reject(Repack(Bad), TEXT("Unknown version"));
+    for(const int64 OldVersion:{4LL,5LL,99LL}){Bad=Base;Bad.FormatVersion=OldVersion;Reject(Repack(Bad),TEXT("Different save version rejected without migration"));TestTrue(TEXT("Clear new-game instruction"),E.Contains(TEXT("neue Partie")));}
+    Bad=Base;Bad.SimulationVersion=CurrentSaveVersion-1;Reject(Repack(Bad),TEXT("Older simulation version rejected"));
+    Bad=Base;Bad.DefinitionsVersion=CurrentSaveVersion-1;Reject(Repack(Bad),TEXT("Older definitions version rejected"));
     Bad = Base;
     Bad.RandomAlgorithm = TEXT("new-rng");
     Reject(Repack(Bad), TEXT("Unknown RNG"));
