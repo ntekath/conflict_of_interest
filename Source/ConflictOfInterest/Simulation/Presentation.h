@@ -30,6 +30,8 @@ FCompanyPresentation CompanyPresentation(const FState &, const FDefinitions &, c
 
 namespace Display
 {
+// Presentation only: scenario tags remain in source data and tooltips.
+FString Name(const FString& Value);
 FString Number(int64 Value);
 FString Money(int64 Cents);
 FString Quantity(int64 Kg);

@@ -32,6 +32,19 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
+ friend class FMapHUDNavigation;
+ void BuildMapPanels();void RefreshMapPanels();
+ bool AnalysisExpanded=false,DisplayExpanded=false;
+ UPROPERTY() TObjectPtr<UBorder> DisplayOptions;
+ UPROPERTY() TObjectPtr<UBorder> ScenarioHint;
+ UPROPERTY() TObjectPtr<UVerticalBox> AnalysisBody;
+ UPROPERTY() TObjectPtr<UVerticalBox> DisplayBody;
+ UPROPERTY() TObjectPtr<UCoIActionButton> AnalysisToggle;
+ UPROPERTY() TObjectPtr<UCoIActionButton> DisplayToggle;
+ UPROPERTY() TObjectPtr<UCoIActionButton> CityOpenButton;
+ UPROPERTY() TObjectPtr<UCoIActionButton> MarketOpenButton;
+ UPROPERTY() TObjectPtr<UCoIActionButton> StoreOpenButton;
+ UPROPERTY() TObjectPtr<UCoIActionButton> PlanButton;
  void BuildCompanyHeader();void LayoutCompanyHeader(double Width);void RefreshCompanyHeader();void CompanyDetail();
  void OpenPauseMenu();void RefreshPauseMenu();void ClosePauseMenu(bool Resume);bool HeaderAction(const FString&,const FString&);
  UPROPERTY() TObjectPtr<UCanvasPanel> HeaderCanvas;

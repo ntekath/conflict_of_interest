@@ -1,0 +1,28 @@
+Log file: C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Log.txt
+Determining max actions to execute in parallel (6 physical cores, 12 logical cores)
+  Executing up to 6 processes, one per physical core
+Using 'git status' to determine working set for adaptive non-unity build (C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest).
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+Building ConflictOfInterest...
+===== Toolchain Information =====
+Using ISPC compiler (E:\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+Using Visual Studio 14.44.35229 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+[Adaptive Build] Excluded from ConflictOfInterest unity file: MapInterface.cpp, Presentation.cpp, CompanyHeaderTests.cpp, MapHUDTests.cpp, PlayerHeader.cpp, PlayerHUD.cpp, PlayerMapHUD.cpp
+===== End Toolchain Information =====
+Using Unreal Build Accelerator local executor to run 4 action(s)
+  CPU 6 physical cores, 12 logical cores
+  Memory 63.16 GB physical, 25.34 GB/67.16 GB committed
+  UBA Storage capacity 40 GB
+[1/4] Compile [x64] MapHUDTests.cpp [NoUba]
+[2/4] Compile [x64] PlayerHUD.cpp [NoUba]
+[3/4] Link [x64] ConflictOfInterest.exe [NoUba]
+   Bibliothek "C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest.lib" und Objekt "C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest.exp" werden erstellt.
+[4/4] WriteMetadata ConflictOfInterest.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 12.38 seconds
+Output binary: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest.exe
+
+Result: Succeeded
+Total execution time: 13.30 seconds
+Trace written to file C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Trace.uba with size 4.3kb

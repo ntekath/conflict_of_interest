@@ -6,6 +6,7 @@ namespace CoISim
 {
 namespace Display
 {
+FString Name(const FString& Value){FString Out=Value;Out.ReplaceInline(TEXT(" (TEST)"),TEXT(""),ESearchCase::CaseSensitive);return Out;}
 FString Number(int64 V)
 {
     return FText::AsNumber(V, nullptr, FInternationalization::Get().GetCulture(TEXT("de-DE"))).ToString();

@@ -178,10 +178,11 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
  int32 Top=Layer;if(PlayerHUD&&PlayerHUD->KeyboardBlocked())return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);if(!bReady)return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);
  const FLinearColor Gold(1,.78f,.24f),Orange(1,.48f,.08f);const auto Font=FCoreStyle::GetDefaultFontStyle("Bold",12);
  auto Line=[&](TArray<FVector2D> P,FLinearColor Color,float Width){FSlateDrawElement::MakeLines(Out,Top+1,G.ToPaintGeometry(FVector2f(G.GetLocalSize()),FSlateLayoutTransform()),P,ESlateDrawEffect::None,Color,true,Width);};
- // All rings, including islands/holes, follow the original selection ID even after a mode change.
+ // A selected hub also highlights its complete region, including islands and holes.
+ FString HighlightRegion;for(const auto& City:Data.Cities)if(City.Id==Selection.Id)HighlightRegion=City.RegionId;
  auto Highlight=[&](const TArray<FCoIGeoSurface>& Surfaces)
  {
-  for(const auto& S:Surfaces)if(S.Id==Selection.Id)for(const auto& Ring:S.Rings)
+  for(const auto& S:Surfaces)if(S.Id==Selection.Id||S.Id==HighlightRegion)for(const auto& Ring:S.Rings)
   {
    for(int I=1;I<Ring.Num();++I)
    {
@@ -221,13 +222,13 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
   FSlateDrawElement::MakeBox(Out,Top+2,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At))),FCoreStyle::Get().GetBrush("WhiteBrush"),ESlateDrawEffect::None,FLinearColor(.015f,.025f,.035f,.95f));
   FSlateDrawElement::MakeText(Out,Top+3,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At+FVector2D(5,1)))),C.Name,Font,ESlateDrawEffect::None,Selected?Gold:FLinearColor::White);
  }
- if(View!=ECoIMapView::Countries&&Height<12000)for(const auto& R:Data.Regions)
+ if(View!=ECoIMapView::Countries&&MetricLayer!=TEXT("supply")&&MetricLayer!=TEXT("price")&&Height<12000)for(const auto& R:Data.Regions)
  {
   double Largest=0;FVector2D Anchor=FVector2D::ZeroVector;
   for(int I=0;I<R.Triangles.Num();I+=3)
   {auto A=R.Vertices[R.Triangles[I]],B=R.Vertices[R.Triangles[I+1]],C=R.Vertices[R.Triangles[I+2]];double Area=FMath::Abs((B.X-A.X)*(C.Y-A.Y)-(B.Y-A.Y)*(C.X-A.X));if(Area>Largest){Largest=Area;Anchor=(A+B+C)/3;}}
   FVector2D At;if(!Project(Anchor,At))continue;
-  FString Label=R.Name+(View==ECoIMapView::Ownership?TEXT(" | nicht zugewiesen"):(R.bTest?TEXT(" | TEST"):TEXT("")));FVector2D TextSize(Label.Len()*7+12,22);At-=TextSize/2;
+  FString Label=R.Name;FVector2D TextSize(Label.Len()*7+12,22);At-=TextSize/2;
   if(At.X<8||At.Y<8||At.X+TextSize.X>Size.X-8||At.Y+TextSize.Y>Size.Y-8)continue;
   bool Blocked=PlayerHUD?PlayerHUD->OverlayCovered(At,TextSize):(InsidePanel(G.LocalToAbsolute(At))||InsidePanel(G.LocalToAbsolute(At+TextSize)));for(int I=0;I<Occupied.Num();++I)if(CoISelection::Overlaps(At,TextSize,Occupied[I],OccupiedSizes[I])){Blocked=true;break;}if(Blocked)continue;
   Occupied.Add(At);OccupiedSizes.Add(TextSize);
@@ -235,7 +236,7 @@ int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,co
   FSlateDrawElement::MakeText(Out,Top+3,G.ToPaintGeometry(FVector2f(TextSize),FSlateLayoutTransform(FVector2f(At+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Regular",11),ESlateDrawEffect::None,FLinearColor(.75f,.87f,.77f));
  }
 
- if((MetricLayer==TEXT("supply")||MetricLayer==TEXT("price"))&&Simulation&&Simulation->IsReady()){const auto& S=Simulation->GetSnapshot();for(const auto& R:Data.Regions){double Largest=0;FVector2D Anchor=FVector2D::ZeroVector;for(int32 I=0;I<R.Triangles.Num();I+=3){auto A=R.Vertices[R.Triangles[I]],B=R.Vertices[R.Triangles[I+1]],C=R.Vertices[R.Triangles[I+2]];double Area=FMath::Abs((B.X-A.X)*(C.Y-A.Y)-(B.Y-A.Y)*(C.X-A.X));if(Area>Largest){Largest=Area;Anchor=(A+B+C)/3;}}FVector2D P;if(!Project(Anchor,P)||(PlayerHUD?PlayerHUD->OverlayCovered(P):InsidePanel(G.LocalToAbsolute(P))))continue;auto V=CoISim::MetricValue(S.MapDay,R.Id,MetricGood,MetricKind);FString Label=V.Availability==CoISim::EMetricAvailability::NoNeed?TEXT("N · Kein Bedarf"):V.Availability==CoISim::EMetricAvailability::Missing?(S.MapDay.Complete?TEXT("– · Kein Umsatz"):TEXT("– · Keine Tagesdaten")):MetricKind==CoISim::EMapMetric::Price?FString::Printf(TEXT("%.2f USD/kg"),V.Value/100.):FString::Printf(TEXT("%.0f %%"),V.Value);FVector2D Box(Label.Len()*7+12,22);P-=Box/2;if(PlayerHUD&&PlayerHUD->OverlayCovered(P,Box))continue;if(P.X<8||P.Y<8||P.X+Box.X>G.GetLocalSize().X-8||P.Y+Box.Y>G.GetLocalSize().Y-8)continue;FSlateDrawElement::MakeBox(Out,Top+4,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,FLinearColor(.02f,.03f,.04f,.94f));FSlateDrawElement::MakeText(Out,Top+5,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Bold",11),ESlateDrawEffect::None,FLinearColor(.95f,.91f,.8f));}}
+ if((MetricLayer==TEXT("supply")||MetricLayer==TEXT("price"))&&Simulation&&Simulation->IsReady()&&Simulation->GetSnapshot().MapDay.Complete){const auto& S=Simulation->GetSnapshot();for(const auto& R:Data.Regions){double Largest=0;FVector2D Anchor=FVector2D::ZeroVector;for(int32 I=0;I<R.Triangles.Num();I+=3){auto A=R.Vertices[R.Triangles[I]],B=R.Vertices[R.Triangles[I+1]],C=R.Vertices[R.Triangles[I+2]];double Area=FMath::Abs((B.X-A.X)*(C.Y-A.Y)-(B.Y-A.Y)*(C.X-A.X));if(Area>Largest){Largest=Area;Anchor=(A+B+C)/3;}}FVector2D P;if(!Project(Anchor,P)||(PlayerHUD?PlayerHUD->OverlayCovered(P):InsidePanel(G.LocalToAbsolute(P))))continue;auto V=CoISim::MetricValue(S.MapDay,R.Id,MetricGood,MetricKind);FString Label=V.Availability==CoISim::EMetricAvailability::NoNeed?TEXT("N"):V.Availability==CoISim::EMetricAvailability::Missing?TEXT("–"):MetricKind==CoISim::EMapMetric::Price?FString::Printf(TEXT("%.2f USD/kg"),V.Value/100.):FString::Printf(TEXT("%.0f %%"),V.Value);FVector2D Box(Label.Len()*7+12,22);P-=Box/2;bool Covered=PlayerHUD&&PlayerHUD->OverlayCovered(P,Box);for(int32 I=0;I<Occupied.Num();++I)if(CoISelection::Overlaps(P,Box,Occupied[I],OccupiedSizes[I])){Covered=true;break;}if(Covered)continue;Occupied.Add(P);OccupiedSizes.Add(Box);if(P.X<8||P.Y<8||P.X+Box.X>G.GetLocalSize().X-8||P.Y+Box.Y>G.GetLocalSize().Y-8)continue;FSlateDrawElement::MakeBox(Out,Top+4,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,FLinearColor(.02f,.03f,.04f,.94f));FSlateDrawElement::MakeText(Out,Top+5,G.ToPaintGeometry(FVector2f(Box),FSlateLayoutTransform(FVector2f(P+FVector2D(5,1)))),Label,FCoreStyle::GetDefaultFontStyle("Bold",11),ESlateDrawEffect::None,FLinearColor(.95f,.91f,.8f));}}
  return FMath::Max(Top+5,RouteTop);
 }
 
@@ -300,4 +301,4 @@ int32 UCoIMapInterface::PaintRoutes(const FGeometry& G,FSlateWindowElementList& 
  }RoutePaintMicros=(FPlatformTime::Seconds()-Start)*1.e6;return Layer+2;
 }
 
-void UCoIMapInterface::FocusObject(const FString& CityId,const FString& ObjectId){if(const auto* C=Data.Cities.FindByPredicate([&](const FCoIGeoCity& X){return X.Id==CityId;})){if(auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn()))Pawn->FocusCity(C->Position);Selection.Id=ObjectId;RefreshInformation();}}
+void UCoIMapInterface::FocusObject(const FString& CityId,const FString& ObjectId){if(const auto* C=Data.Cities.FindByPredicate([&](const FCoIGeoCity& X){return X.Id==CityId;})){if(auto* Controller=GetOwningPlayer())if(auto* Pawn=Cast<AMapCameraPawn>(Controller->GetPawn()))Pawn->FocusCity(C->Position);Selection.Id=ObjectId;RefreshInformation();}}

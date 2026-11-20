@@ -4,7 +4,7 @@
 
 Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
 Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
-Umgesetzt: **AP01 bis AP09.4, UI01–UI02 und MAP01 bis MAP03**.
+Umgesetzt: **AP01 bis AP09.4, UI01–UI03 und MAP01 bis MAP03**.
 [MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
 Standard ist jetzt das [MAP03-Wirtschaftsszenario Deutschland/Niederlande](Docs/MAP03.md) mit 50 Regionen/Hubs, 150 Haushaltsgruppen und drei konfigurierbaren Startfirmen. Der Großer-Seen-US-Teststand bleibt separat als Regression spielbar.
 
@@ -99,6 +99,8 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [UI01](Docs/UI01.md): gemeinsame Snapshot-Kennzahlen, korrekte eigene Mitarbeiter-/Standortzählung, erklärte fehlende Monats-/Bewertungsdaten und einheitliche USD-/Prozent-/Mengenformate. Geldfelder erwarten USD mit maximal zwei Nachkommastellen (ohne Tausendertrennzeichen); interne Buchungen bleiben centgenau.
 
-[UI02](Docs/UI02.md): responsive Unternehmensleiste mit fünf anklickbaren Kennzahlen, eindeutiger Zeitsteuerung und Pausenmenü für Spielstände sowie lokale VSync-/FPS-Einstellungen. UI03–UI06 folgen getrennt.
+[UI02](Docs/UI02.md): responsive Unternehmensleiste mit fünf anklickbaren Kennzahlen, eindeutiger Zeitsteuerung und Pausenmenü für Spielstände sowie lokale VSync-/FPS-Einstellungen. UI04–UI06 folgen getrennt.
+
+[UI03](Docs/UI03.md): einklappbare Kartenanalyse und Anzeigeoptionen mit Filtererhalt, kompakte Tageslegende, ein kontextbezogenes Auswahlpanel und Region-zu-Stadt-Verknüpfung. Ein Testszenariohinweis ersetzt Dauertexte; UI-Flächen und offene Auswahllisten schützen vor versehentlicher Kartenbedienung.
 
 [AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. Save-Version **6** lädt ausschließlich die aktuelle Version; alte Partien werden während der Entwicklung nicht migriert. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.

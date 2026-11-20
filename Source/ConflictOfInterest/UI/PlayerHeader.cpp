@@ -51,7 +51,7 @@ void UCoIPlayerHUD::LayoutCompanyHeader(double Width)
 void UCoIPlayerHUD::RefreshCompanyHeader()
 {
  const auto& S=Sim->GetSnapshot();const auto& C=S.Player.Company;
- CompanyName->SetText(FText::FromString(S.PlayerName));IdentityButton->SetToolTipText(FText::FromString(S.PlayerName+TEXT("\nUnternehmensübersicht öffnen. Lange Namen sind im Namensfeld scrollbar.")));
+ CompanyName->SetText(FText::FromString(Display::Name(S.PlayerName)));IdentityButton->SetToolTipText(FText::FromString(S.PlayerName+TEXT("\nUnternehmensübersicht öffnen. Lange Namen sind im Namensfeld scrollbar.")));
  const FDisplayMetric* Metrics[]={&C.AvailableMoney,&C.MonthlyResult,&C.Employees,&C.Sites,&C.NetWorth};
  for(int32 I=0;I<5;++I){const auto& M=*Metrics[I];MetricValues[I]->SetText(FText::FromString(M.Display()));MetricButtons[I]->SetToolTipText(FText::FromString(M.Tooltip()+TEXT("\nKlicken: zugehörige Unternehmensdetails öffnen.")));MetricValues[I]->SetColorAndOpacity(M.State!=EDisplayState::Value?Muted:I==1&&M.Value<0?FLinearColor(.95f,.47f,.40f):Paper);Active(MetricButtons[I],View==TEXT("Unternehmensdetails")&&MetricButtons[I]->Action==TEXT("header|")+HeaderDetail);}
  ClockText->SetText(FText::FromString(S.Date+TEXT(" · ")+(Sim->IsPaused()?TEXT("Pausiert"):TEXT("Läuft"))));ClockText->SetToolTipText(FText::FromString(FString::Printf(TEXT("Veröffentlichte Spielzeit · %.1f Simulationsstunden pro realer Sekunde"),Sim->GetDiagnostics().ActualHoursPerSecond)));
