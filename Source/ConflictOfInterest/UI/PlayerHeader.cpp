@@ -1,4 +1,5 @@
-#include "PlayerHUD.h"
+﻿#include "PlayerHUD.h"
+#include "UITheme.h"
 #include "CompanyHeaderLayout.h"
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/SimArchive.h"
@@ -18,7 +19,7 @@
 #include "Styling/CoreStyle.h"
 using namespace CoISim;
 namespace {
-const FLinearColor Brass(.68f,.49f,.24f),Paper(.88f,.85f,.76f),Muted(.58f,.64f,.63f);
+using namespace CoITheme;
 void Active(UCoIActionButton* B,bool On){if(!B)return;auto Style=B->GetStyle();Style.Normal.TintColor=FSlateColor(On?FLinearColor(.32f,.24f,.12f):FLinearColor(.085f,.105f,.11f));B->SetStyle(Style);}
 }
 void UCoIPlayerHUD::BuildCompanyHeader()
@@ -53,7 +54,7 @@ void UCoIPlayerHUD::RefreshCompanyHeader()
  const auto& S=Sim->GetSnapshot();const auto& C=S.Player.Company;
  CompanyName->SetText(FText::FromString(Display::Name(S.PlayerName)));IdentityButton->SetToolTipText(FText::FromString(S.PlayerName+TEXT("\nUnternehmensübersicht öffnen. Lange Namen sind im Namensfeld scrollbar.")));
  const FDisplayMetric* Metrics[]={&C.AvailableMoney,&C.MonthlyResult,&C.Employees,&C.Sites,&C.NetWorth};
- for(int32 I=0;I<5;++I){const auto& M=*Metrics[I];MetricValues[I]->SetText(FText::FromString(M.Display()));MetricButtons[I]->SetToolTipText(FText::FromString(M.Tooltip()+TEXT("\nKlicken: zugehörige Unternehmensdetails öffnen.")));MetricValues[I]->SetColorAndOpacity(M.State!=EDisplayState::Value?Muted:I==1&&M.Value<0?FLinearColor(.95f,.47f,.40f):Paper);Active(MetricButtons[I],View==TEXT("Unternehmensdetails")&&MetricButtons[I]->Action==TEXT("header|")+HeaderDetail);}
+ for(int32 I=0;I<5;++I){const auto& M=*Metrics[I];MetricValues[I]->SetText(FText::FromString(M.Display()));MetricButtons[I]->SetToolTipText(FText::FromString(M.Tooltip()+TEXT("\nKlicken: zugehörige Unternehmensdetails öffnen.")));MetricValues[I]->SetColorAndOpacity(M.State!=EDisplayState::Value?Muted:I==1&&M.Value<0?CoITheme::Loss:Paper);Active(MetricButtons[I],View==TEXT("Unternehmensdetails")&&MetricButtons[I]->Action==TEXT("header|")+HeaderDetail);}
  ClockText->SetText(FText::FromString(S.Date+TEXT(" · ")+(Sim->IsPaused()?TEXT("Pausiert"):TEXT("Läuft"))));ClockText->SetToolTipText(FText::FromString(FString::Printf(TEXT("Veröffentlichte Spielzeit · %.1f Simulationsstunden pro realer Sekunde"),Sim->GetDiagnostics().ActualHoursPerSecond)));
  const int32 Speeds[]={1,4,16};for(int32 I=0;I<3;++I){const bool SelectedSpeed=Sim->GetSpeed()==Speeds[I];Active(SpeedButtons[I],SelectedSpeed);SpeedButtons[I]->SetToolTipText(FText::FromString(FString::Printf(TEXT("%dx Spielzeit%s"),Speeds[I],SelectedSpeed?TEXT(" · ausgewählt"):TEXT(""))));}
  if(auto* Label=Cast<UTextBlock>(PauseButton->GetContent()))Label->SetText(FText::FromString(Sim->IsPaused()?TEXT("Start"):TEXT("Pause")));Active(PauseButton,Sim->IsPaused());Active(MenuButton,!MenuPage.IsEmpty()||ReturnToPause);

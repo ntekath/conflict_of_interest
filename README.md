@@ -1,4 +1,4 @@
-# Conflict of Interest
+﻿# Conflict of Interest
 
 **Entwicklungsregel ab 20.11.2026:** Keine Migration alter Speicherstände. Nur das aktuelle Save-Format wird geladen; bei inkompatiblen Änderungen beginnt eine neue Partie. Verbindliche Regel: [AGENTS.md](AGENTS.md).
 
@@ -110,3 +110,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [UI05](Docs/UI05.md): einklappbare öffentliche Firmentabelle und strukturierte Haushalts-/Konsumdetails auf der vorhandenen Stadtansicht; kompakte Gruppenansicht, klare USD-/Periodenangaben, stabile Auswahl und Sortierung. 92 Tests bestanden, Save-Version 8 unverändert. UI04 bleibt auf ausdrückliche Entscheidung separat offen.
 
 [UI07](Docs/UI07.md): gemeinsames linkes Seitenpanel, kompakter Stadtkopf, schmale Kartenlisten, Zurück mit Kontext/Scroll, geschützte Entwürfe und freie Kartenbedienung; bestehende Markt-/Transport-/Investitionsdialoge erhalten.
+
+[UI06](Docs/UI06.md): gemeinsame Gestaltung, beschriftete Kartenwerte, sichere Snapshotwechsel und durchgängige Bedienprüfung des UI07-Stands. 94 Regressionstests, beide Zielauflösungen plus DPI-Stress, Tabellenmesswerte. Endgültige Gesamtabnahme nach UI08–UI10 wiederholen.

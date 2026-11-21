@@ -120,16 +120,29 @@ void UCoIPlayerHUD::BuildCityHeading()
              TEXT(" · ") + Display::Number(Stores) + TEXT(" Lager · ") + Display::Number(Facilities) +
              TEXT(" Betriebe"),
          12, true);
-    auto* Switch=Row(WorkBox);
-    TArray<TPair<FString,FString>> Hubs;for(const auto& X:P.Cities)Hubs.Add({X.Id,X.Name});
-    auto* HubChoice=Choice(Switch,TEXT("hub.city"),TEXT("Stadt wechseln"),Hubs,CityContext);
+    auto *Switch = Row(WorkBox);
+    TArray<TPair<FString, FString>> Hubs;
+    for (const auto &X : P.Cities)
+        Hubs.Add({X.Id, X.Name});
+    auto *HubChoice = Choice(Switch, TEXT("hub.city"), TEXT("Stadt wechseln"), Hubs, CityContext);
     HubChoice->SetToolTipText(FText::FromString(TEXT("Anderen Stadthub im selben Panel öffnen")));
-    Button(Switch,TEXT("Karte"),TEXT("centerCity"),false,TEXT("Hub in freier Kartenfläche zentrieren"));
-    auto* Tabs=Row(WorkBox);
-    for(const auto& Pair:TArray<TPair<FString,FString>>{{TEXT("Übersicht"),TEXT("Übersicht")},{TEXT("Markt"),TEXT("Markt")},{TEXT("Assets"),TEXT("Eigene Assets")},{TEXT("Investitionen"),TEXT("Investitionen")}}){
-        auto* B=Button(Tabs,Pair.Key,TEXT("cityTab|")+Pair.Value,CityTab==Pair.Value);
-        auto Style=B->GetStyle();Style.NormalPadding=FMargin(6,6);B->SetStyle(Style);
-        CastChecked<UHorizontalBoxSlot>(B->Slot)->SetPadding(FMargin(0,0,4,0));
+    Button(Switch, TEXT("Karte"), TEXT("centerCity"), false, TEXT("Hub in freier Kartenfläche zentrieren"));
+    auto *Tabs = Row(WorkBox);
+    int32 TabIndex=0;
+    for (const auto &Pair : TArray<TPair<FString, FString>>{{TEXT("Übersicht"), TEXT("Übersicht")},
+                                                            {TEXT("Markt"), TEXT("Markt")},
+                                                            {TEXT("Assets"), TEXT("Eigene Assets")},
+                                                            {TEXT("Investitionen"), TEXT("Investitionen")}})
+    {
+        if(TabIndex++==2)Tabs=Row(WorkBox);
+        auto *B = Button(Tabs, Pair.Key, TEXT("cityTab|") + Pair.Value, CityTab == Pair.Value);
+        auto Style = B->GetStyle();
+        Style.NormalPadding = FMargin(6, 6);
+        B->SetStyle(Style);
+        CastChecked<UHorizontalBoxSlot>(B->Slot)->SetPadding(FMargin(0, 0, 4, 0));
+        CastChecked<UHorizontalBoxSlot>(B->Slot)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
     }
-    if(View==TEXT("Märkte"))Button(WorkBox,EntireRegion?TEXT("Ortsfilter: gesamte Region"):TEXT("Ortsfilter: diese Stadt"),TEXT("regionScope"));
+    if (View == TEXT("Märkte"))
+        Button(WorkBox, EntireRegion ? TEXT("Ortsfilter: gesamte Region") : TEXT("Ortsfilter: diese Stadt"),
+               TEXT("regionScope"));
 }

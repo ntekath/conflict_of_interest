@@ -38,6 +38,8 @@ private:
  friend class FSidePanelFlow;friend class FUIEndToEnd;friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
  TMap<FString,FCoICityDetailState> CityDetails;
  bool CompactCityDetails=true;
+ TArray<FString> TableColumns;
+ uint64 TableBuildCount=0;double TableBuildMicros=0,PeakTableBuildMicros=0;
  struct FPanelVisit {FString View,City,Tab,Focus,Header;bool Region=false;TMap<FString,FString> Filters;float Scroll=0;};
  TArray<FPanelVisit> PanelHistory;
  TMap<FString,float> PanelScroll;

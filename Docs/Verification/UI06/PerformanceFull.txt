@@ -1,0 +1,2 @@
+240 paused refresh/tick frames: mean 25.57 us; table builds before/after 13/13
+Latest table build 1546.30 us; peak 7856.60 us. Single local measurement, not a portable benchmark.
