@@ -1,4 +1,4 @@
-#if WITH_DEV_AUTOMATION_TESTS
+﻿#if WITH_DEV_AUTOMATION_TESTS
 #include "Misc/AutomationTest.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
@@ -209,7 +209,7 @@ bool FCityDetailWidgets::RunTest(const FString &)
     TestFalse(TEXT("Household details initially closed"), HUD->CityDetails[City].Population);
     TestFalse(TEXT("Company table initially closed"), HUD->CityDetails[City].Companies);
     HUD->Action(TEXT("cityFold|companies"));
-    TestTrue(TEXT("Public company table has activities"), HasText(TEXT("Tätigkeiten")));
+    TestTrue(TEXT("Public company table has activities"), HasText(TEXT("Firma · Standortrolle · Tätigkeiten · Präsenz")));
     TestFalse(TEXT("Cryptic combined column removed"), HasText(TEXT("Betriebe / öffentliche Lkw")));
     HUD->Action(TEXT("cityCompany|") + CompanyId);
     HUD->WorkScroll->SetScrollOffset(48);
@@ -227,7 +227,7 @@ bool FCityDetailWidgets::RunTest(const FString &)
     for (FVector2D Size : {FVector2D(1280, 720), FVector2D(1920, 1080)})
     {
         HUD->NativeTick(FGeometry::MakeRoot(Size, FSlateLayoutTransform()), 0);
-        TestEqual(TEXT("Responsive detail state follows viewport"), HUD->CompactCityDetails, Size.X < 1700);
+        TestEqual(TEXT("Responsive detail state follows viewport"), HUD->CompactCityDetails, true);
         TestEqual(TEXT("Responsive rebuilding retains group"), HUD->CityDetails[City].GroupId, GroupId);
     }
     // Presentation-only stress cases: never alter simulation companies or accounts.

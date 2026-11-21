@@ -18,7 +18,7 @@ public:
  UPROPERTY(EditAnywhere,Category="Map Camera") double MaximumZoom=22000;
  UPROPERTY(EditAnywhere,Category="Map Camera") double InitialZoom=17000;
  double GetZoomHeight() const{return Height;}
- void FocusCity(FVector2D Position);
+ void FocusCity(FVector2D Position,FVector2D ViewSize=FVector2D::ZeroVector,FVector2D Target=FVector2D::ZeroVector);
  void SetMapBounds(FVector2D Min,FVector2D Max,FVector Center,double OverviewHeight);
 private:
  UPROPERTY() TObjectPtr<UCameraComponent> Camera;

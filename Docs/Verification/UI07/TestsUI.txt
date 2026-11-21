@@ -1,0 +1,22 @@
+Using bundled DotNet SDK version: 10.0 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Mode=ValidatePlatforms -OutputSDKs  -AllPlatforms  -project="C:/Users/Noel Tekath/Documents/GitHub/conflict_of_interest/ConflictOfInterest.uproject" -log="C:/Users/Noel Tekath/Documents/GitHub/conflict_of_interest/Saved/Logs/AutoSDKInfo.txt" -verbose -timestamps
+Log file: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Saved\Logs\AutoSDKInfo.txt
+##PlatformValidate: Win64 VALID 10.0.22621.0
+##PlatformValidate: Mac INVALID 26.1.1
+##PlatformValidate: IOS INVALID 26.1.1
+##PlatformValidate: Android INVALID r27c
+##PlatformValidate: Linux INVALID v26_clang-20.1.8-rockylinux8
+##PlatformValidate: LinuxArm64 INVALID <UNKNOWN>
+##PlatformValidate: TVOS INVALID 26.1.1
+##PlatformValidate: VisionOS INVALID <UNKNOWN>
+Unable to find required SDK version 'MainVersion' for platform LinuxArm64. Check your SDK.json files
+Unable to find required SDK version 'MainVersion' for platform VisionOS. Check your SDK.json files
+Trace written to file C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Trace.uba with size 321b
+[2026.11.21-12.12.08:556][305]LogAutomationController: Display: Test Completed. Result={Success} Name={LiveWidgetsPauseNavigationAndCompanyRestart} Path={CoI.UI02.LiveWidgetsPauseNavigationAndCompanyRestart}
+[2026.11.21-12.12.08:587][307]LogAutomationController: Display: Test Completed. Result={Success} Name={ResponsiveHeaderBounds} Path={CoI.UI02.ResponsiveHeaderBounds}
+[2026.11.21-12.12.08:662][309]LogAutomationController: Display: Test Completed. Result={Success} Name={ContextFiltersNavigationAndMapSpace} Path={CoI.UI03.ContextFiltersNavigationAndMapSpace}
+[2026.11.21-12.12.08:751][312]LogAutomationController: Display: Test Completed. Result={Success} Name={ActualConsumptionProjectionAndPrivatePresence} Path={CoI.UI05.ActualConsumptionProjectionAndPrivatePresence}
+[2026.11.21-12.12.10:837][314]LogAutomationController: Display: Test Completed. Result={Success} Name={LiveFoldSortSelectionAndSnapshotUpdates} Path={CoI.UI05.LiveFoldSortSelectionAndSnapshotUpdates}
+[2026.11.21-12.12.10:868][316]LogAutomationController: Display: Test Completed. Result={Success} Name={PeriodFractionNoNeedAndMissing} Path={CoI.UI05.PeriodFractionNoNeedAndMissing}
+[2026.11.21-12.12.12:871][318]LogAutomationController: Display: Test Completed. Result={Success} Name={DockNavigationDraftAndLiveUpdates} Path={CoI.UI07.DockNavigationDraftAndLiveUpdates}
+Passed 7 tests. Log: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Saved\Logs\AP05_Automation.log

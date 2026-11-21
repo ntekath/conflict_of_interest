@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
@@ -25,6 +25,8 @@ public:
  UPROPERTY() TObjectPtr<class UCoIMapInterface> MapOwner;
  void Action(const FString& Key);void MapSelection(const FString& Id,const FString& Summary=TEXT(""));bool PointerBlocked(FVector2D Absolute) const;bool OverlayCovered(FVector2D Position,FVector2D Size=FVector2D::ZeroVector) const;bool KeyboardBlocked() const;bool Escape();
  bool IsPauseMenuOpen() const {return !MenuPage.IsEmpty();}
+ bool MapObscured() const {return !DialogKind.IsEmpty()||!MenuPage.IsEmpty();}
+ double PanelWidth(double Width) const;
  const FString& CurrentView() const {return View;}
 protected:
  virtual TSharedRef<SWidget> RebuildWidget() override;
@@ -33,9 +35,18 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
- friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
+ friend class FSidePanelFlow;friend class FUIEndToEnd;friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
  TMap<FString,FCoICityDetailState> CityDetails;
  bool CompactCityDetails=true;
+ struct FPanelVisit {FString View,City,Tab,Focus,Header;bool Region=false;TMap<FString,FString> Filters;float Scroll=0;};
+ TArray<FPanelVisit> PanelHistory;
+ TMap<FString,float> PanelScroll;
+ FString PanelKey;
+ bool SwitchingCity=false;
+ bool PanelAction(const FString&,const FString&);
+ FPanelVisit CapturePanel() const;void RestorePanel(const FPanelVisit&);
+ void BuildCityHeading();
+
  void CityCompanies(const CoISim::FCityView&);void CityHouseholds(const CoISim::FCityView&);
  bool CityDetailAction(const FString&,const FString&);
  void CityDataRow(const TArray<FString>&,const TArray<float>&,const FString& Action=TEXT(""),bool Header=false,bool Own=false,bool Selected=false);

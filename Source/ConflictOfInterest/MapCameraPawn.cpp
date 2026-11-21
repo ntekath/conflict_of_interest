@@ -41,4 +41,12 @@ void AMapCameraPawn::Zoom(float Value)
 void AMapCameraPawn::SetMapBounds(FVector2D Min,FVector2D Max,FVector Center,double OverviewHeight)
 {Minimum=Min;Maximum=Max;InitialFocus=Center;InitialZoom=FMath::Clamp(OverviewHeight,MinimumZoom,MaximumZoom);Height=InitialZoom;SetActorLocation(CoICamera::ClampFocus(Center,Min,Max));Camera->SetRelativeLocation(FVector(0,0,Height));}
 
-void AMapCameraPawn::FocusCity(FVector2D Position){SetActorLocation(CoICamera::ClampFocus(FVector(Position.X,Position.Y,0),Minimum,Maximum));Height=FMath::Min(Height,10000.);Camera->SetRelativeLocation(FVector(0,0,Height));}
+void AMapCameraPawn::FocusCity(FVector2D Position,FVector2D ViewSize,FVector2D Target)
+{
+ Height=FMath::Min(Height,10000.);Camera->SetRelativeLocation(FVector(0,0,Height));
+ FVector Focus(Position.X,Position.Y,0);
+ if(ViewSize.X>0&&ViewSize.Y>0){const double WorldPerPixel=2.*Height*FMath::Tan(FMath::DegreesToRadians(27.5))/ViewSize.X;
+ // Camera looks down: screen right is world +Y, screen down is world -X.
+ Focus.Y-=(Target.X-ViewSize.X/2.)*WorldPerPixel;Focus.X+=(Target.Y-ViewSize.Y/2.)*WorldPerPixel;}
+ SetActorLocation(CoICamera::ClampFocus(Focus,Minimum,Maximum));
+}

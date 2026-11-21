@@ -1,4 +1,4 @@
-#include "PlayerHUD.h"
+﻿#include "PlayerHUD.h"
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/CityDetails.h"
 #include "Simulation/SimArchive.h"
@@ -26,12 +26,18 @@ int32 Rank(const FString &B)
 void UCoIPlayerHUD::CityDataRow(const TArray<FString> &Values, const TArray<float> &Weights, const FString &Key,
                                 bool Header, bool Own, bool SelectedRow)
 {
+    if(Header&&!View.IsEmpty()){Text(Body,FString::Join(Values,TEXT(" · ")),11,true);return;}
     auto *Background = WidgetTree->ConstructWidget<UBorder>();
     Background->SetPadding(FMargin(6, 4));
     Background->SetBrushColor(SelectedRow ? FLinearColor(.22f, .19f, .11f)
                               : Own       ? FLinearColor(.13f, .14f, .09f)
                                           : FLinearColor(.045f, .06f, .065f));
     Body->AddChild(Background);
+    if(!View.IsEmpty()&&Values.Num()>2){
+        auto* Card=WidgetTree->ConstructWidget<UVerticalBox>();Background->SetContent(Card);
+        for(int32 I=0;I<Values.Num();++I){if(I==Values.Num()-1&&!Key.IsEmpty())Button(Card,Values[I],Key,SelectedRow);else Text(Card,Values[I],Header?11:12,Header||Own);}
+        return;
+    }
     auto *R = Row(nullptr);
     Background->SetContent(R);
     for (int32 I = 0; I < Values.Num(); ++I)
@@ -101,7 +107,7 @@ void UCoIPlayerHUD::CityCompanies(const FCityView &C)
         Empty(Body, TEXT("Keine öffentlich sichtbare Firmenpräsenz an diesem Hub."));
         return;
     }
-    auto *Sort = Row(Body);
+    auto *Sort = Body.Get();
     Button(Sort, State.NameDescending ? TEXT("Firma Z–A") : TEXT("Firma A–Z"), TEXT("citySort|name"));
     Button(Sort, State.OwnFirst ? TEXT("Eigene Firma zuerst · an") : TEXT("Eigene Firma zuerst"), TEXT("citySort|own"));
     auto Rows = C.Presence;
@@ -114,7 +120,7 @@ void UCoIPlayerHUD::CityCompanies(const FCityView &C)
         return A.CompanyId < B.CompanyId;
     });
     const TArray<float> Widths = {2.5f, 1.3f, 2.2f, 1.3f, 1};
-    CityDataRow({TEXT("Firma"), TEXT("Standortrolle"), TEXT("Tätigkeiten"), TEXT("Präsenz"), TEXT("Auswahl")}, Widths,
+    CityDataRow({TEXT("Firma"), TEXT("Standortrolle"), TEXT("Tätigkeiten"), TEXT("Präsenz")}, Widths,
                 TEXT(""), true);
     for (const auto &X : Rows)
     {
@@ -139,7 +145,7 @@ void UCoIPlayerHUD::CityCompanies(const FCityView &C)
         Explain->SetToolTipText(FText::FromString(TEXT(
             "Lagerstandorte schließen Geschäfts- und Betriebslager ein. Fahrzeuge unterwegs werden keinem Hub "
             "zugerechnet. Private Fremdfahrzeuge, Konten, Warenmengen und Einzelaufträge werden nicht offengelegt.")));
-        auto *Actions = Row(Body);
+        auto *Actions = Body.Get();
         Button(Actions, TEXT("Markt öffnen"), TEXT("cityTab|Markt"));
         if (X.Own)
         {

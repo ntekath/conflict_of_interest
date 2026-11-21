@@ -1,4 +1,4 @@
-#include "MapInterface.h"
+﻿#include "MapInterface.h"
 #include "UI/PlayerHUD.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
@@ -175,7 +175,7 @@ FReply UCoIMapInterface::NativeOnMouseButtonDown(const FGeometry& G,const FPoint
 }
 int32 UCoIMapInterface::NativePaint(const FPaintArgs& Args,const FGeometry& G,const FSlateRect& Cull,FSlateWindowElementList& Out,int32 Layer,const FWidgetStyle& Style,bool Enabled) const
 {
- int32 Top=Layer;if(PlayerHUD&&PlayerHUD->KeyboardBlocked())return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);if(!bReady)return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);
+ int32 Top=Layer;if(PlayerHUD&&PlayerHUD->MapObscured())return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);if(!bReady)return Super::NativePaint(Args,G,Cull,Out,Layer,Style,Enabled);
  const FLinearColor Gold(1,.78f,.24f),Orange(1,.48f,.08f);const auto Font=FCoreStyle::GetDefaultFontStyle("Bold",12);
  auto Line=[&](TArray<FVector2D> P,FLinearColor Color,float Width){FSlateDrawElement::MakeLines(Out,Top+1,G.ToPaintGeometry(FVector2f(G.GetLocalSize()),FSlateLayoutTransform()),P,ESlateDrawEffect::None,Color,true,Width);};
  // A selected hub also highlights its complete region, including islands and holes.
@@ -301,4 +301,4 @@ int32 UCoIMapInterface::PaintRoutes(const FGeometry& G,FSlateWindowElementList& 
  }RoutePaintMicros=(FPlatformTime::Seconds()-Start)*1.e6;return Layer+2;
 }
 
-void UCoIMapInterface::FocusObject(const FString& CityId,const FString& ObjectId){if(const auto* C=Data.Cities.FindByPredicate([&](const FCoIGeoCity& X){return X.Id==CityId;})){if(auto* Controller=GetOwningPlayer())if(auto* Pawn=Cast<AMapCameraPawn>(Controller->GetPawn()))Pawn->FocusCity(C->Position);Selection.Id=ObjectId;RefreshInformation();}}
+void UCoIMapInterface::FocusObject(const FString& CityId,const FString& ObjectId){if(const auto* C=Data.Cities.FindByPredicate([&](const FCoIGeoCity& X){return X.Id==CityId;})){if(auto* Controller=GetOwningPlayer())if(auto* Pawn=Cast<AMapCameraPawn>(Controller->GetPawn())){const auto Size=GetCachedGeometry().GetLocalSize();const double Left=PlayerHUD?PlayerHUD->PanelWidth(Size.X)+32.:0.;Pawn->FocusCity(C->Position,Size,FVector2D((Left+Size.X)/2.,Size.Y*.60));}Selection.Id=ObjectId;RefreshInformation();}}

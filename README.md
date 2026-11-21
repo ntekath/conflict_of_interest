@@ -108,3 +108,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP09.5](Docs/AP09.5.md): gemeinsame Bankbilanz auf vorhandenen Konten, geprüfte Kreditanträge, automatische Tilgung/Zinsen, finanzierte Banklöhne und Betrieb, Rückstände und getrennte Abschreibungen. Save-Version 8 ohne Migration; 89 Tests und ein 41-Tage-Europa-Lauf. Öffentliche Einkommen/Staatshaushalt folgen AP09.5a.
 
 [UI05](Docs/UI05.md): einklappbare öffentliche Firmentabelle und strukturierte Haushalts-/Konsumdetails auf der vorhandenen Stadtansicht; kompakte Gruppenansicht, klare USD-/Periodenangaben, stabile Auswahl und Sortierung. 92 Tests bestanden, Save-Version 8 unverändert. UI04 bleibt auf ausdrückliche Entscheidung separat offen.
+
+[UI07](Docs/UI07.md): gemeinsames linkes Seitenpanel, kompakter Stadtkopf, schmale Kartenlisten, Zurück mit Kontext/Scroll, geschützte Entwürfe und freie Kartenbedienung; bestehende Markt-/Transport-/Investitionsdialoge erhalten.

@@ -27,7 +27,8 @@ Stand: 20.11.2026. AP01–AP08.6 sowie AP09.1–AP09.4 sind laut Projektinhaber 
 | AP15 | Gesamtprüfung und Auslieferung | Entwurf |
 | AP16 | Skalierung und Parallelisierung | Entwurf |
 | MAP01–MAP06 | Eigene Kartenplanung: Deutschland/Niederlande 1913, Verwaltungsregionen, Stadthubs und Wassertransport | Neu; vor geografisch abhängigen Erweiterungen |
-| UI01–UI06 | Eigenes UI-/Kartenkapitel: Kennzahlen, Kartenbedienung, Stadtansicht, Details und Bedienprüfung | Neu; auf vorhandenem UI aufbauend |
+| UI01–UI06 | Bestehendes UI-Kapitel; UI05 laut Projektinhaber umgesetzt, UI06 Gesamtprüfung offen | Vorhandene Funktionen bewahren |
+| UI07–UI10 | Seitliche Panels, Handelsmenü, Kauf-/Transportablauf und Logistikübersicht | Neue Ergänzungen; danach UI06 abschließend prüfen |
 
 **Leseregel:** Die allgemeinen Leitlinien und die neuen AP09–AP16 beschreiben das Zielmodell. AP01–AP08.6 bleiben als Implementierungshistorie erhalten. Ältere Aussagen darin zu direkten Haushaltskäufen, mehreren Städten pro Region, fixer Geldmenge oder noch fehlenden Funktionen sind kein Auftrag, die neue Zielarchitektur zu umgehen. AP09.1 erfasst die tatsächlichen Abweichungen im Code. Paketnummern außerhalb der historischen Abschnitte folgen ausschließlich diesem Inhaltsverzeichnis.
 
@@ -1211,6 +1212,8 @@ Die folgenden Vorgaben präzisieren ältere HUD- und Stadtansichtsvorgaben. Vorh
 
 ### UI05 – Tabellen und aufklappbare Details
 
+**Stand:** Laut Projektinhaber umgesetzt. Bestehende Komponenten für UI07–UI10 wiederverwenden.
+
 **Voraussetzung:** UI04.
 
 **Aufgaben**
@@ -1229,7 +1232,7 @@ Die folgenden Vorgaben präzisieren ältere HUD- und Stadtansichtsvorgaben. Vorh
 
 ### UI06 – Gestaltung und durchgängige Bedienprüfung
 
-**Voraussetzung:** UI02–UI05.
+**Voraussetzung:** UI02–UI05; abschließende Gesamtprüfung nach UI07–UI10 wiederholen.
 
 **Aufgaben**
 - Ruhige dunkle Flächen, warme helle Schrift, sparsame Messingakzente und Firmenfarbe konsistent anwenden; Lesbarkeit vor historischer Dekoration.
@@ -1246,6 +1249,97 @@ Die folgenden Vorgaben präzisieren ältere HUD- und Stadtansichtsvorgaben. Vorh
 - HUD, Stadt und Unternehmensansicht zeigen beim gleichen Snapshot dieselben Werte.
 - Handel, Lieferregeln, Investitionen, Firmenrechte und Save/Load funktionieren nach UI-Umbau.
 - Diagnose bleibt erreichbar, ist aber standardmäßig verborgen; fehlende fachliche Kennzahlen sind dokumentiert.
+
+### UI-Erweiterung vom 21.11.2026 – Seitenpanels und Handel
+
+**Arbeitsstand:** UI05 ist laut Projektinhaber umgesetzt. Bestehende UI01–UI05-Komponenten weiterverwenden; ihren tatsächlichen Code prüfen und nicht erneut vollständig bauen. Nächster neuer Auftrag UI07. Danach UI08 → UI09 → UI10; UI06 abschließend auf das überarbeitete Gesamt-UI anwenden. Wirtschafts- und MAP-Paketnummern bleiben unverändert.
+
+**Neue Layoutregel:** Die Karte bleibt Arbeitsfläche. Stadt und Handel öffnen in einem linken angedockten Hauptpanel unter der oberen Leiste. Sie ersetzen sich, statt mehrere zentrale Fenster zu stapeln. Maximal eine ergänzende Detail-/Auftragsvorschau daneben. Die funktionale Aufteilung der Strategiereferenzen übernehmen, nicht deren fremde Grafiken oder mittelalterliches Thema.
+
+### UI07 – Seitliches Stadtpanel und Fensterführung
+
+**Voraussetzung:** Vorhandene Stadtansicht einschließlich UI05.
+
+**Aufgaben**
+- Zentriertes Stadtfenster durch linkes angedocktes Panel ersetzen. Kopf mit Stadt, Region, eigener Präsenz und Schließen; Tabs Übersicht, Markt, Assets, Investitionen erhalten.
+- Als Startlayout etwa ein Drittel der nutzbaren Breite; bei 1920×1080 z. B. 560–640 px, bei 1280×720 etwa 400–440 px als abstimmbare Testwerte. Keine breiten Tabellen unverändert hineinpressen.
+- Im Panel Kennzahlen kompakt, Listen als Zeilen/Karten mit aufklappbaren Details. Breite Detailtabellen in ergänzendem Panel bzw. Detailansicht, kein permanentes horizontales Scrollen der Übersicht.
+- Eine Hauptpanelverwaltung mit Stadt/Handel/Logistik als Ansichten nutzen. Zurücknavigation erhält Auswahl, Filter und Scrollposition. Maximal ein Detailpanel; neues Detail ersetzt das vorherige.
+- Bestehendes rechtes Auswahlpanel bei geöffnetem Stadtpanel reduzieren/ausblenden, wenn es denselben Inhalt dupliziert. Karte bleibt außerhalb belegter Panelrechtecke bedienbar.
+- Klick auf andere Stadt aktualisiert dasselbe Panel. Ungespeicherten Auftragsentwurf nicht still verwerfen: Entwurf erhalten oder explizit schließen lassen.
+- Kamerazentrierung nutzt die freie Kartenfläche rechts des Panels; Hub darf nicht hinter dem Panel landen. Kein Kamerasprung bei jedem Kennzahlenupdate.
+- Escape schließt erst Unterdetail, dann Hauptpanel; UI-Eingaben blockieren Kartenbedienung nur im passenden Fokus.
+
+**Abnahme**
+- Stadtpanel liegt seitlich und lässt ausgewählten Hub/Region sichtbar.
+- Wechsel zwischen Städten erzeugt kein zusätzliches Fenster und verliert keine bestätigten Aufträge.
+- UI05-Details und alle Markt-/Investitionsaktionen bleiben erreichbar.
+- 1280×720 und 1920×1080 mit langen Namen und vollen Listen visuell geprüft.
+
+### UI08 – Handelsmenü als Einstieg für Geschäfte
+
+**Voraussetzung:** UI07, bestehende Orderbücher und Firmenberechtigungen.
+
+**Aufgaben**
+- Hauptnavigation „Märkte“ zu „Handel“ weiterentwickeln, vorhandene Marktlogik integrieren statt ersetzen.
+- Drei Bereiche: Angebote, Handelsplanung, Laufende Geschäfte. Unterliegende Regionsmärkte, B2B-Regeln und physische Angebotsorte erhalten.
+- Angebote nach Ware, Region/Hub, Anbieter und Menge filtern. Preis, verfügbare Menge, Quellort und Datenstand zeigen; keine globale erfundene Sofortlieferung.
+- Stadtaktion „Markt/Handel öffnen“ übernimmt Ort und Warenauswahl ins gleiche seitliche Handelsmenü.
+- Handelskauf kann eigene Produktion versorgen, Bestände auffüllen oder späteren Weiterverkauf vorbereiten; Weiterverkauf nicht voraussetzen.
+- Laufende Geschäfte verknüpfen bestehende Markt- und Transport-IDs mit Mengen. Zustände abbilden: Auftrag offen, teilweise gekauft, gekauft/Abholung erforderlich, Transport geplant, unterwegs, angekommen, Verkaufsauftrag offen, abgeschlossen; Fehler/Teilmengen sichtbar.
+- Eine neue Handelsvorgangs-ID dient nur der Organisation und erzeugt keinen zweiten Waren-/Geldbestand. Saveformat bei neuem dauerhaften Zustand erweitern, keine Altspielstände migrieren.
+- Normale Ladenverkäufe an Haushalte bleiben eigenständiger Einzelhandel; Handelsmenü ist B2B-/Unternehmensbedienung.
+
+**Abnahme**
+- Spieler findet Angebot, kennt dessen tatsächlichen Ort und beginnt daraus eine Planung.
+- Derselbe Marktauftrag erscheint nicht als zwei unterschiedliche Geschäfte durch mehrfaches Öffnen.
+- Fremde private Aufträge bleiben geschützt. Aktuelle Simulation statt alter Vorschau bestimmt Verfügbarkeit.
+
+### UI09 – Kauf und anschließenden Transport zusammen planen
+
+**Voraussetzung:** UI08 und vorhandener Transportdienst; Wasserangebote nur falls MAP05 bereits umgesetzt.
+
+**Aufgaben**
+- Geführter Ablauf im Handelsmenü: Angebot → Menge → Ziellager/-Asset → eigener oder gemieteter Transport → Kostenübersicht → ausdrückliche Bestätigung.
+- Preislimit/Kaufbedingungen aus vorhandenen Orderbüchern verwenden. Bereits gekaufte Ware nicht neu kaufen; Transportentwurf separat möglich.
+- Vorschau zeigt Warenpreis, Transport/Umschlag, bekannte Lagerkosten, Gesamtausgabe, Ankunft und benötigte Kapazität. Laufende zukünftige Lagerkosten nur als Zeitraumannahme, nicht als garantierter Fixbetrag.
+- Optionalen Weiterverkauf mit unverbindlichem geschätztem Erlös/Ergebnis kennzeichnen. Kein Verkauf fremder oder noch nicht verfügbarer Ware und keine garantierte Marge.
+- Vor Bestätigung Kauf und Transport gemeinsam auf Plausibilität prüfen. Diese Vorschau reserviert nicht automatisch alles und ist kein versprochenes globales atomisches Geschäft.
+- Ausführung über vorhandene validierte Befehle: erst tatsächliche Kaufmenge bestimmen, dann nur erworbene Menge für Transport buchen. Teilfüllungen und asynchrone Bestätigung abbilden.
+- Scheitert Kauf: kein Frachtauftrag. Gelingt Kauf, scheitert danach Transport: Ware und Eigentum bleiben am Quellort, Status „Gekauft – Abholung erforderlich“, Ursache und Aktion „Transport erneut planen“.
+- Transportbuchung selbst weiterhin atomar reservieren: Ware, Zahlung, Fahrzeug/Anbieter und Zielkapazität gemeinsam oder gar nicht. Keine Teilreservierungen nach Ablehnung.
+- Keine automatische Wiederholung des Kaufs beim erneuten Transportversuch. Doppelklick/erneutes Öffnen mit identischer Befehls-ID erzeugt keine Doppelbestellung.
+- Änderungen von Preis, Anbieterangebot oder Lagerkapazität beim laufenden Spiel erneut prüfen und in aktualisierter Vorschau bestätigen lassen, sofern sie die autorisierten Bedingungen überschreiten.
+- Schließen des Plans storniert keine bereits ausgeführten Käufe. Offene tatsächliche Aufträge nur über explizite Stornoaktion ändern.
+- Kaufmenge, Abholstatus und Transportverknüpfungen innerhalb derselben kompatiblen Saveversion speichern.
+
+**Abnahme**
+- Kauf mit Lieferung vom Handelsmenü aus vollständig bedienbar, ohne Quellort/Menge im Transportfenster nochmals abzuschreiben.
+- Kontrollfälle: keine Ware, zu wenig Geld, Teilfüllung, Ziel voll, eigenes Fahrzeug belegt, Fremdanbieter inzwischen ausgebucht.
+- Transportfehler nach Kauf zeigt korrekten verbleibenden Warenbesitz; erneute Planung kauft nichts doppelt.
+- Save/Load zwischen Kauf und Transport bestätigt denselben Abholbedarf, keine zweite Zahlung/Zustellung.
+- Bei keinem Weiterverkaufsplan wird kein scheinbarer Handelsgewinn angezeigt.
+
+### UI10 – Logistikübersicht, Karte und Gesamtintegration
+
+**Voraussetzung:** UI09.
+
+**Aufgaben**
+- Bestehendes Transportmenü als Logistikübersicht erhalten: Flotte, Standort, Auslastung, laufende Lieferungen, Leer-/Rückfahrten und wiederkehrende Verbindungen.
+- Transport bereits eigener Ware und interne Lieferungen bleiben ohne neuen Marktkauf planbar.
+- Handelsvorgang öffnet zugehörigen Transport, Logistik öffnet zugehöriges Geschäft, Quelle/Ziel lässt sich auf der Karte markieren.
+- Im Planungsmodus Route und Start/Ziel als Vorschau visualisieren; kein Simulationsauftrag allein durch Kartenklick. Abgebrochene Vorschau entfernen.
+- Hauptpanelwechsel und Meldungen erhalten Kontext. „Abholung erforderlich“ führt zur konkreten verbleibenden Menge und ihrem Quelllager.
+- Vorhandene Vertrags-/Automatisierungslogik unverändert nutzen. Ein UI-Handelsvorgang darf nicht zusätzlich zu einer Lieferregel dieselbe Ware disponieren.
+- Durchgängige UI06-Abnahme wiederholen: Seitenlayout, Kartenfläche, Unternehmenskontext, Fokus, Fehlermeldungen, Performance und beide Zielauflösungen.
+- Kein historisches Save-Migrationssystem; bei inkompatibler Schemaänderung frische Partie verlangen.
+
+**Abnahme**
+- Standardfall Angebot → Kauf → Lieferung → Lager ist aus Handel heraus erreichbar.
+- Bestandsumlagerung/Leerfahrt bleibt aus Logistik erreichbar, ohne künstlichen Handel.
+- Karte bleibt neben Panels nutzbar; eigene/fremde Datenzugriffe sind korrekt.
+- Wiederkehrende Lieferungen, Investitionen und alle UI05-Details funktionieren nach dem Umbau.
+- UI06 gilt erst nach Prüfung des neuen Layouts und Handelsablaufs als abschließend bestanden.
 
 ## 6. Karte und geografisches Transportmodell – MAP01 bis MAP06
 
