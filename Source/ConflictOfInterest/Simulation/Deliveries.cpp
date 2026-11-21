@@ -16,7 +16,7 @@ const FVehicle *DeliveryVehicle(const FScenario &S, const FState &W, const FDeli
     {
         const auto *C = Find(S.Definitions.Companies, V.OwnerId);
         const auto *T = Find(S.Definitions.VehicleTypes, V.TypeId);
-        if (!T ||
+        if (!T || (T->Mode!=TEXT("truck")||T->TerminalOnly) ||
             (!R.VehicleId.IsEmpty()
                  ? V.Id != R.VehicleId || V.OwnerId != Buyer
                  : !C || C->AccountingOnly || C->DecisionProfile != TEXT("carrier") || V.OwnerId == Buyer) ||

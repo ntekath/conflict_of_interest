@@ -99,6 +99,15 @@ def main():
             stock(item['owner'],item['id'],good,kg)
     for item in config['vehicles']:
         vehicle(item['id'],item['owner'],city(item['home']))
+    water=config['water_service']
+    d['VehicleTypes'].append(water['type'])
+    feeder=copy.deepcopy(next(x for x in d['VehicleTypes'] if x['Mode']=='truck'))
+    feeder.update(Id=water['feeder_type_id'],TerminalOnly=True)
+    d['VehicleTypes'].append(feeder)
+    for v in w['Vehicles']:
+        if v['Id'] in water['feeder_ids']:v['TypeId']=feeder['Id']
+    vehicle(water['ship_id'],water['owner'],city(water['home']))
+    w['Vehicles'][-1]['TypeId']=water['type']['Id']
     for offer in config.get('asset_sales',[]):
         asset=next(x for x in w['Warehouses'] if x['Id']==offer['asset'])
         w['AssetSales'].append(dict(Id=offer['id'],SellerId=asset['OwnerId'],AssetId=asset['Id'],
@@ -109,7 +118,7 @@ def main():
     economy['AccountingOpeningAssets']=[]
     for key,price in [('Warehouses',50000),('Facilities',300000),('Vehicles',200000)]:
         for asset in w[key]:
-            economy['AccountingOpeningAssets'].append(dict(Id=asset['Id'],OwnerId=asset['OwnerId'],ValueCents=price,Known=True))
+            economy['AccountingOpeningAssets'].append(dict(Id=asset['Id'],OwnerId=asset['OwnerId'],ValueCents=config['water_service']['asset_book_cents'] if asset['Id']==config['water_service']['ship_id'] else price,Known=True))
     result=dict(Schema=2,HubSchema=1,Id=geo['scenario']['id'],StartDate='1913-01-01',
         PlayerCompanyId=config['player_company_id'],Currency='USD',BalancingNotice=config['notice'],
         Settings=copy.deepcopy(base['Settings']),Definitions=d,InitialState=w,Economy=economy,

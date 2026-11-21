@@ -305,6 +305,23 @@
     ],
     "VehicleTypes": [
       {
+        "Id": "vehicle_type.port_truck",
+        "Mode": "truck",
+        "CapacityKg": 2000,
+        "SpeedKmPerHour": 20,
+        "CostCentsPerKm": 5,
+        "DailyCostCents": 100,
+        "TerminalOnly": true
+      },
+      {
+        "Id": "vehicle_type.rhine_ship",
+        "Mode": "ship",
+        "CapacityKg": 10000,
+        "SpeedKmPerHour": 10,
+        "CostCentsPerKm": 2,
+        "DailyCostCents": 500
+      },
+      {
         "Id": "vehicle_type.truck",
         "Mode": "truck",
         "CapacityKg": 2000,
@@ -14928,7 +14945,7 @@
         "OwnerId": "company.carrier",
         "CityId": "city.de.1913.rheinprovinz",
         "HomeCityId": "city.de.1913.rheinprovinz",
-        "TypeId": "vehicle_type.truck",
+        "TypeId": "vehicle_type.port_truck",
         "Bound": false,
         "TransportId": "",
         "CostRecipientAccountId": "account.company.services"
@@ -14958,7 +14975,17 @@
         "OwnerId": "company.carrier",
         "CityId": "city.nl.1913.zuid_holland",
         "HomeCityId": "city.nl.1913.zuid_holland",
-        "TypeId": "vehicle_type.truck",
+        "TypeId": "vehicle_type.port_truck",
+        "Bound": false,
+        "TransportId": "",
+        "CostRecipientAccountId": "account.company.services"
+      },
+      {
+        "Id": "vehicle.carrier.rhine",
+        "OwnerId": "company.carrier",
+        "CityId": "city.nl.1913.zuid_holland",
+        "HomeCityId": "city.nl.1913.zuid_holland",
+        "TypeId": "vehicle_type.rhine_ship",
         "Bound": false,
         "TransportId": "",
         "CostRecipientAccountId": "account.company.services"
@@ -16965,6 +16992,12 @@
         "Known": true
       },
       {
+        "Id": "vehicle.carrier.rhine",
+        "OwnerId": "company.carrier",
+        "ValueCents": 2000000,
+        "Known": true
+      },
+      {
         "Id": "vehicle.local.city.de.1913.anhalt",
         "OwnerId": "company.local.city.de.1913.anhalt",
         "ValueCents": 200000,
@@ -17277,6 +17310,7 @@
         "Known": true
       }
     ],
+    "WaterMaxChainHours": 72,
     "Bank": {
       "Enabled": true,
       "NpcEnabled": true,

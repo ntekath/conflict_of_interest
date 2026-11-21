@@ -4,7 +4,7 @@
 
 Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
 Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
-Umgesetzt: **AP01 bis AP09.5, UI01–UI03 sowie UI05–UI08 und MAP01 bis MAP04**.
+Umgesetzt: **AP01 bis AP09.5, UI01–UI03 sowie UI05–UI08 und MAP01 bis MAP05**.
 [MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
 Standard ist jetzt das [MAP03-Wirtschaftsszenario Deutschland/Niederlande](Docs/MAP03.md) mit 50 Regionen/Hubs, 150 Haushaltsgruppen und drei konfigurierbaren Startfirmen. Der Großer-Seen-US-Teststand bleibt separat als Regression spielbar.
 
@@ -103,7 +103,7 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [UI03](Docs/UI03.md): einklappbare Kartenanalyse und Anzeigeoptionen mit Filtererhalt, kompakte Tageslegende, ein kontextbezogenes Auswahlpanel und Region-zu-Stadt-Verknüpfung. Ein Testszenariohinweis ersetzt Dauertexte; UI-Flächen und offene Auswahllisten schützen vor versehentlicher Kartenbedienung.
 
-[AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. AP09.4 führte Save-Version **6** ein; aktuell gilt **Version 10** aus MAP04. Alte Partien werden während der Entwicklung nicht migriert. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.
+[AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. AP09.4 führte Save-Version **6** ein; aktuell gilt **Version 11** aus MAP05. Alte Partien werden während der Entwicklung nicht migriert. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.
 
 [AP09.5](Docs/AP09.5.md): gemeinsame Bankbilanz auf vorhandenen Konten, geprüfte Kreditanträge, automatische Tilgung/Zinsen, finanzierte Banklöhne und Betrieb, Rückstände und getrennte Abschreibungen. Save-Version 8 ohne Migration; 89 Tests und ein 41-Tage-Europa-Lauf. Öffentliche Einkommen/Staatshaushalt folgen AP09.5a.
 
@@ -115,4 +115,6 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 
 [UI08](Docs/UI08.md): Handel mit Angeboten, Filtern, Handelsplanung und laufenden Geschäften. Eindeutige gespeicherte Zuordnung zu realen Marktaufträgen/Transporten, Teilmengen und Abholbedarf. Historischer UI08-Stand: Save-Version **9**, keine Migration. Geführter Kauf mit Lieferung folgt UI09.
 
-[MAP04](Docs/MAP04.md): explizites schiffbares Netz Köln–Rotterdam, Hafen-/Landanschlüsse, historische Zugangsregeln, geografische Kantenlängen und lesende Netzdiagnose. **Aktuelle Save-Version 10**, keine Migration. Spielbare Wasserbuchungen folgen MAP05.
+[MAP04](Docs/MAP04.md): explizites schiffbares Netz Köln–Rotterdam, Hafen-/Landanschlüsse, historische Zugangsregeln, geografische Kantenlängen und lesende Netzdiagnose. Historischer MAP04-Stand: **Save-Version 10**, keine Migration. Spielbare Wasserbuchungen sind in MAP05 integriert.
+
+[MAP05](Docs/MAP05.md): spielbare Wasserkette Rotterdam–Köln mit endlichem Schiff, realen Hafenzubringern, atomaren Reservierungen, Zahlung und tatsächlicher Ankunft. Vorschau und Karte im vorhandenen Menü; **aktuelle Save-Version 11**, keine Migration.

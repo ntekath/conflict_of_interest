@@ -1,4 +1,5 @@
-﻿#include "SimCore.h"
+#include "SimCore.h"
+#include "WaterTransport.h"
 #include "Accounting.h"
 #include "Banking.h"
 #include "CityHubs.h"
@@ -53,7 +54,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateBusinesses(Error)||!ValidateBank(Error)||!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateWaterBookings(Scenario,State,Error)||!ValidateBusinesses(Error)||!ValidateBank(Error)||!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Consumption=0,Transfers=0;for(const auto& Region:State.Regions){if(Region.FinalConsumptionCents<0)return Fail(TEXT("Negative final consumption statistic"));Consumption+=Region.FinalConsumptionCents;Transfers+=Region.NetInventoryTransferCents;}
  const auto* RetailTotal=Find(State.CashTotals,FString(TEXT("retail_sale")));if(Transfers!=0||Consumption!=(RetailTotal?RetailTotal->Cents:0))return Fail(TEXT("Regional economic statistic balance"));
@@ -70,7 +71,7 @@ bool FSimulation::AuditRuntime(FString& Error) const
   if(!Find(State.Warehouses,I.StorageId)){bool Cargo=false;for(const auto& J:State.Transports)if(J.Status==TEXT("moving")&&J.CargoInventoryId==I.Id)Cargo=true;if(!Cargo)return Fail(TEXT("Stock without physical location: ")+I.Id);}
  }
  for(const auto& S:State.Warehouses){int64 Backed=0;for(const auto& J:State.Transports)if((J.Status==TEXT("planned")||J.Status==TEXT("moving"))&&J.DestinationStorageId==S.Id)Backed+=J.ReservedIncomingPoints;for(const auto& R:State.Reservations)if(R.Active&&R.WarehouseId==S.Id)Backed+=R.IncomingPoints;if(Backed!=S.ReservedIncomingPoints)return Fail(TEXT("Unbacked destination hold: ")+S.Id);}
- for(const auto& V:State.Vehicles){int Count=0;for(const auto& J:State.Transports)if((J.Status==TEXT("planned")||J.Status==TEXT("moving"))&&J.VehicleId==V.Id){++Count;if(V.TransportId!=J.Id)return Fail(TEXT("Wrong vehicle job"));}for(const auto& R:State.Reservations)if(R.Active&&R.VehicleId==V.Id)++Count;if(Count>1||V.Bound!=(Count==1))return Fail(TEXT("Vehicle double binding: ")+V.Id);}
+ for(const auto& V:State.Vehicles){int Count=0;for(const auto& J:State.Transports)if((J.Status==TEXT("planned")||J.Status==TEXT("moving"))&&(J.VehicleId==V.Id||J.FeederVehicleIds.Contains(V.Id))){++Count;if(V.TransportId!=J.Id)return Fail(TEXT("Wrong vehicle job"));}for(const auto& R:State.Reservations)if(R.Active&&R.VehicleId==V.Id)++Count;if(Count>1||V.Bound!=(Count==1))return Fail(TEXT("Vehicle double binding: ")+V.Id);}
  Error.Empty();return true;
 }
 void FSimulation::Payroll(int64 Hour)

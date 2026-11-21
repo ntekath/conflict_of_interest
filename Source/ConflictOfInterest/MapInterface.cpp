@@ -1,4 +1,4 @@
-﻿#include "MapInterface.h"
+#include "MapInterface.h"
 #include "UI/PlayerHUD.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
@@ -273,16 +273,16 @@ void UCoIMapInterface::ApplyMetricLayer(){if(!Simulation||!Simulation->IsReady()
 }
 
 void UCoIMapInterface::SetRouteDisplay(const FString& Filter,bool Animate){RouteFilter=Filter;RouteAnimate=Animate;}
-FString UCoIMapInterface::RouteDiagnostics() const{return FString::Printf(TEXT("Routen %d · Lkw %d · Routenzeichnung %.0f µs · Frame %.2f ms"),DrawnRoutes,DrawnTrucks,RoutePaintMicros,FApp::GetDeltaTime()*1000.);}
+FString UCoIMapInterface::RouteDiagnostics() const{return FString::Printf(TEXT("Routen %d · Fahrzeugsymbole %d · Routenzeichnung %.0f µs · Frame %.2f ms"),DrawnRoutes,DrawnTrucks,RoutePaintMicros,FApp::GetDeltaTime()*1000.);}
 TArray<UCoIMapInterface::FScreenRoute> UCoIMapInterface::ScreenRoutes() const {
  TArray<FScreenRoute> Out;if(!Simulation||!Simulation->IsReady()||RouteFilter==TEXT("off"))return Out;
  auto* Pawn=Cast<AMapCameraPawn>(GetOwningPlayer()->GetPawn());const auto& P=Simulation->GetSnapshot().Player;bool Detail=Pawn&&Pawn->GetZoomHeight()<P.Rules.MapRouteDetailZoom;TSet<FString> Bundles;
- for(const auto& R:P.Routes){if(RouteFilter==TEXT("own")&&!R.Own)continue;
+ for(const auto& R:P.Routes){if(!P.Catalog.Network.Id.IsEmpty()&&!R.Water)continue;if(RouteFilter==TEXT("own")&&!R.Own)continue;
   const auto* A=Data.Cities.FindByPredicate([&](const FCoIGeoCity& C){return C.Id==R.FromCityId;});const auto* B=Data.Cities.FindByPredicate([&](const FCoIGeoCity& C){return C.Id==R.ToCityId;});FVector2D From,To;if(!A||!B||!Project(A->Position,From)||!Project(B->Position,To))continue;
   const auto Size=GetCachedGeometry().GetLocalSize();if(FMath::Max(From.X,To.X)<0||FMath::Min(From.X,To.X)>Size.X||FMath::Max(From.Y,To.Y)<0||FMath::Min(From.Y,To.Y)>Size.Y)continue;
   // At overview scale draw one representative per undirected pair and ownership class.
-  FString Key=(R.FromCityId<R.ToCityId?R.FromCityId+R.ToCityId:R.ToCityId+R.FromCityId)+(R.Own?TEXT("own"):TEXT("public"));if(!Detail&&Bundles.Contains(Key))continue;Bundles.Add(Key);
-  FScreenRoute X;X.Id=R.Id;X.Own=R.Own;for(int32 I=0;I<=16;++I)X.Points.Add(CoIRoutes::Point(From,To,I/16.,R.Own,Detail));Out.Add(X);
+  FString Key=(R.FromCityId<R.ToCityId?R.FromCityId+R.ToCityId:R.ToCityId+R.FromCityId)+(R.Own?TEXT("own"):TEXT("public"))+(R.Water?TEXT("water"):TEXT("road"));if(!Detail&&Bundles.Contains(Key))continue;Bundles.Add(Key);
+  FScreenRoute X;X.Id=R.Id;X.Own=R.Own;if(R.Water){for(const auto& Pnt:R.Geometry){FVector2D Screen;if(Project(Data.Project(Pnt.Latitude,Pnt.Longitude),Screen))X.Points.Add(Screen);else {X.Points.Reset();break;}}}else for(int32 I=0;I<=16;++I)X.Points.Add(CoIRoutes::Point(From,To,I/16.,R.Own,Detail));if(X.Points.Num()>=2)Out.Add(X);
  }return Out;
 }
 int32 UCoIMapInterface::PaintRoutes(const FGeometry& G,FSlateWindowElementList& Out,int32 Layer) const {
@@ -292,11 +292,11 @@ int32 UCoIMapInterface::PaintRoutes(const FGeometry& G,FSlateWindowElementList& 
  auto Line=[&](FVector2D A,FVector2D B,FLinearColor C,float W){if(Clear(A,FVector2D::ZeroVector)&&Clear(B,FVector2D::ZeroVector))FSlateDrawElement::MakeLines(Out,Layer,G.ToPaintGeometry(),{A,B},ESlateDrawEffect::None,C,true,W);};
  for(const auto& R:ScreenRoutes()){const auto* DataRow=CoISim::Find(P.Routes,R.Id);if(!DataRow)continue;++DrawnRoutes;FLinearColor Color=R.Id==Selection.Id?FLinearColor(1,.86f,.3f):R.Own?FLinearColor(.9f,.62f,.18f):FLinearColor(.55f,.72f,.8f);
   for(int32 I=1;I<R.Points.Num();++I)Line(R.Points[I-1],R.Points[I],Color,R.Own?3:1.5f);
-  auto Center=R.Points[9],D=(R.Points[10]-R.Points[8]).GetSafeNormal(),N=FVector2D(-D.Y,D.X);Line(Center,Center-D*9+N*5,Color,2);Line(Center,Center-D*9-N*5,Color,2);
+  const int32 Mid=FMath::Clamp(R.Points.Num()/2,1,R.Points.Num()-1);auto Center=R.Points[Mid],D=(R.Points[Mid]-R.Points[Mid-1]).GetSafeNormal(),N=FVector2D(-D.Y,D.X);Line(Center,Center-D*9+N*5,Color,2);Line(Center,Center-D*9-N*5,Color,2);
   int32 Count=CoIRoutes::TruckCount(*DataRow,P.Rules,Zoom,(int32)P.Rules.MapTrucksTotal-DrawnTrucks,RouteAnimate);
-  for(int32 I=0;I<Count;++I){double Phase=CoIRoutes::ExamplePhase(*DataRow,I,P),Index=Phase*16;int32 Seg=FMath::Min(15,(int32)Index);FVector2D At=FMath::Lerp(R.Points[Seg],R.Points[Seg+1],Index-Seg)-FVector2D(8,5);if(!Clear(At,{18,13}))continue;++DrawnTrucks;
+  for(int32 I=0;I<Count;++I){double Phase=CoIRoutes::ExamplePhase(*DataRow,I,P),Index=DataRow->Water?DataRow->WaterBegin+Phase*(DataRow->WaterEnd-DataRow->WaterBegin):Phase*(R.Points.Num()-1);int32 Seg=FMath::Min(R.Points.Num()-2,(int32)Index);FVector2D At=FMath::Lerp(R.Points[Seg],R.Points[Seg+1],Index-Seg)-FVector2D(8,5);if(!Clear(At,{18,13}))continue;++DrawnTrucks;
    auto Box=[&](FVector2D Pos,FVector2D Size,FLinearColor C){FSlateDrawElement::MakeBox(Out,Layer+1,G.ToPaintGeometry(FVector2f(Size),FSlateLayoutTransform(FVector2f(Pos))),FCoreStyle::Get().GetBrush(TEXT("WhiteBrush")),ESlateDrawEffect::None,C);};
-   Box(At,{11,8},Color);Box(At+FVector2D(12,2),{5,6},Color);Box(At+FVector2D(2,8),{4,3},FLinearColor::Black);Box(At+FVector2D(12,8),{4,3},FLinearColor::Black);
+   if(DataRow->Water){Box(At+FVector2D(1,3),{16,6},FLinearColor(.25f,.65f,1.f));Box(At+FVector2D(5,0),{7,4},FLinearColor::White);continue;}Box(At,{11,8},Color);Box(At+FVector2D(12,2),{5,6},Color);Box(At+FVector2D(2,8),{4,3},FLinearColor::Black);Box(At+FVector2D(12,8),{4,3},FLinearColor::Black);
   }
  }RoutePaintMicros=(FPlatformTime::Seconds()-Start)*1.e6;return Layer+2;
 }

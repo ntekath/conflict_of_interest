@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
 #include "SimCore.h"
 namespace CoISim
 {
-inline constexpr int64 CurrentSaveVersion = 10;
+inline constexpr int64 CurrentSaveVersion = 11;
 
 // Generation is a process-local lifetime token, NEVER persisted or trusted from disk.
 struct FStoredCommand

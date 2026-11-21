@@ -1,0 +1,9 @@
+network=network.de_nl.rhine.1913.v1
+kg_booked=100
+kg_delivered=98
+freight_cents=1119
+operation_cents=932
+departure=1
+arrival=51
+feeders=vehicle.carrier.4,vehicle.carrier.1
+state=arrived

@@ -1,6 +1,7 @@
 #include "SaveGame.h"
 #include "SimArchive.h"
 #include "Banking.h"
+#include "WaterTransport.h"
 namespace CoISim
 {
 namespace
@@ -207,9 +208,9 @@ bool FSimulation::ValidateSaveState(FString &E) const
             return Fail(J.Id);
         const auto Terms = TransportTerms(D, Scenario.Economy, J.FromCityId, J.ToCityId, *T, J.OwnerId == J.ProviderId,
                                           0, J.DepartureStep);
-        if (J.RouteKm != Terms.Km || J.OperatingCents != Terms.Operation || J.FreightCents != Terms.Freight ||
+        if (T->Mode!=TEXT("ship")&&(J.RouteKm != Terms.Km || J.OperatingCents != Terms.Operation || J.FreightCents != Terms.Freight ||
             J.CostCents != Terms.Cost || J.ArrivalStep != Terms.Arrival ||
-            J.Service != (J.OwnerId == J.ProviderId ? TEXT("own_truck") : TEXT("rented_truck")))
+            J.Service != (J.OwnerId == J.ProviderId ? TEXT("own_truck") : TEXT("rented_truck"))))
             return Fail(J.Id);
         if (Active && V->OwnerId != J.ProviderId)
             return Fail(J.Id);

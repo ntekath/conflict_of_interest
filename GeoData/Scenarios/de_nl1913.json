@@ -56,8 +56,28 @@
     {"id":"vehicle.carrier.3","owner":"company.carrier","home":"friesland"},
     {"id":"vehicle.carrier.4","owner":"company.carrier","home":"zuid_holland"}
   ],
+  "water_service":{
+    "notice": "MAP05 explicit opening asset, no cash or goods grant. Existing carrier trucks provide local feeder service. All values are gameplay assumptions.",
+    "ship_id": "vehicle.carrier.rhine",
+    "owner": "company.carrier",
+    "home": "zuid_holland",
+    "asset_book_cents": 2000000,
+    "type": {
+      "Id": "vehicle_type.rhine_ship",
+      "Mode": "ship",
+      "CapacityKg": 10000,
+      "SpeedKmPerHour": 10,
+      "CostCentsPerKm": 2,
+      "DailyCostCents": 500
+    },
+    "feeder_ids": [
+      "vehicle.carrier.1",
+      "vehicle.carrier.4"
+    ],
+    "feeder_type_id": "vehicle_type.port_truck"
+  },
   "asset_sales":[{"id":"sale.rotterdam.warehouse","asset":"storage.offer.rotterdam","price_cents":150000}],
-  "economy":{"MaxOpenOrders":2048,"DeliveryMaxRules":256},
+  "economy":{"MaxOpenOrders":2048,"DeliveryMaxRules":256,"WaterMaxChainHours":72},
   "bank": {
     "Enabled": true,
     "NpcEnabled": true,
