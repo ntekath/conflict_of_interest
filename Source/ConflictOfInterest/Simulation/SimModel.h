@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
+#include "TransportNetwork.h"
 // Plain data: no Actor, UObject, widget, world or streaming dependency.
 // All money is USD cents, goods kg, time integral simulation hours.
 namespace CoISim
@@ -56,10 +57,11 @@ struct FSiteLedger {int64 CreditCents=0,PrincipalCents=0,InterestCents=0;FString
 struct FInternalTransfer {FString Id,ActorId,SourceId,DestinationId,GoodId;int64 Kg=0,ValueCents=0;COI_RECORD(COI_F(Id);COI_F(ActorId);COI_F(SourceId);COI_F(DestinationId);COI_F(GoodId);COI_F(Kg);COI_F(ValueCents);)};
 struct FDefinitions
 {
+ FTransportNetwork Network;
  TArray<FConstructionDef> Construction;TArray<FBuildPlotDef> BuildPlots;TArray<FResourceSiteDef> ResourceSites;TArray<FGoodDef> Goods; TArray<FCompanyDef> Companies; TArray<FNeedDef> Needs; TArray<FGroupDef> Groups;
  TArray<FRegionDef> Regions; TArray<FPlaceDef> Places; TArray<FFacilityDef> FacilityTypes;
  TArray<FWarehouseDef> WarehouseTypes; TArray<FVehicleDef> VehicleTypes;
- COI_RECORD(COI_O(Construction);COI_O(BuildPlots);COI_O(ResourceSites);COI_F(Goods);COI_F(Companies);COI_F(Needs);COI_F(Groups);COI_F(Regions);COI_F(Places);COI_F(FacilityTypes);COI_F(WarehouseTypes);COI_F(VehicleTypes);)
+ COI_RECORD(COI_O(Network);COI_O(Construction);COI_O(BuildPlots);COI_O(ResourceSites);COI_F(Goods);COI_F(Companies);COI_F(Needs);COI_F(Groups);COI_F(Regions);COI_F(Places);COI_F(FacilityTypes);COI_F(WarehouseTypes);COI_F(VehicleTypes);)
 };
 struct FAccount { FString Id,OwnerId; int64 BalanceCents=0,ReservedCents=0; COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(BalanceCents);COI_F(ReservedCents);) };
 struct FCompany { FString Id,AccountId; COI_RECORD(COI_F(Id);COI_F(AccountId);) };

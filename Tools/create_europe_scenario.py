@@ -1,5 +1,6 @@
-"""Deterministic MAP03 configuration; no network or runtime grants."""
+"""Deterministic offline MAP03/MAP04 configuration; no runtime grants."""
 import copy
+from build_transport_network import compile_network
 import json
 from pathlib import Path
 
@@ -16,6 +17,7 @@ def main():
     base = read('Content/Simulation/scenario.coisim')
     d = {k: copy.deepcopy(base['Definitions'][k]) for k in
          ['Goods','Needs','FacilityTypes','WarehouseTypes','VehicleTypes','Construction']}
+    d['Network'] = compile_network()
     for key in ['Companies','Groups','Regions','Places','ResourceSites','BuildPlots']:
         d[key] = []
     w = {k: [] for k in ['Accounts','Companies','Groups','Facilities','Warehouses','Vehicles',
@@ -120,7 +122,7 @@ def main():
     assert len({r['MarketId'] for r in d['Regions']})==50
     assert all('city.us.' not in str(x) and 'region.test.' not in str(x) for x in [d,w,economy])
     write('Content/Simulation/scenario.de_nl1913.coisim',result)
-    print('MAP03: 50 hubs, 50 markets, 150 household groups; all opening balances explicit.')
+    print('MAP03/MAP04: 50 hubs, 50 markets, 150 household groups; explicit Rhine pilot network; all opening balances unchanged.')
 
 if __name__=='__main__':
     main()

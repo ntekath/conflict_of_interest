@@ -1,0 +1,14 @@
+{
+  "network_id": "network.de_nl.rhine.1913.v1",
+  "sha256": "81f3af750ee618124be1e210f51ae592014e5fc74f60b32e26d420ddcb312d56",
+  "nodes": 67,
+  "edges": 34,
+  "ports": 2,
+  "enabled_edges": 32,
+  "disabled_candidates": [
+    "candidate.merwede_canal",
+    "candidate.north_sea"
+  ],
+  "water_route_meters": 270917,
+  "money_or_goods_created": 0
+}

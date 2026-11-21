@@ -1,0 +1,2280 @@
+{
+  "Id": "network.de_nl.rhine.1913.v1",
+  "Date": "1913-01-01",
+  "Nodes": [
+    {
+      "Id": "canal.amsterdam",
+      "Name": "merwede_canal",
+      "Kind": "canal",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 52.37,
+        "Longitude": 4.9
+      }
+    },
+    {
+      "Id": "coast.hoek",
+      "Name": "north_sea",
+      "Kind": "coast",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.98,
+        "Longitude": 4.12
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.anhalt",
+      "Name": "Dessau",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.anhalt",
+      "Position": {
+        "Latitude": 51.83864,
+        "Longitude": 12.24555
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.baden",
+      "Name": "Mannheim",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.baden",
+      "Position": {
+        "Latitude": 49.4891,
+        "Longitude": 8.46694
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.bayern",
+      "Name": "München",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.bayern",
+      "Position": {
+        "Latitude": 48.13743,
+        "Longitude": 11.57549
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.berlin",
+      "Name": "Berlin",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.berlin",
+      "Position": {
+        "Latitude": 52.52437,
+        "Longitude": 13.41053
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.brandenburg",
+      "Name": "Charlottenburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.brandenburg",
+      "Position": {
+        "Latitude": 52.51667,
+        "Longitude": 13.28333
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.braunschweig",
+      "Name": "Braunschweig",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.braunschweig",
+      "Position": {
+        "Latitude": 52.26594,
+        "Longitude": 10.52673
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.bremen",
+      "Name": "Bremen",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.bremen",
+      "Position": {
+        "Latitude": 53.07582,
+        "Longitude": 8.80717
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.elsass_lothringen",
+      "Name": "Straßburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.elsass_lothringen",
+      "Position": {
+        "Latitude": 48.58392,
+        "Longitude": 7.74553
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.hamburg",
+      "Name": "Hamburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.hamburg",
+      "Position": {
+        "Latitude": 53.55073,
+        "Longitude": 9.99302
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.hannover",
+      "Name": "Hannover",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.hannover",
+      "Position": {
+        "Latitude": 52.37052,
+        "Longitude": 9.73322
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.hessen",
+      "Name": "Mainz",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.hessen",
+      "Position": {
+        "Latitude": 49.98185,
+        "Longitude": 8.28008
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.hessen_nassau",
+      "Name": "Frankfurt am Main",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.hessen_nassau",
+      "Position": {
+        "Latitude": 50.11552,
+        "Longitude": 8.68417
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.hohenzollern",
+      "Name": "Hechingen",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.hohenzollern",
+      "Position": {
+        "Latitude": 48.35149,
+        "Longitude": 8.96317
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.lippe",
+      "Name": "Detmold",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.lippe",
+      "Position": {
+        "Latitude": 51.93855,
+        "Longitude": 8.87318
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.luebeck",
+      "Name": "Lübeck",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.luebeck",
+      "Position": {
+        "Latitude": 53.86893,
+        "Longitude": 10.68729
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.mecklenburg_schwerin",
+      "Name": "Rostock",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.mecklenburg_schwerin",
+      "Position": {
+        "Latitude": 54.0887,
+        "Longitude": 12.14049
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.mecklenburg_strelitz",
+      "Name": "Neubrandenburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.mecklenburg_strelitz",
+      "Position": {
+        "Latitude": 53.55735,
+        "Longitude": 13.26105
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.oldenburg",
+      "Name": "Oldenburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.oldenburg",
+      "Position": {
+        "Latitude": 53.14039,
+        "Longitude": 8.21479
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.ostpreussen",
+      "Name": "Königsberg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.ostpreussen",
+      "Position": {
+        "Latitude": 54.70639,
+        "Longitude": 20.51102
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.pommern",
+      "Name": "Stettin",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.pommern",
+      "Position": {
+        "Latitude": 53.42894,
+        "Longitude": 14.55302
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.posen",
+      "Name": "Posen",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.posen",
+      "Position": {
+        "Latitude": 52.40692,
+        "Longitude": 16.92993
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.reuss_aeltere_linie",
+      "Name": "Greiz",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.reuss_aeltere_linie",
+      "Position": {
+        "Latitude": 50.65778,
+        "Longitude": 12.19918
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.reuss_juengere_linie",
+      "Name": "Gera",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.reuss_juengere_linie",
+      "Position": {
+        "Latitude": 50.88029,
+        "Longitude": 12.08187
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.rheinprovinz",
+      "Name": "Köln",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.rheinprovinz",
+      "Position": {
+        "Latitude": 50.93333,
+        "Longitude": 6.95
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.sachsen",
+      "Name": "Leipzig",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.sachsen",
+      "Position": {
+        "Latitude": 51.33962,
+        "Longitude": 12.37129
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.sachsen_altenburg",
+      "Name": "Altenburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.sachsen_altenburg",
+      "Position": {
+        "Latitude": 50.98763,
+        "Longitude": 12.43684
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.sachsen_coburg_gotha",
+      "Name": "Gotha",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.sachsen_coburg_gotha",
+      "Position": {
+        "Latitude": 50.94823,
+        "Longitude": 10.70193
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.sachsen_meiningen",
+      "Name": "Sonneberg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.sachsen_meiningen",
+      "Position": {
+        "Latitude": 50.3592,
+        "Longitude": 11.17463
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.sachsen_provinz",
+      "Name": "Magdeburg",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.sachsen_provinz",
+      "Position": {
+        "Latitude": 52.13129,
+        "Longitude": 11.63189
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.sachsen_weimar_eisenach",
+      "Name": "Jena",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.sachsen_weimar_eisenach",
+      "Position": {
+        "Latitude": 50.92878,
+        "Longitude": 11.5899
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.schaumburg_lippe",
+      "Name": "Stadthagen",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.schaumburg_lippe",
+      "Position": {
+        "Latitude": 52.32333,
+        "Longitude": 9.20311
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.schlesien",
+      "Name": "Breslau",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.schlesien",
+      "Position": {
+        "Latitude": 51.10286,
+        "Longitude": 17.03006
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.schleswig_holstein",
+      "Name": "Kiel",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.schleswig_holstein",
+      "Position": {
+        "Latitude": 54.32133,
+        "Longitude": 10.13489
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.schwarzburg_rudolstadt",
+      "Name": "Rudolstadt",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.schwarzburg_rudolstadt",
+      "Position": {
+        "Latitude": 50.72043,
+        "Longitude": 11.34046
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.schwarzburg_sondershausen",
+      "Name": "Arnstadt",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.schwarzburg_sondershausen",
+      "Position": {
+        "Latitude": 50.84048,
+        "Longitude": 10.95198
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.waldeck_pyrmont",
+      "Name": "Wildungen",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.waldeck_pyrmont",
+      "Position": {
+        "Latitude": 51.11963,
+        "Longitude": 9.12475
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.westfalen",
+      "Name": "Dortmund",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.westfalen",
+      "Position": {
+        "Latitude": 51.51494,
+        "Longitude": 7.466
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.westpreussen",
+      "Name": "Danzig",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.westpreussen",
+      "Position": {
+        "Latitude": 54.35227,
+        "Longitude": 18.64912
+      }
+    },
+    {
+      "Id": "hub.city.de.1913.wuerttemberg",
+      "Name": "Stuttgart",
+      "Kind": "hub",
+      "CountryId": "country.de.1913",
+      "HubId": "city.de.1913.wuerttemberg",
+      "Position": {
+        "Latitude": 48.78232,
+        "Longitude": 9.17702
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.drenthe",
+      "Name": "Meppel",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.drenthe",
+      "Position": {
+        "Latitude": 52.69583,
+        "Longitude": 6.19444
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.friesland",
+      "Name": "Leeuwarden",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.friesland",
+      "Position": {
+        "Latitude": 53.20271,
+        "Longitude": 5.80973
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.gelderland",
+      "Name": "Arnhem",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.gelderland",
+      "Position": {
+        "Latitude": 51.98,
+        "Longitude": 5.91111
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.groningen",
+      "Name": "Groningen",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.groningen",
+      "Position": {
+        "Latitude": 53.21917,
+        "Longitude": 6.56667
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.limburg",
+      "Name": "Maastricht",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.limburg",
+      "Position": {
+        "Latitude": 50.84833,
+        "Longitude": 5.68889
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.noord_brabant",
+      "Name": "Tilburg",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.noord_brabant",
+      "Position": {
+        "Latitude": 51.55551,
+        "Longitude": 5.0913
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.noord_holland",
+      "Name": "Amsterdam",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.noord_holland",
+      "Position": {
+        "Latitude": 52.37403,
+        "Longitude": 4.88969
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.overijssel",
+      "Name": "Enschede",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.overijssel",
+      "Position": {
+        "Latitude": 52.21833,
+        "Longitude": 6.89583
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.utrecht",
+      "Name": "Utrecht",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.utrecht",
+      "Position": {
+        "Latitude": 52.09083,
+        "Longitude": 5.12222
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.zeeland",
+      "Name": "Vlissingen",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.zeeland",
+      "Position": {
+        "Latitude": 51.4425,
+        "Longitude": 3.57361
+      }
+    },
+    {
+      "Id": "hub.city.nl.1913.zuid_holland",
+      "Name": "Rotterdam",
+      "Kind": "hub",
+      "CountryId": "country.nl.1913",
+      "HubId": "city.nl.1913.zuid_holland",
+      "Position": {
+        "Latitude": 51.9225,
+        "Longitude": 4.47917
+      }
+    },
+    {
+      "Id": "terminal.koeln",
+      "Name": "Kölner Rheinhafen · Spielterminal",
+      "Kind": "terminal",
+      "CountryId": "country.de.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 50.9252,
+        "Longitude": 6.9685
+      }
+    },
+    {
+      "Id": "terminal.rotterdam",
+      "Name": "Rotterdamer Stadthafen · Spielterminal",
+      "Kind": "terminal",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.916,
+        "Longitude": 4.483
+      }
+    },
+    {
+      "Id": "water.dordrecht",
+      "Name": "dordrecht",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.821,
+        "Longitude": 4.655
+      }
+    },
+    {
+      "Id": "water.duesseldorf",
+      "Name": "duesseldorf",
+      "Kind": "river",
+      "CountryId": "country.de.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.225,
+        "Longitude": 6.767
+      }
+    },
+    {
+      "Id": "water.duisburg",
+      "Name": "duisburg",
+      "Kind": "river",
+      "CountryId": "country.de.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.458,
+        "Longitude": 6.72
+      }
+    },
+    {
+      "Id": "water.emmerich",
+      "Name": "emmerich",
+      "Kind": "river",
+      "CountryId": "country.de.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.833,
+        "Longitude": 6.244
+      }
+    },
+    {
+      "Id": "water.gorinchem",
+      "Name": "gorinchem",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.819,
+        "Longitude": 4.979
+      }
+    },
+    {
+      "Id": "water.kinderdijk",
+      "Name": "kinderdijk",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.89,
+        "Longitude": 4.633
+      }
+    },
+    {
+      "Id": "water.koeln",
+      "Name": "koeln",
+      "Kind": "river",
+      "CountryId": "country.de.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 50.925,
+        "Longitude": 6.972
+      }
+    },
+    {
+      "Id": "water.lobith",
+      "Name": "lobith",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.853,
+        "Longitude": 6.115
+      }
+    },
+    {
+      "Id": "water.nijmegen",
+      "Name": "nijmegen",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.855,
+        "Longitude": 5.859
+      }
+    },
+    {
+      "Id": "water.pannerden",
+      "Name": "pannerden",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.884,
+        "Longitude": 6.009
+      }
+    },
+    {
+      "Id": "water.rotterdam",
+      "Name": "rotterdam",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.915,
+        "Longitude": 4.483
+      }
+    },
+    {
+      "Id": "water.tiel",
+      "Name": "tiel",
+      "Kind": "river",
+      "CountryId": "country.nl.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.881,
+        "Longitude": 5.446
+      }
+    },
+    {
+      "Id": "water.wesel",
+      "Name": "wesel",
+      "Kind": "river",
+      "CountryId": "country.de.1913",
+      "HubId": "",
+      "Position": {
+        "Latitude": 51.657,
+        "Longitude": 6.595
+      }
+    }
+  ],
+  "Edges": [
+    {
+      "Id": "candidate.merwede_canal",
+      "FromId": "water.gorinchem",
+      "ToId": "canal.amsterdam",
+      "Mode": "canal",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": false,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 61506,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.819,
+          "Longitude": 4.979
+        },
+        {
+          "Latitude": 52.37,
+          "Longitude": 4.9
+        }
+      ]
+    },
+    {
+      "Id": "candidate.north_sea",
+      "FromId": "water.rotterdam",
+      "ToId": "coast.hoek",
+      "Mode": "coast",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "",
+      "Enabled": false,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 25909,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.915,
+          "Longitude": 4.483
+        },
+        {
+          "Latitude": 51.98,
+          "Longitude": 4.12
+        }
+      ]
+    },
+    {
+      "Id": "port.koeln.feeder.back",
+      "FromId": "terminal.koeln",
+      "ToId": "hub.city.de.1913.rheinprovinz",
+      "Mode": "road",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.cologne",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 1593,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 20000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 35,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 50.9252,
+          "Longitude": 6.9685
+        },
+        {
+          "Latitude": 50.93,
+          "Longitude": 6.96
+        },
+        {
+          "Latitude": 50.93333,
+          "Longitude": 6.95
+        }
+      ]
+    },
+    {
+      "Id": "port.koeln.feeder.out",
+      "FromId": "hub.city.de.1913.rheinprovinz",
+      "ToId": "terminal.koeln",
+      "Mode": "road",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.cologne",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 1593,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 20000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 35,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 50.93333,
+          "Longitude": 6.95
+        },
+        {
+          "Latitude": 50.93,
+          "Longitude": 6.96
+        },
+        {
+          "Latitude": 50.9252,
+          "Longitude": 6.9685
+        }
+      ]
+    },
+    {
+      "Id": "port.koeln.load",
+      "FromId": "terminal.koeln",
+      "ToId": "water.koeln",
+      "Mode": "transfer",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.cologne",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 0,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 0,
+      "FixedMinutes": 120,
+      "FixedCents": 50,
+      "CentsPerKm": 0,
+      "CentsPerKg": 1,
+      "Geometry": [
+        {
+          "Latitude": 50.9252,
+          "Longitude": 6.9685
+        },
+        {
+          "Latitude": 50.925,
+          "Longitude": 6.972
+        }
+      ]
+    },
+    {
+      "Id": "port.koeln.unload",
+      "FromId": "water.koeln",
+      "ToId": "terminal.koeln",
+      "Mode": "transfer",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.cologne",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 0,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 0,
+      "FixedMinutes": 120,
+      "FixedCents": 50,
+      "CentsPerKm": 0,
+      "CentsPerKg": 1,
+      "Geometry": [
+        {
+          "Latitude": 50.925,
+          "Longitude": 6.972
+        },
+        {
+          "Latitude": 50.9252,
+          "Longitude": 6.9685
+        }
+      ]
+    },
+    {
+      "Id": "port.rotterdam.feeder.back",
+      "FromId": "terminal.rotterdam",
+      "ToId": "hub.city.nl.1913.zuid_holland",
+      "Mode": "road",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rotterdam",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 786,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 20000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 35,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.916,
+          "Longitude": 4.483
+        },
+        {
+          "Latitude": 51.919,
+          "Longitude": 4.48
+        },
+        {
+          "Latitude": 51.9225,
+          "Longitude": 4.47917
+        }
+      ]
+    },
+    {
+      "Id": "port.rotterdam.feeder.out",
+      "FromId": "hub.city.nl.1913.zuid_holland",
+      "ToId": "terminal.rotterdam",
+      "Mode": "road",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rotterdam",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 786,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 20000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 35,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.9225,
+          "Longitude": 4.47917
+        },
+        {
+          "Latitude": 51.919,
+          "Longitude": 4.48
+        },
+        {
+          "Latitude": 51.916,
+          "Longitude": 4.483
+        }
+      ]
+    },
+    {
+      "Id": "port.rotterdam.load",
+      "FromId": "terminal.rotterdam",
+      "ToId": "water.rotterdam",
+      "Mode": "transfer",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rotterdam",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 0,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 0,
+      "FixedMinutes": 120,
+      "FixedCents": 50,
+      "CentsPerKm": 0,
+      "CentsPerKg": 1,
+      "Geometry": [
+        {
+          "Latitude": 51.916,
+          "Longitude": 4.483
+        },
+        {
+          "Latitude": 51.915,
+          "Longitude": 4.483
+        }
+      ]
+    },
+    {
+      "Id": "port.rotterdam.unload",
+      "FromId": "water.rotterdam",
+      "ToId": "terminal.rotterdam",
+      "Mode": "transfer",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rotterdam",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 0,
+      "CapacityKg": 10000,
+      "SpeedMetersHour": 0,
+      "FixedMinutes": 120,
+      "FixedCents": 50,
+      "CentsPerKm": 0,
+      "CentsPerKg": 1,
+      "Geometry": [
+        {
+          "Latitude": 51.915,
+          "Longitude": 4.483
+        },
+        {
+          "Latitude": 51.916,
+          "Longitude": 4.483
+        }
+      ]
+    },
+    {
+      "Id": "reach.dordrecht.kinderdijk.down",
+      "FromId": "water.dordrecht",
+      "ToId": "water.kinderdijk",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 8304,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.821,
+          "Longitude": 4.655
+        },
+        {
+          "Latitude": 51.84,
+          "Longitude": 4.66
+        },
+        {
+          "Latitude": 51.86,
+          "Longitude": 4.66
+        },
+        {
+          "Latitude": 51.88,
+          "Longitude": 4.65
+        },
+        {
+          "Latitude": 51.89,
+          "Longitude": 4.633
+        }
+      ]
+    },
+    {
+      "Id": "reach.dordrecht.kinderdijk.up",
+      "FromId": "water.kinderdijk",
+      "ToId": "water.dordrecht",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 8304,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.89,
+          "Longitude": 4.633
+        },
+        {
+          "Latitude": 51.88,
+          "Longitude": 4.65
+        },
+        {
+          "Latitude": 51.86,
+          "Longitude": 4.66
+        },
+        {
+          "Latitude": 51.84,
+          "Longitude": 4.66
+        },
+        {
+          "Latitude": 51.821,
+          "Longitude": 4.655
+        }
+      ]
+    },
+    {
+      "Id": "reach.duesseldorf.duisburg.down",
+      "FromId": "water.duesseldorf",
+      "ToId": "water.duisburg",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 31507,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.225,
+          "Longitude": 6.767
+        },
+        {
+          "Latitude": 51.26,
+          "Longitude": 6.74
+        },
+        {
+          "Latitude": 51.28,
+          "Longitude": 6.69
+        },
+        {
+          "Latitude": 51.31,
+          "Longitude": 6.7
+        },
+        {
+          "Latitude": 51.34,
+          "Longitude": 6.66
+        },
+        {
+          "Latitude": 51.38,
+          "Longitude": 6.73
+        },
+        {
+          "Latitude": 51.41,
+          "Longitude": 6.73
+        },
+        {
+          "Latitude": 51.458,
+          "Longitude": 6.72
+        }
+      ]
+    },
+    {
+      "Id": "reach.duesseldorf.duisburg.up",
+      "FromId": "water.duisburg",
+      "ToId": "water.duesseldorf",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 31507,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.458,
+          "Longitude": 6.72
+        },
+        {
+          "Latitude": 51.41,
+          "Longitude": 6.73
+        },
+        {
+          "Latitude": 51.38,
+          "Longitude": 6.73
+        },
+        {
+          "Latitude": 51.34,
+          "Longitude": 6.66
+        },
+        {
+          "Latitude": 51.31,
+          "Longitude": 6.7
+        },
+        {
+          "Latitude": 51.28,
+          "Longitude": 6.69
+        },
+        {
+          "Latitude": 51.26,
+          "Longitude": 6.74
+        },
+        {
+          "Latitude": 51.225,
+          "Longitude": 6.767
+        }
+      ]
+    },
+    {
+      "Id": "reach.duisburg.wesel.down",
+      "FromId": "water.duisburg",
+      "ToId": "water.wesel",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 27795,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.458,
+          "Longitude": 6.72
+        },
+        {
+          "Latitude": 51.49,
+          "Longitude": 6.72
+        },
+        {
+          "Latitude": 51.51,
+          "Longitude": 6.67
+        },
+        {
+          "Latitude": 51.54,
+          "Longitude": 6.68
+        },
+        {
+          "Latitude": 51.57,
+          "Longitude": 6.62
+        },
+        {
+          "Latitude": 51.61,
+          "Longitude": 6.65
+        },
+        {
+          "Latitude": 51.64,
+          "Longitude": 6.61
+        },
+        {
+          "Latitude": 51.657,
+          "Longitude": 6.595
+        }
+      ]
+    },
+    {
+      "Id": "reach.duisburg.wesel.up",
+      "FromId": "water.wesel",
+      "ToId": "water.duisburg",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 27795,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.657,
+          "Longitude": 6.595
+        },
+        {
+          "Latitude": 51.64,
+          "Longitude": 6.61
+        },
+        {
+          "Latitude": 51.61,
+          "Longitude": 6.65
+        },
+        {
+          "Latitude": 51.57,
+          "Longitude": 6.62
+        },
+        {
+          "Latitude": 51.54,
+          "Longitude": 6.68
+        },
+        {
+          "Latitude": 51.51,
+          "Longitude": 6.67
+        },
+        {
+          "Latitude": 51.49,
+          "Longitude": 6.72
+        },
+        {
+          "Latitude": 51.458,
+          "Longitude": 6.72
+        }
+      ]
+    },
+    {
+      "Id": "reach.emmerich.lobith.down",
+      "FromId": "water.emmerich",
+      "ToId": "water.lobith",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 9407,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.833,
+          "Longitude": 6.244
+        },
+        {
+          "Latitude": 51.848,
+          "Longitude": 6.2
+        },
+        {
+          "Latitude": 51.855,
+          "Longitude": 6.16
+        },
+        {
+          "Latitude": 51.853,
+          "Longitude": 6.115
+        }
+      ]
+    },
+    {
+      "Id": "reach.emmerich.lobith.up",
+      "FromId": "water.lobith",
+      "ToId": "water.emmerich",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 9407,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.853,
+          "Longitude": 6.115
+        },
+        {
+          "Latitude": 51.855,
+          "Longitude": 6.16
+        },
+        {
+          "Latitude": 51.848,
+          "Longitude": 6.2
+        },
+        {
+          "Latitude": 51.833,
+          "Longitude": 6.244
+        }
+      ]
+    },
+    {
+      "Id": "reach.gorinchem.dordrecht.down",
+      "FromId": "water.gorinchem",
+      "ToId": "water.dordrecht",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 22512,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.819,
+          "Longitude": 4.979
+        },
+        {
+          "Latitude": 51.823,
+          "Longitude": 4.91
+        },
+        {
+          "Latitude": 51.825,
+          "Longitude": 4.86
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 4.79
+        },
+        {
+          "Latitude": 51.827,
+          "Longitude": 4.73
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 4.69
+        },
+        {
+          "Latitude": 51.821,
+          "Longitude": 4.655
+        }
+      ]
+    },
+    {
+      "Id": "reach.gorinchem.dordrecht.up",
+      "FromId": "water.dordrecht",
+      "ToId": "water.gorinchem",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 22512,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.821,
+          "Longitude": 4.655
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 4.69
+        },
+        {
+          "Latitude": 51.827,
+          "Longitude": 4.73
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 4.79
+        },
+        {
+          "Latitude": 51.825,
+          "Longitude": 4.86
+        },
+        {
+          "Latitude": 51.823,
+          "Longitude": 4.91
+        },
+        {
+          "Latitude": 51.819,
+          "Longitude": 4.979
+        }
+      ]
+    },
+    {
+      "Id": "reach.kinderdijk.rotterdam.down",
+      "FromId": "water.kinderdijk",
+      "ToId": "water.rotterdam",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 10820,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.89,
+          "Longitude": 4.633
+        },
+        {
+          "Latitude": 51.891,
+          "Longitude": 4.6
+        },
+        {
+          "Latitude": 51.899,
+          "Longitude": 4.57
+        },
+        {
+          "Latitude": 51.909,
+          "Longitude": 4.54
+        },
+        {
+          "Latitude": 51.913,
+          "Longitude": 4.51
+        },
+        {
+          "Latitude": 51.915,
+          "Longitude": 4.483
+        }
+      ]
+    },
+    {
+      "Id": "reach.kinderdijk.rotterdam.up",
+      "FromId": "water.rotterdam",
+      "ToId": "water.kinderdijk",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 10820,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.915,
+          "Longitude": 4.483
+        },
+        {
+          "Latitude": 51.913,
+          "Longitude": 4.51
+        },
+        {
+          "Latitude": 51.909,
+          "Longitude": 4.54
+        },
+        {
+          "Latitude": 51.899,
+          "Longitude": 4.57
+        },
+        {
+          "Latitude": 51.891,
+          "Longitude": 4.6
+        },
+        {
+          "Latitude": 51.89,
+          "Longitude": 4.633
+        }
+      ]
+    },
+    {
+      "Id": "reach.koeln.duesseldorf.down",
+      "FromId": "water.koeln",
+      "ToId": "water.duesseldorf",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 42937,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 50.925,
+          "Longitude": 6.972
+        },
+        {
+          "Latitude": 50.96,
+          "Longitude": 6.99
+        },
+        {
+          "Latitude": 50.99,
+          "Longitude": 6.96
+        },
+        {
+          "Latitude": 51.025,
+          "Longitude": 6.98
+        },
+        {
+          "Latitude": 51.06,
+          "Longitude": 6.91
+        },
+        {
+          "Latitude": 51.1,
+          "Longitude": 6.88
+        },
+        {
+          "Latitude": 51.13,
+          "Longitude": 6.81
+        },
+        {
+          "Latitude": 51.17,
+          "Longitude": 6.85
+        },
+        {
+          "Latitude": 51.2,
+          "Longitude": 6.8
+        },
+        {
+          "Latitude": 51.225,
+          "Longitude": 6.767
+        }
+      ]
+    },
+    {
+      "Id": "reach.koeln.duesseldorf.up",
+      "FromId": "water.duesseldorf",
+      "ToId": "water.koeln",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 42937,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.225,
+          "Longitude": 6.767
+        },
+        {
+          "Latitude": 51.2,
+          "Longitude": 6.8
+        },
+        {
+          "Latitude": 51.17,
+          "Longitude": 6.85
+        },
+        {
+          "Latitude": 51.13,
+          "Longitude": 6.81
+        },
+        {
+          "Latitude": 51.1,
+          "Longitude": 6.88
+        },
+        {
+          "Latitude": 51.06,
+          "Longitude": 6.91
+        },
+        {
+          "Latitude": 51.025,
+          "Longitude": 6.98
+        },
+        {
+          "Latitude": 50.99,
+          "Longitude": 6.96
+        },
+        {
+          "Latitude": 50.96,
+          "Longitude": 6.99
+        },
+        {
+          "Latitude": 50.925,
+          "Longitude": 6.972
+        }
+      ]
+    },
+    {
+      "Id": "reach.lobith.pannerden.down",
+      "FromId": "water.lobith",
+      "ToId": "water.pannerden",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 8243,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.853,
+          "Longitude": 6.115
+        },
+        {
+          "Latitude": 51.866,
+          "Longitude": 6.09
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 6.05
+        },
+        {
+          "Latitude": 51.884,
+          "Longitude": 6.009
+        }
+      ]
+    },
+    {
+      "Id": "reach.lobith.pannerden.up",
+      "FromId": "water.pannerden",
+      "ToId": "water.lobith",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 8243,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.884,
+          "Longitude": 6.009
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 6.05
+        },
+        {
+          "Latitude": 51.866,
+          "Longitude": 6.09
+        },
+        {
+          "Latitude": 51.853,
+          "Longitude": 6.115
+        }
+      ]
+    },
+    {
+      "Id": "reach.nijmegen.tiel.down",
+      "FromId": "water.nijmegen",
+      "ToId": "water.tiel",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 30254,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.855,
+          "Longitude": 5.859
+        },
+        {
+          "Latitude": 51.86,
+          "Longitude": 5.82
+        },
+        {
+          "Latitude": 51.88,
+          "Longitude": 5.78
+        },
+        {
+          "Latitude": 51.89,
+          "Longitude": 5.72
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 5.67
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 5.61
+        },
+        {
+          "Latitude": 51.88,
+          "Longitude": 5.55
+        },
+        {
+          "Latitude": 51.875,
+          "Longitude": 5.5
+        },
+        {
+          "Latitude": 51.881,
+          "Longitude": 5.446
+        }
+      ]
+    },
+    {
+      "Id": "reach.nijmegen.tiel.up",
+      "FromId": "water.tiel",
+      "ToId": "water.nijmegen",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 30254,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.881,
+          "Longitude": 5.446
+        },
+        {
+          "Latitude": 51.875,
+          "Longitude": 5.5
+        },
+        {
+          "Latitude": 51.88,
+          "Longitude": 5.55
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 5.61
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 5.67
+        },
+        {
+          "Latitude": 51.89,
+          "Longitude": 5.72
+        },
+        {
+          "Latitude": 51.88,
+          "Longitude": 5.78
+        },
+        {
+          "Latitude": 51.86,
+          "Longitude": 5.82
+        },
+        {
+          "Latitude": 51.855,
+          "Longitude": 5.859
+        }
+      ]
+    },
+    {
+      "Id": "reach.pannerden.nijmegen.down",
+      "FromId": "water.pannerden",
+      "ToId": "water.nijmegen",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 11127,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.884,
+          "Longitude": 6.009
+        },
+        {
+          "Latitude": 51.872,
+          "Longitude": 5.98
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 5.93
+        },
+        {
+          "Latitude": 51.858,
+          "Longitude": 5.9
+        },
+        {
+          "Latitude": 51.855,
+          "Longitude": 5.859
+        }
+      ]
+    },
+    {
+      "Id": "reach.pannerden.nijmegen.up",
+      "FromId": "water.nijmegen",
+      "ToId": "water.pannerden",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 11127,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.855,
+          "Longitude": 5.859
+        },
+        {
+          "Latitude": 51.858,
+          "Longitude": 5.9
+        },
+        {
+          "Latitude": 51.87,
+          "Longitude": 5.93
+        },
+        {
+          "Latitude": 51.872,
+          "Longitude": 5.98
+        },
+        {
+          "Latitude": 51.884,
+          "Longitude": 6.009
+        }
+      ]
+    },
+    {
+      "Id": "reach.tiel.gorinchem.down",
+      "FromId": "water.tiel",
+      "ToId": "water.gorinchem",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 34449,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.881,
+          "Longitude": 5.446
+        },
+        {
+          "Latitude": 51.86,
+          "Longitude": 5.39
+        },
+        {
+          "Latitude": 51.85,
+          "Longitude": 5.32
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 5.27
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 5.22
+        },
+        {
+          "Latitude": 51.815,
+          "Longitude": 5.17
+        },
+        {
+          "Latitude": 51.825,
+          "Longitude": 5.11
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 5.04
+        },
+        {
+          "Latitude": 51.819,
+          "Longitude": 4.979
+        }
+      ]
+    },
+    {
+      "Id": "reach.tiel.gorinchem.up",
+      "FromId": "water.gorinchem",
+      "ToId": "water.tiel",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.holland",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 34449,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.819,
+          "Longitude": 4.979
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 5.04
+        },
+        {
+          "Latitude": 51.825,
+          "Longitude": 5.11
+        },
+        {
+          "Latitude": 51.815,
+          "Longitude": 5.17
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 5.22
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 5.27
+        },
+        {
+          "Latitude": 51.85,
+          "Longitude": 5.32
+        },
+        {
+          "Latitude": 51.86,
+          "Longitude": 5.39
+        },
+        {
+          "Latitude": 51.881,
+          "Longitude": 5.446
+        }
+      ]
+    },
+    {
+      "Id": "reach.wesel.emmerich.down",
+      "FromId": "water.wesel",
+      "ToId": "water.emmerich",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 33562,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 10000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.657,
+          "Longitude": 6.595
+        },
+        {
+          "Latitude": 51.69,
+          "Longitude": 6.55
+        },
+        {
+          "Latitude": 51.7,
+          "Longitude": 6.49
+        },
+        {
+          "Latitude": 51.73,
+          "Longitude": 6.46
+        },
+        {
+          "Latitude": 51.74,
+          "Longitude": 6.39
+        },
+        {
+          "Latitude": 51.78,
+          "Longitude": 6.36
+        },
+        {
+          "Latitude": 51.79,
+          "Longitude": 6.31
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 6.29
+        },
+        {
+          "Latitude": 51.833,
+          "Longitude": 6.244
+        }
+      ]
+    },
+    {
+      "Id": "reach.wesel.emmerich.up",
+      "FromId": "water.emmerich",
+      "ToId": "water.wesel",
+      "Mode": "river",
+      "AccessId": "access.rhine.de_nl.1913",
+      "EvidenceId": "eb1911.rhine",
+      "Enabled": true,
+      "FirstYear": 1913,
+      "LastYear": 1913,
+      "LengthMeters": 33562,
+      "CapacityKg": 20000,
+      "SpeedMetersHour": 6000,
+      "FixedMinutes": 0,
+      "FixedCents": 0,
+      "CentsPerKm": 2,
+      "CentsPerKg": 0,
+      "Geometry": [
+        {
+          "Latitude": 51.833,
+          "Longitude": 6.244
+        },
+        {
+          "Latitude": 51.82,
+          "Longitude": 6.29
+        },
+        {
+          "Latitude": 51.79,
+          "Longitude": 6.31
+        },
+        {
+          "Latitude": 51.78,
+          "Longitude": 6.36
+        },
+        {
+          "Latitude": 51.74,
+          "Longitude": 6.39
+        },
+        {
+          "Latitude": 51.73,
+          "Longitude": 6.46
+        },
+        {
+          "Latitude": 51.7,
+          "Longitude": 6.49
+        },
+        {
+          "Latitude": 51.69,
+          "Longitude": 6.55
+        },
+        {
+          "Latitude": 51.657,
+          "Longitude": 6.595
+        }
+      ]
+    }
+  ],
+  "Ports": [
+    {
+      "Id": "port.koeln",
+      "Name": "Kölner Rheinhafen · Spielterminal",
+      "HubId": "city.de.1913.rheinprovinz",
+      "LandNodeId": "terminal.koeln",
+      "WaterNodeId": "water.koeln",
+      "FeederOutId": "port.koeln.feeder.out",
+      "FeederBackId": "port.koeln.feeder.back",
+      "TransferOutId": "port.koeln.load",
+      "TransferBackId": "port.koeln.unload",
+      "Enabled": true
+    },
+    {
+      "Id": "port.rotterdam",
+      "Name": "Rotterdamer Stadthafen · Spielterminal",
+      "HubId": "city.nl.1913.zuid_holland",
+      "LandNodeId": "terminal.rotterdam",
+      "WaterNodeId": "water.rotterdam",
+      "FeederOutId": "port.rotterdam.feeder.out",
+      "FeederBackId": "port.rotterdam.feeder.back",
+      "TransferOutId": "port.rotterdam.load",
+      "TransferBackId": "port.rotterdam.unload",
+      "Enabled": true
+    }
+  ],
+  "Access": [
+    {
+      "Id": "access.rhine.de_nl.1913",
+      "EvidenceId": "ccnr.history",
+      "Enabled": true,
+      "FirstYear": 1869,
+      "LastYear": 1913,
+      "Countries": [
+        "country.de.1913",
+        "country.nl.1913"
+      ],
+      "Carriers": [
+        "country.de.1913",
+        "country.nl.1913"
+      ]
+    }
+  ],
+  "Evidence": [
+    {
+      "Id": "ccnr.history",
+      "Url": "https://www.ccr-zkr.org/en/history",
+      "License": "Factual reference only; no copied text or graphics",
+      "Note": "1868–1918: Mannheimer Akte und deutsch-niederländischer Rahmen. Zugang im Spiel ausdrücklich auf beide simulierten Länder beschränkt."
+    },
+    {
+      "Id": "eb1911.cologne",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Cologne",
+      "License": "Public Domain (historical text)",
+      "Note": "Südlicher Hafen mit Kais und Frachtumschlag vor 1913 belegt. Terminalpunkt und Zubringer sind schematische Spielgeometrie."
+    },
+    {
+      "Id": "eb1911.holland",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Holland",
+      "License": "Public Domain (historical text)",
+      "Note": "Waal, Merwede, Noord und Nieuwe Maas als verbundene Wasserwege. Weitere Kanäle nur Kandidaten, keine Segmentfreigabe."
+    },
+    {
+      "Id": "eb1911.rhine",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rhine",
+      "License": "Public Domain (historical text)",
+      "Note": "Zeitgenössische Rhein-Frachtschifffahrt und Häfen Köln/Rotterdam; keine pauschale Freigabe von Nebenarmen."
+    },
+    {
+      "Id": "eb1911.rotterdam",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rotterdam",
+      "License": "Public Domain (historical text)",
+      "Note": "Rotterdamer Hafen und Lade-/Löschanlagen vor 1913 belegt. Kein maßstabsgetreuer historischer Terminalplan."
+    },
+    {
+      "Id": "geonames.hubs",
+      "Url": "https://download.geonames.org/export/dump/",
+      "License": "CC BY 4.0",
+      "Note": "GeoNames, gepinnte MAP02-Hubpunkte vom 20.11.2026. Wirtschaftliche Hubzuordnung aus MAP01; keine modernen Bevölkerungsdaten."
+    },
+    {
+      "Id": "treaty.1868",
+      "Url": "https://treatydatabase.overheid.nl/en/Treaty/Details/001517.html",
+      "License": "Factual reference only; no copied text or graphics",
+      "Note": "Vertrag vom 17.10.1868, Inkrafttreten 01.07.1869. Moderne konsolidierte Vorschriften werden nicht als vollständiges Recht von 1913 übernommen."
+    }
+  ]
+}

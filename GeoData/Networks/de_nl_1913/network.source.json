@@ -1,0 +1,468 @@
+{
+  "Id": "network.de_nl.rhine.1913.v1",
+  "Date": "1913-01-01",
+  "Checked": "2026-11-21",
+  "GeometryNote": "Eigene generalisierte WGS84-Routenstützpunkte. Historisch belegte Korridor-/Armfolge; keine historische Tiefenkarte oder exakter Ufer-/Straßenplan. Meter aus diesen Linien, nicht aus UE-Bildschirmabstand.",
+  "Evidence": [
+    {
+      "Id": "eb1911.rhine",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rhine",
+      "License": "Public Domain (historical text)",
+      "Note": "Zeitgenössische Rhein-Frachtschifffahrt und Häfen Köln/Rotterdam; keine pauschale Freigabe von Nebenarmen."
+    },
+    {
+      "Id": "eb1911.holland",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Holland",
+      "License": "Public Domain (historical text)",
+      "Note": "Waal, Merwede, Noord und Nieuwe Maas als verbundene Wasserwege. Weitere Kanäle nur Kandidaten, keine Segmentfreigabe."
+    },
+    {
+      "Id": "eb1911.cologne",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Cologne",
+      "License": "Public Domain (historical text)",
+      "Note": "Südlicher Hafen mit Kais und Frachtumschlag vor 1913 belegt. Terminalpunkt und Zubringer sind schematische Spielgeometrie."
+    },
+    {
+      "Id": "eb1911.rotterdam",
+      "Url": "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica/Rotterdam",
+      "License": "Public Domain (historical text)",
+      "Note": "Rotterdamer Hafen und Lade-/Löschanlagen vor 1913 belegt. Kein maßstabsgetreuer historischer Terminalplan."
+    },
+    {
+      "Id": "ccnr.history",
+      "Url": "https://www.ccr-zkr.org/en/history",
+      "License": "Factual reference only; no copied text or graphics",
+      "Note": "1868–1918: Mannheimer Akte und deutsch-niederländischer Rahmen. Zugang im Spiel ausdrücklich auf beide simulierten Länder beschränkt."
+    },
+    {
+      "Id": "treaty.1868",
+      "Url": "https://treatydatabase.overheid.nl/en/Treaty/Details/001517.html",
+      "License": "Factual reference only; no copied text or graphics",
+      "Note": "Vertrag vom 17.10.1868, Inkrafttreten 01.07.1869. Moderne konsolidierte Vorschriften werden nicht als vollständiges Recht von 1913 übernommen."
+    },
+    {
+      "Id": "geonames.hubs",
+      "Url": "https://download.geonames.org/export/dump/",
+      "License": "CC BY 4.0",
+      "Note": "GeoNames, gepinnte MAP02-Hubpunkte vom 20.11.2026. Wirtschaftliche Hubzuordnung aus MAP01; keine modernen Bevölkerungsdaten."
+    }
+  ],
+  "WaterNodes": [
+    {
+      "Id": "koeln",
+      "Latitude": 50.925,
+      "Longitude": 6.972,
+      "Country": "de"
+    },
+    {
+      "Id": "duesseldorf",
+      "Latitude": 51.225,
+      "Longitude": 6.767,
+      "Country": "de"
+    },
+    {
+      "Id": "duisburg",
+      "Latitude": 51.458,
+      "Longitude": 6.72,
+      "Country": "de"
+    },
+    {
+      "Id": "wesel",
+      "Latitude": 51.657,
+      "Longitude": 6.595,
+      "Country": "de"
+    },
+    {
+      "Id": "emmerich",
+      "Latitude": 51.833,
+      "Longitude": 6.244,
+      "Country": "de"
+    },
+    {
+      "Id": "lobith",
+      "Latitude": 51.853,
+      "Longitude": 6.115,
+      "Country": "nl"
+    },
+    {
+      "Id": "pannerden",
+      "Latitude": 51.884,
+      "Longitude": 6.009,
+      "Country": "nl"
+    },
+    {
+      "Id": "nijmegen",
+      "Latitude": 51.855,
+      "Longitude": 5.859,
+      "Country": "nl"
+    },
+    {
+      "Id": "tiel",
+      "Latitude": 51.881,
+      "Longitude": 5.446,
+      "Country": "nl"
+    },
+    {
+      "Id": "gorinchem",
+      "Latitude": 51.819,
+      "Longitude": 4.979,
+      "Country": "nl"
+    },
+    {
+      "Id": "dordrecht",
+      "Latitude": 51.821,
+      "Longitude": 4.655,
+      "Country": "nl"
+    },
+    {
+      "Id": "kinderdijk",
+      "Latitude": 51.89,
+      "Longitude": 4.633,
+      "Country": "nl"
+    },
+    {
+      "Id": "rotterdam",
+      "Latitude": 51.915,
+      "Longitude": 4.483,
+      "Country": "nl"
+    }
+  ],
+  "Bends": [
+    [
+      [
+        50.96,
+        6.99
+      ],
+      [
+        50.99,
+        6.96
+      ],
+      [
+        51.025,
+        6.98
+      ],
+      [
+        51.06,
+        6.91
+      ],
+      [
+        51.1,
+        6.88
+      ],
+      [
+        51.13,
+        6.81
+      ],
+      [
+        51.17,
+        6.85
+      ],
+      [
+        51.2,
+        6.8
+      ]
+    ],
+    [
+      [
+        51.26,
+        6.74
+      ],
+      [
+        51.28,
+        6.69
+      ],
+      [
+        51.31,
+        6.7
+      ],
+      [
+        51.34,
+        6.66
+      ],
+      [
+        51.38,
+        6.73
+      ],
+      [
+        51.41,
+        6.73
+      ]
+    ],
+    [
+      [
+        51.49,
+        6.72
+      ],
+      [
+        51.51,
+        6.67
+      ],
+      [
+        51.54,
+        6.68
+      ],
+      [
+        51.57,
+        6.62
+      ],
+      [
+        51.61,
+        6.65
+      ],
+      [
+        51.64,
+        6.61
+      ]
+    ],
+    [
+      [
+        51.69,
+        6.55
+      ],
+      [
+        51.7,
+        6.49
+      ],
+      [
+        51.73,
+        6.46
+      ],
+      [
+        51.74,
+        6.39
+      ],
+      [
+        51.78,
+        6.36
+      ],
+      [
+        51.79,
+        6.31
+      ],
+      [
+        51.82,
+        6.29
+      ]
+    ],
+    [
+      [
+        51.848,
+        6.2
+      ],
+      [
+        51.855,
+        6.16
+      ]
+    ],
+    [
+      [
+        51.866,
+        6.09
+      ],
+      [
+        51.87,
+        6.05
+      ]
+    ],
+    [
+      [
+        51.872,
+        5.98
+      ],
+      [
+        51.87,
+        5.93
+      ],
+      [
+        51.858,
+        5.9
+      ]
+    ],
+    [
+      [
+        51.86,
+        5.82
+      ],
+      [
+        51.88,
+        5.78
+      ],
+      [
+        51.89,
+        5.72
+      ],
+      [
+        51.87,
+        5.67
+      ],
+      [
+        51.87,
+        5.61
+      ],
+      [
+        51.88,
+        5.55
+      ],
+      [
+        51.875,
+        5.5
+      ]
+    ],
+    [
+      [
+        51.86,
+        5.39
+      ],
+      [
+        51.85,
+        5.32
+      ],
+      [
+        51.82,
+        5.27
+      ],
+      [
+        51.82,
+        5.22
+      ],
+      [
+        51.815,
+        5.17
+      ],
+      [
+        51.825,
+        5.11
+      ],
+      [
+        51.82,
+        5.04
+      ]
+    ],
+    [
+      [
+        51.823,
+        4.91
+      ],
+      [
+        51.825,
+        4.86
+      ],
+      [
+        51.82,
+        4.79
+      ],
+      [
+        51.827,
+        4.73
+      ],
+      [
+        51.82,
+        4.69
+      ]
+    ],
+    [
+      [
+        51.84,
+        4.66
+      ],
+      [
+        51.86,
+        4.66
+      ],
+      [
+        51.88,
+        4.65
+      ]
+    ],
+    [
+      [
+        51.891,
+        4.6
+      ],
+      [
+        51.899,
+        4.57
+      ],
+      [
+        51.909,
+        4.54
+      ],
+      [
+        51.913,
+        4.51
+      ]
+    ]
+  ],
+  "Ports": [
+    {
+      "Id": "koeln",
+      "Hub": "city.de.1913.rheinprovinz",
+      "Name": "Kölner Rheinhafen · Spielterminal",
+      "Land": [
+        50.9252,
+        6.9685
+      ],
+      "Water": "koeln",
+      "RoadBends": [
+        [
+          50.93,
+          6.96
+        ]
+      ],
+      "Evidence": "eb1911.cologne"
+    },
+    {
+      "Id": "rotterdam",
+      "Hub": "city.nl.1913.zuid_holland",
+      "Name": "Rotterdamer Stadthafen · Spielterminal",
+      "Land": [
+        51.916,
+        4.483
+      ],
+      "Water": "rotterdam",
+      "RoadBends": [
+        [
+          51.919,
+          4.48
+        ]
+      ],
+      "Evidence": "eb1911.rotterdam"
+    }
+  ],
+  "Rules": {
+    "FirstYear": 1913,
+    "LastYear": 1913,
+    "WaterCapacityKg": 20000,
+    "TerminalCapacityKg": 10000,
+    "DownstreamMetersHour": 10000,
+    "UpstreamMetersHour": 6000,
+    "RoadMetersHour": 20000,
+    "WaterCentsKm": 2,
+    "RoadCentsKm": 35,
+    "HandlingMinutes": 120,
+    "HandlingFixedCents": 50,
+    "HandlingCentsKg": 1
+  },
+  "Candidates": [
+    {
+      "Id": "merwede_canal",
+      "From": "gorinchem",
+      "To": "canal.amsterdam",
+      "Latitude": 52.37,
+      "Longitude": 4.9,
+      "Mode": "canal",
+      "Evidence": "eb1911.holland",
+      "Note": "Existenz belegt, Verlauf/Schleusen/Terminalfreigabe für 1913 noch nicht geprüft."
+    },
+    {
+      "Id": "north_sea",
+      "From": "rotterdam",
+      "To": "coast.hoek",
+      "Latitude": 51.98,
+      "Longitude": 4.12,
+      "Mode": "coast",
+      "Evidence": "",
+      "Note": "Kein freigegebener Küstenabschnitt; weder Seeschiff noch Seezugang wird daraus erzeugt."
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 #if COI_WITH_DEV_CONSOLE
 #include "SimCore.h"
 namespace CoISim {
-enum class EDevKind:uint8 {Help,List,Inspect,Pause,Step,Advance,Status,Cancel,MoneySet,MoneyAdd,GoodsAdd,Relocate,Validate,Repro,Config,Restart,Export,EventList,EventStart,EventStop};
+enum class EDevKind:uint8 {Help,List,Inspect,Pause,Step,Advance,Status,Cancel,MoneySet,MoneyAdd,GoodsAdd,Relocate,Validate,Repro,Config,Restart,Export,EventList,EventStart,EventStop,NetworkStatus,NetworkRoute};
 struct FDevCommand {EDevKind Kind=EDevKind::Help;TArray<FString> Args;FString Raw;bool Mutating=false;};
 struct FDevSpec {FString Syntax,Description;};
 struct FDevRecord {int64 Sequence=0,Step=0;uint64 Generation=0;bool Accepted=false;FString Command,Phase,Before,After,Message;FString Json() const;};

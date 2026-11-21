@@ -8,6 +8,8 @@ namespace CoISim {
 namespace {
 struct FRegistration {EDevKind Kind;const TCHAR* Prefix;int32 Min,Max;bool Mutation;const TCHAR* Usage;const TCHAR* Description;};
 const TArray<FRegistration>& Registrations(){static const TArray<FRegistration> R={
+ {EDevKind::NetworkStatus,TEXT("network status"),0,0,false,TEXT("network status"),TEXT("MAP04-Netz, Hafenlücken und gesperrte Abschnitte; nur lesen")},
+ {EDevKind::NetworkRoute,TEXT("network route"),3,4,false,TEXT("network route FROM_HUB TO_HUB KG [YEAR]"),TEXT("Wasser-Netzvorschau inklusive Zubringer/Umschlag; keine Buchung")},
  {EDevKind::Help,TEXT("help"),0,0,false,TEXT("help"),TEXT("Befehle und Einheiten anzeigen")},
  {EDevKind::List,TEXT("list"),1,2,false,TEXT("list companies|regions|warehouses|vehicles|orders|inventories|transports|goods|places [SUCHTEXT]"),TEXT("IDs/Namen finden; maximal 50 Treffer")},
  {EDevKind::Inspect,TEXT("inspect"),2,2,false,TEXT("inspect group|company|inventory|warehouse|vehicle|order|transport|region|city|assets ID"),TEXT("Privilegierte lokale Diagnose, einschließlich NPCs")},
@@ -70,6 +72,14 @@ bool FDeveloperConsole::Validate(const FSimulation& S,FString& E) const {
 FString FDeveloperConsole::Read(const FSimulation& S,const FDevCommand& C,bool& OK) const {
  OK=true;const auto& W=S.State;const auto& D=S.Scenario.Definitions;
  if(C.Kind==EDevKind::Help){FString T=TEXT("Lokale Entwicklerkonsole. CENTS = USD-Cent, KG = ganze kg, HOURS = ganze Spielstunden. Kein Seedwechsel im laufenden Zustand.\n");for(const auto& R:Registry())T+=R.Syntax+TEXT(" — ")+R.Description+TEXT("\n");return T;}
+ if(C.Kind==EDevKind::NetworkStatus||C.Kind==EDevKind::NetworkRoute){
+ FDateTime Start;FDateTime::ParseIso8601(*(S.Scenario.StartDate+TEXT("T00:00:00Z")),Start);int64 Year=(Start+FTimespan::FromHours(W.EconomyHour)).GetYear();FString Country;
+ if(const auto* Company=Find(D.Companies,S.Session.PlayerCompanyId))if(const auto* Hub=Find(D.Places,Company->HeadquartersCityId))if(const auto* Region=Find(D.Regions,Hub->RegionId))Country=Region->CountryId;
+ if(C.Kind==EDevKind::NetworkStatus)return TransportNetworkDiagnostics(D,Year,Country);
+ int64 Kg=0;if(!Integer(C.Args[2],Kg)||(C.Args.Num()==4&&!Integer(C.Args[3],Year))){OK=false;return TEXT("KG und YEAR müssen positive ganze Zahlen sein.");}
+ const auto P=PlanWaterRoute(D,C.Args[0],C.Args[1],Year,Kg,Country);OK=P.Valid;if(!P.Valid)return P.Reason;
+ return FString::Printf(TEXT("%s\n%lld m gesamt / %lld m Wasser · %lld min · %lld Cent · Engpass %lld kg\n"),*P.NetworkId,P.Meters,P.WaterMeters,P.Minutes,P.CostCents,P.CapacityKg)+FString::Join(P.EdgeIds,TEXT("\n"))+TEXT("\nNur Netzvorschau. Kein Fahrzeug, Geld, Ware oder Kapazität gebucht.");
+ }
  if(C.Kind==EDevKind::Status)return Status(S);
  if(C.Kind==EDevKind::Repro){FFingerprint H;H.Write(S.Scenario);return FString::Printf(TEXT("Szenario %s · Schema %lld · Seed %lld · Schritt %lld · Generation %llu\nKonfiguration SHA1 %s\nEntwicklereingriffe %s · Quellen %lld / Senken %lld Cent\nconfig / export log: vollständige Konfiguration"),*S.Scenario.Id,S.Scenario.Schema,S.Scenario.Settings.Seed,W.Step,S.Generation,*H.Finish(),W.DeveloperModified?TEXT("ja"):TEXT("nein"),W.DeveloperMoneySources,W.DeveloperMoneySinks);}
  if(C.Kind==EDevKind::Config)return Configuration(S);

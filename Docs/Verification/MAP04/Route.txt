@@ -1,0 +1,8 @@
+network=network.de_nl.rhine.1913.v1
+meters=273296
+water_meters=270917
+minutes_down=1879
+minutes_up=2965
+cost_1000kg_cents=2732
+capacity_kg=10000
+edges=port.koeln.feeder.out -> port.koeln.load -> reach.koeln.duesseldorf.down -> reach.duesseldorf.duisburg.down -> reach.duisburg.wesel.down -> reach.wesel.emmerich.down -> reach.emmerich.lobith.down -> reach.lobith.pannerden.down -> reach.pannerden.nijmegen.down -> reach.nijmegen.tiel.down -> reach.tiel.gorinchem.down -> reach.gorinchem.dordrecht.down -> reach.dordrecht.kinderdijk.down -> reach.kinderdijk.rotterdam.down -> port.rotterdam.unload -> port.rotterdam.feeder.back
