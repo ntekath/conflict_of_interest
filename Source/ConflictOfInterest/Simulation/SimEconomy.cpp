@@ -1,4 +1,4 @@
-#include "SimCore.h"
+﻿#include "SimCore.h"
 #include "Accounting.h"
 #include "Banking.h"
 #include "CityHubs.h"
@@ -53,7 +53,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateBank(Error)||!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidateBusinesses(Error)||!ValidateBank(Error)||!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Consumption=0,Transfers=0;for(const auto& Region:State.Regions){if(Region.FinalConsumptionCents<0)return Fail(TEXT("Negative final consumption statistic"));Consumption+=Region.FinalConsumptionCents;Transfers+=Region.NetInventoryTransferCents;}
  const auto* RetailTotal=Find(State.CashTotals,FString(TEXT("retail_sale")));if(Transfers!=0||Consumption!=(RetailTotal?RetailTotal->Cents:0))return Fail(TEXT("Regional economic statistic balance"));

@@ -1,4 +1,4 @@
-#include "PlayerHUD.h"
+﻿#include "PlayerHUD.h"
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/SimArchive.h"
 #include "Simulation/MapNavigation.h"
@@ -33,7 +33,7 @@ void UCoIPlayerHUD::BuildMapPanels()
  auto* Scroll=WidgetTree->ConstructWidget<UScrollBox>();Selection->AddChildToVerticalBox(Scroll)->SetSize(FSlateChildSize(ESlateSizeRule::Fill));auto* Content=WidgetTree->ConstructWidget<UVerticalBox>();Scroll->AddChild(Content);
  SelectionText=Text(Content,TEXT(""),13);MetricDetails=Text(Content,TEXT(""),11);
  CityOpenButton=Button(Content,TEXT("Stadt öffnen"),TEXT("openSelectedCity"),true);
- MarketOpenButton=Button(Content,TEXT("Markt öffnen"),TEXT("selectedMarket"));StoreOpenButton=Button(Content,TEXT("Eigene Lager"),TEXT("selectedStore"));PlanButton=Button(Content,TEXT("Transport planen"),TEXT("mapPlan"));RouteOpenButton=Button(Content,TEXT("Routenaufträge öffnen"),TEXT("routeJobs"));
+ MarketOpenButton=Button(Content,TEXT("Handel öffnen"),TEXT("selectedMarket"));StoreOpenButton=Button(Content,TEXT("Eigene Lager"),TEXT("selectedStore"));PlanButton=Button(Content,TEXT("Transport planen"),TEXT("mapPlan"));RouteOpenButton=Button(Content,TEXT("Routenaufträge öffnen"),TEXT("routeJobs"));
  RefreshMapPanels();SelectionPanel->SetVisibility(ESlateVisibility::Collapsed);
 }
 void UCoIPlayerHUD::RefreshMapPanels()

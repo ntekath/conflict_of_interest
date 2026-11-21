@@ -63,7 +63,7 @@ bool UCoIPlayerHUD::PanelAction(const FString &Verb, const FString &Arg)
                           Verb == TEXT("siteReports") || Verb == TEXT("event") || Verb == TEXT("notice") ||
                           Verb == TEXT("mapPlan") || Verb == TEXT("routeJobs") || Verb == TEXT("openSelectedCity") ||
                           Verb == TEXT("centerStore") || Verb == TEXT("centerJob") || Verb == TEXT("closeWork") ||
-                          Verb == TEXT("panelBack");
+                          Verb == TEXT("panelBack") || Verb == TEXT("tradeTab") || Verb == TEXT("tradePlan");
     // Never silently destroy a quote, typed values, token or pending confirmation.
     if (Navigate && !DialogKind.IsEmpty())
     {

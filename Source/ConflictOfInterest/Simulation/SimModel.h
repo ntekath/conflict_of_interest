@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "CoreMinimal.h"
 // Plain data: no Actor, UObject, widget, world or streaming dependency.
 // All money is USD cents, goods kg, time integral simulation hours.
@@ -172,6 +172,16 @@ struct FTransport
  int64 RequestedDepartureHour=0;FString SourceInventoryId;bool Empty=false;int64 OperatingCents=0,FreightCents=0,RouteKm=0; int64 Kg=0,DepartureStep=0,ArrivalStep=0,CostCents=0,ReservedIncomingPoints=0;
  COI_RECORD(COI_O(AccountingServicePayerId);COI_O(AccountingServiceCents);COI_O(DeliveryId);COI_O(ReportSiteId);COI_O(DeliveredKg);COI_O(DeliveredBookCents);COI_O(ActualArrivalHour);COI_F(Id);COI_F(OwnerId);COI_F(ProviderId);COI_F(VehicleId);COI_F(FromCityId);COI_F(ToCityId);COI_F(GoodId);COI_F(CargoInventoryId);COI_F(DestinationStorageId);COI_F(Service);COI_F(Status);COI_O(RequestedDepartureHour);COI_O(SourceInventoryId);COI_O(Empty);COI_O(OperatingCents);COI_O(FreightCents);COI_O(RouteKm);COI_F(Kg);COI_F(DepartureStep);COI_F(ArrivalStep);COI_F(CostCents);COI_F(ReservedIncomingPoints);)
 };
+// UI08: organizational references and confirmed totals, never an inventory/reservation.
+struct FBusinessLeg {
+ FString Id,DestinationStorageId,Status;int64 Kg=0,DeliveredKg=0;
+ COI_RECORD(COI_F(Id);COI_F(DestinationStorageId);COI_F(Status);COI_F(Kg);COI_F(DeliveredKg);)
+};
+struct FTradeBusiness {
+ FString Id,OwnerId,OrderId,StorageId,GoodId,Side,Purpose,OrderStatus,LastReason;
+ int64 CreatedHour=0,RequestedKg=0,FilledKg=0,SettledCents=0;TArray<FBusinessLeg> Legs;
+ COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(OrderId);COI_F(StorageId);COI_F(GoodId);COI_F(Side);COI_F(Purpose);COI_F(OrderStatus);COI_F(LastReason);COI_F(CreatedHour);COI_F(RequestedKg);COI_F(FilledKg);COI_F(SettledCents);COI_F(Legs);)
+};
 struct FReservation
 {
  FString Id,ActorId,AccountId,InventoryId,WarehouseId,VehicleId;
@@ -245,6 +255,7 @@ struct FDayMetrics
 struct FServiceEmployment {FString Id;int64 PaidUntilHour=0;TArray<FEmployment> Employment;int64 AccountingPaidDailyWageCents=0;COI_RECORD(COI_F(Id);COI_F(PaidUntilHour);COI_F(Employment);COI_O(AccountingPaidDailyWageCents);)};
 struct FState
 {
+ TArray<FTradeBusiness> Businesses;
  FBankState Bank;TArray<FLoan> Loans;TArray<FDebtDue> DebtDues;TArray<FBankHistory> BankHistory;
  TArray<FAccountingCharge> AccountingCharges;int64 AccountingPriceSequence=0;int64 AccountingStartHour=-1,AccountingReliableFromHour=-1;TArray<FAccountingPeriod> AccountingPeriods;TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingAsset> AccountingAssets;
  TArray<FServiceEmployment> ServiceEmployment;
@@ -258,7 +269,7 @@ struct FState
  TArray<FInventory> Inventories; TArray<FMarketOrder> Orders; TArray<FTrade> Trades;
  TArray<FTransport> Transports; TArray<FTransportOffer> Offers; TArray<FReservation> Reservations;
  TArray<FRegion> Regions; TArray<FCountry> Countries;
- COI_RECORD(COI_O(Bank);COI_O(Loans);COI_O(DebtDues);COI_O(BankHistory);COI_O(AccountingCharges);COI_O(AccountingPriceSequence);COI_O(AccountingStartHour);COI_O(AccountingReliableFromHour);COI_O(AccountingPeriods);COI_O(AccountingPrices);COI_O(AccountingAssets);COI_O(ServiceEmployment);COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
+ COI_RECORD(COI_O(Businesses);COI_O(Bank);COI_O(Loans);COI_O(DebtDues);COI_O(BankHistory);COI_O(AccountingCharges);COI_O(AccountingPriceSequence);COI_O(AccountingStartHour);COI_O(AccountingReliableFromHour);COI_O(AccountingPeriods);COI_O(AccountingPrices);COI_O(AccountingAssets);COI_O(ServiceEmployment);COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
 };
 struct FSettings
 {

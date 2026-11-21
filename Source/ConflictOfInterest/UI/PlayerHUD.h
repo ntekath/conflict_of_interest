@@ -35,7 +35,7 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
- friend class FSidePanelFlow;friend class FUIEndToEnd;friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
+ friend class FTradeMenuWidgets;friend class FSidePanelFlow;friend class FUIEndToEnd;friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
  TMap<FString,FCoICityDetailState> CityDetails;
  bool CompactCityDetails=true;
  TArray<FString> TableColumns;
@@ -48,6 +48,12 @@ private:
  bool PanelAction(const FString&,const FString&);
  FPanelVisit CapturePanel() const;void RestorePanel(const FPanelVisit&);
  void BuildCityHeading();
+ UPROPERTY() TObjectPtr<UEditableTextBox> TradingMinimum;
+ UPROPERTY() TObjectPtr<UCoIActionButton> TradingFilterToggle;
+ UPROPERTY() TObjectPtr<UTextBlock> TradingFilterSummary;
+ FString ActiveTradeCase;
+ void BuildTrading();void RefreshTrading();bool TradingAction(const FString&,const FString&);
+ void TradingFilterChanged();
 
  void CityCompanies(const CoISim::FCityView&);void CityHouseholds(const CoISim::FCityView&);
  bool CityDetailAction(const FString&,const FString&);

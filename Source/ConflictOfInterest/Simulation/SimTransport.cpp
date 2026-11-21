@@ -1,4 +1,4 @@
-#include "SimCore.h"
+﻿#include "SimCore.h"
 #include "Accounting.h"
 #include "SimArchive.h"
 #include "GeoTransform.h"
@@ -53,6 +53,6 @@ void FSimulation::TransportHour(int64 Hour) {
   }
  }
  int32 Closed=0;for(const auto& J:State.Transports)if(J.Status!=TEXT("planned")&&J.Status!=TEXT("moving"))++Closed;
- for(int32 I=0;Closed>Scenario.Economy.HistoryLimit&&I<State.Transports.Num();)if(State.Transports[I].Status!=TEXT("planned")&&State.Transports[I].Status!=TEXT("moving")&&!DeliveryTransportReferenced(State.Transports[I].Id)){State.Transports.RemoveAt(I);--Closed;}else ++I;
+ for(int32 I=0;Closed>Scenario.Economy.HistoryLimit&&I<State.Transports.Num();)if(State.Transports[I].Status!=TEXT("planned")&&State.Transports[I].Status!=TEXT("moving")&&!DeliveryTransportReferenced(State.Transports[I].Id)&&!BusinessTransportReferenced(State.Transports[I].Id)){State.Transports.RemoveAt(I);--Closed;}else ++I;
 }
 }

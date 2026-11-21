@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "SimModel.h"
 #include "Presentation.h"
 namespace CoISim {
@@ -22,6 +22,7 @@ struct FHouseholdNeedView {FString GoodId;bool Known=false;int64 WantedKg=0,Used
 struct FHouseholdView {FString Id,Band;int64 Population=0,Workforce=0,Employed=0,IncomeCentsDay=0,SpentCents=0,SavingsCents=0,FreeSavingsCents=0,BudgetCents=0,RemainingBudgetCents=0,WealthPermille=0,MaxWealthPermille=0,BeginHour=0,EndHour=0;FHouseholdNeedView Basic,Luxury;};
 struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FHouseholdView> Households;TArray<FCityPresence> Presence;};
 struct FPlayerView {
+ TArray<FTradeBusiness> Businesses;
   FBankState Bank;int64 BankDeposits=0,BankClaims=0,BankDebt=0,RealAssetBookCents=0;TArray<FLoan> Loans;TArray<FDebtDue> DebtDues;
  TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingPeriod> AccountingPeriods;FCompanyPresentation Company;FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
  TArray<FDeliveryContract> Deliveries;TArray<FDeliverySlot> DeliverySlots;TArray<FSiteLedger> SiteLedgers;TArray<FInternalTransfer> InternalTransfers;

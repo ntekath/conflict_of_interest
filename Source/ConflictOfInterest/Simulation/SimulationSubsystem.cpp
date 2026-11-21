@@ -1,4 +1,4 @@
-#include "SimulationSubsystem.h"
+﻿#include "SimulationSubsystem.h"
 #include "Investments.h"
 #include "GeoCatalog.h"
 #include "GeoMapData.h"
@@ -87,7 +87,7 @@ bool UCoISimulationSubsystem::SubmitPlayer(CoISim::FCommand C,int64 Token,int64&
  if(C.Generation!=Simulation.GetGeneration()){Error=TEXT("Szenario gewechselt. Neue Vorschau öffnen.");return false;}
  C.Sequence=Simulation.NextSequence();C.TargetStep=Simulation.GetState().Step+1;
  const FString Actor=Simulation.GetSession().PlayerCompanyId;C.Origin=CoISim::ECommandOrigin::Player;C.CompanyId=Actor;
- if(C.Kind==CoISim::ECommandKind::PlaceOrder){C.Order.ActorId=Actor;C.Order.Id=FString::Printf(TEXT("player.order.%lld"),C.Sequence);}
+ if(C.Kind==CoISim::ECommandKind::PlaceOrder){C.TrackTrade=true;C.Order.ActorId=Actor;C.Order.Id=FString::Printf(TEXT("player.order.%lld"),C.Sequence);}
  else if(C.Kind==CoISim::ECommandKind::CancelOrder)C.Order.ActorId=Actor;
  else if(C.Kind==CoISim::ECommandKind::BookTransport){C.Transport.OwnerId=Actor;C.Transport.Id=FString::Printf(TEXT("player.haul.%lld"),C.Sequence);}
  else if(C.Kind==CoISim::ECommandKind::CancelTransport)C.Transport.OwnerId=Actor;

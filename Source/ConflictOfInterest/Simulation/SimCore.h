@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "SimModel.h"
 #include "DeveloperBuild.h"
 #include "PlayerView.h"
@@ -10,6 +10,7 @@ enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTra
 enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
+ bool TrackTrade=false;FString TradeCaseId,TradePurpose=TEXT("restock");
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
  ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;FDeliveryRequest Delivery;FLoanRequest Loan;
@@ -77,6 +78,9 @@ private:
  double RateSeconds=0; int64 RateSteps=0; bool Loaded=false;
  bool Authorized(const FCommand&,FString&) const;
  bool Apply(const FCommand&,FString& Reason);
+ bool BusinessOrder(const FCommand&,FString&);bool BusinessTransport(const FCommand&,FString&);
+ void ReconcileBusinesses();bool ValidateBusinesses(FString&) const;
+ bool BusinessOrderReferenced(const FString&) const;bool BusinessTransportReferenced(const FString&) const;
  bool RunStep();
  void Aggregate(); void Publish();
  bool Invest(const FInvestmentRequest&,FString&);void ConstructionHour(int64 Hour);

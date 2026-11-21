@@ -1,4 +1,4 @@
-#include "SimCore.h"
+﻿#include "SimCore.h"
 #include <atomic>
 #include "SimArchive.h"
 #include "HAL/PlatformTime.h"
@@ -50,6 +50,10 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
  if(!Authorized(Command,Reason))return false;
+ if(Command.TrackTrade&&Command.Kind!=ECommandKind::PlaceOrder){Reason=TEXT("Invalid business command");return false;}
+ if(!Command.TradeCaseId.IsEmpty()&&Command.Kind!=ECommandKind::BookTransport){Reason=TEXT("Invalid business link");return false;}
+ if(Command.Kind==ECommandKind::PlaceOrder&&Command.TrackTrade)return BusinessOrder(Command,Reason);
+ if(Command.Kind==ECommandKind::BookTransport&&!Command.TradeCaseId.IsEmpty())return BusinessTransport(Command,Reason);
  if(Command.Kind==ECommandKind::Loan)return ChangeLoan(Command.Loan,Reason);
  if(Command.Kind==ECommandKind::Delivery)return ChangeDelivery(Command.Delivery,Reason);
  if(Command.Kind==ECommandKind::OperatingRule)return ChangeOperatingRule(Command.Rule,Reason);
@@ -124,7 +128,7 @@ bool FSimulation::RunStep()
   for(const auto& P:Proposals){auto& Region=State.Regions[P.Index];Region.LastProcessedStep=P.Step;Region.DiagnosticRandom=P.Random;}
   State.Step=Next;++Version;Diagnostics.CommitMicros=Micros()-T;
  }
- Aggregate();Diagnostics.StepMicros=Micros()-Begin;Diagnostics.PendingCommands=Pending.Num();return true;
+ ReconcileBusinesses();Aggregate();Diagnostics.StepMicros=Micros()-Begin;Diagnostics.PendingCommands=Pending.Num();return true;
 }
 bool FSimulation::StepOnce(){if(!RunStep())return false;Publish();return true;}
 void FSimulation::Advance(int64 RealMicros,int32 Speed,bool Paused)
@@ -184,7 +188,7 @@ void FSimulation::Publish()
 FString FSimulation::Fingerprint() const
 {
  FFingerprint F;F.Write(Scenario);F.Write(State);F.Write(LastIssuedSequence);
- for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);F.Write(C.Investment);F.Write(C.Rule);F.Write(C.Delivery);}return F.Finish();
+ for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);F.Write(C.Investment);F.Write(C.Rule);F.Write(C.Delivery);F.Write(C.TrackTrade);F.Write(C.TradeCaseId);F.Write(C.TradePurpose);}return F.Finish();
 }
 }
 
@@ -195,5 +199,5 @@ bool FSimulation::Authorized(const FCommand& C,FString& Error) const {
  FString Actor=C.Kind==ECommandKind::Loan?C.Loan.OwnerId:C.Kind==ECommandKind::Delivery?C.Delivery.OwnerId:C.Kind==ECommandKind::OperatingRule?C.Rule.OwnerId:C.Kind==ECommandKind::Invest?C.Investment.OwnerId:(C.Kind==ECommandKind::PlaceOrder||C.Kind==ECommandKind::CancelOrder)?C.Order.ActorId:(C.Kind==ECommandKind::BookTransport||C.Kind==ECommandKind::CancelTransport)?C.Transport.OwnerId:C.Resources.ActorId;
  if(C.CompanyId!=Actor||!Find(State.Companies,Actor)||(C.Origin==ECommandOrigin::Player?Actor!=Session.PlayerCompanyId:!IsAutonomous(Actor))){Error=TEXT("Company control authorization failed");return false;}return true;
 }
-FString FSimulation::EconomicFingerprint() const {auto Economic=State;Economic.PlayerDays.Reset();Economic.PlayerEvents.Reset();FFingerprint F;F.Write(Scenario.Definitions);F.Write(Scenario.Settings);F.Write(Economic);return F.Finish();}
+FString FSimulation::EconomicFingerprint() const {auto Economic=State;Economic.PlayerDays.Reset();Economic.PlayerEvents.Reset();Economic.Businesses.Reset();FFingerprint F;F.Write(Scenario.Definitions);F.Write(Scenario.Settings);F.Write(Economic);return F.Finish();}
 }

@@ -112,3 +112,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [UI07](Docs/UI07.md): gemeinsames linkes Seitenpanel, kompakter Stadtkopf, schmale Kartenlisten, Zurück mit Kontext/Scroll, geschützte Entwürfe und freie Kartenbedienung; bestehende Markt-/Transport-/Investitionsdialoge erhalten.
 
 [UI06](Docs/UI06.md): gemeinsame Gestaltung, beschriftete Kartenwerte, sichere Snapshotwechsel und durchgängige Bedienprüfung des UI07-Stands. 94 Regressionstests, beide Zielauflösungen plus DPI-Stress, Tabellenmesswerte. Endgültige Gesamtabnahme nach UI08–UI10 wiederholen.
+
+[UI08](Docs/UI08.md): Handel mit Angeboten, Filtern, Handelsplanung und laufenden Geschäften. Eindeutige gespeicherte Zuordnung zu realen Marktaufträgen/Transporten, Teilmengen und Abholbedarf. Aktuelle Save-Version **9**, keine Migration. Geführter Kauf mit Lieferung folgt UI09.

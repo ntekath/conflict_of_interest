@@ -1,4 +1,4 @@
-#include "SaveGame.h"
+﻿#include "SaveGame.h"
 #include "Serialization/JsonSerializer.h"
 #include "SimArchive.h"
 namespace CoISim
@@ -125,7 +125,7 @@ bool FSimulation::SaveGameJson(FString &Json, FString &E, int32 Speed) const
         P.Origin = (int64)C.Origin;
         P.TargetStep = C.TargetStep;
         P.Sequence = C.Sequence;
-        P.CompanyId = C.CompanyId;
+        P.CompanyId = C.CompanyId;P.TrackTrade=C.TrackTrade;P.TradeCaseId=C.TradeCaseId;P.TradePurpose=C.TradePurpose;
         P.Resources = C.Resources;
         P.Order = C.Order;
         P.Transport = C.Transport;
@@ -208,7 +208,7 @@ bool FSimulation::LoadGameJson(const FString &Json, const FCoIGeoMapData &Geo, c
         Cmd.Origin = (ECommandOrigin)P.Origin;
         Cmd.TargetStep = P.TargetStep;
         Cmd.Sequence = P.Sequence;
-        Cmd.CompanyId = P.CompanyId;
+        Cmd.CompanyId = P.CompanyId;Cmd.TrackTrade=P.TrackTrade;Cmd.TradeCaseId=P.TradeCaseId;Cmd.TradePurpose=P.TradePurpose;
         Cmd.Resources = P.Resources;
         Cmd.Order = P.Order;
         Cmd.Transport = P.Transport;

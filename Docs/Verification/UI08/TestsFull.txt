@@ -1,0 +1,111 @@
+Using bundled DotNet SDK version: 10.0 win-x64
+Running UnrealBuildTool: dotnet "..\..\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.dll" -Mode=ValidatePlatforms -OutputSDKs  -AllPlatforms  -project="C:/Users/Noel Tekath/Documents/GitHub/conflict_of_interest/ConflictOfInterest.uproject" -log="C:/Users/Noel Tekath/Documents/GitHub/conflict_of_interest/Saved/Logs/AutoSDKInfo.txt" -verbose -timestamps
+Log file: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Saved\Logs\AutoSDKInfo.txt
+##PlatformValidate: Win64 VALID 10.0.22621.0
+##PlatformValidate: Mac INVALID 26.1.1
+##PlatformValidate: IOS INVALID 26.1.1
+##PlatformValidate: Android INVALID r27c
+##PlatformValidate: Linux INVALID v26_clang-20.1.8-rockylinux8
+##PlatformValidate: LinuxArm64 INVALID <UNKNOWN>
+##PlatformValidate: TVOS INVALID 26.1.1
+##PlatformValidate: VisionOS INVALID <UNKNOWN>
+Unable to find required SDK version 'MainVersion' for platform LinuxArm64. Check your SDK.json files
+Unable to find required SDK version 'MainVersion' for platform VisionOS. Check your SDK.json files
+Trace written to file C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Trace.uba with size 322b
+[2026.11.21-12.55.00:001][305]LogAutomationController: Display: Test Completed. Result={Success} Name={AssetDisposalGainAndBuyerCarryingAmount} Path={CoI.Accounting.AssetDisposalGainAndBuyerCarryingAmount}
+[2026.11.21-12.55.00:073][308]LogAutomationController: Display: Test Completed. Result={Success} Name={AuthoritativeMarkupAndRealizedSale} Path={CoI.Accounting.AuthoritativeMarkupAndRealizedSale}
+[2026.11.21-12.55.00:201][311]LogAutomationController: Display: Test Completed. Result={Success} Name={ConstructionIsCapitalAndFeesFollowRealAssessments} Path={CoI.Accounting.ConstructionIsCapitalAndFeesFollowRealAssessments}
+[2026.11.21-12.55.00:251][314]LogAutomationController: Display: Test Completed. Result={Success} Name={CostFlowRoundingAndNoInternalMarkup} Path={CoI.Accounting.CostFlowRoundingAndNoInternalMarkup}
+[2026.11.21-12.55.00:367][316]LogAutomationController: Display: Test Completed. Result={Success} Name={CurrentSaveCorruptionRejected} Path={CoI.Accounting.CurrentSaveCorruptionRejected}
+[2026.11.21-12.55.03:433][319]LogAutomationController: Display: Test Completed. Result={Success} Name={FortyDaysMonthCloseAndSaveReplay} Path={CoI.Accounting.FortyDaysMonthCloseAndSaveReplay}
+[2026.11.21-12.55.03:553][322]LogAutomationController: Display: Test Completed. Result={Success} Name={InternalValuationEliminatedAndIdleCosts} Path={CoI.Accounting.InternalValuationEliminatedAndIdleCosts}
+[2026.11.21-12.55.03:663][325]LogAutomationController: Display: Test Completed. Result={Success} Name={InvalidConfigurationAndStableZeroSalesBasis} Path={CoI.Accounting.InvalidConfigurationAndStableZeroSalesBasis}
+[2026.11.21-12.55.03:806][328]LogAutomationController: Display: Test Completed. Result={Success} Name={PrepaidReturnEarnedAtDepartureAndSaved} Path={CoI.Accounting.PrepaidReturnEarnedAtDepartureAndSaved}
+[2026.11.21-12.55.04:079][330]LogAutomationController: Display: Test Completed. Result={Success} Name={RealFreightAndSaveInTransit} Path={CoI.Accounting.RealFreightAndSaveInTransit}
+[2026.11.21-12.55.04:156][333]LogAutomationController: Display: Test Completed. Result={Success} Name={RetailUpgradeDoesNotRepricePaidWages} Path={CoI.Accounting.RetailUpgradeDoesNotRepricePaidWages}
+[2026.11.21-12.55.05:206][335]LogAutomationController: Display: Test Completed. Result={Success} Name={ThirtyDayBaseline} Path={CoI.Audit.ThirtyDayBaseline}
+[2026.11.21-12.55.05:352][338]LogAutomationController: Display: Test Completed. Result={Success} Name={ArrearsWriteoffDoesNotDeleteDeposits} Path={CoI.Banking.ArrearsWriteoffDoesNotDeleteDeposits}
+[2026.11.21-12.55.05:473][341]LogAutomationController: Display: Test Completed. Result={Success} Name={CreditFinancedCapacityAndLosingInvestment} Path={CoI.Banking.CreditFinancedCapacityAndLosingInvestment}
+[2026.11.21-12.58.15:173][344]LogAutomationController: Display: Test Completed. Result={Success} Name={EuropeFortyDayLoanAndSaveLoad} Path={CoI.Banking.EuropeFortyDayLoanAndSaveLoad}
+[2026.11.21-12.58.15:359][347]LogAutomationController: Display: Test Completed. Result={Success} Name={InterestFundedWagesExpensesAndSharedWorkers} Path={CoI.Banking.InterestFundedWagesExpensesAndSharedWorkers}
+[2026.11.21-12.58.16:922][349]LogAutomationController: Display: Test Completed. Result={Success} Name={LiveWidgetApplicationRepaymentAndInvestment} Path={CoI.Banking.LiveWidgetApplicationRepaymentAndInvestment}
+[2026.11.21-12.58.17:037][352]LogAutomationController: Display: Test Completed. Result={Success} Name={NpcUsesSameAuthorityAndHistoryRules} Path={CoI.Banking.NpcUsesSameAuthorityAndHistoryRules}
+[2026.11.21-12.58.17:201][355]LogAutomationController: Display: Test Completed. Result={Success} Name={OpeningCreationRepaymentAndNormalTransfers} Path={CoI.Banking.OpeningCreationRepaymentAndNormalTransfers}
+[2026.11.21-12.58.17:586][358]LogAutomationController: Display: Test Completed. Result={Success} Name={PendingLoanAndDueSaveLoadContinuation} Path={CoI.Banking.PendingLoanAndDueSaveLoadContinuation}
+[2026.11.21-12.58.17:836][361]LogAutomationController: Display: Test Completed. Result={Success} Name={RejectsCorruptBalanceAndDuplicateDueWithoutMutation} Path={CoI.Banking.RejectsCorruptBalanceAndDuplicateDueWithoutMutation}
+[2026.11.21-12.58.18:497][363]LogAutomationController: Display: Test Completed. Result={Success} Name={RiskBoundsAuthorityAndNoAutomaticRescue} Path={CoI.Banking.RiskBoundsAuthorityAndNoAutomaticRescue}
+[2026.11.21-12.58.18:547][366]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundsAndAnchor} Path={CoI.Camera.BoundsAndAnchor}
+[2026.11.21-12.58.18:637][369]LogAutomationController: Display: Test Completed. Result={Success} Name={LocalPurchaseDeliverySale} Path={CoI.CityScreen.LocalPurchaseDeliverySale}
+[2026.11.21-12.58.18:706][372]LogAutomationController: Display: Test Completed. Result={Success} Name={ScopePrivacyAndNavigation} Path={CoI.CityScreen.ScopePrivacyAndNavigation}
+[2026.11.21-12.58.18:780][374]LogAutomationController: Display: Test Completed. Result={Success} Name={ExistingCompanySelection} Path={CoI.Control.ExistingCompanySelection}
+[2026.11.21-12.58.18:853][377]LogAutomationController: Display: Test Completed. Result={Success} Name={ExternalBuyerConsentAndLocalTransport} Path={CoI.Delivery.ExternalBuyerConsentAndLocalTransport}
+[2026.11.21-12.58.18:987][380]LogAutomationController: Display: Test Completed. Result={Success} Name={ExternalConsentPaymentAndFundedRentalReturn} Path={CoI.Delivery.ExternalConsentPaymentAndFundedRentalReturn}
+[2026.11.21-12.58.19:416][383]LogAutomationController: Display: Test Completed. Result={Success} Name={InternalRecurrenceReturnsValuationAndReplay} Path={CoI.Delivery.InternalRecurrenceReturnsValuationAndReplay}
+[2026.11.21-12.58.19:490][386]LogAutomationController: Display: Test Completed. Result={Success} Name={PromiseMarketCoordinationAndMissedSlotPolicy} Path={CoI.Delivery.PromiseMarketCoordinationAndMissedSlotPolicy}
+[2026.11.21-12.58.19:656][389]LogAutomationController: Display: Test Completed. Result={Success} Name={StopCorruptionAndAtomicLoadRollback} Path={CoI.Delivery.StopCorruptionAndAtomicLoadRollback}
+[2026.11.21-12.58.19:770][392]LogAutomationController: Display: Test Completed. Result={Success} Name={TargetCapAndRecoveryWithoutBacklog} Path={CoI.Delivery.TargetCapAndRecoveryWithoutBacklog}
+[2026.11.21-12.58.19:855][395]LogAutomationController: Display: Test Completed. Result={Success} Name={AdvanceReplayAndLifecycle} Path={CoI.Developer.AdvanceReplayAndLifecycle}
+[2026.11.21-12.58.19:937][398]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicMutationsAndAudit} Path={CoI.Developer.AtomicMutationsAndAudit}
+[2026.11.21-12.58.20:044][401]LogAutomationController: Display: Test Completed. Result={Success} Name={ActualConsumption} Path={CoI.Economy.ActualConsumption}
+[2026.11.21-12.58.20:147][404]LogAutomationController: Display: Test Completed. Result={Success} Name={Autonomous72Hours} Path={CoI.Economy.Autonomous72Hours}
+[2026.11.21-12.58.21:168][406]LogAutomationController: Display: Test Completed. Result={Success} Name={FourWeeksConservationAndReplay} Path={CoI.Economy.FourWeeksConservationAndReplay}
+[2026.11.21-12.58.21:238][409]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderPriorityAndRejection} Path={CoI.Economy.OrderPriorityAndRejection}
+[2026.11.21-12.58.21:310][412]LogAutomationController: Display: Test Completed. Result={Success} Name={OrderSettlement} Path={CoI.Economy.OrderSettlement}
+[2026.11.21-12.58.21:423][415]LogAutomationController: Display: Test Completed. Result={Success} Name={ProductionPayroll} Path={CoI.Economy.ProductionPayroll}
+[2026.11.21-12.58.21:524][418]LogAutomationController: Display: Test Completed. Result={Success} Name={TransportAndCosts} Path={CoI.Economy.TransportAndCosts}
+[2026.11.21-12.58.31:323][421]LogAutomationController: Display: Test Completed. Result={Success} Name={BuyTransportSellSaveContinuation} Path={CoI.EuropeScenario.BuyTransportSellSaveContinuation}
+[2026.11.21-12.58.56:931][424]LogAutomationController: Display: Test Completed. Result={Success} Name={FourteenDaysAndCountryStatistics} Path={CoI.EuropeScenario.FourteenDaysAndCountryStatistics}
+[2026.11.21-12.58.58:064][426]LogAutomationController: Display: Test Completed. Result={Success} Name={FreshWorldAndCompanySelection} Path={CoI.EuropeScenario.FreshWorldAndCompanySelection}
+[2026.11.21-12.58.58:146][428]LogAutomationController: Display: Test Completed. Result={Success} Name={CatalogProjectionAndDistances} Path={CoI.Geo.CatalogProjectionAndDistances}
+[2026.11.21-12.58.59:386][430]LogAutomationController: Display: Test Completed. Result={Success} Name={Europe1913HierarchyPhysicalAndPolitical} Path={CoI.Geo.Europe1913HierarchyPhysicalAndPolitical}
+[2026.11.21-12.59.12:645][433]LogAutomationController: Display: Test Completed. Result={Success} Name={Europe1913RejectsCorruptionAtomically} Path={CoI.Geo.Europe1913RejectsCorruptionAtomically}
+[2026.11.21-12.59.15:147][436]LogAutomationController: Display: Test Completed. Result={Success} Name={IncomeSavingsAndReplay} Path={CoI.Households.IncomeSavingsAndReplay}
+[2026.11.21-12.59.15:220][439]LogAutomationController: Display: Test Completed. Result={Success} Name={JobLossPreservesSavings} Path={CoI.Households.JobLossPreservesSavings}
+[2026.11.21-12.59.15:279][441]LogAutomationController: Display: Test Completed. Result={Success} Name={UnfundedNeedsAndNoDuplicateIncome} Path={CoI.Households.UnfundedNeedsAndNoDuplicateIncome}
+[2026.11.21-12.59.15:347][444]LogAutomationController: Display: Test Completed. Result={Success} Name={AssignmentsAndResourceLimits} Path={CoI.Hubs.AssignmentsAndResourceLimits}
+[2026.11.21-12.59.15:507][447]LogAutomationController: Display: Test Completed. Result={Success} Name={MigrationAndTransit} Path={CoI.Hubs.MigrationAndTransit}
+[2026.11.21-12.59.15:613][449]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicLimitsAndFarmProduction} Path={CoI.Investment.AtomicLimitsAndFarmProduction}
+[2026.11.21-12.59.15:726][452]LogAutomationController: Display: Test Completed. Result={Success} Name={OfferedAssetsAndObligations} Path={CoI.Investment.OfferedAssetsAndObligations}
+[2026.11.21-12.59.15:803][454]LogAutomationController: Display: Test Completed. Result={Success} Name={WarehouseBuildUseAndUpgrade} Path={CoI.Investment.WarehouseBuildUseAndUpgrade}
+[2026.11.21-12.59.15:869][457]LogAutomationController: Display: Test Completed. Result={Success} Name={SelectionPriorityAndViews} Path={CoI.Map.SelectionPriorityAndViews}
+[2026.11.21-12.59.15:903][459]LogAutomationController: Display: Test Completed. Result={Success} Name={CalculationAndAvailability} Path={CoI.MapMetrics.CalculationAndAvailability}
+[2026.11.21-12.59.16:015][462]LogAutomationController: Display: Test Completed. Result={Success} Name={CompletedDaysAndConservation} Path={CoI.MapMetrics.CompletedDaysAndConservation}
+[2026.11.21-12.59.16:089][465]LogAutomationController: Display: Test Completed. Result={Success} Name={ContextAndNoSideEffects} Path={CoI.MapNavigation.ContextAndNoSideEffects}
+[2026.11.21-12.59.16:391][468]LogAutomationController: Display: Test Completed. Result={Success} Name={ExplicitProcurementProductionSaleAndSave} Path={CoI.Operating.ExplicitProcurementProductionSaleAndSave}
+[2026.11.21-12.59.16:446][470]LogAutomationController: Display: Test Completed. Result={Success} Name={RuleChangesProtectSharedPhysicalReserves} Path={CoI.Operating.RuleChangesProtectSharedPhysicalReserves}
+[2026.11.21-12.59.16:524][473]LogAutomationController: Display: Test Completed. Result={Success} Name={SharedLiquidityBudgetsDisableAndManualOrders} Path={CoI.Operating.SharedLiquidityBudgetsDisableAndManualOrders}
+[2026.11.21-12.59.16:650][475]LogAutomationController: Display: Test Completed. Result={Success} Name={SharedTargetsCapacityAndIncomingCargo} Path={CoI.Operating.SharedTargetsCapacityAndIncomingCargo}
+[2026.11.21-12.59.16:729][478]LogAutomationController: Display: Test Completed. Result={Success} Name={WageUtilizationAuthorizationAndRecipeLimits} Path={CoI.Operating.WageUtilizationAuthorizationAndRecipeLimits}
+[2026.11.21-12.59.16:817][481]LogAutomationController: Display: Test Completed. Result={Success} Name={PurchaseDeliverySale} Path={CoI.Player.PurchaseDeliverySale}
+[2026.11.21-12.59.16:896][484]LogAutomationController: Display: Test Completed. Result={Success} Name={RentedFreightAndPreview} Path={CoI.Player.RentedFreightAndPreview}
+[2026.11.21-12.59.16:973][487]LogAutomationController: Display: Test Completed. Result={Success} Name={DifferentPlayerCompanyUsesSameEconomicWorld} Path={CoI.Presentation.DifferentPlayerCompanyUsesSameEconomicWorld}
+[2026.11.21-12.59.17:023][490]LogAutomationController: Display: Test Completed. Result={Success} Name={ExactUnitsAndMoneyInput} Path={CoI.Presentation.ExactUnitsAndMoneyInput}
+[2026.11.21-12.59.17:074][493]LogAutomationController: Display: Test Completed. Result={Success} Name={MonthBoundaryAndMissingValuation} Path={CoI.Presentation.MonthBoundaryAndMissingValuation}
+[2026.11.21-12.59.17:107][495]LogAutomationController: Display: Test Completed. Result={Success} Name={OwnActiveEmployeesAndUniqueHubs} Path={CoI.Presentation.OwnActiveEmployeesAndUniqueHubs}
+[2026.11.21-12.59.17:227][498]LogAutomationController: Display: Test Completed. Result={Success} Name={SnapshotConservationSaveAndCompanyScope} Path={CoI.Presentation.SnapshotConservationSaveAndCompanyScope}
+[2026.11.21-12.59.17:299][501]LogAutomationController: Display: Test Completed. Result={Success} Name={BasicPriorityAndFiniteInventory} Path={CoI.Retail.BasicPriorityAndFiniteInventory}
+[2026.11.21-12.59.17:384][504]LogAutomationController: Display: Test Completed. Result={Success} Name={BuildUpgradeAndExplicitPurchase} Path={CoI.Retail.BuildUpgradeAndExplicitPurchase}
+[2026.11.21-12.59.17:491][507]LogAutomationController: Display: Test Completed. Result={Success} Name={LuxuryAfterBasicsAndDailyCapacity} Path={CoI.Retail.LuxuryAfterBasicsAndDailyCapacity}
+[2026.11.21-12.59.17:597][510]LogAutomationController: Display: Test Completed. Result={Success} Name={ProducerStockIsNotRetailAndBudgetLimits} Path={CoI.Retail.ProducerStockIsNotRetailAndBudgetLimits}
+[2026.11.21-12.59.20:582][513]LogAutomationController: Display: Test Completed. Result={Success} Name={RealSupplyAndThirtyDaySaveReplay} Path={CoI.Retail.RealSupplyAndThirtyDaySaveReplay}
+[2026.11.21-12.59.20:726][516]LogAutomationController: Display: Test Completed. Result={Success} Name={WeightedPriceQualityAndRealPayments} Path={CoI.Retail.WeightedPriceQualityAndRealPayments}
+[2026.11.21-12.59.20:813][518]LogAutomationController: Display: Test Completed. Result={Success} Name={PrivacyLimitsAndTime} Path={CoI.Routes.PrivacyLimitsAndTime}
+[2026.11.21-12.59.22:886][520]LogAutomationController: Display: Test Completed. Result={Success} Name={ConstructionPartialOrderTransportAndContinuation} Path={CoI.Save.ConstructionPartialOrderTransportAndContinuation}
+[2026.11.21-12.59.23:300][522]LogAutomationController: Display: Test Completed. Result={Success} Name={CorruptionReferencesVersionsAndAtomicRollback} Path={CoI.Save.CorruptionReferencesVersionsAndAtomicRollback}
+[2026.11.21-12.59.23:444][525]LogAutomationController: Display: Test Completed. Result={Success} Name={DiskSlotReplacementAndReadback} Path={CoI.Save.DiskSlotReplacementAndReadback}
+[2026.11.21-12.59.23:574][528]LogAutomationController: Display: Test Completed. Result={Success} Name={SeedCompanyDeveloperAuditAndUpgrade} Path={CoI.Save.SeedCompanyDeveloperAuditAndUpgrade}
+[2026.11.21-12.59.23:646][531]LogAutomationController: Display: Test Completed. Result={Success} Name={AtomicCommandsAndLifetime} Path={CoI.Simulation.AtomicCommandsAndLifetime}
+[2026.11.21-12.59.23:722][534]LogAutomationController: Display: Test Completed. Result={Success} Name={BoundedBacklogAndOrdering} Path={CoI.Simulation.BoundedBacklogAndOrdering}
+[2026.11.21-12.59.23:829][537]LogAutomationController: Display: Test Completed. Result={Success} Name={ContractAndValidation} Path={CoI.Simulation.ContractAndValidation}
+[2026.11.21-12.59.23:949][539]LogAutomationController: Display: Test Completed. Result={Success} Name={FixedStepsAndPause} Path={CoI.Simulation.FixedStepsAndPause}
+[2026.11.21-12.59.24:435][542]LogAutomationController: Display: Test Completed. Result={Success} Name={LiveWidgetsPauseNavigationAndCompanyRestart} Path={CoI.UI02.LiveWidgetsPauseNavigationAndCompanyRestart}
+[2026.11.21-12.59.24:464][544]LogAutomationController: Display: Test Completed. Result={Success} Name={ResponsiveHeaderBounds} Path={CoI.UI02.ResponsiveHeaderBounds}
+[2026.11.21-12.59.24:565][547]LogAutomationController: Display: Test Completed. Result={Success} Name={ContextFiltersNavigationAndMapSpace} Path={CoI.UI03.ContextFiltersNavigationAndMapSpace}
+[2026.11.21-12.59.24:658][550]LogAutomationController: Display: Test Completed. Result={Success} Name={ActualConsumptionProjectionAndPrivatePresence} Path={CoI.UI05.ActualConsumptionProjectionAndPrivatePresence}
+[2026.11.21-12.59.26:944][553]LogAutomationController: Display: Test Completed. Result={Success} Name={LiveFoldSortSelectionAndSnapshotUpdates} Path={CoI.UI05.LiveFoldSortSelectionAndSnapshotUpdates}
+[2026.11.21-12.59.26:974][555]LogAutomationController: Display: Test Completed. Result={Success} Name={PeriodFractionNoNeedAndMissing} Path={CoI.UI05.PeriodFractionNoNeedAndMissing}
+[2026.11.21-12.59.29:337][558]LogAutomationController: Display: Test Completed. Result={Success} Name={EndToEndSnapshotFocusAndPerformance} Path={CoI.UI06.EndToEndSnapshotFocusAndPerformance}
+[2026.11.21-12.59.31:747][560]LogAutomationController: Display: Test Completed. Result={Success} Name={DockNavigationDraftAndLiveUpdates} Path={CoI.UI07.DockNavigationDraftAndLiveUpdates}
+[2026.11.21-12.59.33:482][562]LogAutomationController: Display: Test Completed. Result={Success} Name={MenuFiltersPlanningLiveOffersAndNoDuplicateReads} Path={CoI.UI08.MenuFiltersPlanningLiveOffersAndNoDuplicateReads}
+[2026.11.21-12.59.33:643][565]LogAutomationController: Display: Test Completed. Result={Success} Name={PartialPurchaseTransportPersistenceAndRights} Path={CoI.UI08.PartialPurchaseTransportPersistenceAndRights}
+Passed 96 tests. Log: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Saved\Logs\AP05_Automation.log
