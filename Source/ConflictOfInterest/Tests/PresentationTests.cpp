@@ -189,10 +189,10 @@ bool FDisplaySnapshot::RunTest(const FString &)
     {
         People += C.Residents;
         Staff += C.OwnEmployees;
-        for (const auto &Group : C.Groups)
+        for (const auto &Group : C.Households)
         {
-            TestFalse(TEXT("No raw cents in population view"), Group.Contains(TEXT("Cent")));
-            TestFalse(TEXT("Wealth scale named"), Group.Contains(TEXT("/1000")));
+            TestTrue(TEXT("Savings numeric, formatted only at display"),Group.SavingsCents>=0);
+            TestTrue(TEXT("Wealth scale explicitly bounded"),Group.WealthPermille>=0&&Group.MaxWealthPermille>=Group.WealthPermille);
         }
     }
     TestEqual(TEXT("Residents assigned once across hubs"), People, S.GetSnapshot().Population);

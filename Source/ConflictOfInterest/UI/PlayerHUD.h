@@ -7,6 +7,7 @@
 #include "Simulation/SaveGame.h"
 #include "PlayerHUD.generated.h"
 class UVerticalBox;class UHorizontalBox;class UTextBlock;class UBorder;class UCanvasPanel;class UScrollBox;class UEditableTextBox;class UComboBoxString;
+struct FCoICityDetailState {bool Companies=false,Population=false,OwnFirst=false,NameDescending=false;FString CompanyId,GroupId;};
 UCLASS()
 class UCoIChoice : public UComboBoxString {GENERATED_BODY() public:UCoIChoice();protected:virtual TSharedRef<SWidget> HandleGenerateWidget(TSharedPtr<FString> Item) const override;};
 UCLASS()
@@ -32,7 +33,12 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
- friend class FMapHUDNavigation;friend class FBankWidgetFlow;
+ friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
+ TMap<FString,FCoICityDetailState> CityDetails;
+ bool CompactCityDetails=true;
+ void CityCompanies(const CoISim::FCityView&);void CityHouseholds(const CoISim::FCityView&);
+ bool CityDetailAction(const FString&,const FString&);
+ void CityDataRow(const TArray<FString>&,const TArray<float>&,const FString& Action=TEXT(""),bool Header=false,bool Own=false,bool Selected=false);
  void BankInfo();void OpenLoan(const FString& LoanId=TEXT(""));bool ReadLoanForm(FString&);CoISim::FLoanRequest LoanDraft;
  void BuildMapPanels();void RefreshMapPanels();
  bool AnalysisExpanded=false,DisplayExpanded=false;

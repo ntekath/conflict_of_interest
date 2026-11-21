@@ -16,8 +16,11 @@ FTransportTerms TransportTerms(const FDefinitions& D,const FEconomyRules& E,cons
 // Deliberately contains no foreign actor, job, cargo, account or schedule fields.
 struct FRouteActivity {FString Id,FromCityId,ToCityId;bool Own=false;int64 Active=0,Moving=0,OwnKg=0,NextArrival=0;TArray<FString> OwnJobs;};
 // Explicit public presence; no foreign cash, inventory, employment or plans.
-struct FCityPresence {FString CompanyId,Name;bool Headquarters=false,Own=false;int64 Warehouses=0,Facilities=0,PublicVehicles=0;};
-struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FString> Groups;TArray<FCityPresence> Presence;};
+struct FCityPresence {TArray<FString> Activities;int64 Shops=0;FString CompanyId,Name;bool Headquarters=false,Own=false;int64 Warehouses=0,Facilities=0,PublicVehicles=0;};
+struct FHouseholdNeedView {FString GoodId;bool Known=false;int64 WantedKg=0,UsedKg=0;};
+// Aggregate household display only; no account IDs or private company state.
+struct FHouseholdView {FString Id,Band;int64 Population=0,Workforce=0,Employed=0,IncomeCentsDay=0,SpentCents=0,SavingsCents=0,FreeSavingsCents=0,BudgetCents=0,RemainingBudgetCents=0,WealthPermille=0,MaxWealthPermille=0,BeginHour=0,EndHour=0;FHouseholdNeedView Basic,Luxury;};
+struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FHouseholdView> Households;TArray<FCityPresence> Presence;};
 struct FPlayerView {
   FBankState Bank;int64 BankDeposits=0,BankClaims=0,BankDebt=0,RealAssetBookCents=0;TArray<FLoan> Loans;TArray<FDebtDue> DebtDues;
  TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingPeriod> AccountingPeriods;FCompanyPresentation Company;FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;

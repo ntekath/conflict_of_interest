@@ -1,0 +1,40 @@
+Log file: C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Log.txt
+Determining max actions to execute in parallel (6 physical cores, 12 logical cores)
+  Executing up to 6 processes, one per physical core
+Using 'git status' to determine working set for adaptive non-unity build (C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest).
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+Invalidating makefile for ConflictOfInterest (source file added)
+Building ConflictOfInterest...
+===== Toolchain Information =====
+Using ISPC compiler (E:\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+Using Visual Studio 14.44.35229 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+[Adaptive Build] Excluded from ConflictOfInterest unity file: CityDetails.cpp, PlayerView.cpp, SimDiagnostics.cpp, CityDetailTests.cpp, PresentationTests.cpp, PlayerBanking.cpp, PlayerCityDetails.cpp, PlayerHeader.cpp, PlayerHUD.cpp, PlayerMapHUD.cpp
+===== End Toolchain Information =====
+Using Unreal Build Accelerator local executor to run 15 action(s)
+  CPU 6 physical cores, 12 logical cores
+  Memory 63.16 GB physical, 27.65 GB/67.16 GB committed
+  UBA Storage capacity 40 GB
+[1/15] Compile [x64] CityDetailTests.cpp [NoUba]
+[2/15] Compile [x64] CityDetails.cpp [NoUba]
+[3/15] Compile [x64] PlayerBanking.cpp [NoUba]
+[4/15] Compile [x64] Module.ConflictOfInterest.3.cpp [NoUba]
+[5/15] Compile [x64] PlayerCityDetails.cpp [NoUba]
+[6/15] Compile [x64] PlayerHeader.cpp [NoUba]
+[7/15] Compile [x64] PlayerMapHUD.cpp [NoUba]
+[8/15] Compile [x64] PresentationTests.cpp [NoUba]
+[9/15] Compile [x64] PlayerView.cpp [NoUba]
+[10/15] Compile [x64] SimDiagnostics.cpp [NoUba]
+[11/15] Compile [x64] Module.ConflictOfInterest.2.cpp [NoUba]
+[12/15] Compile [x64] PlayerHUD.cpp [NoUba]
+[13/15] Compile [x64] Module.ConflictOfInterest.1.cpp [NoUba]
+[14/15] Link [x64] ConflictOfInterest-Win64-Shipping.exe [NoUba]
+   Bibliothek "C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest-Win64-Shipping.lib" und Objekt "C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest-Win64-Shipping.exp" werden erstellt.
+[15/15] WriteMetadata ConflictOfInterest-Win64-Shipping.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 35.34 seconds
+Output binary: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest-Win64-Shipping.exe
+
+Result: Succeeded
+Total execution time: 37.09 seconds
+Trace written to file C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Trace.uba with size 7.7kb

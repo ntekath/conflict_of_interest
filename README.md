@@ -4,7 +4,7 @@
 
 Spielbeginn 01.01.1913. Neue geografische Zielvorgabe: **Deutschland/Niederlande 1913**.
 Verbindlicher Entwurf: [Entwicklungsauftrag](Docs_DevelopmentBrief.md).
-Umgesetzt: **AP01 bis AP09.5, UI01–UI03 und MAP01 bis MAP03**.
+Umgesetzt: **AP01 bis AP09.5, UI01–UI03 sowie UI05 und MAP01 bis MAP03**.
 [MAP01](Docs/MAP01.md) legt 50 Regionen/Hubs, Quellen, Gewässer und die Integrationsfolge fest.
 Standard ist jetzt das [MAP03-Wirtschaftsszenario Deutschland/Niederlande](Docs/MAP03.md) mit 50 Regionen/Hubs, 150 Haushaltsgruppen und drei konfigurierbaren Startfirmen. Der Großer-Seen-US-Teststand bleibt separat als Regression spielbar.
 
@@ -106,3 +106,5 @@ Das [Spieler-HUD aus AP06](Docs/AP06.md) ersetzt das bisherige Diagnosepanel als
 [AP09.4](Docs/AP09.4.md): durchgängige Waren-/Herstell-/Frachtkosten, realisierte Kalender-Monatsergebnisse und aufschlagsbasierte neue Verkaufspreise. Markt-/Ladenverkäufe werden mit Prozentaufschlag gesteuert; Einkaufslimits und feste Lieferverträge behalten ihren Zweck. AP09.4 führte Save-Version **6** ein; aktuell gilt **Version 8** aus AP09.5. Alte Partien werden während der Entwicklung nicht migriert. 73 Tests und ein 40-Tage-Monatsabgleich prüfen den Kostenfluss; keine garantierten Gewinne oder Geld-/Warenzugaben.
 
 [AP09.5](Docs/AP09.5.md): gemeinsame Bankbilanz auf vorhandenen Konten, geprüfte Kreditanträge, automatische Tilgung/Zinsen, finanzierte Banklöhne und Betrieb, Rückstände und getrennte Abschreibungen. Save-Version 8 ohne Migration; 89 Tests und ein 41-Tage-Europa-Lauf. Öffentliche Einkommen/Staatshaushalt folgen AP09.5a.
+
+[UI05](Docs/UI05.md): einklappbare öffentliche Firmentabelle und strukturierte Haushalts-/Konsumdetails auf der vorhandenen Stadtansicht; kompakte Gruppenansicht, klare USD-/Periodenangaben, stabile Auswahl und Sortierung. 92 Tests bestanden, Save-Version 8 unverändert. UI04 bleibt auf ausdrückliche Entscheidung separat offen.

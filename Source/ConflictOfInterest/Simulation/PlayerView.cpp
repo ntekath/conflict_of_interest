@@ -1,4 +1,5 @@
 #include "PlayerView.h"
+#include "CityDetails.h"
 #include "SimCore.h"
 #include "SimArchive.h"
 #include "GeoTransform.h"
@@ -64,12 +65,14 @@ void FSimulation::PublishPlayer(FSnapshot& Out) const {
  }
  for(const auto& Place:P.Catalog.Places){FCityView City;City.Id=Place.Id;City.Name=Place.Name;City.RegionId=Place.RegionId;City.OwnEmployees=P.Company.EmployeesByCity.FindRef(Place.Id);
   if(const auto* R=Find(State.Regions,Place.RegionId)){City.RegionalEmployed=R->Employed;City.RegionalPopulation=R->Population;}
-  for(const auto& G:State.Groups){const auto* Def=Find(P.Catalog.Groups,G.Id);if(Def->ConsumptionCityId==Place.Id){City.Residents+=G.Population;City.Workforce+=G.Workforce;City.Groups.Add((Def->IncomeBand==TEXT("high")?FString(TEXT("hoch")):Def->IncomeBand==TEXT("low")?FString(TEXT("niedrig")):FString(TEXT("mittel")))+TEXT(" · Lohn ")+Display::Money(G.DailyIncomeCents)+TEXT(" / Tag · Konsum heute ")+Display::Money(G.DailySpentCents)+TEXT(" · Ersparnisse ")+Display::Money(Find(State.Accounts,G.AccountId)->BalanceCents)+TEXT(" · arbeitslos ")+Display::Number(G.Workforce-G.Employed)+TEXT(" / ")+Display::Number(G.Workforce)+TEXT(" · Wohlstandszuwachs ")+Display::Percent(double(G.WealthPermille)/1000.)+TEXT(" gegenüber Grundniveau"));for(const auto& Need:G.UnmetNeed)City.Groups.Last()+=FString::Printf(TEXT(" · Fehlbedarf %s %lld kg"),*Find(P.Catalog.Goods,Need.GoodId)->Name,Need.Kg);}}
+  for(const auto& G:State.Groups){const auto* Def=Find(P.Catalog.Groups,G.Id);if(Def->ConsumptionCityId==Place.Id){City.Residents+=G.Population;City.Workforce+=G.Workforce;City.Households.Add(HouseholdDisplay(G,*Def,*Find(P.Catalog.Needs,Def->NeedProfileId),*Find(State.Accounts,G.AccountId),P.Rules));}}
+
   for(const auto& I:P.Stocks)if(const auto* W=Find(P.Stores,I.StorageId);W&&W->CityId==Place.Id)City.OwnStockKg+=I.QuantityKg;
   for(const auto& C:P.Catalog.Companies){FCityPresence X;X.CompanyId=C.Id;X.Name=C.Name;X.Own=C.Id==P.ActorId;X.Headquarters=C.HeadquartersCityId==Place.Id;
-   for(const auto& W:State.Warehouses)if(W.CityId==Place.Id&&W.OwnerId==C.Id)++X.Warehouses;
+   for(const auto& W:State.Warehouses)if(W.CityId==Place.Id&&W.OwnerId==C.Id){++X.Warehouses;if(!Find(P.Catalog.WarehouseTypes,W.TypeId)->RetailOffers.IsEmpty())++X.Shops;}
    for(const auto& F:State.Facilities)if(F.CityId==Place.Id&&F.OwnerId==C.Id)++X.Facilities;
    for(const auto& V:P.Vehicles)if(V.ProviderId==C.Id&&V.CityId==Place.Id)++X.PublicVehicles;
+   if(X.Shops)X.Activities.Add(TEXT("Einzelhandel"));for(const auto& F:State.Facilities)if(F.CityId==Place.Id&&F.OwnerId==C.Id)X.Activities.AddUnique(Find(P.Catalog.FacilityTypes,F.TypeId)->Name);if(X.Warehouses>X.Shops+X.Facilities)X.Activities.Add(TEXT("Lagerhaltung"));if(X.PublicVehicles)X.Activities.Add(X.Own?TEXT("Eigene Logistik"):TEXT("Transportangebote"));
    if(X.Headquarters||X.Warehouses||X.Facilities||X.PublicVehicles||(X.Own&&City.OwnStockKg))City.Presence.Add(X);
   }P.Cities.Add(City);
  }
