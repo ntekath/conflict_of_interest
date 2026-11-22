@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
@@ -35,7 +35,7 @@ protected:
  virtual FReply NativeOnMouseButtonDown(const FGeometry&,const FPointerEvent&) override;
  virtual FReply NativeOnMouseWheel(const FGeometry&,const FPointerEvent&) override;
 private:
- friend class FTradeMenuWidgets;friend class FSidePanelFlow;friend class FUIEndToEnd;friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
+ friend class FPurchaseWidgets;friend class FTradeMenuWidgets;friend class FSidePanelFlow;friend class FUIEndToEnd;friend class FMapHUDNavigation;friend class FBankWidgetFlow;friend class FCityDetailWidgets;
  TMap<FString,FCoICityDetailState> CityDetails;
  bool CompactCityDetails=true;
  TArray<FString> TableColumns;
@@ -52,6 +52,7 @@ private:
  UPROPERTY() TObjectPtr<UCoIActionButton> TradingFilterToggle;
  UPROPERTY() TObjectPtr<UTextBlock> TradingFilterSummary;
  FString ActiveTradeCase;
+ void OpenPurchase(const FString&);void PurchasePreview();
  void BuildTrading();void RefreshTrading();bool TradingAction(const FString&,const FString&);
  void TradingFilterChanged();
 

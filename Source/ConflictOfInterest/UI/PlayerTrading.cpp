@@ -1,4 +1,4 @@
-﻿#include "PlayerHUD.h"
+#include "PlayerHUD.h"
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/SimArchive.h"
 #include "Simulation/TradeBusiness.h"
@@ -126,6 +126,8 @@ bool UCoIPlayerHUD::TradingAction(const FString &Verb, const FString &Arg)
         BuildView(TEXT("Märkte"));
         return true;
     }
+    if(Verb==TEXT("purchasePlan")){if(Sim&&DialogKind.IsEmpty())OpenPurchase(Arg);return true;}
+    if(Verb==TEXT("purchasePause")){if(Sim&&DialogKind==TEXT("purchase")){if(!Sim->IsPaused())Sim->TogglePause();Preview();}return true;}
     if (Verb == TEXT("tradeQuote"))
     {
         if (!Sim || !DialogKind.IsEmpty())
@@ -170,10 +172,10 @@ bool UCoIPlayerHUD::TradingAction(const FString &Verb, const FString &Arg)
             Refresh();
             return true;
         }
-        OpenTransport(Stock->Id);
+        OpenTransport(Stock->Id,false,B->Purchase.Enabled?B->Purchase.DestinationStorageId:FString());
         ActiveTradeCase = B->Id;
         Fields[TEXT("quantity")]->SetText(
-            FText::FromString(LexToString(FMath::Min3(100LL, Remaining, Stock->QuantityKg - Stock->ReservedKg))));
+            FText::FromString(LexToString(FMath::Min(Remaining, Stock->QuantityKg - Stock->ReservedKg))));
         Preview();
         return true;
     }
@@ -227,13 +229,14 @@ void UCoIPlayerHUD::RefreshTrading()
                 {TEXT("resale"), TEXT("Weiterverkauf vorbereiten")}},
                Id(TEXT("trade.purpose")).IsEmpty() ? TEXT("restock") : Id(TEXT("trade.purpose")));
         Text(Body,
-             TEXT("Eigentumswechsel findet am angegebenen Lager statt. Transport wird anschließend separat mit "
-                  "vorhandener eigener Ware geplant. Kein Auftrag durch Öffnen dieser Planung."),
+             TEXT("Eigentumswechsel findet am angegebenen Lager statt. Kauf mit Lieferung plant danach ausschließlich "
+                  "tatsächlich erworbene Ware ein. Ein reiner Limitauftrag bleibt ebenfalls möglich."),
              12);
         Text(Body,
              TEXT("Offenes Orderbuch: Preis-/Zeitpriorität. Der angezeigte Anbieter ist kein exklusiv zugesicherter "
                   "Vertragspartner. Teilfüllungen sind möglich."),
              11);
+        if(O->Side==TEXT("sell"))Button(Body,TEXT("Kauf mit Lieferung planen …"),TEXT("purchasePlan|")+O->Id,true);
         Button(Body, TEXT("Limitauftrag prüfen …"), TEXT("tradeQuote"), true);
         return;
     }
@@ -285,7 +288,7 @@ void UCoIPlayerHUD::RefreshTrading()
                          TEXT(" · tatsächlich frei am Quellort: ") + Display::Quantity(Free),
                      12);
                 if (Free > 0 && B.FilledKg > BusinessAssignedKg(B))
-                    Button(Body, TEXT("Transport dieser Kaufmenge planen …"), TEXT("businessHaul|") + B.Id);
+                    Button(Body, B.Purchase.Enabled?TEXT("Transport erneut planen …"):TEXT("Transport dieser Kaufmenge planen …"), TEXT("businessHaul|") + B.Id);
                 else if (B.FilledKg > BusinessAssignedKg(B))
                     Empty(Body, TEXT("Kein freier passender Abholbestand. Verbrauch, Verkauf, Verderb und "
                                      "Reservierungen prüfen."));

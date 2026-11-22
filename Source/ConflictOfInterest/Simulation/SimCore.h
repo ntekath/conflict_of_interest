@@ -10,7 +10,7 @@ enum class ECommandKind : uint8 { Reserve,Release,PlaceOrder,CancelOrder,BookTra
 enum class ECommandOrigin : uint8 { System,Player,Autonomous };
 struct FCommand
 {
- bool TrackTrade=false;FString TradeCaseId,TradePurpose=TEXT("restock");
+ FPurchaseIntent Purchase;bool TrackTrade=false;FString TradeCaseId,TradePurpose=TEXT("restock");
  int64 TargetStep=0,Sequence=0; uint64 Generation=0;
  ECommandOrigin Origin=ECommandOrigin::System;FString CompanyId;
  ECommandKind Kind=ECommandKind::Reserve; FReservation Resources; FMarketOrder Order; FTransport Transport;FInvestmentRequest Investment;FOperatingRule Rule;FDeliveryRequest Delivery;FLoanRequest Loan;
@@ -56,6 +56,7 @@ public:
  uint64 GetGeneration() const { return Generation; }
  int64 NextSequence() const { return LastIssuedSequence+1; }
  bool AuditRuntime(FString& Error) const;
+ bool PreviewPurchase(const FMarketOrder&,const FPurchaseIntent&,struct FPurchaseQuote&,FString&) const;
  bool PreviewLoan(const FLoanRequest&,struct FLoanQuote&,FString&) const;
  bool PreviewDelivery(const FDeliveryRequest&,FString&) const;
  bool PreviewOperatingRule(const FOperatingRule&,FString&) const;
@@ -79,7 +80,7 @@ private:
  bool Authorized(const FCommand&,FString&) const;
  bool Apply(const FCommand&,FString& Reason);
  bool BusinessOrder(const FCommand&,FString&);bool BusinessTransport(const FCommand&,FString&);
- void ReconcileBusinesses();bool ValidateBusinesses(FString&) const;
+ void ProgressPurchases();void ReconcileBusinesses();bool ValidateBusinesses(FString&) const;
  bool BusinessOrderReferenced(const FString&) const;bool BusinessTransportReferenced(const FString&) const;
  bool RunStep();
  void Aggregate(); void Publish();

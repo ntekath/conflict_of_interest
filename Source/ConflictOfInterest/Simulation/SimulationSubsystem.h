@@ -23,6 +23,7 @@ public:
  bool SaveSlot(int32 Slot,FString& Error);bool LoadSlot(int32 Slot,FString& Error);
  bool Submit(CoISim::FCommand Command,FString& Error);
  bool SubmitPlayer(CoISim::FCommand Command,int64 Token,int64& Ticket,FString& Error);
+ bool PreviewPurchase(const CoISim::FMarketOrder&,const CoISim::FPurchaseIntent&,CoISim::FPurchaseQuote&,FString&) const;
  bool PreviewLoan(CoISim::FLoanRequest,CoISim::FLoanQuote&,FString&) const;
  bool PreviewDelivery(CoISim::FDeliveryRequest Request,FString& Error) const;
  bool PreviewOperatingRule(CoISim::FOperatingRule Rule,FString& Error) const;

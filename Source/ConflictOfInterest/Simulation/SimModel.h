@@ -182,10 +182,15 @@ struct FBusinessLeg {
  FString Id,DestinationStorageId,Status;int64 Kg=0,DeliveredKg=0;
  COI_RECORD(COI_F(Id);COI_F(DestinationStorageId);COI_F(Status);COI_F(Kg);COI_F(DeliveredKg);)
 };
-struct FTradeBusiness {
+struct FPurchaseIntent {
+ bool Enabled=false;FString OfferId,VehicleId,DestinationStorageId,Phase;
+ int64 ApprovedHour=0,DepartureHour=0,LatestArrivalHour=0,MaxFreightCents=0,ReadyStep=0;
+ COI_RECORD(COI_F(Enabled);COI_F(OfferId);COI_F(VehicleId);COI_F(DestinationStorageId);COI_F(Phase);COI_F(ApprovedHour);COI_F(DepartureHour);COI_F(LatestArrivalHour);COI_F(MaxFreightCents);COI_F(ReadyStep);)
+};
+struct FTradeBusiness {FPurchaseIntent Purchase;
  FString Id,OwnerId,OrderId,StorageId,GoodId,Side,Purpose,OrderStatus,LastReason;
  int64 CreatedHour=0,RequestedKg=0,FilledKg=0,SettledCents=0;TArray<FBusinessLeg> Legs;
- COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(OrderId);COI_F(StorageId);COI_F(GoodId);COI_F(Side);COI_F(Purpose);COI_F(OrderStatus);COI_F(LastReason);COI_F(CreatedHour);COI_F(RequestedKg);COI_F(FilledKg);COI_F(SettledCents);COI_F(Legs);)
+ COI_RECORD(COI_O(Purchase);COI_F(Id);COI_F(OwnerId);COI_F(OrderId);COI_F(StorageId);COI_F(GoodId);COI_F(Side);COI_F(Purpose);COI_F(OrderStatus);COI_F(LastReason);COI_F(CreatedHour);COI_F(RequestedKg);COI_F(FilledKg);COI_F(SettledCents);COI_F(Legs);)
 };
 struct FReservation
 {

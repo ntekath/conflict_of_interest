@@ -1,0 +1,55 @@
+Log file: C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Log.txt
+Determining max actions to execute in parallel (6 physical cores, 12 logical cores)
+  Executing up to 6 processes, one per physical core
+Using 'git status' to determine working set for adaptive non-unity build (C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest).
+UbaSessionServer - Disable remote execution (remote sessions will finish current processes)
+Invalidating makefile for ConflictOfInterest (source file added)
+Building ConflictOfInterest...
+===== Toolchain Information =====
+Using ISPC compiler (E:\UE_5.8\Engine\Source\ThirdParty\Intel\ISPC\bin\Windows\ispc.exe)
+  Intel(r) Implicit SPMD Program Compiler (Intel(r) ISPC), 1.24.0 (build commit  @ 20250404, LLVM 18.1.2)
+Using Visual Studio 14.44.35229 toolchain (C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207) and Windows 10.0.22621.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+[Adaptive Build] Excluded from ConflictOfInterest unity file: PlayerView.cpp, Presentation.cpp, PurchasePlan.cpp, SaveGame.cpp, SaveValidation.cpp, SimCompanies.cpp, SimConsumers.cpp, SimCore.cpp, SimCosts.cpp, SimDiagnostics.cpp, SimEconomy.cpp, SimMarket.cpp, SimTransport.cpp, SimulationSubsystem.cpp, SimValidation.cpp, TradeBusiness.cpp, PurchasePlanTests.cpp, PlayerBanking.cpp, PlayerCityDetails.cpp, PlayerHeader.cpp, PlayerHUD.cpp, PlayerMapHUD.cpp, PlayerPanels.cpp, PlayerPurchase.cpp, PlayerTrading.cpp
+===== End Toolchain Information =====
+Using Unreal Build Accelerator local executor to run 30 action(s)
+  CPU 6 physical cores, 12 logical cores
+  Memory 63.16 GB physical, 30.36 GB/67.16 GB committed
+  UBA Storage capacity 40 GB
+[1/30] Compile [x64] PlayerBanking.cpp [NoUba]
+[2/30] Compile [x64] Module.ConflictOfInterest.2.cpp [NoUba]
+[3/30] Compile [x64] Module.ConflictOfInterest.3.cpp [NoUba]
+[4/30] Compile [x64] PlayerCityDetails.cpp [NoUba]
+[5/30] Compile [x64] PlayerHeader.cpp [NoUba]
+[6/30] Compile [x64] PlayerMapHUD.cpp [NoUba]
+[7/30] Compile [x64] PlayerPurchase.cpp [NoUba]
+[8/30] Compile [x64] PlayerPanels.cpp [NoUba]
+[9/30] Compile [x64] Presentation.cpp [NoUba]
+[10/30] Compile [x64] PlayerHUD.cpp [NoUba]
+[11/30] Compile [x64] PurchasePlan.cpp [NoUba]
+[12/30] Compile [x64] PlayerView.cpp [NoUba]
+[13/30] Compile [x64] PlayerTrading.cpp [NoUba]
+[14/30] Compile [x64] PurchasePlanTests.cpp [NoUba]
+[15/30] Compile [x64] SimConsumers.cpp [NoUba]
+[16/30] Compile [x64] SimCompanies.cpp [NoUba]
+[17/30] Compile [x64] SaveValidation.cpp [NoUba]
+[18/30] Compile [x64] SimCosts.cpp [NoUba]
+[19/30] Compile [x64] SimDiagnostics.cpp [NoUba]
+[20/30] Compile [x64] Module.ConflictOfInterest.1.cpp [NoUba]
+[21/30] Compile [x64] SimEconomy.cpp [NoUba]
+[22/30] Compile [x64] SimCore.cpp [NoUba]
+[23/30] Compile [x64] SimMarket.cpp [NoUba]
+[24/30] Compile [x64] SimTransport.cpp [NoUba]
+[25/30] Compile [x64] TradeBusiness.cpp [NoUba]
+[26/30] Compile [x64] SimulationSubsystem.cpp [NoUba]
+[27/30] Compile [x64] SimValidation.cpp [NoUba]
+[28/30] Compile [x64] SaveGame.cpp [NoUba]
+[29/30] Link [x64] ConflictOfInterest-Win64-Shipping.exe [NoUba]
+   Bibliothek "C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest-Win64-Shipping.lib" und Objekt "C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest-Win64-Shipping.exp" werden erstellt.
+[30/30] WriteMetadata ConflictOfInterest-Win64-Shipping.target [NoUba]
+
+Total time in Unreal Build Accelerator local executor: 40.44 seconds
+Output binary: C:\Users\Noel Tekath\Documents\GitHub\conflict_of_interest\Binaries\Win64\ConflictOfInterest-Win64-Shipping.exe
+
+Result: Succeeded
+Total execution time: 42.46 seconds
+Trace written to file C:\Users\Noel Tekath\AppData\Local\UnrealBuildTool\Trace.uba with size 10.0kb

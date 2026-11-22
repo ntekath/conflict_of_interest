@@ -24,7 +24,7 @@ struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg
 struct FPlayerView {
  TArray<FTradeBusiness> Businesses;
   FBankState Bank;int64 BankDeposits=0,BankClaims=0,BankDebt=0,RealAssetBookCents=0;TArray<FLoan> Loans;TArray<FDebtDue> DebtDues;
- TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingPeriod> AccountingPeriods;FCompanyPresentation Company;FString ActorId,StartDate;int64 Hour=0;FDefinitions Catalog;FEconomyRules Rules;
+ TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingPeriod> AccountingPeriods;FCompanyPresentation Company;FString ActorId,StartDate;int64 StepHours=1,Hour=0;FDefinitions Catalog;FEconomyRules Rules;
  TArray<FDeliveryContract> Deliveries;TArray<FDeliverySlot> DeliverySlots;TArray<FSiteLedger> SiteLedgers;TArray<FInternalTransfer> InternalTransfers;
  TArray<FOperatingRule> OperatingRules;TArray<FOperatingStatus> OperatingStatus;
  TArray<FConstructionProject> Projects;TArray<FAssetSale> AssetSales;TArray<FString> OccupiedPlots;TArray<FCityView> Cities;TArray<FStoreView> Stores;TArray<FVehicleView> Vehicles;TArray<FInventory> Stocks;

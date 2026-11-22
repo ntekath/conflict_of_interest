@@ -1,4 +1,4 @@
-﻿#include "SimulationSubsystem.h"
+#include "SimulationSubsystem.h"
 #include "Investments.h"
 #include "GeoCatalog.h"
 #include "GeoMapData.h"
@@ -196,3 +196,5 @@ bool UCoISimulationSubsystem::PreviewOperatingRule(CoISim::FOperatingRule R,FStr
 bool UCoISimulationSubsystem::PreviewDelivery(CoISim::FDeliveryRequest R,FString& E) const {check(IsInGameThread());R.OwnerId=Simulation.GetSession().PlayerCompanyId;return Simulation.PreviewDelivery(R,E);}
 
 bool UCoISimulationSubsystem::PreviewLoan(CoISim::FLoanRequest R,CoISim::FLoanQuote& Q,FString& E) const {R.OwnerId=Simulation.GetSession().PlayerCompanyId;return Simulation.PreviewLoan(R,Q,E);}
+
+bool UCoISimulationSubsystem::PreviewPurchase(const CoISim::FMarketOrder& O,const CoISim::FPurchaseIntent& I,CoISim::FPurchaseQuote& Q,FString& E) const{return Simulation.PreviewPurchase(O,I,Q,E);}

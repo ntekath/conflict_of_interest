@@ -50,6 +50,7 @@ int64 FSimulation::UsedStorage(const FString& Id) const
 bool FSimulation::Apply(const FCommand& Command,FString& Reason)
 {
  if(!Authorized(Command,Reason))return false;
+ if(Command.Purchase.Enabled&&(Command.Kind!=ECommandKind::PlaceOrder||!Command.TrackTrade)){Reason=TEXT("Invalid purchase plan command");return false;}
  if(Command.TrackTrade&&Command.Kind!=ECommandKind::PlaceOrder){Reason=TEXT("Invalid business command");return false;}
  if(!Command.TradeCaseId.IsEmpty()&&Command.Kind!=ECommandKind::BookTransport){Reason=TEXT("Invalid business link");return false;}
  if(Command.Kind==ECommandKind::PlaceOrder&&Command.TrackTrade)return BusinessOrder(Command,Reason);
@@ -113,7 +114,7 @@ bool FSimulation::RunStep()
   Diagnostics.CommandsMicros=Micros()-T;
  }
  // Match all queued market commands against the committed state before the next hour ages stock.
- if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}
+ if(Scenario.Economy.Stage>=2){ExpireOrders();MatchOrders();}ProgressPurchases();
  for(int64 Hour=State.Step*Scenario.Settings.HoursPerStep;Hour<Next*Scenario.Settings.HoursPerStep;++Hour)
  {State.EconomyHour=Hour;PlayerDay();EconomyHour(Hour);State.EconomyHour=Hour+1;CloseAccounting(Hour+1);ConstructionHour(Hour+1);if(State.EconomyHour%24==0)FinishDayMetrics(Next);PlayerWarnings();}
  // Snapshot inputs are const and independent of rendering. Results have disjoint per-region slots.
@@ -188,7 +189,7 @@ void FSimulation::Publish()
 FString FSimulation::Fingerprint() const
 {
  FFingerprint F;F.Write(Scenario);F.Write(State);F.Write(LastIssuedSequence);
- for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);F.Write(C.Investment);F.Write(C.Rule);F.Write(C.Delivery);F.Write(C.TrackTrade);F.Write(C.TradeCaseId);F.Write(C.TradePurpose);}return F.Finish();
+ for(const auto& C:Pending){F.Write(C.TargetStep);F.Write(C.Sequence);F.Write((int64)C.Kind);F.Write((int64)C.Origin);F.Write(C.CompanyId);F.Write(C.Resources);F.Write(C.Order);F.Write(C.Transport);F.Write(C.Investment);F.Write(C.Rule);F.Write(C.Delivery);F.Write(C.Purchase);F.Write(C.TrackTrade);F.Write(C.TradeCaseId);F.Write(C.TradePurpose);}return F.Finish();
 }
 }
 

@@ -1,6 +1,7 @@
-﻿#include "TradeBusiness.h"
+#include "TradeBusiness.h"
 #include "SimCore.h"
 #include "SimArchive.h"
+#include "PurchasePlan.h"
 namespace CoISim
 {
 int64 BusinessAssignedKg(const FTradeBusiness &B)
@@ -27,12 +28,17 @@ FString BusinessPhase(const FTradeBusiness &B, bool OwnSource)
     for (const auto &L : B.Legs)
         if (L.Status == TEXT("planned"))
             return TEXT("Transport geplant");
+    if (B.Purchase.Enabled && B.Purchase.Phase == TEXT("ready"))
+        return TEXT("Gekauft · Transportprüfung im nächsten Schritt");
+    if (B.Purchase.Enabled && B.Purchase.Phase == TEXT("pickup_required") && B.FilledKg > BusinessAssignedKg(B))
+        return TEXT("Gekauft – Abholung erforderlich");
     if (B.OrderStatus == TEXT("open"))
         return B.FilledKg ? TEXT("Teilweise gekauft") : TEXT("Auftrag offen");
     if (!B.FilledKg)
         return TEXT("Abgeschlossen · ohne Kauf");
     if (BusinessAssignedKg(B) < B.FilledKg)
-        return OwnSource ? TEXT("Abgeschlossen · am eigenen Standort") : TEXT("Gekauft – Abholung erforderlich");
+        return OwnSource && !B.Purchase.Enabled ? TEXT("Abgeschlossen · am eigenen Standort")
+                                                : TEXT("Gekauft – Abholung erforderlich");
     return TEXT("Angekommen · abgeschlossen");
 }
 bool BusinessFinished(const FTradeBusiness &B, bool OwnSource)
@@ -65,8 +71,29 @@ bool FSimulation::BusinessOrder(const FCommand &C, FString &E)
         E = TEXT("Zu viele offene Handelsvorgänge. Vorhandene Aufträge zuerst abschließen.");
         return false;
     }
+    if (C.Purchase.Enabled)
+    {
+        FPurchaseQuote Q;
+        if (!C.Purchase.Phase.IsEmpty() || C.Purchase.ReadyStep || C.Purchase.ApprovedHour != State.EconomyHour ||
+            C.Purchase.MaxFreightCents < 0 || C.Purchase.MaxFreightCents > 1000000000000LL ||
+            C.Purchase.LatestArrivalHour > C.Purchase.ApprovedHour + 87600 || O.Id.Len() > 112)
+        {
+            E = TEXT("Ungültiger Kauf-Lieferplan. Aktuelle Vorschau erforderlich.");
+            return false;
+        }
+        if (!PreviewPurchase(O, C.Purchase, Q, E))
+            return false;
+        if (Q.Transport.Cost > C.Purchase.MaxFreightCents || Q.Transport.Arrival > C.Purchase.LatestArrivalHour)
+        {
+            E = TEXT("Autorisierte Kosten/Ankunft überschritten. Neue Vorschau bestätigen.");
+            return false;
+        }
+    }
     const bool Accepted = PlaceOrder(O, E);
     FTradeBusiness B;
+    B.Purchase = C.Purchase;
+    if (B.Purchase.Enabled)
+        B.Purchase.Phase = Accepted ? TEXT("awaiting_purchase") : TEXT("no_purchase");
     B.Id = TEXT("business.") + O.Id;
     B.OwnerId = O.ActorId;
     B.OrderId = O.Id;
@@ -188,6 +215,8 @@ bool FSimulation::ValidateBusinesses(FString &E) const
             B.SettledCents < 0 || B.SettledCents > B.FilledKg * Scenario.Economy.MaxPriceCents ||
             B.Legs.Num() > BusinessLegLimit)
             return Fail();
+        if (!ValidPurchaseIntent(Scenario.Definitions, State, B, E))
+            return false;
         Cases.Add(B.Id);
         Orders.Add(B.OrderId);
         if (B.OrderStatus == TEXT("rejected"))
