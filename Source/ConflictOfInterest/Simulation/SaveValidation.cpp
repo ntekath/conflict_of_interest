@@ -27,7 +27,7 @@ bool FSimulation::ValidateSaveState(FString &E) const
         E = TEXT("Ungültiger Spielzustand: ") + Why;
         return false;
     };
-    auto Actor = [&](const FString &Id) { return Find(W.Companies, Id) || Find(W.Groups, Id); };
+    auto Actor = [&](const FString &Id) { return Find(W.Companies, Id) || Find(W.Groups, Id) || Find(Scenario.Economy.Public.Treasuries,Id); };
     auto Amounts = [&](const TArray<FAmount> &A) {
         TSet<FString> Seen;
         for (const auto &X : A)

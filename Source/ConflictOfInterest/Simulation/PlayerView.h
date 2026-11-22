@@ -19,7 +19,7 @@ struct FRouteActivity {TArray<FNetworkPoint> Geometry;int32 WaterBegin=0,WaterEn
 struct FCityPresence {TArray<FString> Activities;int64 Shops=0;FString CompanyId,Name;bool Headquarters=false,Own=false;int64 Warehouses=0,Facilities=0,PublicVehicles=0;};
 struct FHouseholdNeedView {FString GoodId;bool Known=false;int64 WantedKg=0,UsedKg=0;};
 // Aggregate household display only; no account IDs or private company state.
-struct FHouseholdView {FString Id,Band;int64 Population=0,Workforce=0,Employed=0,IncomeCentsDay=0,SpentCents=0,SavingsCents=0,FreeSavingsCents=0,BudgetCents=0,RemainingBudgetCents=0,WealthPermille=0,MaxWealthPermille=0,BeginHour=0,EndHour=0;FHouseholdNeedView Basic,Luxury;};
+struct FHouseholdView {int64 PrivateIncomeCentsDay=0,PublicIncomeCentsDay=0,TransferIncomeCentsDay=0,PublicEmployed=0;FString Id,Band;int64 Population=0,Workforce=0,Employed=0,IncomeCentsDay=0,SpentCents=0,SavingsCents=0,FreeSavingsCents=0,BudgetCents=0,RemainingBudgetCents=0,WealthPermille=0,MaxWealthPermille=0,BeginHour=0,EndHour=0;FHouseholdNeedView Basic,Luxury;};
 struct FCityView {FString Id,Name,RegionId;int64 OwnEmployees=0;int64 OwnStockKg=0;int64 Residents=0,Workforce=0,RegionalEmployed=0,RegionalPopulation=0;TArray<FHouseholdView> Households;TArray<FCityPresence> Presence;};
 struct FPlayerView {
  TArray<FTradeBusiness> Businesses;

@@ -113,6 +113,11 @@ def main():
         w['AssetSales'].append(dict(Id=offer['id'],SellerId=asset['OwnerId'],AssetId=asset['Id'],
             CityId=asset['CityId'],Kind='warehouse',PriceCents=offer['price_cents'],ExpiresHour=168,Active=True))
     economy=copy.deepcopy(base['Economy']); economy.update(config['economy'])
+    economy['Public']=copy.deepcopy(config['public_finance'])
+    for t in economy['Public']['Treasuries']:
+        w['Accounts'].append(dict(Id=t['AccountId'],OwnerId=t['Id'],BalanceCents=t['OpeningReserveCents'],ReservedCents=0))
+    for r in d['Regions']:
+        economy['Public']['Offices'].append(dict(Id='public.office.'+r['Id'],CountryId=r['CountryId'],RegionId=r['Id'],CityId=next(p['Id'] for p in d['Places'] if p['RegionId']==r['Id']),Jobs=config['public_office_jobs'],DailyWageCents=config['public_office_daily_wage_cents']))
     economy['Bank']=copy.deepcopy(config['bank'])
     economy['Bank']['OpeningBackingCents']=sum(a['BalanceCents'] for a in w['Accounts'])+economy['Bank']['OpeningCapitalCents']
     economy['AccountingOpeningAssets']=[]
@@ -131,7 +136,7 @@ def main():
     assert len({r['MarketId'] for r in d['Regions']})==50
     assert all('city.us.' not in str(x) and 'region.test.' not in str(x) for x in [d,w,economy])
     write('Content/Simulation/scenario.de_nl1913.coisim',result)
-    print('MAP03/MAP04: 50 hubs, 50 markets, 150 household groups; explicit Rhine pilot network; all opening balances unchanged.')
+    print('MAP03/AP09.5a: 50 hubs, 50 markets, 150 household groups; private opening balances unchanged; explicit national opening reserves and Rhine fleet.')
 
 if __name__=='__main__':
     main()

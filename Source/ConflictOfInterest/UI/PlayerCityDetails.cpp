@@ -1,4 +1,4 @@
-﻿#include "PlayerHUD.h"
+#include "PlayerHUD.h"
 #include "Simulation/SimulationSubsystem.h"
 #include "Simulation/CityDetails.h"
 #include "Simulation/SimArchive.h"
@@ -172,13 +172,14 @@ void UCoIPlayerHUD::CityHouseholds(const FCityView &C)
         return;
     }
     Text(Body,
-         TEXT("Geldwerte je gesamter Gruppe · Einkommen als Lohnrate pro Tag · Konsum je ausgewiesener Bedarfsperiode "
+         TEXT("Geldwerte je gesamter Gruppe · Einkommen als bezahlte Tagesrate · Konsum je ausgewiesener Bedarfsperiode "
               "· Ersparnisse als aktuelles Guthaben"),
          11)
         ->SetToolTipText(
             FText::FromString(TEXT("Alle Werte stammen aus dem veröffentlichten Zustand. Der Konsum umfasst "
                                    "tatsächliche Käufe; Guthaben ist weder garantiertes Einkommen noch frei "
                                    "ausgebbares Tagesbudget. Gruppendetails trennen Grund- und Luxusbedarf.")));
+    if(P.Rules.Public.Enabled){const auto* Office=P.Rules.Public.Offices.FindByPredicate([&](const FPublicOffice& O){return O.CityId==C.Id;});if(Office)Text(Body,TEXT("Öffentliche Dienste: ")+Display::Number(Office->Jobs)+TEXT(" Stellen angeboten · ")+Display::Money(Office->DailyWageCents)+TEXT(" je Stelle/Tag. National gedeckt, bei Mittelmangel gekürzt. Unterstützung ist eine befristete Testszenarioregel."),11);}
     const auto &Period = C.Households[0];
     bool SamePeriod = true;
     for (const auto &Group : C.Households)
@@ -199,7 +200,7 @@ void UCoIPlayerHUD::CityHouseholds(const FCityView &C)
     CityDataRow(
         CompactCityDetails
             ? TArray<FString>{TEXT("Einkommensgruppe"), TEXT("Personen"), TEXT("Grundversorgung"), TEXT("Auswahl")}
-            : TArray<FString>{TEXT("Einkommensgruppe"), TEXT("Löhne / Tag"), TEXT("Konsum / Periode"),
+            : TArray<FString>{TEXT("Einkommensgruppe"), TEXT("Einkommen / Tag"), TEXT("Konsum / Periode"),
                               TEXT("Ersparnisse"), TEXT("Arbeitslosigkeit"), TEXT("Grundversorgung"), TEXT("Auswahl")},
         Widths, TEXT(""), true);
     for (const auto &G : Rows)
@@ -232,7 +233,10 @@ void UCoIPlayerHUD::CityHouseholds(const FCityView &C)
                      "berechneten Bedarfsperiode, auch genau an einem Tageswechsel.")));
         const FString Stamp = TEXT("Stand: ") + Time(P.Hour);
         Text(Body, Stamp, 11);
-        CityDataRow({TEXT("Lohneinkommen der Gruppe"), Display::Money(G.IncomeCentsDay) + TEXT(" / Tag")}, {1, 2});
+        CityDataRow({TEXT("Einkommen gesamt"), Display::Money(G.IncomeCentsDay) + TEXT(" / Tag")}, {1, 2});
+        CityDataRow({TEXT("Private und Banklöhne"),Display::Money(G.PrivateIncomeCentsDay)+TEXT(" / Tag")},{1,2});
+        CityDataRow({TEXT("Öffentliche Löhne"),Display::Money(G.PublicIncomeCentsDay)+TEXT(" / Tag · ")+Display::Number(G.PublicEmployed)+TEXT(" Stellen")},{1,2});
+        CityDataRow({TEXT("Tatsächlich gezahlte Unterstützung"),Display::Money(G.TransferIncomeCentsDay)+TEXT(" / Tag")},{1,2});
         CityDataRow({TEXT("Tatsächlicher Konsum"), Display::Money(G.SpentCents) + TEXT(" / Bedarfsperiode")}, {1, 2});
         CityDataRow({TEXT("Konsumbudget / ungenutzter Rest"),
                      G.EndHour ? Display::Money(G.BudgetCents) + TEXT(" / ") + Display::Money(G.RemainingBudgetCents)

@@ -1,0 +1,8 @@
+
+AP09.5a · Öffentliche Dienste sind abstrakt; keine Warenproduktion. Staatskredit aus; Schuldendienst 0 Cent.
+Deutscher Testhaushalt · Konto account.public.de · Start 500000 / aktuell 130902 Cent
+Abgabe: fällig 150302 / bezahlt 150302 / offen 0 · Löhne 491400 · Transfers 28000 · gekürzt 245000 Cent
+Letzter Lohnlauf: 0 Stellen ungedeckt / 0 finanzierbar, aber unbesetzt · nächster Transfer h840
+Niederländischer Testhaushalt · Konto account.public.nl · Start 150000 / aktuell 100 Cent
+Abgabe: fällig 0 / bezahlt 0 / offen 0 · Löhne 135900 · Transfers 14000 · gekürzt 63000 Cent
+Letzter Lohnlauf: 15 Stellen ungedeckt / 0 finanzierbar, aber unbesetzt · nächster Transfer h840

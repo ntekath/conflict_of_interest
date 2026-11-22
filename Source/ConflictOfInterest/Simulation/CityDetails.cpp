@@ -10,7 +10,7 @@ FHouseholdView HouseholdDisplay(const FGroup &G, const FGroupDef &D, const FNeed
     V.Population = G.Population;
     V.Workforce = G.Workforce;
     V.Employed = G.Employed;
-    V.IncomeCentsDay = G.DailyIncomeCents;
+    V.IncomeCentsDay = G.DailyIncomeCents;V.PrivateIncomeCentsDay=G.DailyIncomeCents-G.PublicIncomeCentsDay-G.TransferIncomeCentsDay;V.PublicIncomeCentsDay=G.PublicIncomeCentsDay;V.TransferIncomeCentsDay=G.TransferIncomeCentsDay;V.PublicEmployed=G.PublicEmployed;
     V.SpentCents = G.DailySpentCents;
     V.SavingsCents = A.BalanceCents;
     V.FreeSavingsCents = A.BalanceCents - A.ReservedCents;

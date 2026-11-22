@@ -10,7 +10,7 @@
 using namespace CoISim;
 namespace
 {
-bool Fixture(FSimulation &S, FCoIGeoMapData &G, FString &E, bool Carrier = false)
+bool WaterFixture(FSimulation &S, FCoIGeoMapData &G, FString &E, bool Carrier = false)
 {
     FString J;
     auto *C =
@@ -72,7 +72,7 @@ bool FWaterArrival::RunTest(const FString &)
     FSimulation S;
     FCoIGeoMapData G;
     FString E;
-    if (!Fixture(S, G, E))
+    if (!WaterFixture(S, G, E))
     {
         AddError(E);
         return false;
@@ -148,7 +148,7 @@ bool FWaterCancel::RunTest(const FString &)
     FSimulation S;
     FCoIGeoMapData G;
     FString E;
-    if (!Fixture(S, G, E))
+    if (!WaterFixture(S, G, E))
         return false;
     auto C = Haul(S);
     if (!Send(S, C, E))
@@ -189,7 +189,7 @@ bool FWaterInvalid::RunTest(const FString &)
     FSimulation S;
     FCoIGeoMapData G;
     FString E;
-    if (!Fixture(S, G, E))
+    if (!WaterFixture(S, G, E))
         return false;
     auto C = Haul(S);
     C.Transport.RequestedDepartureHour = 168;
@@ -207,7 +207,7 @@ bool FWaterInvalid::RunTest(const FString &)
                            TEXT("city.nl.1913.zuid_holland"), TEXT("city.de.1913.rheinprovinz"), 2001, Ids, E));
     // A fresh scenario isolates the actual mid-voyage cancellation from autonomous repositioning.
     FSimulation Running;
-    if (!Fixture(Running, G, E))
+    if (!WaterFixture(Running, G, E))
         return false;
     C = Haul(Running);
     if (!Send(Running, C, E))
@@ -235,7 +235,7 @@ bool FWaterEmpty::RunTest(const FString &)
     FSimulation S;
     FCoIGeoMapData G;
     FString E;
-    if (!Fixture(S, G, E, true))
+    if (!WaterFixture(S, G, E, true))
         return false;
     auto C = Haul(S);
     C.Transport.OwnerId = TEXT("company.carrier");

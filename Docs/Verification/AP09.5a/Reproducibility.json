@@ -1,0 +1,24 @@
+{
+  "baseline_commit": "5c138ab",
+  "scenario_sha256": "02bc3d5082b8485353c9ad5bd4dae9fc15d78c03076d255d996be8858fa4ef1f",
+  "byte_identical_regeneration": true,
+  "all_private_definitions_and_initial_state_unchanged": true,
+  "private_economy_rules_unchanged": true,
+  "national_accounts_added": [
+    {
+      "Id": "account.public.de",
+      "OwnerId": "country.de.1913",
+      "BalanceCents": 500000,
+      "ReservedCents": 0
+    },
+    {
+      "Id": "account.public.nl",
+      "OwnerId": "country.nl.1913",
+      "BalanceCents": 150000,
+      "ReservedCents": 0
+    }
+  ],
+  "declared_opening_reserves_cents": 650000,
+  "bank_opening_backing_adjustment_cents": 650000,
+  "runtime_cash_or_goods_grants": 0
+}

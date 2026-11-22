@@ -5,7 +5,7 @@
   "StartDate": "1913-01-01",
   "PlayerCompanyId": "company.player",
   "Currency": "USD",
-  "BalancingNotice": "MAP03: Historical geography, entirely fictional TEST economy. USD is a common accounting/test unit, not a historical German/Dutch currency claim. All opening money, stocks, resource quantities and asset values are declared here. No recurring grants. No bank, taxes or free imports.",
+  "BalancingNotice": "MAP03: Historical geography, entirely fictional TEST economy. USD is a common accounting/test unit, not a historical German/Dutch currency claim. All opening money, stocks, resource quantities and asset values are declared here. No recurring grants or free imports. Bank and public finance are explicit fictional scenario rules; public opening reserves are declared separately.",
   "Settings": {
     "Seed": 1913,
     "HoursPerStep": 1,
@@ -7189,6 +7189,18 @@
         "Id": "account.group.city.nl.1913.zuid_holland.middle",
         "OwnerId": "group.city.nl.1913.zuid_holland.middle",
         "BalanceCents": 100000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.public.de",
+        "OwnerId": "country.de.1913",
+        "BalanceCents": 500000,
+        "ReservedCents": 0
+      },
+      {
+        "Id": "account.public.nl",
+        "OwnerId": "country.nl.1913",
+        "BalanceCents": 150000,
         "ReservedCents": 0
       }
     ],
@@ -17311,13 +17323,442 @@
       }
     ],
     "WaterMaxChainHours": 72,
+    "Public": {
+      "Enabled": true,
+      "Treasuries": [
+        {
+          "Id": "country.de.1913",
+          "AccountId": "account.public.de",
+          "Name": "Deutscher Testhaushalt",
+          "OpeningReserveCents": 500000,
+          "TaxPermille": 100,
+          "TransferCapCentsDay": 2000
+        },
+        {
+          "Id": "country.nl.1913",
+          "AccountId": "account.public.nl",
+          "Name": "Niederländischer Testhaushalt",
+          "OpeningReserveCents": 150000,
+          "TaxPermille": 100,
+          "TransferCapCentsDay": 1000
+        }
+      ],
+      "Offices": [
+        {
+          "Id": "public.office.region.de.1913.anhalt",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.anhalt",
+          "CityId": "city.de.1913.anhalt",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.baden",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.baden",
+          "CityId": "city.de.1913.baden",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.bayern",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.bayern",
+          "CityId": "city.de.1913.bayern",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.berlin",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.berlin",
+          "CityId": "city.de.1913.berlin",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.brandenburg",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.brandenburg",
+          "CityId": "city.de.1913.brandenburg",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.braunschweig",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.braunschweig",
+          "CityId": "city.de.1913.braunschweig",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.bremen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.bremen",
+          "CityId": "city.de.1913.bremen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.elsass_lothringen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.elsass_lothringen",
+          "CityId": "city.de.1913.elsass_lothringen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.hamburg",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.hamburg",
+          "CityId": "city.de.1913.hamburg",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.hannover",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.hannover",
+          "CityId": "city.de.1913.hannover",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.hessen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.hessen",
+          "CityId": "city.de.1913.hessen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.hessen_nassau",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.hessen_nassau",
+          "CityId": "city.de.1913.hessen_nassau",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.hohenzollern",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.hohenzollern",
+          "CityId": "city.de.1913.hohenzollern",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.lippe",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.lippe",
+          "CityId": "city.de.1913.lippe",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.luebeck",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.luebeck",
+          "CityId": "city.de.1913.luebeck",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.mecklenburg_schwerin",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.mecklenburg_schwerin",
+          "CityId": "city.de.1913.mecklenburg_schwerin",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.mecklenburg_strelitz",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.mecklenburg_strelitz",
+          "CityId": "city.de.1913.mecklenburg_strelitz",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.oldenburg",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.oldenburg",
+          "CityId": "city.de.1913.oldenburg",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.ostpreussen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.ostpreussen",
+          "CityId": "city.de.1913.ostpreussen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.pommern",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.pommern",
+          "CityId": "city.de.1913.pommern",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.posen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.posen",
+          "CityId": "city.de.1913.posen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.reuss_aeltere_linie",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.reuss_aeltere_linie",
+          "CityId": "city.de.1913.reuss_aeltere_linie",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.reuss_juengere_linie",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.reuss_juengere_linie",
+          "CityId": "city.de.1913.reuss_juengere_linie",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.rheinprovinz",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.rheinprovinz",
+          "CityId": "city.de.1913.rheinprovinz",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.sachsen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.sachsen",
+          "CityId": "city.de.1913.sachsen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.sachsen_altenburg",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.sachsen_altenburg",
+          "CityId": "city.de.1913.sachsen_altenburg",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.sachsen_coburg_gotha",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.sachsen_coburg_gotha",
+          "CityId": "city.de.1913.sachsen_coburg_gotha",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.sachsen_meiningen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.sachsen_meiningen",
+          "CityId": "city.de.1913.sachsen_meiningen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.sachsen_provinz",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.sachsen_provinz",
+          "CityId": "city.de.1913.sachsen_provinz",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.sachsen_weimar_eisenach",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.sachsen_weimar_eisenach",
+          "CityId": "city.de.1913.sachsen_weimar_eisenach",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.schaumburg_lippe",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.schaumburg_lippe",
+          "CityId": "city.de.1913.schaumburg_lippe",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.schlesien",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.schlesien",
+          "CityId": "city.de.1913.schlesien",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.schleswig_holstein",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.schleswig_holstein",
+          "CityId": "city.de.1913.schleswig_holstein",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.schwarzburg_rudolstadt",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.schwarzburg_rudolstadt",
+          "CityId": "city.de.1913.schwarzburg_rudolstadt",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.schwarzburg_sondershausen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.schwarzburg_sondershausen",
+          "CityId": "city.de.1913.schwarzburg_sondershausen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.waldeck_pyrmont",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.waldeck_pyrmont",
+          "CityId": "city.de.1913.waldeck_pyrmont",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.westfalen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.westfalen",
+          "CityId": "city.de.1913.westfalen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.westpreussen",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.westpreussen",
+          "CityId": "city.de.1913.westpreussen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.de.1913.wuerttemberg",
+          "CountryId": "country.de.1913",
+          "RegionId": "region.de.1913.wuerttemberg",
+          "CityId": "city.de.1913.wuerttemberg",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.drenthe",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.drenthe",
+          "CityId": "city.nl.1913.drenthe",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.friesland",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.friesland",
+          "CityId": "city.nl.1913.friesland",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.gelderland",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.gelderland",
+          "CityId": "city.nl.1913.gelderland",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.groningen",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.groningen",
+          "CityId": "city.nl.1913.groningen",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.limburg",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.limburg",
+          "CityId": "city.nl.1913.limburg",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.noord_brabant",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.noord_brabant",
+          "CityId": "city.nl.1913.noord_brabant",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.noord_holland",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.noord_holland",
+          "CityId": "city.nl.1913.noord_holland",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.overijssel",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.overijssel",
+          "CityId": "city.nl.1913.overijssel",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.utrecht",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.utrecht",
+          "CityId": "city.nl.1913.utrecht",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.zeeland",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.zeeland",
+          "CityId": "city.nl.1913.zeeland",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        },
+        {
+          "Id": "public.office.region.nl.1913.zuid_holland",
+          "CountryId": "country.nl.1913",
+          "RegionId": "region.nl.1913.zuid_holland",
+          "CityId": "city.nl.1913.zuid_holland",
+          "Jobs": 2,
+          "DailyWageCents": 180
+        }
+      ],
+      "EligibleBand": "low",
+      "TransferHours": 24,
+      "TransferCentsPersonDay": 25,
+      "TransferMaxPeopleGroup": 20,
+      "TransferDurationDays": 14,
+      "MaxSavingsCentsPerson": 1000
+    },
     "Bank": {
       "Enabled": true,
       "NpcEnabled": true,
       "CityId": "city.nl.1913.zuid_holland",
       "OperatingRecipientAccountId": "account.company.services",
       "OpeningCapitalCents": 10000000,
-      "OpeningBackingCents": 155000000,
+      "OpeningBackingCents": 155650000,
       "BaseRateBps": 500,
       "StartupSpreadBps": 300,
       "RiskSpreadBps": 200,

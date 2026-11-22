@@ -209,7 +209,7 @@ FCompanyPresentation CompanyPresentation(const FState &S, const FDefinitions &D,
         TEXT("Ergebnis · letzter abgeschlossener Monat"),
         TEXT("Monatliche realisierte Kostenrechnung ist noch nicht vorhanden"),
         TEXT("Externe realisierte Erlöse minus Wareneinsatz und Periodenkosten; interne Umsätze und unrealisierte "
-             "Aufschläge eliminieren. Tages- und Standort-Zahlungssalden ersetzen keinen Monatsgewinn."),
+             "Aufschläge eliminieren. Festgesetzte Ergebnisabgaben sind Periodenaufwand. Tages- und Standort-Zahlungssalden ersetzen keinen Monatsgewinn."),
         true);
     FDateTime Start;
     if (FDateTime::ParseIso8601(*(StartDate + TEXT("T00:00:00Z")), Start))

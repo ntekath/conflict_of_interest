@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "SimModel.h"
 #include "DeveloperBuild.h"
 #include "PlayerView.h"
@@ -90,6 +90,7 @@ private:
  bool DeliveryTransportReferenced(const FString&) const;int64 DeliveryPromises(const FString&,const FString&,const FString&) const;void RunDeliveryDue(const FString&,int64);void ProgressDelivery(const FString&,int64);
  FSiteLedger& SiteLedger(const FString&,const FString&);void SitePayment(const FString&,const FString&,int64,bool);void InternalDelivery(const FDeliveryContract&,int64);
  void RetailPlan(int64 Hour);void RetailConsume();bool ValidateRetail(FString&) const;
+ void InitializePublic();void PublicRevenue(int64 Hour);void PublicTransfers(int64 Hour);void PublicPayment(const FString&,const FString&,int64,const FString&);
  void HouseholdPayroll(int64 Hour);bool ValidateHouseholds(FString&) const;
  void AccountingCharge(const FString&,const FString&,int64,int64);int64 AccountingChargeHour(const FString&,const FString&,int64) const;void AccountingPrepaidService(FTransport&);void InitializeAccounting();void AccountingHour(int64);void RefreshAccountingPrices(int64,bool Force=false);void CloseAccounting(int64);bool ValidateAccounting(FString&) const;
  FAccountingPeriod& AccountingPeriod(const FString&);void AccountingPayment(const FString&,const FString&,int64,const FString&);void AccountingSale(const FString&,int64,int64);FAccountingCost AccountingProduction(const FFacility&,int64,int64);

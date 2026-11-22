@@ -12,6 +12,7 @@ FString FSimulation::ActorAccount(const FString& Id) const
 {
  if(const auto* C=Find(State.Companies,Id))return C->AccountId;
  if(const auto* G=Find(State.Groups,Id))return G->AccountId;
+ if(const auto* P=Find(Scenario.Economy.Public.Treasuries,Id))return P->AccountId;
  return {};
 }
 bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FString& Reason,const FString& FromSite,const FString& ToSite)
@@ -20,7 +21,7 @@ bool FSimulation::Pay(const FString& From,const FString& To,int64 Cents,const FS
  auto* A=Find(State.Accounts,From);auto* B=Find(State.Accounts,To);
  if(!A||!B||Cents<0||Cents>A->BalanceCents-A->ReservedCents||B->BalanceCents>MAX_int64-Cents)return false;
  if(!Cents||From==To)return true;
- A->BalanceCents-=Cents;B->BalanceCents+=Cents;BankHistoryPayment(A->OwnerId,B->OwnerId,Cents,Reason);AccountingPayment(A->OwnerId,B->OwnerId,Cents,Reason);SitePayment(A->OwnerId,FromSite,Cents,false);SitePayment(B->OwnerId,ToSite,Cents,true);
+ A->BalanceCents-=Cents;B->BalanceCents+=Cents;PublicPayment(A->OwnerId,B->OwnerId,Cents,Reason);BankHistoryPayment(A->OwnerId,B->OwnerId,Cents,Reason);AccountingPayment(A->OwnerId,B->OwnerId,Cents,Reason);SitePayment(A->OwnerId,FromSite,Cents,false);SitePayment(B->OwnerId,ToSite,Cents,true);
  if(Reason==TEXT("retail_sale"))if(const auto* Household=Find(Scenario.Definitions.Groups,A->OwnerId))Find(State.Regions,Household->RegionId)->FinalConsumptionCents+=Cents;
  if(A->OwnerId==Session.PlayerCompanyId)PlayerDay().ExpenseCents+=Cents;
  if(B->OwnerId==Session.PlayerCompanyId)PlayerDay().IncomeCents+=Cents;
@@ -54,7 +55,7 @@ void FSimulation::InitializeAudit()
 }
 bool FSimulation::AuditRuntime(FString& Error) const
 {
- if(!ValidateWaterBookings(Scenario,State,Error)||!ValidateBusinesses(Error)||!ValidateBank(Error)||!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
+ if(!ValidatePublicState(Scenario,State,Error)||!ValidateWaterBookings(Scenario,State,Error)||!ValidateBusinesses(Error)||!ValidateBank(Error)||!ValidateAccounting(Error)||!ValidateRetail(Error)||!ValidateHouseholds(Error)||!ValidateDeliveries(Error)||!ValidateOperatingRules(Error)||!ValidateInvestments(Scenario,State,false,Error)||!ValidateCityHubs(Scenario,State,false,Error))return false;
  auto Fail=[&](const FString& Message){Error=Message;return false;};
  int64 Consumption=0,Transfers=0;for(const auto& Region:State.Regions){if(Region.FinalConsumptionCents<0)return Fail(TEXT("Negative final consumption statistic"));Consumption+=Region.FinalConsumptionCents;Transfers+=Region.NetInventoryTransferCents;}
  const auto* RetailTotal=Find(State.CashTotals,FString(TEXT("retail_sale")));if(Transfers!=0||Consumption!=(RetailTotal?RetailTotal->Cents:0))return Fail(TEXT("Regional economic statistic balance"));
@@ -156,7 +157,7 @@ void FSimulation::EconomyHour(int64 Hour)
 {
  if(Scenario.Economy.Stage<1)return;
  if(Scenario.Economy.Stage>=4){TransportHour(Hour);Costs(Hour);Spoil();}
- Payroll(Hour);AccountingHour(Hour);RefreshAccountingPrices(Hour);Produce(Hour);
+ PublicRevenue(Hour);Payroll(Hour);PublicTransfers(Hour);AccountingHour(Hour);RefreshAccountingPrices(Hour);Produce(Hour);
  if(Scenario.Economy.Stage>=2)ExpireOrders();
  if(Scenario.Economy.Stage>=4){DeliveryService(Hour);OperatingService(Hour);Companies(Hour);if(Scenario.Economy.RetailEnabled)RetailPlan(Hour);}
  if(Scenario.Economy.Stage>=3)Demand(Hour);

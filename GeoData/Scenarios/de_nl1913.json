@@ -1,5 +1,5 @@
 {
-  "notice": "MAP03: Historical geography, entirely fictional TEST economy. USD is a common accounting/test unit, not a historical German/Dutch currency claim. All opening money, stocks, resource quantities and asset values are declared here. No recurring grants. No bank, taxes or free imports.",
+  "notice": "MAP03: Historical geography, entirely fictional TEST economy. USD is a common accounting/test unit, not a historical German/Dutch currency claim. All opening money, stocks, resource quantities and asset values are declared here. No recurring grants or free imports. Bank and public finance are explicit fictional scenario rules; public opening reserves are declared separately.",
   "player_company_id": "company.player",
   "local_capital_cents": 1500000,
   "capital_cents": {"company.player":2500000,"company.carrier":10000000,"company.food":10000000,"company.wood":5000000,"company.ore":5000000,"company.tools":5000000,"company.luxury":5000000,"company.merchant":5000000,"company.services":5000000,"company.external":0},
@@ -56,6 +56,36 @@
     {"id":"vehicle.carrier.3","owner":"company.carrier","home":"friesland"},
     {"id":"vehicle.carrier.4","owner":"company.carrier","home":"zuid_holland"}
   ],
+  "public_finance":{
+    "Enabled": true,
+    "Treasuries": [
+      {
+        "Id": "country.de.1913",
+        "AccountId": "account.public.de",
+        "Name": "Deutscher Testhaushalt",
+        "OpeningReserveCents": 500000,
+        "TaxPermille": 100,
+        "TransferCapCentsDay": 2000
+      },
+      {
+        "Id": "country.nl.1913",
+        "AccountId": "account.public.nl",
+        "Name": "Niederländischer Testhaushalt",
+        "OpeningReserveCents": 150000,
+        "TaxPermille": 100,
+        "TransferCapCentsDay": 1000
+      }
+    ],
+    "Offices": [],
+    "EligibleBand": "low",
+    "TransferHours": 24,
+    "TransferCentsPersonDay": 25,
+    "TransferMaxPeopleGroup": 20,
+    "TransferDurationDays": 14,
+    "MaxSavingsCentsPerson": 1000
+  },
+  "public_office_jobs":2,
+  "public_office_daily_wage_cents":180,
   "water_service":{
     "notice": "MAP05 explicit opening asset, no cash or goods grant. Existing carrier trucks provide local feeder service. All values are gameplay assumptions.",
     "ship_id": "vehicle.carrier.rhine",

@@ -17,7 +17,7 @@ void FSimulation::HouseholdPayroll(int64 H)
     for (auto &G : State.Groups)
     {
         G.LastIncomeCents = G.DailyIncomeCents;
-        G.DailyIncomeCents = 0;
+        G.DailyIncomeCents = G.TransferIncomeCentsDay;G.PrivateIncomeCentsDay=G.PublicIncomeCentsDay=G.PublicEmployed=0;
         G.Employed = 0;
     }
     State.ServiceEmployment.Reset();
@@ -40,6 +40,7 @@ void FSimulation::HouseholdPayroll(int64 H)
         X.Id = V.Id;
         State.ServiceEmployment.Add(X);
     }
+    if(Scenario.Economy.Public.Enabled)for(const auto& O:Scenario.Economy.Public.Offices){FServiceEmployment X;X.Id=O.Id;State.ServiceEmployment.Add(X);}for(auto& B:State.PublicTreasuries)B.LastUnfundedJobs=B.LastVacantJobs=0;
     if(Scenario.Economy.Bank.Enabled){FServiceEmployment X;X.Id=BankStaffId;State.ServiceEmployment.Add(X);}
     TArray<FJob> Jobs;
     for (auto &F : State.Facilities)
@@ -61,6 +62,7 @@ void FSimulation::HouseholdPayroll(int64 H)
                           ? Q.TraderJobs
                           : Q.WarehouseJobs,
                       Scenario.Economy.RetailEnabled&&!Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailOffers.IsEmpty()?Find(Scenario.Definitions.WarehouseTypes,W->TypeId)->RetailWageCents:Q.ServiceWageCents, nullptr, &S});
+        else if(const auto* O=Find(Q.Public.Offices,S.Id))Jobs.Add({O->Id,O->CountryId,O->CityId,O->Id,O->Jobs,O->DailyWageCents,nullptr,&S});
         else if(S.Id==BankStaffId)Jobs.Add({BankStaffId,BankLedgerId,Q.Bank.CityId,BankStaffId,Q.Bank.Jobs,Q.Bank.DailyWageCents,nullptr,&S});
         else if (const auto *V = Find(State.Vehicles, S.Id))
             Jobs.Add({V->Id, V->OwnerId, V->HomeCityId, V->Id, Q.VehicleJobs, Q.ServiceWageCents, nullptr, &S});
@@ -71,6 +73,7 @@ void FSimulation::HouseholdPayroll(int64 H)
         auto *A = Find(State.Accounts, ActorAccount(J.Owner));
         int64 Wage = J.Wage * (Q.PayrollHours / 24);
         int64 Left = FMath::Min(J.Needed, (J.Owner==BankLedgerId?BankSpendable(Q.Bank,State.Bank):A->BalanceCents-A->ReservedCents) / FMath::Max(1LL, Wage));
+        if(auto* B=Find(State.PublicTreasuries,J.Owner))B->LastUnfundedJobs+=J.Needed-Left;
         auto &Employment = J.Facility ? J.Facility->Employment : J.Service->Employment;
         for (auto &G : State.Groups)
         {
@@ -80,13 +83,14 @@ void FSimulation::HouseholdPayroll(int64 H)
             int64 N = FMath::Min(Left, G.Workforce - G.Employed);
             if (N <= 0)
                 continue;
-            if (!Pay(J.Owner==BankLedgerId?BankLedgerId:A->Id, G.AccountId, N * Wage, J.Owner==BankLedgerId?TEXT("bank_wages"):TEXT("wages"), J.Site))
+            if (!Pay(J.Owner==BankLedgerId?BankLedgerId:A->Id, G.AccountId, N * Wage, J.Owner==BankLedgerId?TEXT("bank_wages"):Find(State.PublicTreasuries,J.Owner)?TEXT("public_wages"):TEXT("wages"), J.Site))
                 continue;
             Employment.Add({G.Id, N});
             G.Employed += N;
-            G.DailyIncomeCents += N * J.Wage;
+            G.DailyIncomeCents += N * J.Wage;if(Find(State.PublicTreasuries,J.Owner)){G.PublicIncomeCentsDay+=N*J.Wage;G.PublicEmployed+=N;}else G.PrivateIncomeCentsDay+=N*J.Wage;
             Left -= N;
         }
+        if(auto* B=Find(State.PublicTreasuries,J.Owner))B->LastVacantJobs+=Left;
         if (J.Facility)
         {
             int64 Count = 0;
@@ -130,7 +134,7 @@ bool FSimulation::ValidateHouseholds(FString &E) const
     {
         const auto *W = Find(State.Warehouses, S.Id);
         const auto *V = Find(State.Vehicles, S.Id);
-        if (Seen.Contains(S.Id) || (!W && !V && !(Q.Bank.Enabled&&S.Id==BankStaffId)) || S.PaidUntilHour < 0 ||
+        if (Seen.Contains(S.Id) || (!W && !V && !(Q.Bank.Enabled&&S.Id==BankStaffId) && !(Q.Public.Enabled&&Find(Q.Public.Offices,S.Id))) || S.PaidUntilHour < 0 ||
             S.PaidUntilHour > State.EconomyHour + Q.PayrollHours || (Q.AccountingEnabled && (S.AccountingPaidDailyWageCents < 0 || S.AccountingPaidDailyWageCents > 1000000 || (!S.Employment.IsEmpty() && !S.AccountingPaidDailyWageCents))))
         {
             E = TEXT("Invalid employment asset: ") + S.Id;
@@ -143,7 +147,7 @@ bool FSimulation::ValidateHouseholds(FString &E) const
             const auto *G = Find(State.Groups, J.GroupId);
             const auto *D = Find(Scenario.Definitions.Groups, J.GroupId);
             if (!G || !D || Groups.Contains(J.GroupId) || J.Workers <= 0 || J.Workers > G->Workforce ||
-                D->RegionId != Find(Scenario.Definitions.Places, W ? W->CityId : V?V->HomeCityId:Q.Bank.CityId)->RegionId)
+                D->RegionId != Find(Scenario.Definitions.Places, W ? W->CityId : V?V->HomeCityId:Find(Q.Public.Offices,S.Id)?Find(Q.Public.Offices,S.Id)->CityId:Q.Bank.CityId)->RegionId)
             {
                 E = TEXT("Invalid service workers: ") + S.Id;
                 return false;

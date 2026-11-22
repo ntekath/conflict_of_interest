@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "TransportNetwork.h"
+#include "PublicFinance.h"
 // Plain data: no Actor, UObject, widget, world or streaming dependency.
 // All money is USD cents, goods kg, time integral simulation hours.
 namespace CoISim
@@ -67,11 +68,12 @@ struct FAccount { FString Id,OwnerId; int64 BalanceCents=0,ReservedCents=0; COI_
 struct FCompany { FString Id,AccountId; COI_RECORD(COI_F(Id);COI_F(AccountId);) };
 struct FGroup
 {
+ int64 PrivateIncomeCentsDay=0,PublicIncomeCentsDay=0,TransferIncomeCentsDay=0,PublicEmployed=0;
  int64 WealthPermille=0,LastIncomeCents=0,LastSpentCents=0,NextBudgetHour=0;
  FString Id,AccountId; int64 Population=0,Workforce=0,Employed=0,DailyIncomeCents=0,BudgetCents=0;
  int64 DailySpentCents=0,LuxurySpentCents=0,BasicRemainder=0,LuxuryRemainder=0;
  TArray<FAmount> MissedNeed; TArray<FAmount> Consumed,UnmetNeed;
- COI_RECORD(COI_O(WealthPermille);COI_O(LastIncomeCents);COI_O(LastSpentCents);COI_O(NextBudgetHour);COI_F(Id);COI_F(AccountId);COI_F(Population);COI_F(Workforce);COI_F(Employed);COI_F(DailyIncomeCents);COI_F(BudgetCents);COI_O(DailySpentCents);COI_O(LuxurySpentCents);COI_O(BasicRemainder);COI_O(LuxuryRemainder);COI_O(MissedNeed);COI_F(Consumed);COI_F(UnmetNeed);)
+ COI_RECORD(COI_O(PrivateIncomeCentsDay);COI_O(PublicIncomeCentsDay);COI_O(TransferIncomeCentsDay);COI_O(PublicEmployed);COI_O(WealthPermille);COI_O(LastIncomeCents);COI_O(LastSpentCents);COI_O(NextBudgetHour);COI_F(Id);COI_F(AccountId);COI_F(Population);COI_F(Workforce);COI_F(Employed);COI_F(DailyIncomeCents);COI_F(BudgetCents);COI_O(DailySpentCents);COI_O(LuxurySpentCents);COI_O(BasicRemainder);COI_O(LuxuryRemainder);COI_O(MissedNeed);COI_F(Consumed);COI_F(UnmetNeed);)
 };
 struct FEmployment { FString GroupId; int64 Workers=0; COI_RECORD(COI_F(GroupId);COI_F(Workers);) };
 // AP09.5: one bank ledger, never a second spendable account.
@@ -126,11 +128,11 @@ struct FAccountingCharge {FString Id,OwnerId;int64 Hour=0,Amount=0;COI_RECORD(CO
 struct FAccountingAsset {FString Id,OwnerId;int64 ValueCents=0;bool Known=false;COI_RECORD(COI_F(Id);COI_F(OwnerId);COI_F(ValueCents);COI_F(Known);)};
 struct FAccountingPeriod {
  FString Id,ActorId;int64 BeginHour=0,EndHour=0;bool Complete=false,Partial=false,Known=true;
- int64 FinancingExpense=0;
+ int64 TaxExpense=0;int64 FinancingExpense=0;
  int64 ProductionIdle=0;int64 GoodsRevenue=0,ServiceRevenue=0,CostOfGoods=0,Wages=0,Operating=0,CapitalizedWages=0,CapitalizedOperating=0,FreightExpense=0,Spoilage=0,DisposalGain=0;
  int64 IdleCosts() const {return Wages+Operating-CapitalizedWages-CapitalizedOperating;}
- int64 Profit() const {return GoodsRevenue+ServiceRevenue-CostOfGoods-IdleCosts()-FreightExpense-Spoilage+DisposalGain-FinancingExpense;}
- COI_RECORD(COI_F(Id);COI_F(ActorId);COI_F(BeginHour);COI_F(EndHour);COI_F(Complete);COI_F(Partial);COI_F(Known);COI_F(FinancingExpense);COI_F(ProductionIdle);COI_F(GoodsRevenue);COI_F(ServiceRevenue);COI_F(CostOfGoods);COI_F(Wages);COI_F(Operating);COI_F(CapitalizedWages);COI_F(CapitalizedOperating);COI_F(FreightExpense);COI_F(Spoilage);COI_F(DisposalGain);)
+ int64 Profit() const {return GoodsRevenue+ServiceRevenue-CostOfGoods-IdleCosts()-FreightExpense-Spoilage+DisposalGain-FinancingExpense-TaxExpense;}
+ COI_RECORD(COI_F(Id);COI_F(ActorId);COI_F(BeginHour);COI_F(EndHour);COI_F(Complete);COI_F(Partial);COI_F(Known);COI_O(TaxExpense);COI_F(FinancingExpense);COI_F(ProductionIdle);COI_F(GoodsRevenue);COI_F(ServiceRevenue);COI_F(CostOfGoods);COI_F(Wages);COI_F(Operating);COI_F(CapitalizedWages);COI_F(CapitalizedOperating);COI_F(FreightExpense);COI_F(Spoilage);COI_F(DisposalGain);)
 };
 struct FAccountingPrice {
  FString Id,ActorId,StorageId,GoodId;int64 Version=0,Hour=0;bool Startup=true;
@@ -222,13 +224,13 @@ struct FEconomyRules
  bool MapPublicRouteActivity=true;
  int64 MapTrucksPerRoute=3,MapTrucksTotal=100,MapTruckZoom=16000,MapRouteDetailZoom=12000;
 
- int64 WaterMaxChainHours=72;
+ FPublicRules Public;int64 WaterMaxChainHours=72;
  int64 UiLowCashCents=10000,UiCapacityWarningPermille=100,UiEventLimit=64,UiVisibleEvents=4,UiHistoryDays=7,MaxBookingDelayHours=168;
  int64 Stage=0,PayrollHours=24,DecisionHours=6,DemandHours=24,CostsHours=24,OrderLifetimeHours=12,PickupGraceHours=24;
  int64 RentalCentsPerPointDay=1,MaxOrderKg=100000,MaxPriceCents=1000000,MaxOpenOrders=512,HistoryLimit=256;
  int64 DailyBudgetPermille=500,LocalHaulKm=1,RouteDetourPermille=1400,FreightMarkupPermille=200,BookingLeadHours=1;
  int64 InputTargetHours=48,ProducerReserveKg=100,TraderMaxLoadKg=2000,TraderCashReserveCents=10000,TraderMinProfitCents=100,TraderMarkupPermille=200;
- COI_RECORD(COI_O(WaterMaxChainHours);COI_O(Bank);COI_O(AccountingEnabled);COI_O(AccountingPricingHours);COI_O(AccountingNormalUtilizationPermille);COI_O(AccountingNormalTradeKgDay);COI_O(AccountingDefaultMarkupPermille);COI_O(AccountingMaxMarkupPermille);COI_O(AccountingHistoryMonths);COI_O(AccountingOpeningAssets);COI_O(RetailEnabled);COI_O(HouseholdModel);COI_O(LegacyHouseholdPurchases);COI_O(WarehouseJobs);COI_O(TraderJobs);COI_O(VehicleJobs);COI_O(ServiceWageCents);COI_O(DeliveryMaxRules);COI_O(DeliveryMinIntervalHours);COI_O(DeliveryMaxIntervalHours);COI_O(DeliveryMaxDurationHours);COI_O(DeliveryMaxKg);COI_O(DeliveryReturnGraceHours);COI_O(DeliveryPromiseHours);COI_O(DeliveryDefaultFreightCapCents);COI_O(RuleBudgetHours);COI_O(RuleDefaultBuyBudgetCents);COI_O(RuleMaxBuyBudgetCents);COI_O(RuleMaxWageCents);COI_O(RuleMaxStockKg);COI_F(MapPublicRouteActivity);COI_F(MapTrucksPerRoute);COI_F(MapTrucksTotal);COI_F(MapTruckZoom);COI_F(MapRouteDetailZoom);COI_F(UiLowCashCents);COI_F(UiCapacityWarningPermille);COI_F(UiEventLimit);COI_F(UiVisibleEvents);COI_F(UiHistoryDays);COI_F(MaxBookingDelayHours);COI_F(Stage);COI_F(PayrollHours);COI_F(DecisionHours);COI_F(DemandHours);COI_F(CostsHours);COI_F(OrderLifetimeHours);COI_F(PickupGraceHours);COI_F(RentalCentsPerPointDay);COI_F(MaxOrderKg);COI_F(MaxPriceCents);COI_F(MaxOpenOrders);COI_F(HistoryLimit);COI_F(DailyBudgetPermille);COI_F(LocalHaulKm);COI_F(RouteDetourPermille);COI_F(FreightMarkupPermille);COI_F(BookingLeadHours);COI_F(InputTargetHours);COI_F(ProducerReserveKg);COI_F(TraderMaxLoadKg);COI_F(TraderCashReserveCents);COI_F(TraderMinProfitCents);COI_F(TraderMarkupPermille);)
+ COI_RECORD(COI_O(Public);COI_O(WaterMaxChainHours);COI_O(Bank);COI_O(AccountingEnabled);COI_O(AccountingPricingHours);COI_O(AccountingNormalUtilizationPermille);COI_O(AccountingNormalTradeKgDay);COI_O(AccountingDefaultMarkupPermille);COI_O(AccountingMaxMarkupPermille);COI_O(AccountingHistoryMonths);COI_O(AccountingOpeningAssets);COI_O(RetailEnabled);COI_O(HouseholdModel);COI_O(LegacyHouseholdPurchases);COI_O(WarehouseJobs);COI_O(TraderJobs);COI_O(VehicleJobs);COI_O(ServiceWageCents);COI_O(DeliveryMaxRules);COI_O(DeliveryMinIntervalHours);COI_O(DeliveryMaxIntervalHours);COI_O(DeliveryMaxDurationHours);COI_O(DeliveryMaxKg);COI_O(DeliveryReturnGraceHours);COI_O(DeliveryPromiseHours);COI_O(DeliveryDefaultFreightCapCents);COI_O(RuleBudgetHours);COI_O(RuleDefaultBuyBudgetCents);COI_O(RuleMaxBuyBudgetCents);COI_O(RuleMaxWageCents);COI_O(RuleMaxStockKg);COI_F(MapPublicRouteActivity);COI_F(MapTrucksPerRoute);COI_F(MapTrucksTotal);COI_F(MapTruckZoom);COI_F(MapRouteDetailZoom);COI_F(UiLowCashCents);COI_F(UiCapacityWarningPermille);COI_F(UiEventLimit);COI_F(UiVisibleEvents);COI_F(UiHistoryDays);COI_F(MaxBookingDelayHours);COI_F(Stage);COI_F(PayrollHours);COI_F(DecisionHours);COI_F(DemandHours);COI_F(CostsHours);COI_F(OrderLifetimeHours);COI_F(PickupGraceHours);COI_F(RentalCentsPerPointDay);COI_F(MaxOrderKg);COI_F(MaxPriceCents);COI_F(MaxOpenOrders);COI_F(HistoryLimit);COI_F(DailyBudgetPermille);COI_F(LocalHaulKm);COI_F(RouteDetourPermille);COI_F(FreightMarkupPermille);COI_F(BookingLeadHours);COI_F(InputTargetHours);COI_F(ProducerReserveKg);COI_F(TraderMaxLoadKg);COI_F(TraderCashReserveCents);COI_F(TraderMinProfitCents);COI_F(TraderMarkupPermille);)
 };
 struct FMarketTotal
 {
@@ -259,6 +261,7 @@ struct FDayMetrics
 struct FServiceEmployment {FString Id;int64 PaidUntilHour=0;TArray<FEmployment> Employment;int64 AccountingPaidDailyWageCents=0;COI_RECORD(COI_F(Id);COI_F(PaidUntilHour);COI_F(Employment);COI_O(AccountingPaidDailyWageCents);)};
 struct FState
 {
+ TArray<FPublicTreasury> PublicTreasuries;TArray<FPublicClaim> PublicClaims;TArray<FPublicTax> PublicTaxes;
  TArray<FTradeBusiness> Businesses;
  FBankState Bank;TArray<FLoan> Loans;TArray<FDebtDue> DebtDues;TArray<FBankHistory> BankHistory;
  TArray<FAccountingCharge> AccountingCharges;int64 AccountingPriceSequence=0;int64 AccountingStartHour=-1,AccountingReliableFromHour=-1;TArray<FAccountingPeriod> AccountingPeriods;TArray<FAccountingPrice> AccountingPrices;TArray<FAccountingAsset> AccountingAssets;
@@ -273,7 +276,7 @@ struct FState
  TArray<FInventory> Inventories; TArray<FMarketOrder> Orders; TArray<FTrade> Trades;
  TArray<FTransport> Transports; TArray<FTransportOffer> Offers; TArray<FReservation> Reservations;
  TArray<FRegion> Regions; TArray<FCountry> Countries;
- COI_RECORD(COI_O(Businesses);COI_O(Bank);COI_O(Loans);COI_O(DebtDues);COI_O(BankHistory);COI_O(AccountingCharges);COI_O(AccountingPriceSequence);COI_O(AccountingStartHour);COI_O(AccountingReliableFromHour);COI_O(AccountingPeriods);COI_O(AccountingPrices);COI_O(AccountingAssets);COI_O(ServiceEmployment);COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
+ COI_RECORD(COI_O(PublicTreasuries);COI_O(PublicClaims);COI_O(PublicTaxes);COI_O(Businesses);COI_O(Bank);COI_O(Loans);COI_O(DebtDues);COI_O(BankHistory);COI_O(AccountingCharges);COI_O(AccountingPriceSequence);COI_O(AccountingStartHour);COI_O(AccountingReliableFromHour);COI_O(AccountingPeriods);COI_O(AccountingPrices);COI_O(AccountingAssets);COI_O(ServiceEmployment);COI_O(Deliveries);COI_O(DeliverySlots);COI_O(SiteLedgers);COI_O(InternalTransfers);COI_O(OperatingRules);COI_O(OperatingStatus);COI_O(Projects);COI_O(AssetSales);COI_O(ResourceSites);COI_O(DeveloperModified);COI_O(DeveloperMoneySources);COI_O(DeveloperMoneySinks);COI_O(CurrentDayMetrics);COI_O(LastDayMetrics);COI_O(PlayerDays);COI_O(PlayerEvents);COI_O(OrderSequence);COI_O(TradeSequence);COI_O(EconomyHour);COI_O(InitialMoneyCents);COI_O(MarketTotals);COI_O(CashFlows);COI_O(CashTotals);COI_O(GoodsAudit);COI_F(Step);COI_F(Accounts);COI_F(Companies);COI_F(Groups);COI_F(Facilities);COI_F(Warehouses);COI_F(Vehicles);COI_F(Inventories);COI_F(Orders);COI_F(Trades);COI_F(Transports);COI_F(Offers);COI_F(Reservations);COI_F(Regions);COI_F(Countries);)
 };
 struct FSettings
 {
